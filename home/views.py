@@ -1,0 +1,534 @@
+from django.db.models.query_utils import Q
+from django.shortcuts import render,redirect,reverse
+from .models import *
+from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
+from .forms import *
+from django.contrib import messages
+from django.contrib.messages import get_messages
+from django.http import JsonResponse,HttpResponseRedirect
+from django.db.models import Q
+from itertools import chain
+from django.conf import settings
+from accounts.models import User
+from django.core.mail import send_mail,EmailMessage
+from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from datetime import datetime
+from django.forms import ValidationError
+
+# Create your views here.
+class FailedJsonResponse(JsonResponse):
+    def __init__(self, data):
+        super().__init__(data)
+        self.status_code = 400
+
+def global_search(request):
+    qs=request.GET.get("qs")
+    courses=Course.objects.filter(Q(name__icontains=qs) | Q(details__icontains=qs) | Q(branch__name__icontains=qs) | Q(branch__category__name__icontains=qs) | Q(Instructor__username=qs)).distinct() 
+    if len(courses) == 0:
+        page_obj=[]
+        qs=None
+    else:
+        paginator = Paginator(courses, 8) # Show 25 contacts per page.
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    context={"results":courses}
+    return render(request,"global_search.html",context)
+
+def course_search(request):
+    qs=request.GET.get("qs")
+    course=Course.objects.filter(Q(name__icontains=qs) | Q(details__icontains=qs) | Q(branch__name__icontains=qs) | Q(branch__category__name__icontains=qs)).distinct() 
+
+    if len(course) == 0:
+        page_obj=[]
+        qs=None
+    else:
+        paginator = Paginator(course, 8) # Show 25 contacts per page.
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    return render(request,"course_search.html",{"course":page_obj,"qs":qs})
+
+
+def home(request):
+    events=Events.objects.order_by("-date")[:5]
+    courses=Course.objects.order_by("-id")[0:5]
+    teachers=User.objects.filter(account_type="teacher").order_by("?")[:4]
+    print(teachers)
+    context={"events":events,"courses":courses,"teachers":teachers}
+    return render(request,"home.html",context)
+    
+def courses(request):
+    course=Course.objects.all()
+    paginator = Paginator(course, 8) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"course":page_obj}
+    return render(request,"courses.html",context)
+
+def branch(request,slug):
+    branch=get_object_or_404(Branch,slug=slug)
+    course=Course.objects.filter(branch=branch)
+    paginator = Paginator(course, 8) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"course":page_obj,"branch":branch}
+    return render(request,"branch.html",context)
+
+def single_course(request,slug):
+    course=get_object_or_404(Course,slug=slug)
+    same=Course.objects.filter(branch=course.branch).exclude(id=course.id).order_by("-id")[:4]
+    payment_form=PaymentMethodForm(request.POST or None)
+    form=ReviewForm(request.POST or None)
+    print(request.user.username)
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            if Reviews.objects.filter(user=request.user,course=course).exists():
+                messages.error(request,"you already submitted to the course")
+                return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+            rate=request.POST.get("rate")
+            reviews=request.POST.get("review")
+            print(rate,reviews)
+            if rate and reviews:
+                if 5 >= int(rate) >= 1:
+                    my_review=Reviews.objects.create(user=request.user,review=reviews,
+                                rate=int(rate),course=course)
+                    messages.success(request, 'thank you for your opinion')
+                    course.reviews.add(my_review)
+                    course.save()
+                else:
+                    print("else")
+        else:
+            messages.error(request, 'login first')
+
+    context={"course":course,"form":form,"same":same,"payment_form":payment_form} 
+    return render(request,"course-single.html",context)
+
+def videos(request,course,slug):
+    video=get_object_or_404(Videos,slug=slug)
+    same=Course.objects.filter(branch=video.my_course.branch).exclude(id=video.my_course.id).order_by("-id")[:3]
+
+    if not request.user in video.my_course.students.all():
+        messages.error(request,"sorry you should buy course first")
+        return redirect(reverse("home:course",kwargs={"slug":video.my_course.slug}))
+    else:
+        if request.method == "POST":
+            if request.user.is_authenticated:
+                if Reviews.objects.filter(user=request.user,course=video.my_course).exists():
+                    messages.error(request,"you already submitted to the course")
+                    return redirect(reverse("home:video",kwargs={"course":course,"slug":video.slug}))
+                rate=request.POST.get("rate")
+                review=request.POST.get("review")
+                print(rate,review)
+                if rate and review:
+                    if 5 >= int(rate) >= 1:
+                        my_review=Reviews.objects.create(user=request.user,review=review,
+                            rate=int(rate),course=video.my_course)
+                        messages.success(request, 'thank you for your opinion')
+                        video.my_course.reviews.add(my_review)
+                        video.my_course.save()
+                    else:
+                        messages.error(request,f'your rate must be between 1 To 5')
+                else:
+                    messages.error(request,f'invalid Rate / Review')
+            else:
+                messages.error(request, 'login first')
+    context={"video":video,"course":video.my_course,"same":same}
+    return render(request,"video.html",context)
+
+def events(request):
+    events=Events.objects.all()
+    paginator = Paginator(events, 8) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"events":page_obj}    
+    return render(request,"events.html",context)
+
+def event_single(request,slug):
+    event=get_object_or_404(Events,slug=slug)
+    context={"event":event}
+    return render(request,"event_single.html",context)
+
+def teachers(request):
+    teahcers=User.objects.filter(account_type="teacher",is_active=True)
+    paginator = Paginator(teahcers, 8) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"teachers":page_obj}
+    return render(request,"teachers.html",context)
+
+def teacher_single(request,slug):
+    teacher=get_object_or_404(User,slug=slug)
+    courses=Course.objects.filter(Instructor=teacher)
+    reviews=Teacher_review.objects.filter(teacher=teacher).order_by("-id")
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            if not Teacher_review.objects.filter(user=request.user,teacher=teacher).exists():
+                    rate=request.POST.get("rate")
+                    review=request.POST.get("review")
+                    print(rate,review)
+                    if rate and review:
+                        if 5 >= int(rate) >= 1:
+                            my_review=Teacher_review.objects.create(user=request.user,review=review,
+                                        rate=int(rate),teacher=teacher)
+                            messages.success(request, 'thank you for your opinion')
+                        else:
+                            messages.error(request,f'your rate must be between 1 To 5')
+                    else:
+                        messages.error(request,f'invalid Rate / Review')
+ 
+                            
+            else:
+                messages.error(request,f'you already submitted your review with Teacher/{teacher.first_name.title()}')
+        else:
+            messages.error(request, 'login first')
+
+    context={"teacher":teacher,"courses":courses,"reviews":reviews}
+    return render(request,"teachers-single.html",context)
+
+def about(request):
+    context={}
+    return render(request,"about.html",context)
+
+def blogs(request):
+    categories=Category.objects.all()
+    blogs=Blog.objects.all()
+    paginator = Paginator(blogs, 8) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"blogs":page_obj,"categories":categories,"popular":popular_blogs()}
+    return render(request,"blogs.html",context)
+
+def single_blog(request,slug):
+    categories=Category.objects.all()
+    blog=get_object_or_404(Blog,slug=slug)
+    if request.user.is_authenticated:
+        user=request.user
+        try:
+            viewers=blog.blog_viewers.viewers.all()
+            if user in viewers:
+                pass
+            else:
+                blog.blog_viewers.viewers.add(request.user)
+                blog.blog_viewers.save()
+        except:
+            pass
+
+    context={"blog":blog,"categories":categories,"popular":popular_blogs()}
+    return render(request,"blog-singel.html",context)
+
+def blog_search(request):
+    categories=Category.objects.all()
+    qs=request.GET.get("qs")
+    blog=Blog.objects.filter(Q(name__icontains=qs) | Q(details__icontains=qs) | Q(category__name__icontains=qs)).distinct() 
+    if len(blog) == 0:
+        qs=None
+        page_obj=[]
+    else:
+        paginator = Paginator(blog, 8) # Show 25 contacts per page.
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    return render(request,"blog_search.html",{"blog":page_obj,"qs":qs,"categories":categories,"popular":popular_blogs()})
+   
+def category(request,slug):
+    blogs=Blog.objects.filter(category__slug=slug)
+    categories=Category.objects.all()
+    if len(blogs) == 0:
+        category_name=[]
+        page_obj=None
+    else:
+        category_name=blogs.first().category.name
+        paginator = Paginator(blogs, 8) # Show 25 contacts per page.
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    context={"blogs":page_obj,"categories":categories,"category_name":category_name,"slug":slug,"popular":popular_blogs()}
+    return render(request,"category.html",context)
+
+    
+def blog_comment(request):
+    try:
+        id=request.POST.get("blog_id")
+        blog=Blog.objects.get(id=id)
+        if request.user.is_authenticated:
+            comment=request.POST.get("comment")
+            if comment:
+                print("comment here")
+                comment= Blog_Comment.objects.create(blog_id=id,comment=comment,user=request.user)
+                blog.comments.add(comment)
+                blog.save()
+                return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
+                # return JsonResponse({"comment":comment.comment,"image":comment.user.image.url,"first_name":comment.user.first_name.title(),"last_name":comment.user.last_name.title(),"created":time_string})
+
+            else: 
+                messages.error(request,"you cant submit blank comment")
+                return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
+
+        else:
+            messages.error(request,"login first")
+            return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
+    except:
+        print("as")
+        return redirect(reverse("home:blogs"))
+def blog_comment_reply(request):
+    # try:
+    comment_id=request.POST.get("comment_id")
+    blog_id=request.POST.get("blog_id")
+    reply=request.POST.get("reply")
+    blog=Blog.objects.get(id=blog_id)
+    if request.user.is_authenticated:  
+        if reply:
+            print("comment here")
+            reply= Blog_Comment_Reply.objects.create(blog=blog,comment_id=comment_id,reply=reply,user=request.user)
+            return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
+            # return JsonResponse({"comment":comment.comment,"image":comment.user.image.url,"first_name":comment.user.first_name.title(),"last_name":comment.user.last_name.title(),"created":time_string})
+        else: 
+            messages.error(request,"you cant submit blank reply")
+            return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
+
+    else:
+        messages.error(request,"login first")
+        return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
+    # except:
+    #     print("as")
+    #     return redirect(reverse("home:blogs"))
+
+def shops(request):
+    context={}   
+    return render(request,"shops.html",context)
+
+def shop(request):
+    context={}
+    return render(request,"shop.html",context)
+
+
+def contact(request):
+    if request.method == "POST":
+        name=request.POST["name"]
+        email=request.POST["email"]
+        subject=request.POST["subject"]
+        message=request.POST["message"]
+        send_mail( 
+    subject,
+    f"from {email} \n {message}",
+    email,
+    [settings.EMAIL_HOST_USER],
+    fail_silently=False,
+)
+        messages.success(request,"thank you for your message")
+    context={}
+    return render(request,"contact.html",context)
+@login_required()
+def wishlist(request,slug):
+    wishlist,created=Wishlist.objects.get_or_create(user=request.user)
+    if len(wishlist.course.all()) == 0:
+        messages.error(request,"your cart is empty")
+        return redirect(reverse("home:home"))
+    paginator = Paginator(wishlist.course.all(), 8) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"course":page_obj} 
+    return render(request,"wishlist.html",context)
+
+def wishlist_remove(request):
+    if request.user.is_authenticated:
+        print("ajax")
+        id=request.GET["id"]
+        my_course=get_object_or_404(Course,id=id)
+        try:
+            wishlist,created=Wishlist.objects.get_or_create(user=request.user)
+            wishlist.course.remove(my_course)
+            my_course.likes -=1
+            my_course.save()
+            return JsonResponse({"id":my_course.id,"shop":wishlist.course.count(),"count":wishlist.course.count()})
+
+        except: 
+            return FailedJsonResponse({"message":"invalid id"})
+    else:
+        print("here")
+        return FailedJsonResponse({"message":"error message"})
+
+# @login_required()
+def wishlist_add(request):
+    if request.user.is_authenticated:
+        id=request.GET["id"]
+        my_course=get_object_or_404(Course,id=id)
+        try:
+            wishlist,created=Wishlist.objects.get_or_create(user=request.user)
+            print("ajax")
+            if not my_course in wishlist.course.all():
+                wishlist.course.add(my_course)
+                my_course.likes +=1
+                my_course.save()
+                print("added")
+                return JsonResponse({"color":"yellow","id":my_course.id,"shop":wishlist.course.count(),"count":my_course.likes})
+            else:
+                wishlist.course.remove(my_course)
+                my_course.likes -=1
+                my_course.save()
+                return JsonResponse({"color":"white","id":my_course.id,"shop":wishlist.course.count(),"count":my_course.likes})
+        except: 
+            return FailedJsonResponse({"message":"invalid id"})
+    else:
+        print("here")
+        return FailedJsonResponse({"message":"error message"})
+
+def checkout(request):
+    return render(request,"checkout.html")
+from allauth.account.forms import SignupForm,LoginForm
+
+def test(request):   
+    return render(request,"test.html")
+        
+
+#######################################
+#payment
+def payment_method_ajax(request):
+    course_id=request.POST.get("ajax_course")
+    print(course_id)
+    course=get_object_or_404(Course,id=course_id)
+    payment_form=PaymentMethodForm(request.POST or None,request.FILES or None)
+    my_method=None
+    if request.is_ajax():     
+        my_method=request.POST.get("payment_method")
+        print(my_method)
+        if payment_form.is_valid():
+            return JsonResponse({"payment":my_method})
+        else:
+            return FailedJsonResponse({"payment":payment_form.errors})
+
+@login_required()
+def payment_method_create(request,course):
+    course=get_object_or_404(Course,slug=course)
+    if request.method == 'POST':
+        form=PaymentMethodForm(request.POST , request.FILES)
+        if form.is_valid():
+            print("valid")
+            if Payment.objects.filter(user=request.user,course=course,ordered=False).exists():
+                    messages.error(request,"our team is working on your request")
+                    return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+            else:
+                method=form.cleaned_data["payment_method"]
+                image=form.cleaned_data["image"]
+                number=form.cleaned_data["number"]
+                Payment.objects.create(user=request.user,method=method,
+                payment_image=image,phone=number,course=course             
+                                    )
+                msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[request.user.email])
+                msg.content_subtype = "html"  # Main content is now text/html
+                msg.send()
+                messages.success(request,"thank you,our team is working on your request We Have sent an Email,Please check your Inbox")
+                return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+        else:
+            print("invalid")
+            for i in form.errors.values():
+                messages.error(request,i)
+            return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+            # return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+
+
+from paypalcheckoutsdk.orders import OrdersCreateRequest
+from paypalcheckoutsdk.orders import OrdersCaptureRequest
+from paypalcheckoutsdk.core import SandboxEnvironment,PayPalHttpClient
+CLIENT_ID="AZDbi4r4DSUE9nyMkO0QQjoMwgpfLjpKV7oYbbx_OlumnJM3xtNNoCkHAkevpHfunFJAaqCUSBvnLJez" # paypal
+CLIENT_SECRET="ED45Xje6Z5SyKQe3EPTblfvM9gOidJTXq342B602AGNi4stk4i9wduEtYTbPzcGBDhTVAZ0cmbZg5b2w" # paypl
+@login_required()
+def create(request,id):
+    if request.method =="POST":
+        try:
+            course=Course.objects.get(id=id)
+            if not Payment.objects.filter(course=course,user=request.user,ordered=True).exists():
+                environment = SandboxEnvironment(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+                client = PayPalHttpClient(environment)
+                create_order = OrdersCreateRequest()
+                #order            
+                create_order.request_body (
+
+            {
+                "intent": "CAPTURE",
+                "purchase_units": [
+                    {
+                        "amount": {
+                            "currency_code": "USD",
+                            "value": course.price,
+                            "breakdown": {
+                                "item_total": {
+                                    "currency_code": "USD",
+                                    "value":  course.price
+                                }
+                                },
+                            },                                  
+
+
+                    }
+                ],      
+                
+
+            }     
+        ) 
+        
+                response = client.execute(create_order)
+                data = response.result.__dict__['_dict']      
+            else:
+                data=[]
+            # print(data)
+            return JsonResponse(data)
+        except:
+            data={}
+            return JsonResponse(data)
+    else:
+        print("not here")
+        return JsonResponse({'details': "invalid request"})         
+
+@login_required()
+def capture(request,order_id,course):       
+    if request.method=="POST": 
+        capture_order = OrdersCaptureRequest(order_id)
+        environment = SandboxEnvironment(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+        client = PayPalHttpClient(environment)
+        response = client.execute(capture_order)
+        data = response.result.__dict__['_dict']
+        print(data)
+        payment,created=Payment.objects.get_or_create(user=request.user,course_id=course,ordered=False)
+        try:
+            if data["status"] == "COMPLETED" and payment.ordered == False:
+                payment.ordered=True
+                payment.transaction_number=data["id"]
+                payment.method ="Paypal"
+                payment.save()
+                payment.course.students.add(request.user)
+                payment.course.save()
+                messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
+                # msg_html = render_to_string("email_order_confirm.html",{"order":order})
+                msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[payment.user.email])
+                msg.content_subtype = "html"  # Main content is now text/html
+                msg.send()
+                return JsonResponse({"status":1})
+            else:
+                return JsonResponse({"status":0})
+        except:
+            return JsonResponse({"status":0})
+
+        # try:
+        #     payment=Payment.objects.get(id=course)
+            
+        #     msg_html = render_to_string("email_order_confirm.html",{"order":order})
+        #     msg = EmailMessage(subject="order confirm", body=msg_html, from_email=settings.EMAIL_HOST_USER, to=[order.user.email])
+        #     msg.content_subtype = "html"  # Main content is now text/html
+        #     msg.send()
+        # except:
+        #     pass
+        # messages.success(request,"")
+        # messages.add_message(request, messages.INFO,data)
+    # return redirect(reverse("home:test"))
+
+def success(request):   
+    return render(request,"success.html")
+        
+def failed(request):   
+    return render(request,"failed.html")
+##########################
+
+def faqs(request):
+    return render(request,"faqs.html")
+
+    
