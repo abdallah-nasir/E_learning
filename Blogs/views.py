@@ -28,26 +28,26 @@ def home(request):
     paginator = Paginator(blogs, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context={"blogs":page_obj}
+    context={"blogs":page_obj,"slider":blog_slider()}
     return render(request,"blogs.html",context)
 
-# def single_blog(request,slug):
-#     categories=Category.objects.all()
-#     blog=get_object_or_404(Blog,slug=slug)
-#     if request.user.is_authenticated:
-#         user=request.user
-#         try:
-#             viewers=blog.blog_viewers.viewers.all()
-#             if user in viewers:
-#                 pass
-#             else:
-#                 blog.blog_viewers.viewers.add(request.user)
-#                 blog.blog_viewers.save()
-#         except:
-#             pass
+def single_blog(request,slug):
 
-#     context={"blog":blog,"categories":categories,"popular":popular_blogs()}
-#     return render(request,"blog-singel.html",context)
+    blog=get_object_or_404(Blog,slug=slug)
+    if request.user.is_authenticated:
+        user=request.user
+        try:
+            viewers=blog.blog_viewers.viewers.all()
+            if user in viewers: 
+                pass
+            else:
+                blog.blog_viewers.viewers.add(request.user)
+                blog.blog_viewers.save()
+        except:
+            pass
+
+    context={"blog":blog,"categories":categories,"popular":popular_blogs()}
+    return render(request,"blog-singel.html",context)
 
 # def blog_search(request):
 #     categories=Category.objects.all()

@@ -6,5 +6,8 @@ admin.site.register(Blog_Comment)
 admin.site.register(Blog_Comment_Reply)
 admin.site.register(Blog_Views)
 admin.site.register(Category)
+admin.site.register(Blog_Images)
+
+
 
     

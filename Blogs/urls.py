@@ -4,6 +4,8 @@ from .views import *
 app_name="Blogs"
 urlpatterns = [
 path("",views.home,name="blogs"),
+path("blog/<str:slug>/",views.single_blog,name="blog"),
+
 # path("add-blog-comment/",views.blog_comment,name="add_blog_comment"),
 # path("add-blog-comment-reply/",views.blog_comment_reply,name="add_blog_comment_reply"),
 # path("blogs/search/",views.blog_search,name="blog_search"),

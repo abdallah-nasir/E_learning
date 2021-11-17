@@ -11,12 +11,16 @@ from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 User=settings.AUTH_USER_MODEL
+import string,random
 
+
+def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 class Category(models.Model):
     name=models.CharField(max_length=100)
 
     def __str__(self):
-        return self.blog.name
+        return self.name
 class Blog_Comment(models.Model):
     blog=models.ForeignKey("Blog",related_name="blog_comment",on_delete=models.CASCADE)
     comment=models.TextField()
@@ -38,7 +42,7 @@ class Blog_Comment_Reply(models.Model):
     def __str__(self):
         return self.blog.name
 def upload_blog_images(instance,filename):
-    return (f"blogs/{instance.user}/{instance.name}/{filename}")
+    return (f"blogs/{instance.blog.slug}/{filename}")
 BLOG_TYPE=(
     ("standard","standard"),
     ("gallery","gallery"),
@@ -48,11 +52,18 @@ BLOG_TYPE=(
     ("link","link"),
             
 )  
+class Blog_Images(models.Model):
+    blog=models.ForeignKey("Blog",on_delete=models.CASCADE,)
+    image=models.ImageField(upload_to=upload_blog_images)
+
+    def __str__(self):
+        return self.blog.name
 class Blog(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     details=RichTextUploadingField()
-    image=models.ImageField(upload_to=upload_blog_images)
+    data=models.TextField(blank=True)
+    image=models.ManyToManyField(Blog_Images,related_name="blog_comment",blank=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
@@ -60,6 +71,22 @@ class Blog(models.Model):
     blog_type=models.CharField(choices=BLOG_TYPE,max_length=20)
     approved=models.BooleanField(default=False)
     tags=TaggableManager()
+    slug=models.SlugField(unique=True,blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def same_category():
+        blogs=Blog.objects.filter(approved=True,category=self.category).order_by("-created_at")[:5]
+        return blogs
+
+    def get_comments(self):
+        comments=self.comments.count()
+        replies=self.blog_comment_reply.count()
+        print(replies,comments)
+        count=comments + replies
+
+        return count
 
 @receiver(post_save, sender=Blog)
 def create_blog_viewers(sender, instance, created, **kwargs):
@@ -68,7 +95,8 @@ def create_blog_viewers(sender, instance, created, **kwargs):
 
 @receiver(pre_save, sender=Blog) 
 def pre_save_receiver(sender, instance, *args, **kwargs):       
-    if instance.slug == None: 
+    if not instance.slug: 
+        print("asd")
         instance.slug = slugify(instance.name)
         if Blog.objects.filter(slug=instance.slug).exists():
             slug=f"{instance.name}-{random_string_generator()}"
@@ -76,6 +104,12 @@ def pre_save_receiver(sender, instance, *args, **kwargs):
         else:
             slug=f"{instance.name}"
             instance.slug = slugify(slug)
+
+                
+
+def blog_slider():
+    blogs=Blog.objects.filter(approved=True).order_by("-created_at")[:5]
+    return blogs
 
 
 class Blog_Views(models.Model):

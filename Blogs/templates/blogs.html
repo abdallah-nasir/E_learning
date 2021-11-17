@@ -8,72 +8,30 @@
 
 				<div class="swiper-container featured-posts margin-bottom">
 					<div class="swiper-wrapper">
+						{% for i in slider %}
 						<div class="swiper-slide">
 							<article class="post">
 								<header class="entry-header">
 									<figure class="entry-thumb">
-										<img src="images/photo-1.jpg" width="1200" height="500" alt="">
+										<img src="{{i.image.first.image.url}}" width="1200" height="500" alt="">
 									</figure>
 									<div class="entry-header-title">
-										<h2><a href="post.html">Lorem ipsum dolor sit amet, consectetur adipisicing</a></h2>
+										<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
 										<div class="entry-meta">
 											<span class="entry-meta-date">
 												<i class="fa fa-calendar"></i>
-												June 11, 2016
+												{{i.created_at|date:"M d, Y"}}
 											</span>
 											<span class="entry-meta-comments">
 												<i class="fa fa-comments"></i>
-												<a href="">37 comments</a>
+												<a href="">{{i.get_comments}} comments</a>
 											</span>
 										</div>
 									</div>
 								</header>
 							</article>
 						</div>
-						<div class="swiper-slide">
-							<article class="post">
-								<header class="entry-header">
-									<figure class="entry-thumb">
-										<img src="images/photo-2.jpg" width="1200" height="500" alt="">
-									</figure>
-									<div class="entry-header-title">
-										<h2><a href="post.html">Assumenda nemo vel ipsum, in veniam, sequi, officia a, expedita aut dolore blanditiis?</a></h2>
-										<div class="entry-meta">
-											<span class="entry-meta-date">
-												<i class="fa fa-calendar"></i>
-												May 28, 2016
-											</span>
-											<span class="entry-meta-comments">
-												<i class="fa fa-comments"></i>
-												<a href="">25 comments</a>
-											</span>
-										</div>
-									</div>
-								</header>
-							</article>
-						</div>
-						<div class="swiper-slide">
-							<article class="post">
-								<header class="entry-header">
-									<figure class="entry-thumb">
-										<img src="images/photo-3.jpg" width="1200" height="500" alt="">
-									</figure>
-									<div class="entry-header-title">
-										<h2><a href="post.html">Dignissimos et, eum id esse dolore tempora illum tenetur laboriosam</a></h2>
-										<div class="entry-meta">
-											<span class="entry-meta-date">
-												<i class="fa fa-calendar"></i>
-												April 8, 2016
-											</span>
-											<span class="entry-meta-comments">
-												<i class="fa fa-comments"></i>
-												<a href="">23 comments</a>
-											</span>
-										</div>
-									</div>
-								</header>
-							</article>
-						</div>
+						{% endfor %}
 					</div>
 					<div class="swiper-button-prev"><i class="fa fa-chevron-left"></i></div>
 					<div class="swiper-button-next"><i class="fa fa-chevron-right"></i></div>
@@ -81,219 +39,144 @@
 				</div>
 
 				<div class="posts">
+					{% for i in blogs %}
+					{% if i.blog_type == "standard" %}
 					<article class="post format-standard">
 						<header class="entry-header">
 							<figure class="entry-thumb">
-								<img src="images/photo-4.jpg" width="1000" height="667" alt="">
+								<img src="{{i.image.first.image.url}}" width="1000" height="667" alt="">
 							</figure>
 							<div class="icon-b">
 								<i class="fa fa-newspaper-o"></i>
 							</div>
-							<div class="entry-category"><a href="">Lifestyle</a></div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
-								<h2><a href="post.html">Lorem ipsum dolor sit amet, consectetur adipisicing elit</a></h2>
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
 								<div class="entry-meta">
 									<span class="entry-meta-date">
 										<i class="fa fa-calendar"></i>
-										May 5, 2016
+										{{i.created_at|date:"M d, Y"}}
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">10 comments</a>
+										<a href="">{{i.get_comments}}  comments</a>
 									</span>
 								</div>
 							</div>
 						</header>
 						<div class="entry-content">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius ut amet minus sint unde repellendus numquam reprehenderit aliquid, excepturi laboriosam perferendis impedit sapiente blanditiis cum officiis nihil id eligendi corporis.</p>
-							<a href="post.html" class="btn-more">Read More</a>
+							<p>{{i.details|truncatewords:20}}</p>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
 						</div>
 					</article>
+					{% elif i.blog_type == "quote" %}
 					<article class="post format-quote">
 						<header class="entry-header">
-							<a href="quote-post.html">
+							<a href="{% url 'blogs:blog' i.slug %}">
 								<div class="icon-b">
 									<i class="fa fa-quote-left"></i>
 								</div>
 								<div class="entry-header-title">
-									<h2>Temporibus accusantium explicabo</h2>
+									<h2>{{i.name|truncatewords:20}}</h2>
 									<blockquote>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis reprehenderit deserunt dolor, quo labore, officiis, culpa nihil aliquam suscipit numquam magnam. Quia, possimus, reiciendis mollitia ad vitae quasi ab doloremque vel consequatur repellat, voluptate sint.</p>
-										<cite>- John Doe</cite>
+										<p>{{i.details|truncatewords:20}}</p>
+										<!-- <cite>- John Doe</cite> -->
 									</blockquote>
 								</div>
 							</a>
 						</header>
 					</article>
-					<article class="post format-standard">
-						<header class="entry-header">
-							<figure class="entry-thumb">
-								<img src="images/photo-5.jpg" width="1000" height="667" alt="">
-							</figure>
-							<div class="icon-b">
-								<i class="fa fa-newspaper-o"></i>
-							</div>
-							<div class="entry-category"><a href="">City</a></div>
-							<div class="entry-header-title">
-								<h2><a href="post.html">Beatae quidem repellat sequi magni assumenda incidunt</a></h2>
-								<div class="entry-meta">
-									<span class="entry-meta-date">
-										<i class="fa fa-calendar"></i>
-										April 20, 2016
-									</span>
-									<span class="entry-meta-comments">
-										<i class="fa fa-comments"></i>
-										<a href="">7 comments</a>
-									</span>
-								</div>
-							</div>
-						</header>
-						<div class="entry-content">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum maiores amet, pariatur magni asperiores laudantium consequatur temporibus distinctio hic cupiditate, impedit numquam rerum tenetur nulla eaque, facere a quasi consectetur?</p>
-							<a href="post.html" class="btn-more">Read More</a>
-						</div>
-					</article>
+					{% elif i.blog_type == "video" %}
 					<article class="post format-video">
 						<header class="entry-header" style="background-image: url(images/photo-6.jpg);">
 							<div class="icon-b">
 								<i class="fa fa-film"></i>
 							</div>
-							<div class="entry-category"><a href="">Travel</a></div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
-								<h2><a href="video-post.html">Blanditiis, voluptatum incidunt commodi! Non dicta fuga, expedita sit</a></h2>
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a></h2>
 								<div class="entry-meta">
 									<span class="entry-meta-date">
 										<i class="fa fa-calendar"></i>
-										April 18, 2016
+										{{i.created_at|date:"M d, Y"}}
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">14 comments</a>
+										<a href="">{{i.get_comments}} comments</a>
 									</span>
 								</div>
 							</div>
 						</header>
 					</article>
-					<article class="post format-standard">
-						<header class="entry-header">
-							<figure class="entry-thumb">
-								<img src="images/photo-7.jpg" width="1000" height="667" alt="">
-							</figure>
-							<div class="icon-b">
-								<i class="fa fa-newspaper-o"></i>
-							</div>
-							<div class="entry-category"><a href="">Lifestyle</a></div>
-							<div class="entry-header-title">
-								<h2><a href="post.html">Ab aspernatur cumque, illo officia asperiores minima</a></h2>
-								<div class="entry-meta">
-									<span class="entry-meta-date">
-										<i class="fa fa-calendar"></i>
-										April 14, 2016
-									</span>
-									<span class="entry-meta-comments">
-										<i class="fa fa-comments"></i>
-										<a href="">3 comments</a>
-									</span>
-								</div>
-							</div>
-						</header>
-						<div class="entry-content">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur modi, cupiditate itaque quas quo provident placeat eaque quos nesciunt nemo dicta iste. Excepturi aperiam dolores distinctio, voluptatem quos mollitia sunt.</p>
-							<a href="post.html" class="btn-more">Read More</a>
-						</div>
-					</article>
+					{% elif i.blog_type == "link" %}
 					<article class="post format-link">
-						<header class="entry-header" style="background-image: url(images/photo-8.jpg);">
+						<header class="entry-header" style="background-image: url({{i.image.first.image.url}});">
 							<div class="icon-b">
 								<i class="fa fa-link"></i>
 							</div>
 							<div class="entry-header-title">
-								<h2><a href="link-post.html">Premium website templates</a></h2>
-								<a class="entry-link btn" href="http://themeforest.net"><i class="fa fa-external-link"></i> http://themeforest.net</a>
+								<h2><a href="{{i.image.first.image.url}}">{{i.category.name.title|truncatewords:10}}</a></h2>
+								<a class="entry-link btn" href="{[i.get_link]}"><i class="fa fa-external-link"></i> {{i.get_link}}</a>
 							</div>
 						</header>
 						<div class="entry-content">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa iste iure tempore nulla temporibus minima ullam quasi. Veniam, maiores iure.</p>
-							<a href="link-post.html" class="btn-more">Read More</a>
+							<p>{{i.details|truncatewords:20}}</p>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
 						</div>
 					</article>
+					{% elif i.blog_type == "gallery" %}
 					<article class="post format-gallery">
 						<header class="entry-header">
 							<figure class="entry-thumb">
-								<img src="images/photo-9.jpg" width="1000" height="667" alt="">
+								<img src="{{i.image.first.image.url}}" width="1000" height="667" alt="">
 							</figure>
 							<div class="icon-b">
 								<i class="fa fa-image"></i>
 							</div>
-							<div class="entry-category"><a href="">Vacation</a></div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
-								<h2><a href="gallery-post.html">Ad numquam atque vitae eos natus aliquam</a></h2>
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a></h2>
 								<div class="entry-meta">
 									<span class="entry-meta-date">
 										<i class="fa fa-calendar"></i>
-										April 6, 2016
+										{{i.created_at|date:"M d, Y"}}
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">14 comments</a>
+										<a href="">{{i.get_comments}} comments</a>
 									</span>
 								</div>
 							</div>
 						</header>
 						<div class="entry-content">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vel dolorum fuga ea dolorem vitae, assumenda ipsa modi beatae error saepe?</p>
-							<a href="gallery-post.html" class="btn-more">Show More</a>
+							<p>{{i.details|truncatewords:20}}</p>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Show More</a>
 						</div>
 					</article>
+					{% elif i.blog_type == "audio" %}
 					<article class="post format-audio">
 						<header class="entry-header" style="background-image: url(images/photo-11.jpg);">
 							<div class="icon-b">
 								<i class="fa fa-music"></i>
 							</div>
-							<div class="entry-category"><a href="">Sport</a></div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
-								<h2><a href="audio-post.html">Impedit cumque itaque earum alias, rem voluptas nam cum</a></h2>
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
 								<div class="entry-meta">
 									<span class="entry-meta-date">
 										<i class="fa fa-calendar"></i>
-										April 10, 2016
+										{{i.created_at|date:"M d, Y"}}
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">10 comments</a>
+										<a href="">{{i.get_comments}}  comments</a>
 									</span>
 								</div>
 							</div>
 						</header>
 					</article>
-					<article class="post format-standard">
-						<header class="entry-header">
-							<figure class="entry-thumb">
-								<img src="images/photo-10.jpg" width="1000" height="667" alt="">
-							</figure>
-							<div class="icon-b">
-								<i class="fa fa-newspaper-o"></i>
-							</div>
-							<div class="entry-category"><a href="">Lifestyle</a></div>
-							<div class="entry-header-title">
-								<h2><a href="post.html">Alias porro asperiores debitis quae qui consequuntur</a></h2>
-								<div class="entry-meta">
-									<span class="entry-meta-date">
-										<i class="fa fa-calendar"></i>
-										April 2, 2016
-									</span>
-									<span class="entry-meta-comments">
-										<i class="fa fa-comments"></i>
-										<a href="">29 comments</a>
-									</span>
-								</div>
-							</div>
-						</header>
-						<div class="entry-content">
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates tempora nisi eveniet quam voluptas porro blanditiis possimus quae ducimus odio, quod, libero reprehenderit recusandae eius.</p>
-							<a href="post.html" class="btn-more">Read More</a>
-						</div>
-					</article>
+					{% endif %}
+					{% endfor %}
 				</div>
 
 				<ul class="pagination">
