@@ -39,6 +39,7 @@
 				</div>
 
 				<div class="posts">
+            {% if blogs %}
 					{% for i in blogs %}
 					{% if i.blog_type == "standard" %}
 					<article class="post format-standard">
@@ -177,24 +178,27 @@
 					</article>
 					{% endif %}
 					{% endfor %}
+            {% else %}
+<h1 style="margin:auto;">Sorry,we didn't Find What You Want</h1>
+                    {% endif %}
 				</div>
 				{% if blogs.has_other_pages  %}
 				<ul class="pagination">
 					{% if blogs.has_previous  %}
-					<li><a href="?page={{ blogs.previous_page_number }}"><i class="fa fa-angle-double-left"></i> Prev</a></li>
+					<li><a href="?search={{qs}}&page={{ blogs.previous_page_number }}"><i class="fa fa-angle-double-left"></i> Prev</a></li>
 					{% else %}
 					<li></li>
 					{% endif %}
 					{% for i in blogs.paginator.page_range %}
 					{% if blogs.number == i %}
-					<li class="active"><a href="?page={{ i }}">{{i}}</a></li>
+					<li class="active"><a href="?search={{qs}}&page={{ i }}">{{i}}</a></li>
 					{% else %}
-					<li><a href="?page={{ i }}">{{i}}</a></li>
+					<li><a href="?search={{qs}}&page={{ i }}">{{i}}</a></li>
 					{% endif %}
 					
 			{% endfor %}
 			{% if blogs.has_next %}
-					<li><a href="?page={{ blogs.next_page_number }}">Next <i class="fa fa-angle-double-right"></i></a></li>
+					<li><a href="?search={{qs}}&page={{ blogs.next_page_number }}">Next <i class="fa fa-angle-double-right"></i></a></li>
 					{% else %}
 					<li></li>
 					{% endif %}

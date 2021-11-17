@@ -11,6 +11,7 @@ from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
 from django.conf import settings
+import json
 
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -27,14 +28,19 @@ class User(AbstractUser):
     account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20)
     phone=models.CharField(max_length=12)
     image=models.ImageField(upload_to=upload_avatar)
-    title=models.CharField(max_length=150,blank=True,null=True)
-    about_me=models.TextField(blank=True,null=True)
     my_data=models.TextField(blank=True,null=True)
     code=models.CharField(max_length=50,blank=True,null=True)
     slug=models.SlugField(unique=True,blank=True,null=True)
     def __str__(self):
         return self.username
 
+    def get_user_data(self):
+        data=json.loads(self.my_data)
+        # title=data["title"]
+        # social=data["social"]
+        about_me=data["about_me"]
+        context={"about_me":about_me}
+        return context
 class LoggedInUser(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='logged_in_user')
     session_key = models.CharField(max_length=100, null=True, blank=True)

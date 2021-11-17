@@ -73,8 +73,8 @@
 					<li><a href=""><i class="fa fa-instagram"></i></a></li>
 				</ul>
 
-				<form class="form-search">
-					<input type="search" placeholder="Search something…">
+				<form class="form-search" method="GE" action="{% url 'blogs:search' %}">
+					<input type="search" name="search" placeholder="Search something…">
 					<button class="submit">
 						<i class="fa fa-search"></i>
 					</button>

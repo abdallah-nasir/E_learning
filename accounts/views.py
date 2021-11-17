@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import Teacher_Form 
 from .models import TeacherForms
 from .models import User
+import json
 # Create your views here.
 
 
@@ -33,9 +34,10 @@ def check_teacher_form(request):
                     about_me=form.cleaned_data['about_me']
                     title=form.cleaned_data['title']
                     code=form.cleaned_data['code']
-                    data=[{"social":{"facebook":facebook,"linkedin":linkedin,"twitter":twitter},
-                        "about_me":about_me,"title":title}]
-                    TeacherForms.objects.create(teacher=user,data=data,code=code,approved=False)
+                    data={"social":{"facebook":facebook,"linkedin":linkedin,"twitter":twitter},
+                        "about_me":about_me,"title":title}
+
+                    TeacherForms.objects.create(teacher=user,data=json.dumps(data),code=code,approved=False)
                     messages.success(request,"your request is being review by admins")
                     form=Teacher_Form()
             except:

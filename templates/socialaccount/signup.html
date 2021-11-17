@@ -125,33 +125,6 @@ margin-bottom: auto;
       });
   });
 
-$("#id_account_type").change(function () {
-      const type = $(this).val();  // get the selected subject ID from the HTML dropdown list 
-      $.ajax({                       // initialize an AJAX request
-          type: "POST",
-          url: '{% url "accounts:test" %}',
-          data: {
-              'type': type,       // add the country id to the POST parameters
-              'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function (data) {   // `data` is from `get_topics_ajax` view function
-             if(data.name == "teacher"){
-               $("#tesst").show();
-            let html_data=`
-            <label class='requiredField' for='id_about_me'>About You</label>
-            <textarea id='id_about_me' class='textarea form-control' name='about_me' cols='40' rows='5' ></textarea>`;
-               $("#tesst").html(html_data);
-             }
-            else if(data.name == "student"){
-               $("#tesst").hide();
-                }
-              
-
-              
-            
-          }
-      });
-  });
 
 
    </script>

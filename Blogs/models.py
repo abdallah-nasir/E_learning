@@ -76,14 +76,27 @@ class Blog(models.Model):
     def __str__(self):
         return self.name
 
-    def same_category():
+    def check_blog_viwers(self,user):
+        try:
+            if self.blog_viewers.viewers.get(id=user):
+                count=self.blog_viewers.viewers.count()
+            else:
+                self.blog_viewers.viewers.add(id=user)
+                self.blog_viewers.viewers.save()
+                count=self.blog_viewers.viewers.count()
+        except:
+            count=0
+        return count
+
+
+
+    def same_category(self):
         blogs=Blog.objects.filter(approved=True,category=self.category).order_by("-created_at")[:5]
         return blogs
 
     def get_comments(self):
         comments=self.comments.count()
         replies=self.blog_comment_reply.count()
-        print(replies,comments)
         count=comments + replies
 
         return count
@@ -106,7 +119,9 @@ def pre_save_receiver(sender, instance, *args, **kwargs):
             instance.slug = slugify(slug)
 
                 
-
+def recent_categories():
+    cat=Category.objects.order_by("-id")[:6]
+    return cat
 def blog_slider():
     blogs=Blog.objects.filter(approved=True).order_by("-created_at")[:5]
     return blogs

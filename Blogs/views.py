@@ -25,70 +25,69 @@ from django.forms import ValidationError
 
 def home(request):
     blogs=Blog.objects.filter(approved=True)
-    paginator = Paginator(blogs, 8) # Show 25 contacts per page.
+    paginator = Paginator(blogs, 9) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context={"blogs":page_obj,"slider":blog_slider()}
     return render(request,"blogs.html",context)
 
+@login_required()
 def single_blog(request,slug):
-
     blog=get_object_or_404(Blog,slug=slug)
+    comment_form=CommentForm(request.POST or None)
+    viewers=blog.check_blog_viwers(request.user)
+    categories=recent_categories()
+    context={"blog":blog,"categories":categories,"comment_form":comment_form}
+    return render(request,"blog.html",context)
+
+def blog_search(request):
+    qs=request.GET.get("search")
+    blog=Blog.objects.filter(Q(name__icontains=qs,approved=True) | Q(details__icontains=qs,approved=True) | Q(category__name__icontains=qs,approved=True) |Q(tags__name__icontains=qs,approved=True)).distinct() 
+    print(blog)
+    if len(blog) == 0:
+        qs=None
+        page_obj=[]
+    else:
+        paginator = Paginator(blog, 9) # Show 25 contacts per page.
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    return render(request,"blog_search.html",{"blogs":page_obj,"qs":qs})
+
+def blog_comment(request,id):
     if request.user.is_authenticated:
-        user=request.user
+        form=CommentForm(request.POST)
+        blog=get_object_or_404(Blog,id=id)
+        if form.is_valid():
+            instance=form.save(commit=False)
+            instance.user=request.user
+            instance.blog=blog
+            instance.save()
+            instance.blog.comments.add(instance)
+            instance.blog.save()
+            form=CommentForm()
+    else:
+        messages.error(request,"You Should Sign in First")
+    return redirect(reverse("blogs:blog",kwargs={"slug":instance.blog.slug}))
+
+
+def blog_comment_reply(request,id,reply):
+    if request.user.is_authenticated:
+        form=ReplyForm(request.POST)
+        blog=get_object_or_404(Blog,id=id)
         try:
-            viewers=blog.blog_viewers.viewers.all()
-            if user in viewers: 
-                pass
-            else:
-                blog.blog_viewers.viewers.add(request.user)
-                blog.blog_viewers.save()
+            comment=blog.comments.get(id=reply)
         except:
-            pass
-
-    context={"blog":blog,"categories":categories,"popular":popular_blogs()}
-    return render(request,"blog-singel.html",context)
-
-# def blog_search(request):
-#     categories=Category.objects.all()
-#     qs=request.GET.get("qs")
-#     blog=Blog.objects.filter(Q(name__icontains=qs) | Q(details__icontains=qs) | Q(category__name__icontains=qs)).distinct() 
-#     if len(blog) == 0:
-#         qs=None
-#         page_obj=[]
-#     else:
-#         paginator = Paginator(blog, 8) # Show 25 contacts per page.
-#         page_number = request.GET.get('page')
-#         page_obj = paginator.get_page(page_number)
-#     return render(request,"blog_search.html",{"blog":page_obj,"qs":qs,"categories":categories,"popular":popular_blogs()})
-
-
-
-
-# def blog_comment(request):
-#     try:
-#         id=request.POST.get("blog_id")
-#         blog=Blog.objects.get(id=id)
-#         if request.user.is_authenticated:
-#             comment=request.POST.get("comment")
-#             if comment:
-#                 print("comment here")
-#                 comment= Blog_Comment.objects.create(blog_id=id,comment=comment,user=request.user)
-#                 blog.comments.add(comment)
-#                 blog.save()
-#                 return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
-#                 # return JsonResponse({"comment":comment.comment,"image":comment.user.image.url,"first_name":comment.user.first_name.title(),"last_name":comment.user.last_name.title(),"created":time_string})
-
-#             else: 
-#                 messages.error(request,"you cant submit blank comment")
-#                 return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
-
-#         else:
-#             messages.error(request,"login first")
-#             return redirect(reverse("home:blog",kwargs={"slug":blog.slug}))
-#     except:
-#         print("as")
-#         return redirect(reverse("home:blogs"))
+            return redirect(reverse("blogs:blog",kwargs={"slug":blog.slug}))
+        if form.is_valid():
+            instance=form.save(commit=False)
+            instance.user=request.user
+            instance.blog=blog
+            instance.comment=comment
+            instance.save()
+            form=CommentForm()
+    else:
+        messages.error(request,"You Should Sign in First")
+    return redirect(reverse("blogs:blog",kwargs={"slug":instance.blog.slug}))
 # def blog_comment_reply(request):
 #     # try:
 #     comment_id=request.POST.get("comment_id")

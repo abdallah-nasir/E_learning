@@ -4,10 +4,13 @@ from allauth.socialaccount.forms import SignupForm as SocialSignUpForm
 from allauth.socialaccount.models import SocialAccount
 import os
 from django.db.models.query_utils import Q
-
+from django.core.mail import send_mail,EmailMessage
 from .models import TeacherForms,User
 from django.contrib import messages
 from django.conf import settings
+import random,string
+def random_string_generator(size=7, chars=string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 class MyCustomLoginForm(LoginForm):
     
     def __init__(self, *args, **kwargs):
@@ -59,10 +62,14 @@ class MyCustomSignupForm(SignupForm):
         # if self.cleaned_data["account_type"] == "teacher":
         #     user.about_me=self.cleaned_data["about_me"]
         #     user.title=self.cleaned_data["about_me"]
+        user.code=random_string_generator()
         user.save()
         if user.account_type == "teacher":
             user.is_active = False
             user.save()
+            msg = EmailMessage(subject="Account Created", body=f"code={user.code}", from_email=settings.EMAIL_HOST_USER, to=[user.email])
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
             messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
         return user
    
@@ -93,10 +100,14 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
         user.account_type=account_type
         user.phone=self.cleaned_data["phone"]       
         user.image=self.cleaned_data["image"]
+        user.code=random_string_generator()
         user.save()
         if user.account_type == "teacher":
             user.is_active = False
             user.save()
+            msg = EmailMessage(subject="Account Created", body=f"code={user.code}", from_email=settings.EMAIL_HOST_USER, to=[user.email])
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
             messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
         # Add your own processing here.
 
