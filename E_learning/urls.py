@@ -32,6 +32,7 @@ urlpatterns = [
     path('auth/', include("accounts.urls",namespace="accounts")),
     path('ckeditor/', include('ckeditor_uploader.urls')),  
     # url(r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:], protected_serve, {'document_root': settings.MEDIA_ROOT}),
+    path('blogs/', include('Blogs.urls',namespace="blogs")),  
 
 ]
       

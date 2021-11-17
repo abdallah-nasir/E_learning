@@ -166,7 +166,7 @@ cursor:pointer;
                                         
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{% url 'home:blogs' %}">Blog</a>
+                                        <a href="{% url 'blogs:blogs' %}">Blog</a>
                                        
                                     </li>
 
@@ -543,53 +543,7 @@ $(document).on('click',"#love-add",function(){
                             });
                             // End
                         });    
-    $("#posts-blog-comment").submit(function(e){
-        // prevent from normal form behaviour
-            e.preventDefault();
-            // serialize the form data  
-            var serializedData = $(this).serialize();
-            //let target_element = $('#add-html-here');
-            $.ajax({
-                type : 'POST',
-                url :  "{% url 'home:add_blog_comment' %}",
-                data : serializedData,
-                success : function(res){
-                //reset the form after successful submit
-                    $("#post-blog-comment")[0].reset();
-                        $("#comment_add").val('');
-                    var html_data=`
-                    <li>
-                        <div class="comment">
-                            <div class="comment-author">
-                                 <div class="author-thum">
-                                     <img src="${res.image}" style="max-height:5rem;" alt="Reviews">
-                                 </div>
-                                 <div class="comment-name">
-                                     <h6>${res.first_name} ${res.last_name}</h6>
-                                     <span>${res.created}</span>
-                                 </div>
-                             </div>
-                             <div class="comment-description pt-20">
-                                 <p style="width:620px;">${res.comment}</p>
-                             </div>
-                             <div class="comment-replay">
-                                 <a href="#">Reply</a>
-                             </div>
-                         </div> <!-- comment -->
-                    </li>
-                    `;
-
-                    
-                  
-                    $("#comment_add").append(html_data);
-                
-    
-                },
-                error : function(response){
-                    console.log(response)
-                }
-            });
-        });
+   
 $(document).ready(function(){
 $('#videoElementID').bind('contextmenu',function() { return false; });
 });

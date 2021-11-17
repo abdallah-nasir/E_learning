@@ -18,8 +18,6 @@ path("blogs/category/<str:slug>/",views.category,name="category"),
 
 path("faqs/",views.faqs,name="faqs"),
 # path("shop/",views.shop,name="shop"),
-path("blogs/",views.blogs,name="blogs"),
-path("blog/<str:slug>/",views.single_blog,name="blog"),
 path("contact-us/",views.contact,name="contact"),
 #wishlist
 path("cart/<str:slug>/",views.wishlist,name="cart"),
@@ -39,11 +37,9 @@ path("capture/<str:order_id>/<str:course>/",views.capture,name="capture"),
 
 #search
 path("courses/search/",views.course_search,name="course_search"),
-path("blogs/search/",views.blog_search,name="blog_search"),
 path("search/",views.global_search,name="global_search"),
 
 #blog comment and replies
-path("add-blog-comment/",views.blog_comment,name="add_blog_comment"),
-path("add-blog-comment-reply/",views.blog_comment_reply,name="add_blog_comment_reply"),
+
   
 ]

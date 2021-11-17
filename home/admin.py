@@ -12,11 +12,7 @@ admin.site.register(Course)
 admin.site.register(Reviews)
 admin.site.register(Events)
 admin.site.register(Wishlist)
-admin.site.register(Blog)
-admin.site.register(Blog_Comment)
-admin.site.register(Blog_Comment_Reply)
 admin.site.register(Teacher_review)
-admin.site.register(Blog_Views)
 admin.site.register(Payment,PaymentAdmin)
 
 
