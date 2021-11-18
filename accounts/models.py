@@ -31,6 +31,7 @@ class User(AbstractUser):
     my_data=models.TextField(blank=True,null=True)
     code=models.CharField(max_length=50,blank=True,null=True)
     slug=models.SlugField(unique=True,blank=True,null=True)
+    vip =models.BooleanField(default=False)
     def __str__(self):
         return self.username
 

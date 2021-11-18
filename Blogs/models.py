@@ -6,6 +6,8 @@ from django.template.defaultfilters import slugify
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
+import json
+from django.shortcuts import render
 from django.conf import settings
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -67,6 +69,7 @@ class Blog(models.Model):
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+    paid=models.BooleanField(default=False)
     comments=models.ManyToManyField(Blog_Comment,related_name="blog_comments",blank=True)
     blog_type=models.CharField(choices=BLOG_TYPE,max_length=20)
     approved=models.BooleanField(default=False)
@@ -133,3 +136,44 @@ class Blog_Views(models.Model):
 
     def __str__(self):
         return self.blog.name
+
+PAYMENTS=(
+    ("Bank Transaction","Bank Transaction"),
+    ("Western Union","Western Union"),
+    ("Vodafone Cash","Vodafone Cash"),
+    ("Paypal","Paypal")
+)
+def upload_blog_payment(instance,filename):
+    return (f"payment/blogs/{instance.user.username}/{filename}")
+class Blog_Payment(models.Model):
+    method=models.CharField(choices=PAYMENTS,max_length=50)
+    payment_image=models.ImageField(upload_to=upload_blog_payment,null=True)
+    # phone=models.CharField(null=True,max_length=20)
+    transaction_number=models.CharField(max_length=50,null=True)
+    user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
+    pending=models.BooleanField(default=False)
+    created_at=models.DateField()
+    expired_at=models.DateField(blank=True,null=True)
+    expired=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.method
+        
+class Prices(models.Model):
+    name=models.CharField(max_length=50)
+    price=models.FloatField(default=0)
+    data=models.TextField()
+    def __str__(self):
+        return self.name
+    
+    def get_duration(self):
+        data=json.loads(self.data)
+        duration=data["duration"]
+        return duration
+    def __str__(self):
+        return self.name
+        
+    def get_details(self):
+        data=json.loads(self.data)
+        details=data["details"]
+        return details

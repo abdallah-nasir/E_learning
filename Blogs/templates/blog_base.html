@@ -6,6 +6,7 @@
 	<meta name="description" content="Blogio clean and simple blog template">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Blogio</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 
 	<!-- Sanitize.css -->
 	<link rel="stylesheet" href="{% static 'blogs/styles/sanitize.css' %}">
@@ -86,19 +87,19 @@
 				<div class="container">
 					<ul>
 						<li class="nav-main-item active">
-							<a class="nav-main-link" href="#">Home</a>
-							<div class="nav-main-sub">
+							<a class="nav-main-link" href="{% url 'home:home' %}">Back To Course</a>
+							<!-- <div class="nav-main-sub">
 								<ul>
 									<li><a href="index.html">Default</a></li>
 									<li><a href="index-type-2.html">Masonry</a></li>
 									<li><a href="index-type-3.html">Sidebar right</a></li>
 									<li><a href="index-type-4.html">Sidebar left</a></li>
 								</ul>
-							</div>
+							</div> -->
 						</li>
 						<li class="nav-main-item ">
 							<a class="nav-main-link" href="#">Posts</a>
-							<div class="nav-main-sub">
+							 <div class="nav-main-sub">
 								<ul>
 									<li><a href="post.html">Standard post</a></li>
 									<li><a href="image-post.html">Image post</a></li>
@@ -109,20 +110,15 @@
 									<li><a href="link-post.html">Link post</a></li>
 									<li><a href="sidebar-left.html">Sidebar left</a></li>
 								</ul>
-							</div>
+							</div> 
 						</li>
-						<li class="nav-main-item "><a class="nav-main-link" href="about.html">About</a></li>
 						<li class="nav-main-item ">
-							<a class="nav-main-link" href="#">Other</a>
-							<div class="nav-main-sub">
-								<ul>
-									<li><a href="error-404.html">Error 404</a></li>
-									<li><a href="typography.html">Typography</a></li>
-								</ul>
-							</div>
+							<a class="nav-main-link" href="{% url 'blogs:pricing' %}">Pricing</a>
+						 
 						</li>
-						<li class="nav-main-item "><a class="nav-main-link" href="contacts.html">Contacts</a></li>
-					</ul>
+					
+					
+						</ul>
 				</div>
 				<button class="hamburger hamburger--spin" type="button">
 					<span class="hamburger-box">
@@ -133,6 +129,20 @@
 
 		</header>
 		<!-- END HEADER -->
+		{% if messages %}
+		<div style="text-align:center;" class="container pt-4">
+			{%  for message in messages %}
+		<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+			<strong></strong> {{message}}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  {% endfor %}
+		</div>
+
+{% endif %}
+
 {% block content %}
 
 {% endblock %}
@@ -193,6 +203,9 @@
 
 	</div>
 
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+
 	<!-- jQuery -->
 	<script src="{% static 'blogs/scripts/jquery.min.js' %}"></script>
 
@@ -222,6 +235,7 @@
 
 	<!-- Functions -->
 	<script src="{% static 'blogs/scripts/main.js' %}"></script>
+
 
 </body>
 </html>
