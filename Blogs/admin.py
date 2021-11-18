@@ -1,7 +1,9 @@
 from django.contrib import admin
 from .models import *
 # Register your models here.
-admin.site.register(Blog)
+class BlogAdmin(admin.ModelAdmin):
+    list_display=["name","paid"]
+admin.site.register(Blog,BlogAdmin)
 admin.site.register(Blog_Comment)
 admin.site.register(Blog_Comment_Reply)
 admin.site.register(Blog_Views)

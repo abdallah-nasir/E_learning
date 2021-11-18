@@ -20,16 +20,35 @@ def check_user_is_member(function):
     wrap.__name__ = function.__name__
     return wrap
 
-
-
 def check_user_status(function):
     def wrap(request, *args, **kwargs):
-        if request.user.vip == True or Blog_Payment.objects.filter(user=request.user,pending=True).exists():
+        if request.user.vip == True:
             messages.error(request,"You Already A Member")
             return redirect(reverse("blogs:blogs"))
         elif Blog_Payment.objects.filter(user=request.user,pending=True).exists():
-            messages.error(request,"our team will review your request")
+            messages.error(request,"You have a pending request ,our team will review your request")
             return redirect(reverse("blogs:blogs"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+import datetime
+def check_blogs_payment_status(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.vip == True:
+            today= datetime.date.today()
+            payment=Blog_Payment.objects.filter(user=request.user,expired=False).last()
+            if payment.expired_at <= today:
+                payment.pending=False
+                payment.expired=True
+                payment.save()
+                request.user.vip =False
+                request.user.save()
+                messages.error(request,"your membership has expired")
+                return redirect(reverse("blogs:pricing"))
+            else:
+                return function(request, *args, **kwargs)
         else:
             return function(request, *args, **kwargs)
     wrap.__doc__ = function.__doc__

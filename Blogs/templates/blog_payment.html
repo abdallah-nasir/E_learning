@@ -3,6 +3,31 @@
 {% block content %}
 
 <style type="text/css">
+    #test {
+        overflow: hidden;
+        text-align: center;
+      }
+      
+#test:before,
+#test:after {
+        background-color: #000;
+        content: "";
+        display: inline-block;
+        height: 1px;
+        position: relative;
+        vertical-align: middle;
+        width: 50%;
+      }
+      
+#test:before {
+        right: 0.5em;
+        margin-left: -50%;
+      }
+      
+#test:after {
+        left: 0.5em;
+        margin-right: -50%;
+      }
     .plan-price h3 {
         text-align: center;
         font-size: 20px;
@@ -134,7 +159,8 @@
         margin-bottom: 100px
     }
 </style>
-<div class="container">
+<div class="container mt-5">
+    
     <div>
         <h3 style="text-align: center;" class="headline pt-5" >Payment Methods</h3><span class="line margin-bottom-45"></span>
         <div class="clearfix"></div> <br> <br>
@@ -144,6 +170,7 @@
             <form method="post" enctype="multipart/form-data">
                {% csrf_token %}
                 <div id="paypal-button-container"></div>
+                <h2 id="test"><span>OR</span></h2>
                 {{form|crispy}}
                 <button  class="btn" type="submit">Submit</button>
             </form>

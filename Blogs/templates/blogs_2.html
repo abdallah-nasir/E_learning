@@ -136,7 +136,8 @@
 
 				<div class="swiper-container featured-posts margin-bottom">
 					<div class="swiper-wrapper">
-						{% for i in slider %}
+                        
+                        {% for i in slider %}
 						<div class="swiper-slide">
 							<article class="post">
 								<header class="entry-header">
@@ -153,8 +154,6 @@
 											<span class="entry-meta-comments">
 												<i class="fa fa-comments"></i>
 												<a href="">{{i.get_comments}} comments</a>
-											
-
 											</span>
 											<span class="entry-meta-comments">
 												<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -171,8 +170,11 @@
 					<div class="swiper-pagination"></div>
 				</div>
 
-				<div class="posts">
-					{% for i in blogs %}
+<div class="grid-container">
+    <div class="grid-70">
+				<div class="posts posts-list">
+            {% if blogs %}
+                    {% for i in blogs %}
 					{% if i.blog_type == "standard" %}
 					<article class="post format-standard">
 						<header class="entry-header">
@@ -323,8 +325,8 @@
 					{% endif %}
 					{% endfor %}
 				</div>
-				{% if blogs.has_other_pages  %}
-				<ul class="pagination">
+                {% if blogs.has_other_pages  %}
+				<ul style="justify-content: center;" class="pagination">
 					{% if blogs.has_previous  %}
 					<li><a href="?page={{ blogs.previous_page_number }}"><i class="fa fa-angle-double-left"></i> Prev</a></li>
 					{% else %}
@@ -346,38 +348,80 @@
 				</ul>
 
 				{% endif %}
-				
-				<div id="myCarousel" class="carousel slide" data-ride="carousel">
-					<!-- Carousel indicators -->
-					<!-- <ol class="carousel-indicators">
-						<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-						<li data-target="#myCarousel" data-slide-to="1"></li>
-						<li data-target="#myCarousel" data-slide-to="2"></li>
-					</ol> -->
-					 <!-- Wrapper for carousel items -->
-					 <h2>Our Teachers</h2>
-					<div class="carousel-inner">
-						{% for i in recent_teachers %}
-						
-						<div class="item carousel-item {% if forloop.first %}active{% endif %}">
-							<div class="img-box"><img src="{{i.image.url}}" alt=""></div>
-							<p class="testimonial">{{i.get_uset_data.about_me|truncatewords:20}}</p>
-							<p class="overview"><b>{{i.get_full_name.title}}</b>{{i.get_user_data.title.title}}</p>
-							<div class="star-rating"> </div>
-						</div>
-						{% endfor %}
-					</div> <!-- Carousel controls --> 
-					<a class="carousel-control left carousel-control-prev" href="#myCarousel" data-slide="prev">
-						<i class="fa fa-angle-left"></i>
-					 </a>
-					  <a class="carousel-control right carousel-control-next" href="#myCarousel" data-slide="next"> <i class="fa fa-angle-right"></i>
-					 </a>
-				</div>
+  
 
+    </div>
+    <div class="grid-30">
+<aside class="site-aside">
+	<div class="widget">
+		<h3 class="widget-title">Recent Posts</h3>
+		<ul>
+            {% for i in recent_blogs %}
+			<li><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a> <span>{{i.created_at|date:"M d, Y"}}</span></li>
+            {% endfor %}
+		</ul>
+	</div>
+
+	<div class="widget">
+		<h3 class="widget-title">Categories</h3>
+		<ul>
+            {% for i in recent_categories %}
+			<li><a href="">{{i.name.title|truncatewords:"10"}}</a></li>
+            {% endfor %}
+		</ul>
+	</div>
+
+	<!-- <div class="widget">
+		<h3 class="widget-title">Archives</h3>
+		<ul>
+			<li><a href="">October 2013</a></li>
+			<li><a href="">September 2013</a></li>
+			<li><a href="">August 2013</a></li>
+			<li><a href="">July 2013</a></li>
+			<li><a href="">June 2013</a></li>
+			<li><a href="">May 2013</a></li>
+			<li><a href="">April 2013</a></li>
+		</ul>
+	</div> -->
+
+</aside>
+
+    </div>
+
+
+    {% else %}
+    <h1 style="margin:auto; justify-content: center; text-align:center;">Sorry,{{type}} Blog is Empty</h1>
+{% endif %}
+</div>
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+	<!-- Carousel indicators -->
+	<!-- <ol class="carousel-indicators">
+		<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+		<li data-target="#myCarousel" data-slide-to="1"></li>
+		<li data-target="#myCarousel" data-slide-to="2"></li>
+	</ol> -->
+	 <!-- Wrapper for carousel items -->
+	 <h2>Our Teachers</h2>
+	<div class="carousel-inner">
+		{% for i in recent_teachers %}
+		
+		<div class="item carousel-item {% if forloop.first %}active{% endif %}">
+			<div class="img-box"><img src="{{i.image.url}}" alt=""></div>
+			<p class="testimonial">{{i.get_uset_data.about_me|truncatewords:20}}</p>
+			<p class="overview"><b>{{i.get_full_name.title}}</b>{{i.get_user_data.title.title}}</p>
+			<div class="star-rating"> </div>
+		</div>
+		{% endfor %}
+	</div> <!-- Carousel controls --> 
+	<a class="carousel-control left carousel-control-prev" href="#myCarousel" data-slide="prev">
+		<i class="fa fa-angle-left"></i>
+	 </a>
+	  <a class="carousel-control right carousel-control-next" href="#myCarousel" data-slide="next"> <i class="fa fa-angle-right"></i>
+	 </a>
+</div>
 			</div>
 		</main>
 		<!-- END CONTENT -->
-
 {% endblock %}
-
 		

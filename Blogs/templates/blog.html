@@ -47,6 +47,9 @@
 							<i class="fa fa-comments"></i>
 							{{blog.get_comments}} comments
 						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
 					</div>
 				</div>
 			</header>
@@ -57,7 +60,7 @@
 				<h3>Tags</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
-					<a href="">{{i.name}}</a>
+					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
 				<h3>Share</h3>
@@ -89,6 +92,9 @@
 							<i class="fa fa-comments"></i>
 							{{blog.get_comments}}  comments
 						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
 					</div>
 				</div>
 			</header>
@@ -99,7 +105,7 @@
 				<h3>Tags</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
-					<a href="">{{i.name}}</a>
+					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
 				<h3>Share</h3>
@@ -131,6 +137,9 @@
 							<i class="fa fa-comments"></i>
 							{{blog.get_comments}} comments
 						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
 					</div>
 				</div>
 			</header>
@@ -141,7 +150,7 @@
 				<h3>Tags</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
-					<a href="">{{i.name}}</a>
+					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
 				<h3>Share</h3>
@@ -173,6 +182,9 @@
 							<i class="fa fa-comments"></i>
 							{{blog.get_comments}} comments
 						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
 					</div>
 				</div>
 			</header>
@@ -183,7 +195,7 @@
 				<h3>Tags</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
-					<a href="">{{i.name}}</a>
+					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
 				<h3>Share</h3>
@@ -211,6 +223,9 @@
 							<i class="fa fa-comments"></i>
 							{{blog.get_comments}} comments
 						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
 					</div>
 				</div>
 			</header>
@@ -222,7 +237,7 @@
 				<h3>Tags</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
-					<a href="">{{i.name}}</a>
+					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
 				<h3>Share</h3>
@@ -254,6 +269,9 @@
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
 							{{blog.get_comments}} comments
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
 						</span>
 					</div>
 				</div>

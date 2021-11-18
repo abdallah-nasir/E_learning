@@ -22,17 +22,23 @@ from django.forms import ValidationError
 from .decorators import *
 
 
-
+@login_required()
 def home(request):
     blogs=Blog.objects.filter(approved=True)
     paginator = Paginator(blogs, 9) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context={"blogs":page_obj,"slider":blog_slider()}
-    return render(request,"blogs.html",context)
+    context={"blogs":page_obj,"slider":blog_slider(),
+             "recent_teachers":recent_teachers(),"recent_blogs":recent_blogs(),"recent_categories":recent_categories()}
+    try:
+        index=request.GET["index"]
+        return render(request,"blogs_2.html",context)
+    except:
+        return render(request,"blogs.html",context)
 
 @login_required()
 @check_user_is_member
+@check_blogs_payment_status
 def single_blog(request,slug):
     blog=get_object_or_404(Blog,slug=slug)
     comment_form=CommentForm(request.POST or None)
@@ -41,6 +47,7 @@ def single_blog(request,slug):
     context={"blog":blog,"categories":categories,"comment_form":comment_form}
     return render(request,"blog.html",context)
 
+@login_required()
 def blog_search(request):
     qs=request.GET.get("search")
     blog=Blog.objects.filter(Q(name__icontains=qs,approved=True) | Q(details__icontains=qs,approved=True) | Q(category__name__icontains=qs,approved=True) |Q(tags__name__icontains=qs,approved=True)).distinct() 
@@ -53,7 +60,7 @@ def blog_search(request):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
     return render(request,"blog_search.html",{"blogs":page_obj,"qs":qs})
-
+@login_required()
 def blog_comment(request,id):
     if request.user.is_authenticated:
         form=CommentForm(request.POST)
@@ -66,11 +73,12 @@ def blog_comment(request,id):
             instance.blog.comments.add(instance)
             instance.blog.save()
             form=CommentForm()
+            messages.success(request,"Thank You For Your Comment")
     else:
         messages.error(request,"You Should Sign in First")
     return redirect(reverse("blogs:blog",kwargs={"slug":instance.blog.slug}))
 
-
+@login_required()
 def blog_comment_reply(request,id,reply):
     if request.user.is_authenticated:
         form=ReplyForm(request.POST)
@@ -86,6 +94,8 @@ def blog_comment_reply(request,id,reply):
             instance.comment=comment
             instance.save()
             form=CommentForm()
+            messages.success(request,"Thank You For Your Comment")
+
     else:
         messages.error(request,"You Should Sign in First")
     return redirect(reverse("blogs:blog",kwargs={"slug":instance.blog.slug}))
@@ -98,6 +108,7 @@ def pricing(request):
 
 @login_required()
 @check_user_status
+@check_blogs_payment_status
 def payment_pricing(request,id):
     price=get_object_or_404(Prices,id=id)
     form=PaymentForm(request.POST or None,request.FILES or None)
@@ -122,7 +133,7 @@ def payment_pricing(request,id):
                 messages.success(request,"We Have sent an Email,Please check your Inbox")
                 return redirect(reverse("blogs:blogs"))
             else:
-                messages.error(request,"our team will review your request")
+                messages.error(request,"ou have a pending request ,our team will review your request")
                 return redirect(reverse("blogs:blogs"))
         else:
             messages.error(request,"invalid form")
@@ -139,6 +150,7 @@ CLIENT_SECRET="ED45Xje6Z5SyKQe3EPTblfvM9gOidJTXq342B602AGNi4stk4i9wduEtYTbPzcGBD
 
 @login_required()
 @check_user_status
+@check_blogs_payment_status
 def paypal_create(request,id):
     if request.method =="POST":
         try:
@@ -147,7 +159,7 @@ def paypal_create(request,id):
                 messages.error(request,"You Already A Member")
                 return redirect(reverse("blogs:blogs"))
             elif Blog_Payment.objects.filter(user=request.user,pending=True).exists():
-                messages.error(request,"our team will review your request")
+                messages.error(request,"ou have a pending request ,our team will review your request")
                 return redirect(reverse("blogs:blogs"))
             else:
                 environment = SandboxEnvironment(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
@@ -225,15 +237,12 @@ def paypal_capture(request,order_id,price_id):
         except:
             return JsonResponse({"status":0})
 
-        # try:
-        #     payment=Payment.objects.get(id=course)
-            
-        #     msg_html = render_to_string("email_order_confirm.html",{"order":order})
-        #     msg = EmailMessage(subject="order confirm", body=msg_html, from_email=settings.EMAIL_HOST_USER, to=[order.user.email])
-        #     msg.content_subtype = "html"  # Main content is now text/html
-        #     msg.send()
-        # except:
-        #     pass
-        # messages.success(request,"")
-        # messages.add_message(request, messages.INFO,data)
-    # return redirect(reverse("home:test"))
+@login_required()
+def blogs_type(request,type):
+    blogs=Blog.objects.filter(approved=True,blog_type=type)
+    paginator = Paginator(blogs, 1) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"blogs":page_obj,"slider":blog_slider(),"type":type,
+            "recent_blogs":recent_blogs(),"recent_categories":recent_categories()}
+    return render(request,"blog_type.html",context)

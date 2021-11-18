@@ -37,10 +37,10 @@ class User(AbstractUser):
 
     def get_user_data(self):
         data=json.loads(self.my_data)
-        # title=data["title"]
+        title=data["title"]
         # social=data["social"]
         about_me=data["about_me"]
-        context={"about_me":about_me}
+        context={"about_me":about_me,"title":title}
         return context
 class LoggedInUser(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='logged_in_user')

@@ -12,7 +12,9 @@ from django.conf import settings
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
-User=settings.AUTH_USER_MODEL
+from django.contrib.auth import get_user_model
+User=get_user_model()
+
 import string,random
 
 
@@ -79,6 +81,12 @@ class Blog(models.Model):
     def __str__(self):
         return self.name
 
+    def get_views(self):
+        try:
+            views=self.blog_viewers.viewers.count()
+        except:
+            views=0
+        return views
     def check_blog_viwers(self,user):
         try:
             if self.blog_viewers.viewers.get(id=user):
@@ -112,7 +120,7 @@ def create_blog_viewers(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=Blog) 
 def pre_save_receiver(sender, instance, *args, **kwargs):       
     if not instance.slug: 
-        print("asd")
+
         instance.slug = slugify(instance.name)
         if Blog.objects.filter(slug=instance.slug).exists():
             slug=f"{instance.name}-{random_string_generator()}"
@@ -121,7 +129,9 @@ def pre_save_receiver(sender, instance, *args, **kwargs):
             slug=f"{instance.name}"
             instance.slug = slugify(slug)
 
-                
+def recent_teachers():
+    teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
+    return teacher 
 def recent_categories():
     cat=Category.objects.order_by("-id")[:6]
     return cat
@@ -129,6 +139,9 @@ def blog_slider():
     blogs=Blog.objects.filter(approved=True).order_by("-created_at")[:5]
     return blogs
 
+def recent_blogs():
+    blog=Blog.objects.filter(approved=True).order_by("-created_at")[:6]
+    return blog
 
 class Blog_Views(models.Model):
     blog=models.OneToOneField(Blog,on_delete=models.CASCADE,related_name="blog_viewers")

@@ -8,6 +8,7 @@ path("blog/<str:slug>/",views.single_blog,name="blog"),
 path("search/",views.blog_search,name="search"),
 path("pricing/",views.pricing,name="pricing"),
 path("payment/<str:id>/",views.payment_pricing,name="payment"),
+path("type/<str:type>/",views.blogs_type,name="blogs_type"),
 
 #### blogs
 path("add-blog-comment/<str:id>/",views.blog_comment,name="add_blog_comment"),
