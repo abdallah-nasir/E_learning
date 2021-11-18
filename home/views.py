@@ -54,7 +54,6 @@ def home(request):
     events=Events.objects.order_by("-date")[:5]
     courses=Course.objects.order_by("-id")[0:5]
     teachers=User.objects.filter(account_type="teacher").order_by("?")[:4]
-    print(teachers)
     context={"events":events,"courses":courses,"teachers":teachers}
     return render(request,"home.html",context)
     

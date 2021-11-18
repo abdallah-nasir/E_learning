@@ -9,18 +9,20 @@ class OneSessionPerUserMiddleware:
         # Code to be executed for each request before
         # the view (and later middleware) are called.
         if request.user.is_authenticated:
-            
-            stored_session_key = request.user.logged_in_user.session_key
-            print(stored_session_key)
+            try:
+                stored_session_key = request.user.logged_in_user.session_key
+            except:
+                session=LoggedInUser.objects.create(user=request.user,session_key=request.session.session_key) 
+                stored_session_key=session.session_key
             # if there is a stored_session_key  in our database and it is
             # different from the current session, delete the stored_session_key
             # session_key with from the Session table
             if stored_session_key and stored_session_key != request.session.session_key:
-                print(Session.objects.filter(session_key=stored_session_key)) 
+  
                 Session.objects.filter(session_key=stored_session_key).delete()
-            logged ,created= LoggedInUser.objects.get_or_create(user=request.user)
-            logged.session_key = request.session.session_key
-            logged.save()
+                logged,created = LoggedInUser.objects.get_or_create(user=request.user)
+                logged.session_key = request.session.session_key
+                logged.save()
 
         response = self.get_response(request)
 
