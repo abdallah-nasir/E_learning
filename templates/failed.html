@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <style>
+;
+        #success {
+          color: #ffc600;
+          font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+          font-weight: 900;
+          font-size: 40px;
+          margin-bottom: 10px;
+        }
+        #talk {
+          color: #404F5E;
+          font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+          font-size:20px;
+          margin: 0;
+        }
+      #check {
+        color: #ffc600;
+        font-size: 100px;
+        line-height: 200px;
+        margin-left:-15px;
+      }
+      .card {
+        background: #fafafa;     
+        margin: 0 auto;
+      }
+    </style>
+      <div style="text-align:center;" class="card">
+      <div style=" height:200px; width:200px;margin:0 auto;">
+        <i id="check" class="checkmark">X</i>
+      </div>
+        <h1 id="success">ERROR</h1> 
+        <p id="talk">We didn't received your purchase request;<br/> we'll be in touch shortly!</p>
+       
+     
+      </div>
+{% endblock %}

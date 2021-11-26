@@ -1,0 +1,26 @@
+{% extends 'account_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col col-lg-8 offset-lg-2">
+          
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                <h3 style="text-align:center;">Account Profile</h3>
+                <img class="rounded-circle mt-5" width="150px" src="{{request.user.image.url}}">
+                <span class="font-weight-bold">{{request.user.get_full_name.title}}</span>
+                <span class="text-black-50">{{request.user.email}}</span>
+                <span> </span></div>
+            <form enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{form|crispy}}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

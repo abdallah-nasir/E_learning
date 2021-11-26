@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style type="text/css">
+#quiz_details{
+    margin-top:50px;
+}
+a{
+    color:#ffc600;
+}
+#confirm_button{
+   background-color:#07294d;
+}
+.progress-bar{
+background-color:#ffc600;
+}
+.prev_ques{
+    background-color:#ffc600;
+    border-radius:20px;
+    color:#07294d;
+    margin-top:10px;
+}
+.prev_ques:hover{
+    color:#fff;
+}
+.next_ques{
+    background-color:#ffc600;
+    border-radius:20px;
+    color:#07294d;
+    margin-top:10px;
+}
+.next_ques:hover{
+    color:#fff;
+}
+</style>
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-2.jpg' %})">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-banner-cont">
+                    <h2>Quiz Result</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'home:courses'   %}">Courses</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'home:course' course.slug  %}">{{course.name.title}}</a></li>
+
+                        </ol>
+                    </nav>
+                </div>  <!-- page banner cont -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+<div class="container">
+    <div class="row">
+        <div class="col col-md-8">
+            <div id="quiz_details">
+            
+    <small>Quiz Result for : <span><a href="{% url 'home:course' course.slug %}">{{course.name}}</a></span> </small>
+   
+<small>Quiz Status:
+     <span id="course_status">Finished</span> 
+    </small>
+<!-- <h3 class="course-title">Quiz - Question 1</h3> -->
+<h4>{{question.title}}</h4>
+<p>{{question.details}}</p>
+</div>
+            <div class='row'>
+                <div class="col-md-12">
+                    <div id="progress_result" class="progress">
+                        <div class="progress-bar" role="progressbar" style="width:{{data.percent}}%;">
+                            <p>{{data.percent}}%</p>
+                        <span  class="sr-only">Complete {{data.percent}}%</span>
+                        </div>
+                        </div>
+                  </div>
+            </div>
+                <hr class="invis">
+                <div class="row">
+                    <div class="col col-lg-12 col-md-12 col-sm-12">
+                        
+                       <h3>Total Questions: {{data.questions}} </h3> 
+                       <h3>Total Answers: {{data.answers}}</h3> 
+                    
+                   
+                        <h3>Correct Answers: {{data.right_answer}} </h3> 
+                        <h3>Wrong Answers: {{data.wrong_answer}}</h3> 
+                        <br>
+                        <h1 style="text-align:center;" >Your Result <span style="color:#ffc600;"> {{data.percent}}%</spans></h1>
+                    </div>
+                </div>
+        </div>
+        <div id="course-left-sidebar" class="col-md-4 mt-5 mb-5">
+            <div class="course-image-widget">
+            <img src="{{course.image.url}}" alt="" class="img-responsive">
+            </div>
+            <div class="course-meta">
+            <p class="course-category">Category : <a href="{% url 'home:course' course.slug %}">{{course.branch.category.name.title}}</a></p>
+            <hr>
+            <div class="rating">
+            <p>Reviews : &nbsp;
+            {% with ''|center:course.total_rate as range %}
+                {% for _ in range %}
+                <i class="fa fa-star"></i>
+                     {% endfor %}
+            {% endwith %}
+
+            <a title="" >&nbsp; ({{course.reviews.count}})</a></p>
+            </div>
+            <hr>
+            <p class="course-student">Students : {{course.students.count}} Members </p>
+            <hr>
+            <p class="course-time">Perriod : {{course.total_duration}} </p>
+            <hr>
+            <!-- <p class="course-prize">Prize : <i class="fa fa-trophy"></i> <i class="fa fa-certificate"></i> <i class="fa fa-shield"></i></p>
+            <hr> -->
+            <p class="course-instructors">Instructor : <a href="{% url 'home:teacher' course.Instructor.slug %}" title="">{{course.Instructor.first_name.title}} {{course.Instructor.last_name.title}}</a></p>
+            <!-- <hr> -->
+            <!-- <p class="course-forum">Course Forum : <a href="#" title="">Web Designers</a></p> -->
+            </div>
+            <!-- <div class="course-button">
+            <a href="#" class="btn btn-primary btn-block">TAKE THIS COURSE</a>
+            </div> -->
+            </div>
+    </div>
+
+
+</div>
+
+{%endblock%}

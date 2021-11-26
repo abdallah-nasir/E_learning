@@ -1,0 +1,19 @@
+blog > limit share lines for member users only
+add email system
+add validations to phone number >> cash     done
+paypal button adjust                done
+adjust vodafone cash            done
+new blog (recent blogs to the same blog category)       done
+quiz system         done
+add firendly asked Question     done
+adjust teacher social 
+add more security to website
+
+western union , bank transaction >> image required      done
+
+redirect user to pricing when unpaid
+
+Cosultant and payment
+
+add course old price 
+upload certificate

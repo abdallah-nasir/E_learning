@@ -1,0 +1,68 @@
+{% extends 'dashboard_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Edit Blog</h1>
+                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                {{form.media}}
+                                <div class="form-group">
+                               {{form.blog_type|as_crispy_field}}
+                                </div>
+                                <div  class="form-group">
+                                    <label for="id_image">Blog Image</label>
+                                    <div class="col">
+                                        {% for i in blog.image.all %}
+                                      <a href="{{i.image.url}}" target="__blank"><img style="max-width: 100px;" class="img-thumbnail" src="{{i.image.url}}"></a>
+                                        {% endfor %}
+                                    </div>
+                                  </div>
+                                  {% if blog.get_link %}
+                                  <div class="form-group">
+                                    <label >Blog Link</label>
+                                   <input name="link"  type="text"  value='{{blog.get_link.link}}' class='textinput textInput form-control'>
+                                </div>
+                                {% endif %}
+                                  <div class="form-group">
+                                    {{form.name|as_crispy_field }}
+                                </div>
+                                <div class="form-group">
+                                    {{form.details}}
+                                    
+                                </div>
+                                <div class="form-group">
+                                    {{form.category|as_crispy_field }}
+                                   
+                                </div>
+                                <div class="form-group">
+                                    {{form.paid|as_crispy_field }}
+                                </div>
+                                     <div class="form-group">
+                                        {{form.tags|as_crispy_field }}
+                                </div>
+                                
+                                <button class="btn btn-primary" type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+{% endblock %}

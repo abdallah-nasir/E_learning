@@ -1,0 +1,230 @@
+{% extends 'blog_base.html' %}
+
+{% block content %}
+
+		<!-- BEGIN CONTENT -->
+		<main class="site-content">
+			<div class="container">
+
+				<div class="swiper-container featured-posts margin-bottom">
+					<div class="swiper-wrapper">
+						{% for i in slider %}
+						<div class="swiper-slide">
+							<article class="post">
+								<header class="entry-header">
+									<figure class="entry-thumb">
+										<img src="{{i.image.first.image.url}}" width="1200" height="500" alt="">
+									</figure>
+									<div class="entry-header-title">
+										<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
+										<div class="entry-meta">
+											<span class="entry-meta-date">
+												<i class="fa fa-calendar"></i>
+												{{i.created_at|date:"M d, Y"}}
+											</span>
+											<span class="entry-meta-comments">
+												<i class="fa fa-comments"></i>
+												<a href="">{{i.get_comments}} comments</a>
+											</span>
+											<span class="entry-meta-comments">
+												<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
+											</span>
+										</div>
+									</div>
+								</header>
+							</article>
+						</div>
+						{% endfor %}
+					</div>
+					<div class="swiper-button-prev"><i class="fa fa-chevron-left"></i></div>
+					<div class="swiper-button-next"><i class="fa fa-chevron-right"></i></div>
+					<div class="swiper-pagination"></div>
+				</div>
+
+				<div class="posts">
+            {% if blogs %}
+					{% for i in blogs %}
+					{% if i.blog_type == "standard" %}
+					<article class="post format-standard">
+						<header class="entry-header">
+							<figure class="entry-thumb">
+								<img src="{{i.image.first.image.url}}" width="1000" height="667" alt="">
+							</figure>
+							<div class="icon-b">
+								<i class="fa fa-newspaper-o"></i>
+							</div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-header-title">
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
+								<div class="entry-meta">
+									<span class="entry-meta-date">
+										<i class="fa fa-calendar"></i>
+										{{i.created_at|date:"M d, Y"}}
+									</span>
+									<span class="entry-meta-comments">
+										<i class="fa fa-comments"></i>
+										<a href="">{{i.get_comments}}  comments</a>
+									</span>
+									<span class="entry-meta-comments">
+										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
+									</span>
+								</div>
+							</div>
+						</header>
+						<div class="entry-content">
+							<p>{{i.details|truncatewords:20}}</p>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
+						</div>
+					</article>
+					{% elif i.blog_type == "quote" %}
+					<article class="post format-quote">
+						<header class="entry-header">
+							<a href="{% url 'blogs:blog' i.slug %}">
+								<div class="icon-b">
+									<i class="fa fa-quote-left"></i>
+								</div>
+								<div class="entry-header-title">
+									<h2>{{i.name|truncatewords:20}}</h2>
+									<blockquote>
+										<p>{{i.details|truncatewords:20}}</p>
+										<!-- <cite>- John Doe</cite> -->
+									</blockquote>
+								</div>
+							</a>
+						</header>
+					</article>
+					{% elif i.blog_type == "video" %}
+					<article class="post format-video">
+						<header class="entry-header" style="background-image: url(images/photo-6.jpg);">
+							<div class="icon-b">
+								<i class="fa fa-film"></i>
+							</div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-header-title">
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a></h2>
+								<div class="entry-meta">
+									<span class="entry-meta-date">
+										<i class="fa fa-calendar"></i>
+										{{i.created_at|date:"M d, Y"}}
+									</span>
+									<span class="entry-meta-comments">
+										<i class="fa fa-comments"></i>
+										<a href="">{{i.get_comments}} comments</a>
+									</span>
+									<span class="entry-meta-comments">
+										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
+									</span>
+								</div>
+							</div>
+						</header>
+					</article>
+					{% elif i.blog_type == "link" %}
+					<article class="post format-link">
+						<header class="entry-header" style="background-image: url({{i.image.first.image.url}});">
+							<div class="icon-b">
+								<i class="fa fa-link"></i>
+							</div>
+							<div class="entry-header-title">
+								<h2><a href="{{i.image.first.image.url}}">{{i.category.name.title|truncatewords:10}}</a></h2>
+								<a class="entry-link btn" href="{[i.get_link]}"><i class="fa fa-external-link"></i> {{i.get_link}}</a>
+							</div>
+						</header>
+						<div class="entry-content">
+							<p>{{i.details|truncatewords:20}}</p>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
+						</div>
+					</article>
+					{% elif i.blog_type == "gallery" %}
+					<article class="post format-gallery">
+						<header class="entry-header">
+							<figure class="entry-thumb">
+								<img src="{{i.image.first.image.url}}" width="1000" height="667" alt="">
+							</figure>
+							<div class="icon-b">
+								<i class="fa fa-image"></i>
+							</div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-header-title">
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a></h2>
+								<div class="entry-meta">
+									<span class="entry-meta-date">
+										<i class="fa fa-calendar"></i>
+										{{i.created_at|date:"M d, Y"}}
+									</span>
+									<span class="entry-meta-comments">
+										<i class="fa fa-comments"></i>
+										<a href="">{{i.get_comments}} comments</a>
+									</span>
+									<span class="entry-meta-comments">
+										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
+									</span>
+								</div>
+							</div>
+						</header>
+						<div class="entry-content">
+							<p>{{i.details|truncatewords:20}}</p>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Show More</a>
+						</div>
+					</article>
+					{% elif i.blog_type == "audio" %}
+					<article class="post format-audio">
+						<header class="entry-header" style="background-image: url(images/photo-11.jpg);">
+							<div class="icon-b">
+								<i class="fa fa-music"></i>
+							</div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-header-title">
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
+								<div class="entry-meta">
+									<span class="entry-meta-date">
+										<i class="fa fa-calendar"></i>
+										{{i.created_at|date:"M d, Y"}}
+									</span>
+									<span class="entry-meta-comments">
+										<i class="fa fa-comments"></i>
+										<a href="">{{i.get_comments}}  comments</a>
+									</span>
+									<span class="entry-meta-comments">
+										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
+									</span>
+								</div>
+							</div>
+						</header>
+					</article>
+					{% endif %}
+					{% endfor %}
+            {% else %}
+<h1 style="margin:auto;">Sorry,we didn't Find What You Want</h1>
+                    {% endif %}
+				</div>
+				{% if blogs.has_other_pages  %}
+				<ul class="pagination">
+					{% if blogs.has_previous  %}
+					<li><a href="?search={{qs}}&page={{ blogs.previous_page_number }}"><i class="fa fa-angle-double-left"></i> Prev</a></li>
+					{% else %}
+					<li></li>
+					{% endif %}
+					{% for i in blogs.paginator.page_range %}
+					{% if blogs.number == i %}
+					<li class="active"><a href="?search={{qs}}&page={{ i }}">{{i}}</a></li>
+					{% else %}
+					<li><a href="?search={{qs}}&page={{ i }}">{{i}}</a></li>
+					{% endif %}
+					
+			{% endfor %}
+			{% if blogs.has_next %}
+					<li><a href="?search={{qs}}&page={{ blogs.next_page_number }}">Next <i class="fa fa-angle-double-right"></i></a></li>
+					{% else %}
+					<li></li>
+					{% endif %}
+				</ul>
+
+				{% endif %}
+
+			</div>
+		</main>
+		<!-- END CONTENT -->
+
+{% endblock %}
+
+		

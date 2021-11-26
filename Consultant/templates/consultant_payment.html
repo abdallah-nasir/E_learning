@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style type="text/css">
+    #test {
+        overflow: hidden;
+        text-align: center;
+      }
+      
+#test:before,
+#test:after {
+        background-color: #000;
+        content: "";
+        display: inline-block;
+        height: 1px;
+        position: relative;
+        vertical-align: middle;
+        width: 50%;
+      }
+      
+#test:before {
+        right: 0.5em;
+        margin-left: -50%;
+      }
+      
+#test:after {
+        left: 0.5em;
+        margin-right: -50%;
+      }
+    #id_payment_method{
+    display: block !important;
+        }
+  
+    </style>
+<div class="container">
+    <div class="row">
+        <div class="col col-lg-8 offset-lg-2">
+            <h2 style="text-align: center; margin-top:10px; margin-bottom:10px;">Payment Method</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div id="paypal-button-container"></div>
+                <h2 id="test"><span>OR</span></h2>
+
+                {{form|crispy}}
+                
+                
+                    <div class="singel-form mt-2 mb-2">
+                        <button type="submit" class="main-btn">Sumit</button>
+                    </div> <!-- singel form -->
+                            
+                        </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#id_number").keydown(function(event) {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            } else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        });
+    });
+
+       const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            style: {
+                color:  'blue',
+                shape:  'pill',
+                label:  'pay',
+                height: 40
+            },
+                               // Call your server to set up the transaction
+                               createOrder: function(data, actions) {
+                                return fetch('{% url "consultant:paypal_create" teacher.id %}', {
+                                    method: 'post',
+                                    headers: {"X-CSRFToken": csrftoken}
+                                }).then(function(res) {
+                                    return res.json();
+                                }).then(function(orderData) {
+                                    return orderData.id;
+                                });
+                            },
+                  
+                            // Call your server to finalize the transaction
+                            onApprove: function(data, actions) {
+                                return fetch('/consultant/paypal/capture/' + data.orderID +'/{{teacher.id}}/',{
+                                    method: 'post',
+                                    headers: {"X-CSRFToken": csrftoken}
+                                }).then(function(res) {
+                                   
+                                    window.location.href = '{% url "home:home" %}';                                
+                                    return res.json();
+                                }).then(function(orderData) {
+                                 
+                                    // Three cases to handle:
+                                    //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                                    //   (2) Other non-recoverable errors -> Show a failure message
+                                    //   (3) Successful transaction -> Show a success / thank you message
+                  
+                                    // Your server defines the structure of 'orderData', which may differ
+                                    var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
+                  
+                                    if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
+                                        // Recoverable state, see: "Handle Funding Failures"
+                                        // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
+                                        return actions.restart();
+                                    }
+                  
+                                    if (errorDetail) {
+                                        var msg = 'Sorry, your transaction could not be processed.';
+                                        if (errorDetail.description) msg += '\n\n' + errorDetail.description;
+                                        if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
+                                        // Show a failure message
+                                        return alert(msg);
+                                    }
+                  
+                                    // Show a success message to the buyer
+                                   
+                                });
+                            },
+                            onCancel: function (data, actions) {
+                                return fetch('/payment/failed/',{
+                                    method: 'post',
+                                    headers: {"X-CSRFToken": csrftoken}
+                                }).then(function(res){
+                                    window.location.href = '{% url "home:home" %}';
+                                    return res.json();
+                                })
+                                // Show a cancel page or return to cart
+                               
+                              },
+                  
+                              
+
+        }).render('#paypal-button-container');
+
+      
+    </script>
+
+{% endblock %}

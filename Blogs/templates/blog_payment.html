@@ -1,0 +1,289 @@
+{% extends 'blog_base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style type="text/css">
+    #test {
+        overflow: hidden;
+        text-align: center;
+      }
+      
+#test:before,
+#test:after {
+        background-color: #000;
+        content: "";
+        display: inline-block;
+        height: 1px;
+        position: relative;
+        vertical-align: middle;
+        width: 50%;
+      }
+      
+#test:before {
+        right: 0.5em;
+        margin-left: -50%;
+      }
+      
+#test:after {
+        left: 0.5em;
+        margin-right: -50%;
+      }
+    .plan-price h3 {
+        text-align: center;
+        font-size: 20px;
+        padding: 10px 0;
+        margin-bottom: 25px;
+        color: #606060;
+        font-weight: 600;
+        text-align: center;
+        background-color: rgba(0, 0, 0, .02)
+    }
+    
+    .plan-price {
+        font-size: 36px;
+        font-weight: 300;
+        color: #606060;
+        text-align: center;
+        padding: 0 0 22px;
+        position: relative
+    }
+    
+    .plan.color-1 .plan-price,
+    .plan.color-1 a.button {
+        background-color: #f6f6f6
+    }
+    
+    .plan.color-2 .plan-price,
+    .plan.color-2 a.button {
+        background-color: #3acf87
+    }
+    
+    .plan.color-3 .plan-price,
+    .plan.color-3 a.button {
+        background-color: #514e9f
+    }
+    
+    .plan.color-4 .plan-price,
+    .plan.color-4 a.button {
+        background-color: #e54b81
+    }
+    
+    .plan.color-5 .plan-price,
+    .plan.color-5 a.button {
+        background-color: #a558a6
+    }
+    
+    .plan-price .value {
+        font-weight: 600;
+        letter-spacing: -1px
+    }
+    
+    .plan-currency {
+        font-size: 22px;
+        opacity: .7;
+        position: relative;
+        margin: 0 -5px 0 0;
+        top: -4px;
+        font-weight: 300
+    }
+    
+    .period {
+        display: block;
+        font-size: 16px;
+        margin: 2px 0 0;
+        opacity: .7
+    }
+    
+    .plan-features {
+        background: #fff;
+        border-top: none;
+        padding: 12px 0 0
+    }
+    
+    .plan-features ul li {
+        padding: 8px 0;
+        text-align: center
+    }
+    
+    .plan-features a.button {
+        position: relative;
+        display: block;
+        margin: 0 auto;
+        margin: 12px 0;
+        text-align: center;
+        color: #666;
+        padding: 10px 0;
+        font-size: 14px;
+        -webkit-transition: all .2s ease-in-out;
+        -moz-transition: all .2s ease-in-out;
+        -o-transition: all .2s ease-in-out;
+        -ms-transition: all .2s ease-in-out;
+        transition: all .2s ease-in-out
+    }
+    
+    .color-2 .plan-price,
+    .color-3 .plan-price,
+    .color-4 .plan-price,
+    .color-5 .plan-price,
+    .color-2 .plan-price h3,
+    .color-3 .plan-price h3,
+    .color-4 .plan-price h3,
+    .color-5 .plan-price h3,
+    .color-2 .plan-price .plan-currency,
+    .color-3 .plan-price .plan-currency,
+    .color-4 .plan-price .plan-currency,
+    .color-5 .plan-price .plan-currency,
+    .color-2 .plan-features a.button,
+    .color-3 .plan-features a.button,
+    .color-4 .plan-features a.button,
+    .color-5 .plan-features a.button {
+        color: #fff
+    }
+    
+    .color-2 .plan-price h3,
+    .color-3 .plan-price h3,
+    .color-4 .plan-price h3,
+    .color-5 .plan-price h3 {
+        background-color: rgba(0, 0, 0, .05)
+    }
+    
+    .columns {
+        margin-right: 15px
+    }
+    
+    .plan {
+        border: 1px solid #f6f6f6
+    }
+    
+    .button {
+        margin-bottom: 100px
+    }
+</style>
+<div class="container mt-5">
+    
+    <div>
+        <h3 style="text-align: center;" class="headline pt-5" >Payment Methods</h3><span class="line margin-bottom-45"></span>
+        <div class="clearfix"></div> <br> <br>
+    </div>
+    <div class="row mb-3">
+        <div class="col col-lg-8 offset-lg-2">
+            <form method="post" enctype="multipart/form-data">
+               {% csrf_token %}
+                <div id="paypal-button-container"></div>
+                <h2 id="test"><span>OR</span></h2>
+                {{form|crispy}}
+                <button  class="btn" type="submit">Submit</button>
+            </form>
+        </div>
+
+     
+  
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#id_number").keydown(function(event) {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            } else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        });
+    });
+
+       const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            style: {
+                color:  'blue',
+                shape:  'pill',
+                label:  'pay',
+                height: 40
+            },
+                               // Call your server to set up the transaction
+                               createOrder: function(data, actions) {
+                                return fetch('{% url "blogs:paypal_create" price.id %}', {
+                                    method: 'post',
+                                    headers: {"X-CSRFToken": csrftoken}
+                                }).then(function(res) {
+                                    return res.json();
+                                }).then(function(orderData) {
+                                    return orderData.id;
+                                });
+                            },
+                  
+                            // Call your server to finalize the transaction
+                            onApprove: function(data, actions) {
+                                return fetch('/blogs/paypal/capture/' + data.orderID +'/{{price.id}}/',{
+                                    method: 'post',
+                                    headers: {"X-CSRFToken": csrftoken}
+                                }).then(function(res) {
+                                   
+                                    window.location.href = '{% url "blogs:blogs" %}';                                
+                                    return res.json();
+                                }).then(function(orderData) {
+                                 
+                                    // Three cases to handle:
+                                    //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                                    //   (2) Other non-recoverable errors -> Show a failure message
+                                    //   (3) Successful transaction -> Show a success / thank you message
+                  
+                                    // Your server defines the structure of 'orderData', which may differ
+                                    var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
+                  
+                                    if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
+                                        // Recoverable state, see: "Handle Funding Failures"
+                                        // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
+                                        return actions.restart();
+                                    }
+                  
+                                    if (errorDetail) {
+                                        var msg = 'Sorry, your transaction could not be processed.';
+                                        if (errorDetail.description) msg += '\n\n' + errorDetail.description;
+                                        if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
+                                        // Show a failure message
+                                        return alert(msg);
+                                    }
+                  
+                                    // Show a success message to the buyer
+                                   
+                                });
+                            },
+                            onCancel: function (data, actions) {
+                                return fetch('/payment/failed/',{
+                                    method: 'post',
+                                    headers: {"X-CSRFToken": csrftoken}
+                                }).then(function(res){
+                                    window.location.href = '{% url "blogs:blogs" %}';
+                                    return res.json();
+                                })
+                                // Show a cancel page or return to cart
+                               
+                              },
+                  
+                              
+
+        }).render('#paypal-button-container');
+
+      
+    </script>
+
+{% endblock %}

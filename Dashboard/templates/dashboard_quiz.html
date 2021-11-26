@@ -1,0 +1,184 @@
+{% extends 'dashboard_base.html' %}
+
+
+
+{% block content %}
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Questions</h1>
+                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>                                       
+                                            <th>Title</th>
+                                            <th>Details</th>
+                                            <th>Answers</th>
+                                            <th>Action</th>
+
+
+                                        </tr>
+                                    </thead>
+                                  
+                                   <tbody>
+                                       {% if quiz %}
+                                       {% for i in quiz.questions.all %}
+                                    <tr>
+                                        <td>{{i.title|truncatewords:5}}</td>
+                                        <td>{{i.details|truncatechars:20}}</td>
+                                        <td>{{i.answer.count}}</td>
+                                        <td>
+                                    <a class="btn btn-success" href="{% url 'dashboard:edit_quiestions' course.slug i.slug %}">Edit</a>
+                                    <a class="btn btn-danger" data-toggle="modal" data-target="#quiz-{{i.id}}" >Delete</a>
+                                    <a class="btn btn-info" href="{% url 'dashboard:add_answer' course.slug i.slug %}" >Add Answer</a>
+
+                                </td>
+                                    </tr>
+<!-- Modal -->
+<div class="modal fade" id="quiz-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete Question</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you Sure ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="{% url 'dashboard:delete_question' course.slug i.id %}" type="button" class="btn btn-danger">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                   </tbody>
+                                </table>
+                                {% if quiz.has_other_pages %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        {% if quiz.has_previous  %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ quiz.previous_page_number }}">Previous</a></li>
+                                      {% endif %}
+                                      {% for i in  quiz.paginator.page_range %}
+                                      {% if quiz.number == i %}
+                                      <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% else %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% endif %}
+                                      {% endfor %}
+                                      {% if quiz.has_next %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ quiz.next_page_number }}">Next</a></li>
+                                      {% endif %}
+                                    </ul>
+                                  </nav>
+                                  {% endif %}
+                            </div>
+                            
+                        </div> 
+                    </div>
+
+                <h1 class="h3 mb-2 text-gray-800">Answers</h1>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>                                       
+                                            <th>Question</th>
+                                            <th>Answer</th>
+                                            <th>Correct</th>
+                                            <th>Action</th>
+
+
+                                        </tr>
+                                    </thead>
+                                  
+                                   <tbody>
+                                       {% if quiz %}
+                                       {% for i in quiz.answers.all %}
+                                    <tr>
+                                        <td>{{i.question.title|truncatewords:20}}</td>
+                                        <td>{{i.answer|truncatechars:20}}</td>
+                                        <td>{{i.correct}}</td>
+                                        <td>
+                                    <a class="btn btn-success" href="{% url 'dashboard:edit_answer' course.slug i.id %}">Edit</a>
+                                    <a class="btn btn-danger" data-toggle="modal" data-target="#answer-{{i.id}}" >Delete</a>
+
+                                </td>
+                                    </tr>
+<!-- Modal -->
+<div class="modal fade" id="answer-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete Answer</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you Sure ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="{% url 'dashboard:delete_answer' course.slug  i.id %}" type="button" class="btn btn-danger">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                   </tbody>
+                                </table>
+                                {% if quiz.has_other_pages %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        {% if quiz.has_previous  %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ quiz.previous_page_number }}">Previous</a></li>
+                                      {% endif %}
+                                      {% for i in  quiz.paginator.page_range %}
+                                      {% if quiz.number == i %}
+                                      <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% else %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% endif %}
+                                      {% endfor %}
+                                      {% if quiz.has_next %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ quiz.next_page_number }}">Next</a></li>
+                                      {% endif %}
+                                    </ul>
+                                  </nav>
+                                  {% endif %}
+                            </div>
+                            
+                        </div> 
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+{% endblock %}
