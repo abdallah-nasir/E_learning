@@ -8,11 +8,13 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from next_prev import next_in_order, prev_in_order
 from django.contrib import messages
+from .decorators import check_course_status
 # Create your views here.
 
 @login_required()
-def quiz(request,course,question):
-    my_course=get_object_or_404(Course,slug=course)
+@check_course_status
+def quiz(request,slug,question):
+    my_course=get_object_or_404(Course,slug=slug)
     if my_course.quiz:
         if request.user in my_course.students.all():
             quiz=my_course.quiz
@@ -52,11 +54,21 @@ def quiz(request,course,question):
     return render(request,"quiz.html",context) 
     
 @login_required()
+@check_course_status
 def quiz_result(request,slug):
     course=get_object_or_404(Course,slug=slug)
-    data=course.quiz.get_quiz_result(student=request.user)
-    if data["allowed"] == False:
-        messages.error(request,"You didn't complete Quiz Yet")
+    if request.user in course.students.all():
+        data=course.quiz.get_quiz_result(student=request.user)
+        if data["allowed"] == False:
+            messages.error(request,"You didn't complete Quiz Yet")
+            return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+        else:
+            result,created=Quiz_Result.objects.get_or_create(user=request.user,quiz=course.quiz)
+            result.degree=data["percent"]
+            result.status=True
+            result.save()
+    else:
+        messages.error(request,"you should buy course first")
         return redirect(reverse("home:course",kwargs={"slug":course.slug}))
     context={"course":course,"data":data}
     return render(request,"result.html",context)

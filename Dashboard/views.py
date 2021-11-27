@@ -363,9 +363,9 @@ def delete_question(request,slug,id):
     if request.user == course.Instructor:
         try:
             course.quiz.questions.get(id=id).delete()
-            if  course.quiz.questions.count() == 0:
-                course.quiz.delete()
-                return redirect(reverse("dashboard:courses"))
+            # if  course.quiz.questions.count() == 0:
+                # course.quiz.delete()
+                # return redirect(reverse("dashboard:courses"))
         except:
             messages.error(request,"invalid question")
             return redirect(reverse("dashboard:courses"))

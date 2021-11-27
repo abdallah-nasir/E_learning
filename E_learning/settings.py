@@ -112,22 +112,22 @@ WSGI_APPLICATION = 'E_learning.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-DATABASES={
-    "default":{
-        "ENGINE":"django.db.backends.postgresql_psycopg2",
-        "NAME":"d19vbjv1m5crsq",
-        "USER":"numkqkihbehoni",
-        "PASSWORD":"cf446d2cb23064a0d3c83cb30c3a18ab93fd6aec5c21b60fd548cb9564a62948",
-        "HOST":"ec2-107-23-143-66.compute-1.amazonaws.com",
-        "PORT":"5432"
-    }     
-} 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+# DATABASES={
+#     "default":{
+#         "ENGINE":"django.db.backends.postgresql_psycopg2",
+#         "NAME":"d19vbjv1m5crsq",
+#         "USER":"numkqkihbehoni",
+#         "PASSWORD":"cf446d2cb23064a0d3c83cb30c3a18ab93fd6aec5c21b60fd548cb9564a62948",
+#         "HOST":"ec2-107-23-143-66.compute-1.amazonaws.com",
+#         "PORT":"5432"
+#     }     
+# } 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',

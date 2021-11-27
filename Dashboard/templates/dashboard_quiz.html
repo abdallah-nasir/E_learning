@@ -19,6 +19,8 @@
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                         </div>
+                              <a href="{% url 'dashboard:add_quiestions' course.slug %}" class='btn btn-danger'>Add New Question</a>
+
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -43,7 +45,7 @@
                                         <td>
                                     <a class="btn btn-success" href="{% url 'dashboard:edit_quiestions' course.slug i.slug %}">Edit</a>
                                     <a class="btn btn-danger" data-toggle="modal" data-target="#quiz-{{i.id}}" >Delete</a>
-                                    <a class="btn btn-info" href="{% url 'dashboard:add_answer' course.slug i.slug %}" >Add Answer</a>
+                                    <a class="btn btn-info" href="{% url 'dashboard:add_answer' course.slug i.slug %}" >Attach Answer</a>
 
                                 </td>
                                     </tr>

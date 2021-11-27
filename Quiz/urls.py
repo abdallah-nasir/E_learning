@@ -5,7 +5,7 @@ app_name="Quiz"
 
 
 urlpatterns = [
-    path("course/<str:course>/<str:question>/",views.quiz,name="home"),
+    path("course/<str:slug>/<str:question>/",views.quiz,name="home"),
     path("result/<str:slug>/",views.quiz_result,name="result"),
 
      

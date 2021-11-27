@@ -104,7 +104,6 @@ class Quiz(models.Model):
         student=Student_Quiz.objects.filter(student=student,quiz=self)
         questions=self.questions.count()
         if len(student) == questions:
-
             total=0
             flo="{0:.2f}"
             for i in student:
@@ -154,3 +153,12 @@ class Student_Quiz(models.Model):
             result=False
         context={"percent":my_percent,"completed":completed,"result":result}
         return context
+
+class Quiz_Result(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    quiz=models.ForeignKey(Quiz,null=True,on_delete=models.SET_NULL)
+    degree=models.FloatField(default=0)
+    status=models.BooleanField(default=False)
+    delivered=models.BooleanField(default=False)
+    def __str__(self):
+        return str(self.id)
