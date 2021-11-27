@@ -11,6 +11,9 @@ def check_course_status(function):
         if course.approved != True:
             messages.error(request,"course isn't ready yet")
             return redirect(reverse("home:courses"))
+        elif course.course_status == "on process":
+            messages.error(request,"course is on progress")
+            return redirect(reverse("home:course",kwargs={"slug":course.slug}))
         else:
             return function(request, *args, **kwargs)
 

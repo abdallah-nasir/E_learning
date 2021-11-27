@@ -62,9 +62,11 @@ class AddEvent(forms.ModelForm):
     date=forms.DateField(widget=DatePickerInput(format='%m/%d/%y'))
     start_time=forms.TimeField(widget=TimePickerInput(format='%H:%M:%S'))
     end_time=forms.TimeField(widget=TimePickerInput(format='%I:%M:%S'))
+    zoom_link=forms.CharField(max_length=300,required=False)
+    # about=forms.CharField(widget=forms.Textarea())
     class Meta:
         model=Events
-        fields=['name',"image","details","date","start_time","end_time","place"]
+        fields=['name',"image","details","date","start_time","end_time","place","zoom_link"]
 
 class AddQuestion(forms.ModelForm):
     class Meta:

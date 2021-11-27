@@ -14,6 +14,7 @@ from embed_video.fields import EmbedVideoField
 from PIL import Image
 import os  
 import time
+import json
 User=settings.AUTH_USER_MODEL
 Quiz= Quiz.models.Quiz()
 # Create your models here.
@@ -239,8 +240,15 @@ class Events(models.Model):
     def __str__(self):
         return self.name
 
-
-   
+    def get_details(self):
+        data=json.loads(self.details)
+        try:
+            zoom=data["zoom"]
+        except:
+            zoom=None
+        details=data["details"]
+        context={"zoom":zoom,"details":details}
+        return context
 @receiver(pre_save, sender=Events)
 def pre_save_receiver(sender, instance, *args, **kwargs):       
     if not instance.slug: 

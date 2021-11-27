@@ -39,7 +39,7 @@
                             <a href="#"><span><i class="fa fa-clock-o"></i>{{event.start_time|date:"h a"}} - {{event.end_time|date:"h a"}}</span></a>
                             <a href="#"><span><i class="fa fa-map-marker"></i> {{event.place}}</span></a>
                             <img src="{{event.image.url}}" alt="Event">
-                            <p>{{event.details}}</p>
+                            <p>{{event.get_details.details}}</p>
                         </div> <!-- events left -->
                     </div>
                     <div class="col-lg-4">
@@ -85,8 +85,21 @@
                                             </div>
                                         </div> <!-- singel address -->
                                     </li>
+                                    {% if request.user in event.students.all %}
+                                    <li>
+                                        <div class="singel-address">
+                                            <div class="icon">
+                                                <i class="fa fa-map"></i>
+                                            </div>
+                                            <div class="cont">
+                                                <h6>Zoom Link</h6>
+                                                <span>{{event.get_details.zoom}}</span>
+                                            </div>
+                                        </div> <!-- singel address -->
+                                    </li>
+                                    {% endif %}
                                 </ul>
-                                <div id="contact-map" class="mt-25"></div>
+                               
 
                             </div> <!-- events address -->
                         </div> <!-- events right -->

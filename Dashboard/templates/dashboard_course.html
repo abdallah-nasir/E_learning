@@ -30,22 +30,13 @@
                                             <th>Price</th>
                                             <th>Videos</th>
                                             <th>Students</th>
+                                            <th>Status</th>
                                             <th>Action</th>
 
 
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>                                        
-                                            <th>Name</th>
-                                            <th>Teacher</th>
-                                            <th>Category</th>
-                                            <th>Price</th>
-                                            <th>Videos</th>
-                                            <th>Students</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot>
+                         
                                    <tbody>
                                        {% for i in courses %}
                                     <tr>
@@ -55,6 +46,7 @@
                                         <td>{{i.price}}</td>
                                         <td>{{i.videos.count}}</td>
                                         <td>{{i.students.count}}</td>
+                                        <td>{{i.course_status}}</td>
                                         <td>
                                     <a class="btn btn-success" href="{% url 'dashboard:add_video' i.slug %}">Add Video</a>
                                             {% if i.quiz %}

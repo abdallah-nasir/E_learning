@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from next_prev import next_in_order, prev_in_order
 from django.contrib import messages
 from .decorators import check_course_status
+from django.core.mail import send_mail,EmailMessage
+
 # Create your views here.
 
 @login_required()
@@ -52,8 +54,8 @@ def quiz(request,slug,question):
 
     context={"quiz":quiz,"course":my_course,"next":next,"prev":prev,"question":quiz_question,"answers":answers,"user_progress":user_progress,"default_progress":default_progress}
     return render(request,"quiz.html",context) 
-    
-@login_required()
+     
+@login_required()   
 @check_course_status
 def quiz_result(request,slug):
     course=get_object_or_404(Course,slug=slug)
@@ -67,6 +69,12 @@ def quiz_result(request,slug):
             result.degree=data["percent"]
             result.status=True
             result.save()
+            if created:
+                print("here")
+                msg = EmailMessage(subject="Quiz Completed", body="thank you for your answers,our team will send you mail for the certification", from_email=settings.EMAIL_HOST_USER, to=[result.user.email])
+                msg.content_subtype = "html"  # Main content is now text/html
+                msg.send()
+                messages.success(request,f"we have sent Email to {result.user.email},Please check it")
     else:
         messages.error(request,"you should buy course first")
         return redirect(reverse("home:course",kwargs={"slug":course.slug}))

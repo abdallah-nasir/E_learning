@@ -247,6 +247,10 @@ def add_event(request):
         if form.is_valid():
             instance=form.save(commit=False)
             instance.user=request.user
+            zoom=form.cleaned_data.get("zoom_link")
+            details=form.cleaned_data.get("details")
+            data={'zoom':zoom,"details":details}
+            instance.details=json.dumps(data)  
             instance.save() 
             messages.success(request,"Event added successfully")
             return redirect("dashboard:events")
@@ -259,13 +263,20 @@ def add_event(request):
 
 @login_required
 @check_user_validation
+@check_event_status
 def edit_event(request,id):
     event=get_object_or_404(Events,id=id)
     form=AddEvent(request.POST or None,request.FILES or None,instance=event)
+    form.initial["details"]=event.get_details()["details"]
+    form.initial["zoom_link"]=event.get_details()["zoom"]
     if request.user == event.user:
         if request.method == "POST":
             if form.is_valid():
                 instance=form.save(commit=False)
+                zoom=form.cleaned_data.get("zoom_link")
+                details=form.cleaned_data.get("details")
+                data={'zoom':zoom,"details":details}
+                instance.details=json.dumps(data)  
                 instance.save() 
                 messages.success(request,"Event updated successfully")
                 return redirect("dashboard:events")
@@ -314,6 +325,7 @@ def add_quiestions(request,slug):
                    quiz.questions.add(instance)
                    quiz.save()
                    course.quiz=quiz
+                   course.course_status = "on process"
                    course.save()
                 else:
                     course.quiz.questions.add(instance)
@@ -347,6 +359,8 @@ def edit_quiestions(request,course,slug):
         if request.method == "POST":
             if form.is_valid():
                 instance=form.save(commit=False)
+                course.course_status = "on process"
+                course.save()
                 instance.save() 
                 messages.success(request,"Question Edited successfully")
                 return redirect(reverse("dashboard:quiz",kwargs={"slug":course.slug}))
@@ -394,6 +408,8 @@ def add_answer(request,course,slug):
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.question=question
+                course.course_status = "on process"
+                course.save()
                 instance.save() 
                 question.answer.add(instance)
                 course.quiz.answers.add(instance)
@@ -425,6 +441,8 @@ def edit_answer(request,course,id):
         if request.method == "POST":
             if form.is_valid():
                 instance=form.save(commit=False)
+                course.course_status = "on process"
+                course.save()
                 instance.save() 
                 messages.success(request,"Answer Edited successfully")
                 return redirect("dashboard:quiz",kwargs={"slug":course.slug})

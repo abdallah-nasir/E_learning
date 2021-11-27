@@ -39,7 +39,7 @@
                             <a href="{% url 'home:event' i.slug %}"><h4>{{i.name|truncatechars_html:70}}</h4></a>
                             <span><i class="fa fa-clock-o"></i> {{i.start_time|date:"h a"}} - {{i.end_time|date:"h a"}}</span>
                             <span><i class="fa fa-map-marker"></i> {{i.place.title}}</span>
-                            <p>{{i.details|truncatechars_html:70}}</p>
+                            <p>{{i.get_details.details|truncatechars_html:70}}</p>
                        </div>
                    </div>
                </div>
