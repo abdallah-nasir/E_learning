@@ -1,0 +1,435 @@
+{% extends 'dashboard_base.html' %}
+
+
+
+{% block content %}
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Approve</h1>
+                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            <form id="approve_form" method="GET">
+                            <div class="form-group">
+                                <select id="approve" name="approve" class="form-control" id="exampleFormControlSelect1">
+                                  <option>select</option>
+                                  {% for i,b in choices.items %}
+                                  <option value="{{b}}">{{i}}</option>
+                                  {% endfor %}
+                               
+                                </select>
+                              </div>
+                            </form>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                {% if qs == "teacher" %}
+                                <h3>Teachers</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Email</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.username|truncatewords:20}}</td>
+                                        <td>{{i.email}}</td>
+                                        <td>
+                                        <button class="btn btn-success" data-toggle="modal" data-target="#teacher-{{i.id}}">Approve</button>
+                                        <a href="{% url 'dashboard:reject' i.id %}?reject=teacher" class="btn btn-danger">Reject</a>
+                                    </td>
+                                    </tr>
+            <div class="modal fade" id="teacher-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Approve Teacher</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you Sure ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == 'blogs' %}
+                                <h3>Blogs</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Blog</th>
+                                            <th>User</th>
+                                            <th>email</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.name|truncatewords:20}}</td>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.user.email}}</td>
+                                        <td>
+                                            <a href="{% url 'dashboard:show_demo_blog' i.slug %}" class="btn btn-primary">Details</a>
+                                            <button class="btn btn-success" data-toggle="modal" data-target="#blogs-{{i.id}}">Approve</button>
+                                            <a href="{% url 'dashboard:reject' i.id %}?reject=blogs" class="btn btn-danger">Reject</a>
+
+                                        </td>
+                                     
+                                     
+                                    </tr>
+                                <div class="modal fade" id="blogs-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Approve Blog</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you Sure ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == "blog_payment" %}
+                                <h3>Blog Payments</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                      
+                                        <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Method</th>
+                                        <th>Transaction Number</th>
+                                        <th>Expired At</th>
+                                    <th>Action</th>
+                   
+
+                                        </tr>
+                                        
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.user.email}}</td>
+                                        <td>{{i.method}}</td>
+                                        <td>{{i.transaction_number}}</td>
+                                        <td>
+                        <button class="btn btn-success" data-toggle="modal" data-target="#blog_payment-{{i.id}}">Approve</button>
+                        <a href="{% url 'dashboard:reject' i.id %}?reject=blog_payment" class="btn btn-danger">Reject</a>
+                    </td>
+                                     
+                                     
+                                    </tr>
+                        <div class="modal fade" id="blog_payment-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Blogs Payment</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you Sure ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == "consultant_payment" %}
+                                <h3>Consultant Payments</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                      
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Teacher</th>
+                                            <th>Transaction Number</th>
+                                            <th>Is Active</th>
+                                        </tr>
+                                        
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.consult.teacher.user.username}}</td>
+                                        <td>{{i.transaction_number}}</td>
+                                        <td>
+                                            <button class="btn btn-success" data-toggle="modal" data-target="#consult_payment-{{i.id}}">Approve</button>
+                                            <a href="{% url 'dashboard:reject' i.id %}?reject=consultant_payment" class="btn btn-danger">Reject</a>
+                                        </td>
+                                     
+                                    </tr>
+
+                                    <div class="modal fade" id="consult_payment-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Consult Payment</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == "course" %}
+                                <h3>Course</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                      
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>email</th>
+                                            <th>Teacher</th>
+                                          
+                                        
+
+                                        </tr>
+                                        
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.name|truncatewords:10}}</td>
+                                          <td>{{i.email}}</td>
+                                        <td>{{i.Instructor.username}}</td>
+                                        <td>
+                                            <button class="btn btn-success" data-toggle="modal" data-target="#course-{{i.id}}">Approve</button>
+                                            <a href="{% url 'dashboard:reject' i.id %}?reject=course" class="btn btn-danger">Reject</a>
+                                                </td>
+                                     
+                                     
+                                    </tr>
+                                    <div class="modal fade" id="course-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Course</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == "events" %}
+                                <h3>Events</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                      
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>User</th>
+                                            <th>Date</th>
+                                            <th>Action</th>
+                                        
+
+                                        </tr>
+                                        
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.name|truncatewords:10}}</td>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.date}}</td>
+                                        <td>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#event-{{i.id}}">Approve</button>
+                                <a href="{% url 'dashboard:reject' i.id %}?reject=events" class="btn btn-danger">Reject</a>
+                            </td>
+                                     
+                                    </tr>
+                                    <div class="modal fade" id="event-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Teacher</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == "payment" %}
+                                <h3>Course Payments</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                      
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Method</th>
+                                            <th>Transaction Number</th>
+                                            <th>Action</th>
+                                        
+
+                                        </tr>
+                                        
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.method}}</td>
+                                        <td>{{i.transaction_number}}</td>
+                                        <td>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#payment_course-{{i.id}}">Approve</button>
+                                <a href="{% url 'dashboard:reject' i.id %}?reject=payment" class="btn btn-danger">Reject</a>
+                            </td>
+                                     
+                                     
+                                    </tr>
+                                    <div class="modal fade" id="payment_course-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Teacher</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% endif %}
+
+
+
+
+
+                                {% if query.has_other_pages %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        {% if teachers.has_previous  %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ teachers.previous_page_number }}">Previous</a></li>
+                                      {% endif %}
+                                      {% for i in  teachers.paginator.page_range %}
+                                      {% if teachers.number == i %}
+                                      <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% else %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% endif %}
+                                      {% endfor %}
+                                      {% if teachers.has_next %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ teachers.next_page_number }}">Next</a></li>
+                                      {% endif %}
+                                    </ul>
+                                  </nav>
+                                  {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+{% endblock %}

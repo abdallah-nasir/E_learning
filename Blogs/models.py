@@ -116,8 +116,8 @@ class Blog(models.Model):
         comments=self.comments.count()
         replies=self.blog_comment_reply.count()
         count=comments + replies
-
         return count
+    # def 
 
 @receiver(post_save, sender=Blog)
 def create_blog_viewers(sender, instance, created, **kwargs):

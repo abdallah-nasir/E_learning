@@ -54,8 +54,7 @@
 
 .right-icon ul li{
 display: table-cell !important;
-margin-right: 17px !important;
-padding: 22px 0 !important;
+
 }
 .nice-select{
 display: none !important;
@@ -63,11 +62,7 @@ display: none !important;
 .fa-heart{
 cursor:pointer;
     }
-    #news-bar {
-        
-    color:#fff;
-    
-      }
+
       
       #news-bar:hover {
         transition: 0.37s;
@@ -75,13 +70,14 @@ cursor:pointer;
       
       #news-bar a {
         padding:8px 2px;
-        color: black;
+        font-size: 30px;
+        color: #fff;
         text-decoration: none;
       }
       
       #news-bar a:hover {
         transition: 0.37s;
-        color: red;
+        color: #ffc600;
       }
       
 </style >
@@ -206,32 +202,42 @@ cursor:pointer;
                                     </li>
                                     <li class="nav-item">
                                         <a href="{% url 'blogs:blogs' %}">{% trans 'Blog' %}</a>
-                                       
-               
-                                    </li>
 
-                            
-                                    <!-- <li class="nav-item">
-                                        <a href="{% url 'home:faqs' %}">FAQS</a>
-                                       
-                                    </li> -->
-                                    <li class="nav-item">
+                                    </li>                            
+                                   
+                                     <li class="nav-item">
                                         <a href="{% url 'consultant:home' %}">{% trans 'Consultant' %}</a>
                                        
-                                    </li>
+                                    </li> 
                                     <li class="nav-item">
-                                        <a href="#">{% trans 'For You' %}</a>
+                                        <a href="#">{% trans 'Profile' %}</a>
                                         <ul class="sub-menu">
-                                          <li><a href="{% url 'home:contact' %}">{% trans 'Contact Us' %}</a></li> 
-                                            <li><a href="{% url 'home:faqs' %}">{% trans 'FAQS' %}</a></li>
-                                            <li><a href="{% url 'home:about' %}">{% trans 'About Us' %}</a></li>
+                      
                                             <li><a href="{% url 'accounts:account_info' %}">{% trans 'Profile' %}</a></li>
-                                     
+                                            {% if request.user.is_authenticated %}
+                                            <li ><a href="{% url 'accounts:logout' %}">{% trans 'Logout' %}</a></li>  
+                                            {% else %}
+                                           
+                                            <li ><a href="{% url 'account_login' %}">{% trans 'Login' %}</a></li>  
+            
+                                            {% endif %}
                                         </ul> 
                                     </li>
+
                                     <li class="nav-item">
+                                        <a href="#">{% trans 'Service' %}</a>
+                                        <ul class="sub-menu">
+                                        <li><a href="{% url 'home:contact' %}">{% trans 'Contact Us' %}</a></li> 
+                                        <li><a href="{% url 'home:faqs' %}">{% trans 'FAQS' %}</a></li>
+                                        <li><a href="{% url 'home:about' %}">{% trans 'About Us' %}</a></li>
+                                       
+                                    </ul> 
+                                    </li>
+
+
+                                    <!-- <li class="nav-item">
                                         <a href="#">{% trans 'Language' %}</a>
-                                    <ul class="sub-menu">
+                                        <ul class="sub-menu">
    
                                             {% for language in languages %}
                                              <li> <a href="/{{language.code}}" class="u-c-brand">{{ language.name_local }} ({{ language.code }})</a> 
@@ -239,23 +245,17 @@ cursor:pointer;
                                         {%  endfor %}
                                         </ul> 
                                        
-                                    </li>
+                                    </li> -->
                                    
                                   
                                 </ul>
                             </div>
                         </nav> <!-- nav -->
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-3 col-4">
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-3">
                         <div class="right-icon text-right">
                             <ul>
-                                {% if request.user.is_authenticated %}
-                                <li ><a href="{% url 'accounts:logout' %}">{% trans 'Logout' %}</a></li>  
-                                {% else %}
                                
-                                <li ><a href="{% url 'account_login' %}">{% trans 'Login' %}</a></li>  
-
-                                {% endif %}
                                 <li><a  style="cursor:pointer;" id="search"><i class="fa fa-search"></i></a></li>
                                 {% if request.user.is_authenticated %}
                                 <li><a href="{% url 'home:cart' request.user.slug %}"><i class="fa fa-shopping-bag"></i><span id="shop-numbers">{{my_wishlist.course.count}}</span></a></li>
@@ -263,6 +263,20 @@ cursor:pointer;
                                 <li><a href="{% url 'account_login' %}"><i class="fa fa-shopping-bag"></i><span id="shop-numbers">{{my_wishlist.course.count}}</span></a></li>
 
                                 {% endif %}
+                                <li >
+                                   
+                                    {% if LANGUAGE_CODE == "en" %}
+                                    <a href="/ar" title="arabic"><i class="fa fa-globe" aria-hidden="true"></i></a>
+                                    {% elif LANGUAGE_CODE == "ar" %}
+                                    <a href="/en" title="english"><i class="fa fa-globe" aria-hidden="true"></i></a>
+
+                                    {% else %}
+                                <a href="/ar" title="arabic"><i class="fa fa-globe" aria-hidden="true"></i></a>
+                                    {% endif %}
+                                </li>
+
+                             
+
                             </ul>
                         </div> <!-- right icon -->
                     </div>

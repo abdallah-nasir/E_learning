@@ -1,0 +1,81 @@
+{% extends 'dashboard_base.html' %}
+
+
+
+{% block content %}
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Teachers</h1>
+                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Teacher</th>
+                                            <th>phone</th>
+                                            <th>email</th>
+                                            <th>Is Active</th>
+                                        
+
+                                        </tr>
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in teachers %}
+                                    <tr>
+                                        <td>{{i.username}}</td>
+                                        <td>{{i.phone}}</td>
+                                        <td>{{i.email}}</td>
+                                        <td>{{i.is_active}}</td>
+                                     
+                                     
+                                    </tr>
+
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% if teachers.has_other_pages %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        {% if teachers.has_previous  %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ teachers.previous_page_number }}">Previous</a></li>
+                                      {% endif %}
+                                      {% for i in  teachers.paginator.page_range %}
+                                      {% if teachers.number == i %}
+                                      <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% else %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% endif %}
+                                      {% endfor %}
+                                      {% if teachers.has_next %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ teachers.next_page_number }}">Next</a></li>
+                                      {% endif %}
+                                    </ul>
+                                  </nav>
+                                  {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+{% endblock %}

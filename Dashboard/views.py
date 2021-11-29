@@ -15,6 +15,9 @@ from django.shortcuts import get_object_or_404
 from taggit.models import Tag
 from django.contrib.auth.decorators import user_passes_test
 import json
+from django.contrib.auth import get_user_model
+User=get_user_model()
+
 # Create your views here.
 
 
@@ -469,3 +472,143 @@ def delete_answer(request,slug,id):
         return redirect("dashboard:courses")
     return redirect(reverse("dashboard:quiz",kwargs={"slug":course.slug}))
 
+@login_required
+@check_user_validation
+def teachers(request):
+    if request.user.is_superuser or request.user.is_director:
+        teacher=User.objects.filter(account_type="teacher").order_by("-id")
+    else:
+        messages.error(request,"You Don't have Permission")
+        return redirect(reverse("dashboard:home"))
+    context={"teachers":teacher}
+    return render(request,"dashboard_teachers.html",context)
+
+def get_choices_keys():
+    choices={"Blogs":"blogs","Consultant Payment":"consultant_payment"}
+    for i in choices.values():
+        print(i)
+    return True
+
+@login_required
+def approve(request):
+    if request.user.is_superuser :
+        qs=request.GET["approve"]
+        print(qs)
+        choices={"Teachers":"teacher","Blogs":"blogs","Blog Payments":"blog_payment","Consultant Payment":"consultant_payment",
+            "Course":"course","Course Payments":"payment","Events":"events"}
+        if qs == "blogs":
+            query=Blog.objects.filter(approved=False).order_by("-id")
+            print(query)
+        elif qs == "blog_payment":
+            query=Blog_Payment.objects.filter(pending=True)
+        elif qs == "consultant_payment":
+            query=Cosultant_Payment.objects.filter(pending=True)
+        elif qs == "course":
+            query=Course.objects.filter(approved=False)
+        elif qs == "events":
+            query=Events.objects.filter(approved=False)
+        elif qs == "payment":
+            query=Payment.objects.filter(pending=True)
+        elif qs == "teacher":
+            query=User.objects.filter(account_type="teacher",is_active=False)
+        else:
+            query=False
+        print(query)
+    else:
+        messages.error(request,"You Don't have Permission")
+        return redirect(reverse("dashboard:home"))
+    context={"query":query,"qs":qs,"choices":choices}
+    return render(request,"dashboard_approve.html",context)
+
+@login_required
+def show_demo_blog(request,slug):
+    if request.user.is_superuser :
+        blog=get_object_or_404(Blog,slug=slug)
+    else:
+        messages.error(request,"You Don't Have permission")
+        return redirect(reverse("home:home"))
+    context={"blog":blog}
+    return render(request,"dashboard_show_demo_blog.html",context)
+
+
+@login_required
+def approve_content(request,id):
+    if request.user.is_superuser :
+        qs=request.GET["approve"]
+        if qs == "blogs":
+            query=get_object_or_404(Blog,id=id,approved=False)
+            query.approved=True
+            query.save()
+        if qs == "blog_payment":
+            query=get_object_or_404(Blog_Payment,id=id,pending=True)
+            query.pending=False
+            query.ordered=True
+            query.save()
+            query.user.vip == True
+            query.user.save()
+        if qs == "consultant_payment":
+            query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
+            query.pending=False
+            query.ordered=True
+            query.save()
+            query.consult.pending=False
+            query.consult.save()
+        if qs == "course":
+            query=get_object_or_404(Course,id=id,approved=False)
+            query.approved=True
+            query.save()
+        if qs == "events":
+            query=get_object_or_404(Events,id=id,approved=False)
+            query.approved=True
+            query.save()
+        if qs == "payment":
+            query=get_object_or_404(Payment,id=id,pending=True)
+            query.pending=False
+            query.ordered=True
+            query.save()
+        if qs == "teacher":
+            query=get_object_or_404(User,id=id,is_active=False,account_type="teacher")
+            query.is_active=True
+            query.save()
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("home:home"))
+    return redirect(reverse("dashboard:approve")) 
+ 
+@login_required
+def reject(request,id):
+    if request.user.is_superuser :
+        qs=request.GET["reject"]
+        if qs == "blogs":
+            query=get_object_or_404(Blog,id=id,approved=False)
+            form=BlogDetail(request.POST or None ,instance=query)
+   
+        if qs == "blog_payment":
+            query=get_object_or_404(Blog_Payment,id=id,pending=True)
+            form=Blog_PaymentDetail(request.POST or None ,instance=query)
+
+        if qs == "consultant_payment":
+            query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
+            form=Cosultant_PaymentDetail(request.POST or None ,instance=query)
+
+        if qs == "course":
+            query=get_object_or_404(Course,id=id,approved=False)
+            form=CourseDetail(request.POST or None ,instance=query)
+
+        if qs == "events":
+            query=get_object_or_404(Events,id=id,approved=False)
+            form=EventsDetail(request.POST or None ,instance=query)
+
+        if qs == "payment":
+            query=get_object_or_404(Payment,id=id,pending=True)
+            form=PaymentDetail(request.POST or None ,instance=query)
+
+        if qs == "teacher":
+            query=get_object_or_404(User,id=id,is_active=False,account_type="teacher")
+            form=UserDetail(request.POST or None ,instance=query)
+
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("home:home"))
+    context={"form":form}
+    return render(request,"dashboard_reject_form.html",context)

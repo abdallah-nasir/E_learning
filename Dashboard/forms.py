@@ -1,11 +1,12 @@
 from django import forms
-from Blogs.models import Blog
-from home.models import Course,Branch,Videos,Events
+from django.contrib.auth import get_user_model
+from Blogs.models import Blog,Blog_Payment
+from home.models import Course,Branch,Videos,Events,Payment
+from Consultant.models import Cosultant_Payment
 from Quiz.models import Question ,Answers
 import os
 from crum import get_current_request
-
-
+User=get_user_model()
 class AddBlog(forms.ModelForm):
     image=forms.ImageField(required=True)
     link=forms.HiddenInput()
@@ -77,3 +78,41 @@ class AddAnswer(forms.ModelForm):
     class Meta:
         model=Answers
         fields=["answer","correct"]
+############################
+# Get model details for superuser
+class BlogDetail(forms.ModelForm):
+    message=forms.CharField(widget=forms.Textarea())
+    class Meta:
+        model=Blog
+        fields="__all__"
+
+class Blog_PaymentDetail(forms.ModelForm):
+    message=forms.CharField(widget=forms.Textarea())
+    class Meta:
+        model=Blog_Payment
+        fields="__all__"
+class Cosultant_PaymentDetail(forms.ModelForm):
+    message=forms.CharField(widget=forms.Textarea())
+    class Meta:
+        model=Cosultant_Payment
+        fields="__all__"
+class CourseDetail(forms.ModelForm):
+    message=forms.CharField(widget=forms.Textarea())
+    class Meta:
+        model=Course
+        fields="__all__"
+class EventsDetail(forms.ModelForm):
+    message=forms.CharField(widget=forms.Textarea())
+    class Meta:
+        model=Events
+        fields="__all__"
+class PaymentDetail(forms.ModelForm):
+    message=forms.CharField(widget=forms.Textarea())
+    class Meta:
+        model=Payment
+        fields="__all__"
+class UserDetail(forms.ModelForm):
+    message=forms.CharField(widget=forms.Textarea())
+    class Meta:
+        model=User
+        fields="__all__"

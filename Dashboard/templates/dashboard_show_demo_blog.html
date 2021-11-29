@@ -1,0 +1,351 @@
+{% extends 'blog_base.html' %}
+
+{% block content %}
+<style type="text/css">
+ /* Style the button that is used to open and close the collapsible content */
+ .collapsible {
+
+	cursor: pointer;
+
+  }
+
+  
+  /* Style the collapsible content. Note: hidden by default */
+  .content {
+	padding: 0 18px;
+	display: none;
+	overflow: hidden;
+	background-color: #f1f1f1;
+  } 
+
+</style>
+
+		<!-- BEGIN CONTENT -->
+		<main class="site-content">
+			<div class="container">
+
+<div class="grid-container">
+	<div class="grid-70">
+		{% if blog.blog_type == "standard" %}
+		<article class="post margin-bottom">
+			<header class="entry-header">
+				<figure class="entry-thumb">
+					<img src="{{blog.image.first.image.url}}" width="1200" height="400" alt="">
+				</figure>
+				<div class="icon-b">
+					<i class="fa fa-newspaper-o"></i>
+				</div>
+				<div class="entry-category"><a href="">{{blog.category.name.title}}</a></div>
+				<div class="entry-header-title">
+					<h1>{{blog.name.title}}</h1>
+					<div class="entry-meta">
+						<span class="entry-meta-date">
+							<i class="fa fa-calendar"></i>
+							{{blog.created_at|date:"M d, Y"}}
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-comments"></i>
+							{{blog.get_comments}} comments
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
+					</div>
+				</div>
+			</header>
+			<div class="entry-content">
+				{{blog.details|safe}}
+			</div>
+			<footer class="entry-footer">
+				<h3>Tags</h3>
+				<div class="tags">
+					{% for b in blog.tags.all %}
+					<a href="">{{b.name}}</a>
+					{% endfor %}
+				</div>
+				<h3>Share</h3>
+				<div class="social-likes social-likes_notext">
+					<div class="facebook" title="Share link on Facebook"></div>
+					<div class="twitter" title="Share link on Twitter"></div>
+					<div class="plusone" title="Share link on Google+"></div>
+				</div>
+			</footer>
+		</article>
+		{% elif blog.blog_type == "video" %}
+		<article class="post format-video margin-bottom">
+			<div class="entry-media">
+				<iframe width="900" height="450" src="{{blog.get_video}}" allowfullscreen></iframe>
+			</div>
+			<header class="entry-header">
+				<div class="icon-b">
+					<i class="fa fa-film"></i>
+				</div>
+				<div class="entry-category"><a href="">{{blog.category.name.title}}</a></div>
+				<div class="entry-header-title">
+					<h1>{{blog.name.title}}</h1>
+					<div class="entry-meta">
+						<span class="entry-meta-date">
+							<i class="fa fa-calendar"></i>
+						{{blog.created_at|date:"M d, Y"}}
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-comments"></i>
+							{{blog.get_comments}}  comments
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
+					</div>
+				</div>
+			</header>
+			<div class="entry-content">
+				{{blog.details|safe}}
+			</div>
+			<footer class="entry-footer">
+				<h3>Tags</h3>
+				<div class="tags">
+					{% for b in blog.tags.all %}
+					<a href="">{{b.name}}</a>
+					{% endfor %}
+				</div>
+				<h3>Share</h3>
+				<div class="social-likes social-likes_notext">
+					<div class="facebook" title="Share link on Facebook"></div>
+					<div class="twitter" title="Share link on Twitter"></div>
+					<div class="plusone" title="Share link on Google+"></div>
+				</div>
+			</footer>
+		</article>
+		{% elif blog.blog_type == "audio" %}
+		<article class="post format-audio margin-bottom">
+			<div class="entry-media">
+				<iframe width="900" height="450" src="{{blog.get_audio}}"></iframe>
+			</div>
+			<header class="entry-header">
+				<div class="icon-b">
+					<i class="fa fa-music"></i>
+				</div>
+				<div class="entry-category"><a href="">{{blog.category.name.title}}</a></div>
+				<div class="entry-header-title">
+					<h1>{{blog.name.title}}</h1>
+					<div class="entry-meta">
+						<span class="entry-meta-date">
+							<i class="fa fa-calendar"></i>
+						{{blog.created_at|date:"M d, Y"}}
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-comments"></i>
+							{{blog.get_comments}} comments
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
+					</div>
+				</div>
+			</header>
+			<div class="entry-content">
+				{{blog.details|safe}}
+			</div>
+			<footer class="entry-footer">
+				<h3>Tags</h3>
+				<div class="tags">
+					{% for b in blog.tags.all %}
+					<a href="">{{b.name}}</a>
+					{% endfor %}
+				</div>
+				<h3>Share</h3>
+				<div class="social-likes social-likes_notext">
+					<div class="facebook" title="Share link on Facebook"></div>
+					<div class="twitter" title="Share link on Twitter"></div>
+					<div class="plusone" title="Share link on Google+"></div>
+				</div>
+			</footer>
+		</article>
+		{% elif blog.blog_type == "quote" %}
+		<article class="post format-link margin-bottom">
+			<header class="entry-header">
+				<blockquote>
+					<p>{{blog.get_quote}}</p>
+					<!-- <cite>- John Doe</cite> -->
+				</blockquote>
+				<div class="icon-b">
+					<i class="fa fa-quote-left"></i>
+				</div>
+				<div class="entry-header-title">
+					<h1>{{blog.name.title}}</h1>
+					<div class="entry-meta">
+						<span class="entry-meta-date">
+							<i class="fa fa-calendar"></i>
+						{{blog.created_at|date:"M d, Y"}}
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-comments"></i>
+							{{blog.get_comments}} comments
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
+					</div>
+				</div>
+			</header>
+			<div class="entry-content">
+			{{blog.details|safe}}
+			</div>
+			<footer class="entry-footer">
+				<h3>Tags</h3>
+				<div class="tags">
+					{% for b in blog.tags.all %}
+					<a href="">{{b.name}}</a>
+					{% endfor %}
+				</div>
+				<h3>Share</h3>
+				<div class="social-likes social-likes_notext">
+					<div class="facebook" title="Share link on Facebook"></div>
+					<div class="twitter" title="Share link on Twitter"></div>
+					<div class="plusone" title="Share link on Google+"></div>
+				</div>
+			</footer>
+		</article>
+		{% elif blog.blog_type == "link" %}
+		<article class="post format-link margin-bottom">
+			<header class="entry-header">
+				<div class="icon-b">
+					<i class="fa fa-link"></i>
+				</div>
+				<div class="entry-header-title">
+					<h1>{{blog.name.title}}</h1>
+					<div class="entry-meta">
+						<span class="entry-meta-date">
+							<i class="fa fa-calendar"></i>
+						{{blog.created_at|date:"M d, Y"}}
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-comments"></i>
+							{{blog.get_comments}} comments
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
+					</div>
+				</div>
+			</header>
+			<div class="entry-content">
+				<a class="entry-link btn" href="{{blog.get_link}}"><i class="fa fa-external-link"></i> {{blog.get_link}}</a>
+				{{blog.details|safe}}
+			</div>
+			<footer class="entry-footer">
+				<h3>Tags</h3>
+				<div class="tags">
+					{% for b in blog.tags.all %}
+					<a href="">{{b.name}}</a>
+					{% endfor %}
+				</div>
+				<h3>Share</h3>
+				<div class="social-likes social-likes_notext">
+					<div class="facebook" title="Share link on Facebook"></div>
+					<div class="twitter" title="Share link on Twitter"></div>
+					<div class="plusone" title="Share link on Google+"></div>
+				</div>
+			</footer>
+		</article>
+		{% elif blog.blog_type == "gallery" %}
+		<article class="post format-gallery margin-bottom">
+			<header class="entry-header">
+				<figure class="entry-thumb">
+					<img src="{{blog.image.first.image.url}}" width="1200" height="500" alt="">
+				</figure>
+				<div class="icon-b">
+					<i class="fa fa-image"></i>
+				</div>
+				<div class="entry-category"><a href="">{{blog.category.name.title}}</a></div>
+				<div class="entry-header-title">
+					<h1>{{blog.name.title}}</h1>
+					<div class="entry-meta">
+						<span class="entry-meta-date">
+							<i class="fa fa-calendar"></i>
+						{{blog.created_at|date:"M d, Y"}}
+
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-comments"></i>
+							{{blog.get_comments}} comments
+						</span>
+						<span class="entry-meta-comments">
+							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
+						</span>
+					</div>
+				</div>
+			</header>
+			<div class="entry-content">
+				<div class="gallery margin-bottom">
+					{% for i in blog.image.all %}
+					<a href="{{i.image.url}}">
+						<img src="{{i.image.url}}" width="300" height="300" alt="">
+					</a>
+					{% endfor %}
+				</div>
+				{{blog.details|safe}}
+			</div>
+			<footer class="entry-footer">
+				<h3>Tags</h3>
+				<div class="tags">
+					{% for b in blog.tags.all %}
+					<a href="">{{b.name}}</a>
+					{% endfor %}
+				</div>
+			
+			</footer>
+		</article>
+		{% endif %}
+
+
+<hr>
+
+
+
+
+
+	</div>
+	<div class="grid-30">
+<aside class="site-aside">
+
+	<div class="widget widget-about">
+		<div class="widget-about-photo">
+			<img src="{{blog.user.image.url}}" width="80" height="80" alt="">
+		</div>
+		<p>{{blog.user.get_user_data.about_me}}</p>
+		<!-- <img src="images/signature.png" width="100" height="25" alt=""> -->
+	</div>
+
+
+
+
+
+</aside>
+
+	</div>
+</div>
+
+
+			</div>
+		</main>
+		<!-- END CONTENT -->
+
+<script style="text/javascript">
+	var coll = document.getElementsByClassName("collapsible");
+	var i;
+	
+	for (i = 0; i < coll.length; i++) {
+	  coll[i].addEventListener("click", function() {
+		this.classList.toggle("active");
+		var content = this.nextElementSibling;
+		if (content.style.display === "block") {
+		  content.style.display = "none";
+		} else {
+		  content.style.display = "block";
+		}
+	  });
+	} 
+
+</script>
+{% endblock %}
