@@ -169,6 +169,10 @@ class Course(models.Model):
         my_time=time.strftime('%H:%M:%S',  time.gmtime(self.duration))
         return my_time
 
+    def related_events(self):
+        events=Events.objects.filter(user=self.Instructor,category=self.branch)[:4]
+        return events
+
     def total_rate(self):
         if self.reviews.count() > 0:
             rate=0
@@ -227,6 +231,7 @@ class Events(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     students=models.ManyToManyField(User,related_name="event_students",blank=True)
+    category=models.ForeignKey(Branch,on_delete=models.SET_NULL,null=True)
     details=models.TextField()
     image=models.ImageField(upload_to=upload_events_images)
     date=models.DateField()

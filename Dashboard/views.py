@@ -499,7 +499,7 @@ def approve(request):
         if qs == "blogs":
             query=Blog.objects.filter(approved=False).order_by("-id")
             print(query)
-        elif qs == "blog_payment":
+        elif qs == "blog_payment":  
             query=Blog_Payment.objects.filter(pending=True)
         elif qs == "consultant_payment":
             query=Cosultant_Payment.objects.filter(pending=True)

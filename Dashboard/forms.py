@@ -112,7 +112,14 @@ class PaymentDetail(forms.ModelForm):
         model=Payment
         fields="__all__"
 class UserDetail(forms.ModelForm):
+    password=forms.CharField(widget = forms.TextInput(attrs={'readonly':'readonly'}))
     message=forms.CharField(widget=forms.Textarea())
     class Meta:
         model=User
         fields="__all__"
+
+    def __init__(self, *args, **kwargs):
+        super(UserDetail, self).__init__(*args, **kwargs)
+        for i in self.fields:
+            self.fields[i].widget.attrs['readonly'] = True
+        self.fields["message"].widget.attrs['readonly'] = False
