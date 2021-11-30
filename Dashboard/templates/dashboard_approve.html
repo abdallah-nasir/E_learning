@@ -31,6 +31,7 @@
                             </form>
                         </div>
                         <div class="card-body">
+                        
                             <div class="table-responsive">
                                 {% if qs == "teacher" %}
                                 <h3>Teachers</h3>
@@ -66,7 +67,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                        <a href="{% url 'dashboard:approve_content' i.id %}?approve=teacher" type="button" class="btn btn-success">Approve</a>
                     </div>
                     </div>
                 </div>
@@ -117,7 +118,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                            <a href="{% url 'dashboard:approve_content' i.id %}?approve=blogs" type="button" class="btn btn-success">Approve</a>
                                         </div>
                                         </div>
                                     </div>
@@ -174,7 +175,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                    <a href="{% url 'dashboard:approve_content' i.id %}?approve=blog_payment" type="button" class="btn btn-success">Approve</a>
                                 </div>
                                 </div>
                             </div>
@@ -226,7 +227,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=consultant_payment" type="button" class="btn btn-success">Approve</a>
                                             </div>
                                             </div>
                                         </div>
@@ -279,7 +280,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=course" type="button" class="btn btn-success">Approve</a>
                                             </div>
                                             </div>
                                         </div>
@@ -322,7 +323,7 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Approve Teacher</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Event</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -332,7 +333,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=events" type="button" class="btn btn-success">Approve</a>
                                             </div>
                                             </div>
                                         </div>
@@ -376,7 +377,7 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Approve Teacher</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Course Payment</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -386,7 +387,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <a href="{% url 'dashboard:approve_content' i.id %}" type="button" class="btn btn-success">Approve</a>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=payment" type="button" class="btn btn-success">Approve</a>
                                             </div>
                                             </div>
                                         </div>

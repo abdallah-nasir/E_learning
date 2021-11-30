@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.template.defaultfilters import urlencode
 from django.urls import reverse
 from Consultant.models import Cosultant_Payment
 from home.models import Course,Payment,Events
@@ -6,6 +7,8 @@ from Blogs.models import (Blog,Blog_Payment,Blog_Images)
 from Quiz.models import *
 from django.core.paginator import Paginator
 from .forms import *
+from django.core.mail import send_mail
+from django.conf import settings
 from accounts.forms import ChangeUserDataForm
 from .decorators import *
 from django.contrib.auth.decorators import login_required
@@ -13,11 +16,12 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from taggit.models import Tag
+from .models import *
 from django.contrib.auth.decorators import user_passes_test
 import json
 from django.contrib.auth import get_user_model
 User=get_user_model()
-
+urlencode
 # Create your views here.
 
 
@@ -492,28 +496,29 @@ def get_choices_keys():
 @login_required
 def approve(request):
     if request.user.is_superuser :
-        qs=request.GET["approve"]
-        print(qs)
-        choices={"Teachers":"teacher","Blogs":"blogs","Blog Payments":"blog_payment","Consultant Payment":"consultant_payment",
-            "Course":"course","Course Payments":"payment","Events":"events"}
-        if qs == "blogs":
-            query=Blog.objects.filter(approved=False).order_by("-id")
-            print(query)
-        elif qs == "blog_payment":  
-            query=Blog_Payment.objects.filter(pending=True)
-        elif qs == "consultant_payment":
-            query=Cosultant_Payment.objects.filter(pending=True)
-        elif qs == "course":
-            query=Course.objects.filter(approved=False)
-        elif qs == "events":
-            query=Events.objects.filter(approved=False)
-        elif qs == "payment":
-            query=Payment.objects.filter(pending=True)
-        elif qs == "teacher":
-            query=User.objects.filter(account_type="teacher",is_active=False)
-        else:
-            query=False
-        print(query)
+        try:
+            qs=request.GET["approve"]
+            choices={"Teachers":"teacher","Blogs":"blogs","Blog Payments":"blog_payment","Consultant Payment":"consultant_payment",
+                "Course":"course","Course Payments":"payment","Events":"events"}
+            if qs == "blogs":
+                query=Blog.objects.filter(approved=False).order_by("-id")
+            elif qs == "blog_payment":  
+                query=Blog_Payment.objects.filter(pending=True)
+            elif qs == "consultant_payment":
+                query=Cosultant_Payment.objects.filter(pending=True)
+            elif qs == "course":
+                query=Course.objects.filter(approved=False)
+            elif qs == "events":
+                query=Events.objects.filter(approved=False)
+            elif qs == "payment":
+                query=Payment.objects.filter(pending=True)
+            elif qs == "teacher":
+                query=User.objects.filter(account_type="teacher",is_active=False)
+            else:
+                query=False
+        except:
+            return redirect(reverse("dashboard:home"))
+
     else:
         messages.error(request,"You Don't have Permission")
         return redirect(reverse("dashboard:home"))
@@ -530,83 +535,114 @@ def show_demo_blog(request,slug):
     context={"blog":blog}
     return render(request,"dashboard_show_demo_blog.html",context)
 
-
 @login_required
 def approve_content(request,id):
     if request.user.is_superuser :
-        qs=request.GET["approve"]
-        if qs == "blogs":
-            query=get_object_or_404(Blog,id=id,approved=False)
-            query.approved=True
-            query.save()
-        if qs == "blog_payment":
-            query=get_object_or_404(Blog_Payment,id=id,pending=True)
-            query.pending=False
-            query.ordered=True
-            query.save()
-            query.user.vip == True
-            query.user.save()
-        if qs == "consultant_payment":
-            query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
-            query.pending=False
-            query.ordered=True
-            query.save()
-            query.consult.pending=False
-            query.consult.save()
-        if qs == "course":
-            query=get_object_or_404(Course,id=id,approved=False)
-            query.approved=True
-            query.save()
-        if qs == "events":
-            query=get_object_or_404(Events,id=id,approved=False)
-            query.approved=True
-            query.save()
-        if qs == "payment":
-            query=get_object_or_404(Payment,id=id,pending=True)
-            query.pending=False
-            query.ordered=True
-            query.save()
-        if qs == "teacher":
-            query=get_object_or_404(User,id=id,is_active=False,account_type="teacher")
-            query.is_active=True
-            query.save()
+        try:
+            qs=request.GET["approve"]
+            if qs == "blogs":
+                query=get_object_or_404(Blog,id=id,approved=False)
+                query.approved=True
+                query.save()
+                messages.success(request,"Blog Approved Successfully")
+            elif qs == "blog_payment":
+                query=get_object_or_404(Blog_Payment,id=id,pending=True)
+                query.pending=False
+                query.ordered=True
+                query.save()
+                query.user.vip == True
+                query.user.save()
+                messages.success(request,"Payment Approved Successfully")
+            elif qs == "consultant_payment":
+                query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
+                query.pending=False
+                query.ordered=True
+                query.save()
+                query.consult.pending=False
+                query.consult.save()
+                messages.success(request,"Payment Approved Successfully")
+            elif qs == "course":
+                query=get_object_or_404(Course,id=id,approved=False)
+                query.approved=True
+                query.save()
+                messages.success(request,"Course Approved Successfully")
+            elif qs == "events":
+                query=get_object_or_404(Events,id=id,approved=False)
+                query.approved=True
+                query.save()
+                messages.success(request,"Event Approved Successfully")
+            elif qs == "payment":
+                query=get_object_or_404(Payment,id=id,pending=True)
+                query.pending=False
+                query.ordered=True
+                query.save()
+                messages.success(request,"Payment Approved Successfully")
+            elif qs == "teacher":
+                query=get_object_or_404(User,id=id,is_active=False,account_type="teacher")
+                query.is_active=True
+                query.save()
+                messages.success(request,"Teacher Approved Successfully")
+        except:
+            return redirect(reverse("dashboard:home"))
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("home:home"))
-    return redirect(reverse("dashboard:approve")) 
- 
+    redirect_url = reverse('dashboard:approve')
+    # parameters = urlencode()
+    return redirect(f'{redirect_url}?approve={qs}') 
+
 @login_required
 def reject(request,id):
     if request.user.is_superuser :
-        qs=request.GET["reject"]
-        if qs == "blogs":
-            query=get_object_or_404(Blog,id=id,approved=False)
-            form=BlogDetail(request.POST or None ,instance=query)
-   
-        if qs == "blog_payment":
-            query=get_object_or_404(Blog_Payment,id=id,pending=True)
-            form=Blog_PaymentDetail(request.POST or None ,instance=query)
-
-        if qs == "consultant_payment":
-            query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
-            form=Cosultant_PaymentDetail(request.POST or None ,instance=query)
-
-        if qs == "course":
-            query=get_object_or_404(Course,id=id,approved=False)
-            form=CourseDetail(request.POST or None ,instance=query)
-
-        if qs == "events":
-            query=get_object_or_404(Events,id=id,approved=False)
-            form=EventsDetail(request.POST or None ,instance=query)
-
-        if qs == "payment":
-            query=get_object_or_404(Payment,id=id,pending=True)
-            form=PaymentDetail(request.POST or None ,instance=query)
-
-        if qs == "teacher":
-            query=get_object_or_404(User,id=id,is_active=False,account_type="teacher")
-            form=UserDetail(request.POST or None ,instance=query)
-
+        try:
+            qs=request.GET["reject"]
+            content=Rejects.objects.filter(type=qs,content_id=id)
+            if content.exists():
+                redirect_url = reverse('dashboard:approve')
+                return redirect(f'{redirect_url}?approve={qs}') 
+            if qs == "blogs":
+                query=get_object_or_404(Blog,id=id,approved=False)
+                form=BlogDetail(request.POST or None ,instance=query)
+                content_user=query.user
+            elif qs == "blog_payment":
+                query=get_object_or_404(Blog_Payment,id=id,pending=True)
+                form=Blog_PaymentDetail(request.POST or None ,instance=query)
+                content_user=query.user
+            elif qs == "consultant_payment":
+                query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
+                form=Cosultant_PaymentDetail(request.POST or None ,instance=query)
+                content_user=query.user
+            elif qs == "course":
+                query=get_object_or_404(Course,id=id,approved=False)
+                form=CourseDetail(request.POST or None ,instance=query)
+                content_user=query.Instructor
+            elif qs == "events":
+                query=get_object_or_404(Events,id=id,approved=False)
+                form=EventsDetail(request.POST or None ,instance=query)
+                content_user=query.user
+            elif qs == "payment":
+                query=get_object_or_404(Payment,id=id,pending=True)
+                form=PaymentDetail(request.POST or None ,instance=query)
+                content_user=query.user
+            elif qs == "teacher":
+                query=get_object_or_404(User,id=id,is_active=False,account_type="teacher")
+                form=UserDetail(request.POST or None ,instance=query)
+                content_user=query
+            if request.method == "POST":
+                message=request.POST.get("message")
+                Rejects.objects.create(type=qs,content_id=id,user=content_user)
+                send_mail(
+                'Content Rejected',
+                message,
+                settings.EMAIL_HOST_USER,
+                [content_user.email],
+                fail_silently=False,
+            )
+                messages.success(request,"Content Rejected Successfully")
+                redirect_url = reverse('dashboard:approve')
+                return redirect(f'{redirect_url}?approve={qs}') 
+        except:
+            return redirect(reverse("dashboard:home"))
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("home:home"))
