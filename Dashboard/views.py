@@ -501,17 +501,17 @@ def approve(request):
             choices={"Teachers":"teacher","Blogs":"blogs","Blog Payments":"blog_payment","Consultant Payment":"consultant_payment",
                 "Course":"course","Course Payments":"payment","Events":"events"}
             if qs == "blogs":
-                query=Blog.objects.filter(approved=False).order_by("-id")
+                query=Blog.check_reject.get_query_set().order_by("-id")
             elif qs == "blog_payment":  
-                query=Blog_Payment.objects.filter(pending=True)
-            elif qs == "consultant_payment":
-                query=Cosultant_Payment.objects.filter(pending=True)
+                query=Blog_Payment.check_reject.get_query_set().order_by("-id")
+            elif qs == "consultant_payment": 
+                query=Cosultant_Payment.check_reject.get_query_set().order_by("-id")
             elif qs == "course":
-                query=Course.objects.filter(approved=False)
+                query=Course.check_reject.get_query_set().order_by("-id")
             elif qs == "events":
-                query=Events.objects.filter(approved=False)
+                query=Events.check_reject.get_query_set().order_by("-id")
             elif qs == "payment":
-                query=Payment.objects.filter(pending=True)
+                query=Payment.check_reject.get_query_set().order_by("-id")
             elif qs == "teacher":
                 query=User.objects.filter(account_type="teacher",is_active=False)
             else:

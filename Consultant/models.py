@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.query_utils import Q
-
+from Dashboard.models import Rejects
 User=get_user_model()
 # Create your models here.
 
@@ -43,6 +43,16 @@ class Consultant(models.Model):
 def upload_consultant_payment(instance,filename):
     return (f"payment/consultant/{instance.user.username}/{filename}")
 
+class CheckRejectConsultant(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="consultant_payment")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        consult=Cosultant_Payment.objects.filter(pending=True).exclude(id__in=list)
+        return consult
+        
 class Cosultant_Payment(models.Model):
     consult=models.ForeignKey(Consultant,on_delete=models.SET_NULL,null=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
@@ -52,5 +62,7 @@ class Cosultant_Payment(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     pending=models.BooleanField(default=False)
     ordered=models.BooleanField(default=False)
+    check_reject=CheckRejectConsultant()
+    objects=models.Manager()
     def __str__(self):
         return self.method

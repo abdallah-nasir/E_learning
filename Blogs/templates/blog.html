@@ -74,7 +74,11 @@
 		{% elif blog.blog_type == "video" %}
 		<article class="post format-video margin-bottom">
 			<div class="entry-media">
-				<iframe width="900" height="450" src="{{blog.get_video}}" allowfullscreen></iframe>
+				<video style="width:100%; max-height:500px;" controls>
+					<source src="{{blog.video.url}}" type="video/mp4">
+			   
+				  Your browser does not support the video tag.
+				  </video>
 			</div>
 			<header class="entry-header">
 				<div class="icon-b">

@@ -15,6 +15,7 @@ from PIL import Image
 import os  
 import time
 import json
+from Dashboard.models import Rejects
 User=settings.AUTH_USER_MODEL
 Quiz= Quiz.models.Quiz()
 # Create your models here.
@@ -93,7 +94,7 @@ class Videos(models.Model):
 def pre_save_receiver_video(sender, instance, *args, **kwargs):
     if not instance.slug:
         if Videos.objects.filter(slug=instance.slug).exists():
-            slug=f"{instance.my_course.name}-{instance.name}-{random_string_generator()}"
+            slug=f"{instance.name}-{random_string_generator()}"
             instance.slug = slugify(slug) 
         else:       
             slug=f"{instance.name}"
@@ -132,7 +133,16 @@ class Reviews(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.user.username    
-     
+class CheckRejectCourse(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="course")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        course=Course.objects.filter(approved=False).exclude(id__in=list)
+        return course
+        
 class Course(models.Model):
     name=models.CharField(max_length=150)
     videos=models.ManyToManyField(Videos)
@@ -147,6 +157,8 @@ class Course(models.Model):
     details=models.TextField()   
     approved=models.BooleanField(default=False)
     stars=models.FloatField(default=0)
+    objects=models.Manager()
+    check_reject=CheckRejectCourse()
     likes=models.PositiveIntegerField(default=0)
     reviews=models.ManyToManyField(Reviews,blank=True,related_name="course_reviews")
     slug=models.SlugField(unique=True,blank=True)
@@ -227,6 +239,16 @@ def upload_events_images(instance,filename):
     place=f"events/{instance.user.username}/{instance.name}/{filename}"
     return place
 
+class CheckRejectEvent(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="events")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        events=Events.objects.filter(approved=False).exclude(id__in=list)
+        return events
+        
 class Events(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -238,6 +260,8 @@ class Events(models.Model):
     start_time=models.TimeField(auto_now_add=False)
     end_time=models.TimeField(auto_now_add=False)
     place=models.CharField(max_length=100)
+    objects=models.Manager()
+    check_reject=CheckRejectEvent()
     expired=models.BooleanField(default=False)
     approved=models.BooleanField(default=False)
     # map=models.CharField(max_length=100)
@@ -285,6 +309,16 @@ PAYMENTS=(
     ("Vodafone Cash","Vodafone Cash"),
     ("Paypal","Paypal")
 )
+
+class CheckRejectPayment(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="payment")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        payment=Payment.objects.filter(pending=True).exclude(id__in=list)
+        return payment
 class Payment(models.Model):
     method=models.CharField(choices=PAYMENTS,max_length=50)
     payment_image=models.ImageField(upload_to=upload_payment_images,null=True)
@@ -293,6 +327,8 @@ class Payment(models.Model):
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     pending=models.BooleanField(default=False)
     ordered=models.BooleanField(default=False)
+    check_reject=CheckRejectPayment()
+    objects=models.Manager()
     def __str__(self):
         return self.method
 

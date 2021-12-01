@@ -12,7 +12,6 @@ from django.dispatch import receiver
 import random,string
 from django.conf import settings
 import json
-
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -24,6 +23,8 @@ ACCOUNT_TYPE=(
     ("student","student"),
     ("teacher","teacher") 
 )
+
+
 class User(AbstractUser):
     account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20)
     phone=models.CharField(max_length=12)
@@ -73,6 +74,8 @@ def pre_save_receiver_video(sender, instance, *args, **kwargs):
     #     instance.slug = slugify(slug) 
 
 auth_user=settings.AUTH_USER_MODEL
+
+    
 class TeacherForms(models.Model):
     teacher=models.ForeignKey(auth_user,on_delete=models.CASCADE)
     approved=models.BooleanField(default=False)

@@ -7,6 +7,7 @@ from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
 import json
+from Dashboard.models import Rejects
 from django.shortcuts import render
 from django.conf import settings
 from ckeditor.fields import RichTextField
@@ -46,7 +47,7 @@ class Blog_Comment_Reply(models.Model):
     def __str__(self):
         return self.blog.name
 def upload_blog_images(instance,filename):
-    return (f"blogs/{instance.blog.slug}/{filename}")
+    return (f"blogs/images/{instance.blog.slug}/{filename}")
 BLOG_TYPE=(
     ("standard","standard"),
     ("gallery","gallery"),
@@ -62,12 +63,26 @@ class Blog_Images(models.Model):
 
     def __str__(self):
         return self.blog.name
+
+class CheckRejectManager(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="blogs")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        blogs=Blog.objects.filter(approved=False).exclude(id__in=list)
+        return blogs
+        
+def upload_blog_videos(instance,filename):
+    return (f"blogs/videos/{instance.slug}/{filename}")
 class Blog(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     details=RichTextUploadingField()
     data=models.TextField(blank=True)
     image=models.ManyToManyField(Blog_Images,related_name="blog_comment",blank=True)
+    video=models.FileField(blank=True,null=True,upload_to=upload_blog_videos)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
@@ -76,6 +91,8 @@ class Blog(models.Model):
     blog_type=models.CharField(choices=BLOG_TYPE,max_length=20)
     approved=models.BooleanField(default=False)
     tags=TaggableManager()
+    check_reject=CheckRejectManager()
+    objects=models.Manager()
     slug=models.SlugField(unique=True,blank=True)
 
     def __str__(self):
@@ -98,6 +115,8 @@ class Blog(models.Model):
         except:
             count=0
         return count
+
+
 
     def get_link(self):
         
@@ -165,6 +184,16 @@ PAYMENTS=(
 )
 def upload_blog_payment(instance,filename):
     return (f"payment/blogs/{instance.user.username}/{filename}")
+
+class CheckRejectBlogPaymentManager(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="blog_payment")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        payments=Blog_Payment.objects.filter(pending=True).exclude(id__in=list)
+        return payments
 class Blog_Payment(models.Model):
     method=models.CharField(choices=PAYMENTS,max_length=50)
     payment_image=models.ImageField(upload_to=upload_blog_payment,blank=True,null=True)
@@ -173,6 +202,8 @@ class Blog_Payment(models.Model):
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     pending=models.BooleanField(default=False)
     ordered=models.BooleanField(default=False)
+    objects=models.Manager()
+    check_reject=CheckRejectBlogPaymentManager()
     created_at=models.DateField()
     expired_at=models.DateField(blank=True,null=True)
     expired=models.BooleanField(default=False)
