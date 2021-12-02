@@ -20,39 +20,27 @@
                             <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                         </div>
                         <div class="card-body">
+                            {% if form_number == 1 %}
                             <form method="POST" enctype="multipart/form-data" >
                                 {% csrf_token %}
-                                {{form.media}}
+                               
                                 <div class="form-group">
-                               {{form.blog_type|as_crispy_field}}
-                                </div>
-                                <div id="place_image" class="form-group">
-                                    <label for="id_image">Blog Image</label>
-                                    <input type="file" name="image"  accept="image/*" class="form-control-file" id="id_image">
-                                  </div>
-                                  <div id="my_link" class="form-group">
-                                   
-                                </div>
-                                  <div class="form-group">
-                                    {{form.name|as_crispy_field }}
-                                </div>
-                                <div class="form-group">
-                                    {{form.details}}
-                                    
-                                </div>
-                                <div class="form-group">
-                                    {{form.category|as_crispy_field }}
-                                   
-                                </div>
-                                <div class="form-group">
-                                    {{form.paid|as_crispy_field }}
-                                </div>
-                                     <div class="form-group">
-                                        {{form.tags|as_crispy_field }}
+                                    {{form.media}}
+                                    {{form|crispy}}
                                 </div>
                                 
                                 <button class="btn btn-primary" type="submit">Submit</button>
                             </form>
+                            {% elif form_number == 2 %}
+                            <form method="GET">
+                                <div class="form-group">
+                                    {{form|crispy}}
+                                </div>
+                                
+                                <button class="btn btn-primary" type="submit">Submit</button>
+                            </form>
+                            {% endif %}
+                          
                         </div>
                     </div>
 

@@ -20,64 +20,42 @@
                             <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                         </div>
                         <div class="card-body">
+                            {% if form_number == 1 %}
                             <form method="POST" enctype="multipart/form-data" >
                                 {% csrf_token %}
-                                {{form.media}}
+                               
                                 <div class="form-group">
-                               {{form.blog_type|as_crispy_field}}
-                                </div>
-                                <div id="my_link" class="form-group">
-                                    
-                                </div>
-                                  {% if blog.get_link %}
-                                  <div class="form-group">
-                                    <label >Blog Link</label>
-                                   <input name="link"  type="text"  value='{{blog.get_link.link}}' class='textinput textInput form-control'>
-                                </div>
-                                {% endif %}
-                                  <div class="form-group">
-                                    {{form.name|as_crispy_field }}
-                                </div>
+                                    {{form.media}}
+                                    {{form|crispy}}
+                                        </div>
+                                        <div  class="form-group">
+                                            <label for="id_image">Blog Image</label>
+                                            <div class="col">
+                                                {% for i in blog.image.all %}
+                                              <a href="{{i.image.url}}" target="__blank"><img style="max-width: 200px;" class="img-thumbnail" src="{{i.image.url}}"></a><a href="{% url 'dashboard:delete_blog_image' i.id %}"><i class="fas fa-times-circle"></i></a>
+                                                {% endfor %}
+                                            </div>
+                                          </div>
+                                          {% if blog.video %}
+                                          <div class="form-group">
+                                       <p><a href="{{blog.video.url}}">{{blog.video.url}}</a></p>  
+                                         <a href="{% url 'dashboard:delete_blog_video' blog.id  %}">{{blog.video.url|truncatechars:50}}<i class="fas fa-times-circle"></i>Delete</a>
+     
+                                          </div>
+                                          {% endif %}
+                                
+                                <button class="btn btn-primary" type="submit">Submit</button>
+                            </form>
+                            {% elif form_number == 2 %}
+                            <form method="GET">
                                 <div class="form-group">
-                                    {{form.image|as_crispy_field}}
-                                   
-                                     </div>
-                                <div  class="form-group">
-                                    <label for="id_image">Blog Image</label>
-                                    <div class="col">
-                                        {% for i in blog.image.all %}
-                                      <a href="{{i.image.url}}" target="__blank"><img style="max-width: 200px;" class="img-thumbnail" src="{{i.image.url}}"></a><a href="{% url 'dashboard:delete_blog_image' i.id %}"><i class="fas fa-times-circle"></i></a>
-                                        {% endfor %}
-                                    </div>
-                                  </div>
-                                  <div class="form-group">
-                                    {{form.video|as_crispy_field}}
-                                   
-                                     </div>
-                                     {% if blog.video %}
-                                     <div class="form-group">
-                                  <p><a href="{{blog.video.url}}">{{blog.video.url}}</a></p>  
-                                    <a href="{% url 'dashboard:delete_blog_video' blog.id  %}">{{blog.video.url|truncatechars:50}}<i class="fas fa-times-circle"></i>Delete</a>
-
-                                     </div>
-                                     {% endif %}
-                                <div class="form-group">
-                                    {{form.details}}
-                                    
-                                </div>
-                                <div class="form-group">
-                                    {{form.category|as_crispy_field }}
-                                   
-                                </div>
-                                <div class="form-group">
-                                    {{form.paid|as_crispy_field }}
-                                </div>
-                                     <div class="form-group">
-                                        {{form.tags|as_crispy_field }}
+                                    {{form|crispy}}
                                 </div>
                                 
                                 <button class="btn btn-primary" type="submit">Submit</button>
                             </form>
+                            {% endif %}
+                          
                         </div>
                     </div>
 

@@ -452,48 +452,8 @@
     <script src="{% static 'dashboard/js/demo/chart-pie-demo.js' %}"></script>
     
 <script type="text/javascript">
-$("#id_blog_type").change(function () {
-        const blog_type = $(this).val();  // get the selected subject ID from the HTML dropdown list 
-        $.ajax({                       // initialize an AJAX request
-            type: "POST",
-            url: '{% url "dashboard:add_blog" %}',
-            data: {
-              "blog_type":blog_type,
-                     // add the country id to the POST parameters
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            dataType:'json',
-            success: function (data) {   // `data` is from `get_topics_ajax` view function
-        
-                 if(data.blog_type == "link"){
-                    $("#my_link").show(); 
-                    let html=`
-                    <label for="link">Link</label>
-                    <input type="text" class="form-control" name="link" id="id_link" >
-                      
-                        `
-                $("#my_link").html(html); 
-            
-                }
-                else if(data.blog_type == "quote"){
-                    $("#my_link").show(); 
-                    let html=`
-                    <label for="quote">Quote</label>
-                    <input type="text" class="form-control" name="quote" id="id_quote">`
-                    $("#my_link").html(html);    
-                }
-                else if(data.blog_type != "quote"){
-                    $("#my_link").hide(); 
-                }
-                          }
-        });
-    });
 
-    
-        $('#approve').change(function (){ 
-        $("#approve_form").submit(); 
-            })
-      
+
 </script>
 </body>
 

@@ -184,7 +184,7 @@
 							</div>
 							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
-								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatechars:50}}</a></h2>
 								<div class="entry-meta">
 									<span class="entry-meta-date">
 										<i class="fa fa-calendar"></i>
@@ -201,7 +201,7 @@
 							</div>
 						</header>
 						<div class="entry-content">
-							<p>{{i.details|truncatewords:20}}</p>
+							<p>{{i.details|safe|truncatechars:100}}</p>
 							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
 						</div>
 					</article>
@@ -213,9 +213,9 @@
 									<i class="fa fa-quote-left"></i>
 								</div>
 								<div class="entry-header-title">
-									<h2>{{i.name|truncatewords:20}}</h2>
+									<h2>{{i.name|truncatechars:20}}</h2>
 									<blockquote>
-										<p>{{i.get_quote|truncatewords:20}}</p>
+										<p>{{i.get_quote|safe|truncatechars:100}}</p>
 										<!-- <cite>- John Doe</cite> -->
 									</blockquote>
 								</div>
@@ -228,9 +228,9 @@
 							<div class="icon-b">
 								<i class="fa fa-film"></i>
 							</div>
-							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-category"><a href="">{{i.category.name.title|truncatechars:20}}</a></div>
 							<div class="entry-header-title">
-								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a></h2>
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatechars:50}}</a></h2>
 								<div class="entry-meta">
 									<span class="entry-meta-date">
 										<i class="fa fa-calendar"></i>

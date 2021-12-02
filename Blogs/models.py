@@ -93,7 +93,7 @@ class Blog(models.Model):
     tags=TaggableManager()
     check_reject=CheckRejectManager()
     objects=models.Manager()
-    slug=models.SlugField(unique=True,blank=True)
+    slug=models.SlugField(unique=True,blank=True,max_length=100)
 
     def __str__(self):
         return self.name
@@ -116,16 +116,20 @@ class Blog(models.Model):
             count=0
         return count
 
-
-
-    def get_link(self):
-        
+    def get_quote(self):
         try:
             data=json.loads(self.data)
-            data["link"]
+            quote=data["quote"]
         except:
-            data=None
-        return data
+            quote=None
+        return quote
+    def get_link(self):
+        try:
+            data=json.loads(self.data)
+            link=data["link"]
+        except:
+            link=None
+        return link
 
     def same_category(self):
         blogs=Blog.objects.filter(approved=True,category=self.category).order_by("-created_at")[:5]

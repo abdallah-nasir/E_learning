@@ -96,34 +96,58 @@ def blogs(request):
 @login_required
 @check_user_validation
 def add_blog(request):
-    form=AddBlog(request.POST or None,request.FILES or None)
-    if request.is_ajax():
-        blog_type =request.POST["blog_type"]
-        return JsonResponse({"blog_type":blog_type})
-    if request.method == "POST":
-        if form.is_valid():
-            instance=form.save(commit=False)
-            type=form.cleaned_data.get("blog_type")
-            if type == "link":
-                link=request.POST.get("link")
-                data={"link":link}
-                instance.data=json.dumps(data)
-            instance.user=request.user
-            instance.save()
-            tag=request.POST.get("tags")
-            for i in tag.split(","):
-                tags,created=Tag.objects.get_or_create(name=i)
-                instance.tags.add(tags)
-                instance.save()
-            image=request.FILES.getlist("image")
-            instance.tags.add(tags)
-            for i in image:
-                image=Blog_Images.objects.create(blog=instance,image=i)
-                instance.image.add(image)
-                instance.save()
-            messages.success(request,"Your Blog is Waiting for Admin Approve")
+    blog_type_list=["standard","gallery","video","audio","quote","link"]
+    try:
+        type=request.GET["blog_type"]
+        if type not in blog_type_list:
             return redirect(reverse("dashboard:blogs"))
-    context={"form":form}
+        elif type == "link":
+            form=BlogLinkForm(request.POST or None,request.FILES or None)
+        elif type == "quote":
+            form=BlogQuoteForm(request.POST or None,request.FILES or None)
+        elif type == "video" or type == "audio":
+            form=BlogVideoForm(request.POST or None,request.FILES or None)
+        elif type == 'gallery':
+            form=BlogGalleryForm(request.POST or None,request.FILES or None)
+        else:
+            form=AddBlog(request.POST or None,request.FILES or None)
+        form_number=1
+    except:
+        form=BlogTypeForm(request.GET or None)
+        form_number=2
+    if request.method == "POST":
+        if form_number == 1:
+            if form.is_valid():
+                instance=form.save(commit=False)
+                if type == "link":
+                    link=request.POST.get("link")
+                    data={"link":link}
+                    instance.data=json.dumps(data)
+                if type == "quote":
+                    quote=request.POST.get("quote")
+                    data={"quote":quote}
+                    instance.data=json.dumps(data)
+                instance.user=request.user
+                instance.blog_type = type
+                instance.save()
+                tag=request.POST.get("tags")
+                print(tag)
+                if tag:
+                    instance.tags=None
+                    instance.save()
+                    for i in tag.split(","):
+                        tags,created=Tag.objects.get_or_create(name=i)
+                        instance.tags.add(tags)
+                        instance.save()
+                image=request.FILES.getlist("image")
+                for i in image:
+                    image=Blog_Images.objects.create(blog=instance,image=i)
+                    instance.image.add(image)
+                    instance.save()
+                messages.success(request,"Your Blog is Waiting for Admin Approve")
+                return redirect(reverse("dashboard:blogs"))
+
+    context={"form":form,"form_number":form_number}
     return render(request,"dashboard_add_blog.html",context)
 
 
@@ -131,29 +155,60 @@ def add_blog(request):
 @check_user_validation
 def edit_blog(request,slug):
     blog=get_object_or_404(Blog,slug=slug)
-    form=AddBlog(request.POST or None , request.FILES or None,instance=blog)
+    blog_type_list=["standard","gallery","video","audio","quote","link"]
+    try:
+        type=request.GET["blog_type"]
+        if type not in blog_type_list:
+            return redirect(reverse("dashboard:blogs"))
+        elif type == "link":
+            form=BlogLinkForm(request.POST or None,request.FILES or None,instance=blog)
+            form.initial["link"] = blog.get_link()
+        elif type == "quote":
+            form=BlogQuoteForm(request.POST or None,request.FILES or None,instance=blog)
+            form.initial["quote"]=blog.get_quote()
+        elif type == "video" or type == "audio":
+            form=BlogVideoForm(request.POST or None,request.FILES or None,instance=blog)
+        elif type == 'gallery':
+            form=BlogGalleryForm(request.POST or None,request.FILES or None,instance=blog)
+        else:
+            form=AddBlog(request.POST or None,request.FILES or None,instance=blog)
+        form_number=1
+    except:
+        form=BlogTypeForm(request.GET or None,instance=blog)
+
+        form_number=2
     if request.user == blog.user:
         if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.approved=False
-                image=request.FILES.getlist("image")
-                if form.cleaned_data.get("blog_type") == "video":
-                    video=request.FILES.get("video")
-                    instance.video=video
+            if form_number == 1:
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    type=request.GET["blog_type"]
+                    if type == "link":
+                        link=request.POST.get("link")
+                        data={"link":link}
+                        instance.data=json.dumps(data)
+                    if type == "quote":
+                        quote=request.POST.get("quote")
+                        data={"quote":quote}
+                        instance.data=json.dumps(data)
                     instance.save()
-                for i in image:
-                    image=Blog_Images.objects.create(blog=instance,image=i)
-                    instance.image.add(image)
-                    instance.save()
-                messages.success(request,"Blog Edited Successfully, Please Wait For Admin Approval")
-                return redirect(reverse("dashboard:blogs"))
-            else:
-                print("invalid")
+                    tag=request.POST.get("tags")
+                    print(tag)
+                    for i in tag.split(","):
+                        tags,created=Tag.objects.get_or_create(name=i)
+                        instance.tags.add(tags)
+                        instance.save()
+                    image=request.FILES.getlist("image")
+                    for i in image:
+                        image=Blog_Images.objects.create(blog=instance,image=i)
+                        instance.image.add(image)
+                        instance.save()
+                    messages.success(request,"Your Blog is Waiting for Admin Approve")
+                    return redirect(reverse("dashboard:blogs"))
     else:
         messages.error(request,"You Don't Have Permisssion")
         return redirect(reverse("dashboard:blogs"))
-    context={"blog":blog,"form":form}
+    context={"blog":blog,"form":form,"form_number":form_number}
     return render(request,"dashboard_edit_blog.html",context)
 
 @login_required

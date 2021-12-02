@@ -7,31 +7,16 @@ from Quiz.models import Question ,Answers
 import os
 from crum import get_current_request   
 User=get_user_model()
+
 class AddBlog(forms.ModelForm):
-    image=forms.FileField(required=True,widget=forms.ClearableFileInput(attrs={'multiple': True}))
-    link=forms.HiddenInput()
-    quote=forms.HiddenInput()
-    video=forms.FileField(required=False,label="Video / Audio",widget=forms.FileInput())
+    image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        # exclude=["user","created_at","updated_at","comments","approved"]
-        fields=["blog_type","name","details","video","image","category","paid","tags"]
-
-
-    def __init__(self,*args,**kwargs):
-        super(AddBlog, self).__init__(*args, **kwargs)
-
-        if "blog_type" in self.data:
-            type=self.data["blog_type"]
-            if type == "link":
-                self.fields["link"] = forms.CharField(required=True)
-            if type == "quote":
-                self.fields["quote"] = forms.CharField(required=True)
-
-
+        fields=["name","details","category","paid","tags","image"]
     def clean_video(self):
+        request=get_current_request()
         video=self.cleaned_data.get("video")      
-        blog_type=self.cleaned_data.get("blog_type")
+        blog_type=request.GET.get("blog_type")
         video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
         if blog_type == "video":
             if not video:
@@ -43,8 +28,8 @@ class AddBlog(forms.ModelForm):
 
         return video
     def clean_image(self):
-        type=self.cleaned_data.get("blog_type")
         request=get_current_request()
+        type=request.GET.get("blog_type")
         image=request.FILES.getlist("image")
         image_extentions=[".png",".jpg",",jpeg"]
         if type != "gallery":
@@ -56,21 +41,109 @@ class AddBlog(forms.ModelForm):
                 if image_extension not in image_extentions:
                     raise forms.ValidationError("invalid image extension")
         return image
-    def clean_blog_type(self):
+
+
+class BlogTypeForm(forms.ModelForm):
+    class Meta:
+        model=Blog
+        fields=["blog_type"]
+class BlogQuoteForm(forms.ModelForm):
+    quote=forms.CharField(required=True,max_length=100)
+    image=forms.ImageField(required=True)
+    class Meta:
+        model=Blog
+        fields=["name","quote","details","category","paid","tags","image"]
+    def clean_image(self):
         request=get_current_request()
-        type=self.cleaned_data.get("blog_type")
+        type=request.GET.get("blog_type")
         image=request.FILES.getlist("image")
-        link=request.POST.get("link")
-        quote=request.POST.get("quote")
-        if type == "quote":
-            if not quote:
-                raise forms.ValidationError("please insert a quote")
-        if type == "link":
-            if not link:
-                raise forms.ValidationError("please insert a link")
+        image_extentions=[".png",".jpg",",jpeg"]
+        if type != "gallery":
+            if len(image) > 1:  
+                raise forms.ValidationError(f"Select only one image for {type} Blog")
+            for i in image:
+                image_extension=os.path.splitext(i.name)[1]
+                print(image_extension)
+                if image_extension not in image_extentions:
+                    raise forms.ValidationError("invalid image extension")
+        return image
+class BlogLinkForm(forms.ModelForm):
+    link=forms.CharField(required=True,max_length=100)
+    image=forms.ImageField(required=True)
+    class Meta:
+        model=Blog
+        fields=["name","link","details","category","paid","tags","image"]
 
-        return type
+    def clean_image(self):
+        request=get_current_request()
+        type=request.GET.get("blog_type")
+        image=request.FILES.getlist("image")
+        image_extentions=[".png",".jpg",",jpeg"]
+        if type != "gallery":
+            if len(image) > 1:  
+                raise forms.ValidationError(f"Select only one image for {type} Blog")
+            for i in image:
+                image_extension=os.path.splitext(i.name)[1]
+                print(image_extension)
+                if image_extension not in image_extentions:
+                    raise forms.ValidationError("invalid image extension")
+        return image
+class BlogVideoForm(forms.ModelForm):
+    video=forms.FileField(required=True,label="Video / Audio",widget=forms.FileInput())
+    image=forms.ImageField(required=True)
+    class Meta:
+        model=Blog
+        fields=["name","video","details","category","paid","tags","image"]
 
+    def clean_image(self):
+        request=get_current_request()
+        type=request.GET.get("blog_type")
+        image=request.FILES.getlist("image")
+        image_extentions=[".png",".jpg",",jpeg"]
+        if type != "gallery":
+            if len(image) > 1:  
+                raise forms.ValidationError(f"Select only one image for {type} Blog")
+            for i in image:
+                image_extension=os.path.splitext(i.name)[1]
+                print(image_extension)
+                if image_extension not in image_extentions:
+                    raise forms.ValidationError("invalid image extension")
+        return image
+    
+    def clean_video(self):
+        video=self.cleaned_data.get("video")      
+        request=get_current_request()
+        blog_type=request.GET.get("blog_type")
+        video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
+        if blog_type == "video":
+            if not video:
+                raise forms.ValidationError("please insert a video / audio")
+            else:
+                video_type=os.path.splitext(video.name)[1]
+                if video_type not in  video_extentions:
+                    raise forms.ValidationError("invalid video / audio extension")
+
+        return video
+class BlogGalleryForm(forms.ModelForm):
+    image=forms.FileField(required=True,widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    class Meta:
+        model=Blog
+        fields=["name","details","category","paid","tags","image"]
+
+    def clean_image(self):
+        request=get_current_request()
+        type=request.GET.get("blog_type")
+        image=request.FILES.getlist("image")
+        image_extentions=[".png",".jpg",",jpeg"]
+        if type != "gallery":
+            if len(image) > 1:  
+                raise forms.ValidationError(f"Select only one image for {type} Blog")
+            for i in image:
+                image_extension=os.path.splitext(i.name)[1]
+                print(image_extension)
+                if image_extension not in image_extentions:
+                    raise forms.ValidationError("invalid image extension")
+        return image
 
 class AddCourse(forms.ModelForm):
     branch=forms.ModelChoiceField(label="Category",queryset=Branch.objects.all())
