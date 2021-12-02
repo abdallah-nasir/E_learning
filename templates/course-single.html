@@ -356,7 +356,15 @@ width:100% !important;
                                     <li><i class="fa fa-user-o"></i>Students :  <span>{% if not course.students.count %}0 {% else %} {{course.students.count}} {% endif %}</span></li>
                                 </ul>
                                 <div class="price-button pt-10">
+                                    
+                                    {% if course.discount %}
+                                    <span>Price : <b>${{course.discount|floatformat}}</b></span>
+                                    <br>
+                                    <span style="margin-top: 10px;  text-decoration: line-through; ">Price : <b>${{course.price|floatformat}}</b></span>
+
+                                    {% else %}
                                     <span>Price : <b>${{course.price|floatformat}}</b></span>
+                                    {% endif %}
                                     {% if request.user.is_authenticated %}
                                     {% if request.user in course.students.all %}
                                     {% if course.get_total_quiz %}
@@ -509,8 +517,25 @@ width:100% !important;
                 <div class="form-group">
                     <input type="hidden" class="ajax_course" data-index="{{course.id}}" value="{{course.id}}">
                     {{payment_form|crispy}}
-
-                </div>      
+                    
+                </div>   
+               
+                <div class="form-group" >
+                    <label for="copyMe" class='requiredField'>IBAN</label>
+                    <div style="display: flex;" >
+                        <input type="text" style="flex: 1;" id="copyMe" class="form-control" value="123454897"> 
+                        <a class="btn btn-primary" onclick="copyMyText()">Copy To Clipboard</a>        
+    
+                    </div>
+                </div>    
+                <div class="form-group" >
+                    <label for="copyMe" class='requiredField'>Bank Swift Key</label>
+                    <div style="display: flex;" >
+                        <input type="text" style="flex: 1;" id="BankAccount" class="form-control" value="910111213141516"> 
+                        <a class="btn btn-primary" onclick="copyMyBank()">Copy To Clipboard</a>        
+    
+                    </div>
+                </div>  
 
         <div class="modal-footer">
           <button type="button" class="btn" id="cancel" data-dismiss="modal">Close</button>
@@ -668,8 +693,25 @@ width:100% !important;
                               
 
         }).render('#paypal-button-container');
-
-      
+     
+            function copyMyText() {
+                 //select the element with the id "copyMe", must be a text box
+                 var textToCopy = document.getElementById("copyMe");
+                 //select the text in the text box
+                 textToCopy.select();
+                 //copy the text to the clipboard
+                 document.execCommand("copy");
+            }
+          
+   
+function copyMyBank() {
+//select the element with the id "copyMe", must be a text box
+var textToCopy = document.getElementById("BankAccount");
+//select the text in the text box
+textToCopy.select();
+//copy the text to the clipboard
+document.execCommand("copy");
+}   
     </script>
 
    {% endblock %}

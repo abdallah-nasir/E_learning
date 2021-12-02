@@ -3,6 +3,8 @@ from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
+from django.core.mail import send_mail,send_mass_mail
+
 import string, random
 from django.utils import translation
 import Quiz.models   
@@ -14,10 +16,12 @@ from embed_video.fields import EmbedVideoField
 from PIL import Image
 import os  
 import time
+import datetime
 import json
 from Dashboard.models import Rejects
 User=settings.AUTH_USER_MODEL
 Quiz= Quiz.models.Quiz()
+from django.template.loader import render_to_string
 # Create your models here.
 
 def upload_course_image(instance,filename):
@@ -152,6 +156,7 @@ class Course(models.Model):
     duration=models.FloatField(default=0)
     branch=models.ForeignKey(Branch,null=True,on_delete=models.SET_NULL)
     price=models.FloatField(default=0)
+    discount=models.PositiveIntegerField(default=0)
     quiz=models.ForeignKey(Quiz,blank=True,null=True,on_delete=models.SET_NULL)
     course_status=models.CharField(choices=CHOICES,max_length=50)
     details=models.TextField()   
@@ -181,6 +186,12 @@ class Course(models.Model):
         my_time=time.strftime('%H:%M:%S',  time.gmtime(self.duration))
         return my_time
 
+    def get_price(self):
+        if self.discount > 0:
+            price=self.discount
+        else:
+            price=self.price
+        return price
     def related_events(self):
         events=Events.objects.filter(user=self.Instructor,category=self.branch)[:4]
         return events
@@ -192,7 +203,7 @@ class Course(models.Model):
                 rate +=i.rate
             total=rate / (self.reviews.count())
             print(total)
-        else:
+        else:   
             total=1
         return total
     def calculate_quiz(self):
@@ -202,10 +213,14 @@ class Course(models.Model):
             questions=0
         return questions
     def get_total_quiz(self):
-        if self.quiz:
-            quiz=self.quiz.questions.first().slug
-        else:    
+        try:
+            if self.quiz:
+                quiz=self.quiz.questions.first().slug
+            else:    
+                quiz=None
+        except:
             quiz=None
+
         return quiz
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -248,7 +263,12 @@ class CheckRejectEvent(models.Manager):
             list.append(i.content_id)
         events=Events.objects.filter(approved=False).exclude(id__in=list)
         return events
-        
+
+EVENT_STATUS=(
+    ("hold","hold"),
+    ("start","start"),
+    ("end","end")
+)
 class Events(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -257,6 +277,7 @@ class Events(models.Model):
     details=models.TextField()
     image=models.ImageField(upload_to=upload_events_images)
     date=models.DateField()
+    status=models.CharField(choices=EVENT_STATUS,max_length=20,default="hold")
     start_time=models.TimeField(auto_now_add=False)
     end_time=models.TimeField(auto_now_add=False)
     place=models.CharField(max_length=100)
@@ -268,7 +289,24 @@ class Events(models.Model):
     slug=models.SlugField(unique=True,blank=True)
     def __str__(self):
         return self.name
-
+    def get_students_events(self):
+        course=Course.objects.filter(branch=self.category,approved=True,Instructor=self.user)
+        list=[]
+        for i in course:
+            for b in i.students.all():
+                self.students.add(b)
+                self.save()
+                list.append(b.email)
+        message1 =  (f'Event {self.name} start ',
+                     f'Event {self.name} has been started , Click The Link to join {self.get_details()["zoom"]}',
+        settings.EMAIL_HOST_USER,
+       list
+       )
+        try: 
+            send_mass_mail((message1,), fail_silently=False)
+        except:
+            pass
+        return list
     def get_details(self):
         data=json.loads(self.details)
         try:
@@ -278,6 +316,7 @@ class Events(models.Model):
         details=data["details"]
         context={"zoom":zoom,"details":details}
         return context
+
 @receiver(pre_save, sender=Events)
 def pre_save_receiver(sender, instance, *args, **kwargs):       
     if not instance.slug: 

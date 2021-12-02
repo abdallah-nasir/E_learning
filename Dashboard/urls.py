@@ -12,11 +12,18 @@ path("consultant/payment/",views.consultant_payment,name="consultant_payment"),
 path("blogs/",views.blogs,name="blogs"),
 path("demo/blog/<str:slug>/",views.show_demo_blog,name="show_demo_blog"),
 
-path("courses/",views.courses,name="courses"),
 path("add/blogs/",views.add_blog,name="add_blog"),
 path("edit/blogs/<str:slug>/",views.edit_blog,name="edit_blog"),
 path("delete/blogs/<str:slug>/",views.delete_blog,name="delete_blog"),
+path("delete/image/blogs/<str:id>/",views.delete_blog_image,name="delete_blog_image"),
+path("delete/videos/blogs/<str:id>/",views.delete_blog_video,name="delete_blog_video"),
+
+
 #### course
+path("courses/",views.courses,name="courses"),
+path("videos/",views.videos,name="videos"),
+path("delete/videos/<str:slug>/",views.delete_videos,name="delete_videos"),
+
 path("add/course/",views.add_course,name="add_course"),
 path("add/video/<str:slug>/",views.add_video,name="add_video"),
 path("edit/courses/<str:slug>/",views.edit_course,name="edit_course"),
@@ -26,7 +33,9 @@ path("events/",views.events,name="events"),
 path("add/events/",views.add_event,name="add_event"),
 path("edit/events/<str:id>/",views.edit_event,name="edit_event"),
 path("delete/events/<str:id>/",views.delete_event,name="delete_event"),
- 
+path("start/events/<str:slug>/",views.start_event,name="start_event"),
+path("finish/events/<str:id>/",views.finish_event,name="finish_event"),
+
 # #quiz Questions
 path("quiz/<str:slug>/",views.quiz,name="quiz"),
 path("add/quiz/<str:slug>/",views.add_quiestions,name="add_quiestions"),

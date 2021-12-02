@@ -120,6 +120,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">All Courses:</h6>
                         <a class="collapse-item" href="{% url 'dashboard:courses' %}">Courses</a>
+                        <a class="collapse-item" href="{% url 'dashboard:videos' %}">Videos</a>
+
                         <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
                         <a class="collapse-item" href="cards.html">Course Payments</a> -->
                     </div>
@@ -462,17 +464,8 @@ $("#id_blog_type").change(function () {
             },
             dataType:'json',
             success: function (data) {   // `data` is from `get_topics_ajax` view function
-                if(data.blog_type == "gallery"){
-                    $("#my_link").hide(); 
-                    let html=`
-                    <label for="id_image">Blog Image</label>
-                    <input type="file" name="image" multiple='true' accept="image/*" class="form-control-file" id="id_image">
-                      
-                        `
-                $("#place_image").html(html);   
-                }
-
-                else if(data.blog_type == "link"){
+        
+                 if(data.blog_type == "link"){
                     $("#my_link").show(); 
                     let html=`
                     <label for="link">Link</label>
@@ -480,24 +473,18 @@ $("#id_blog_type").change(function () {
                       
                         `
                 $("#my_link").html(html); 
-                let html2=`
-                <label for="id_image">Blog Image</label>
-                <input type="file" name="image" accept="image/*" class="form-control-file" id="id_image">
-                    `
-            $("#place_image").html(html2);   
+            
                 }
-                else if(data.blog_type != "link"){
+                else if(data.blog_type == "quote"){
+                    $("#my_link").show(); 
+                    let html=`
+                    <label for="quote">Quote</label>
+                    <input type="text" class="form-control" name="quote" id="id_quote">`
+                    $("#my_link").html(html);    
+                }
+                else if(data.blog_type != "quote"){
                     $("#my_link").hide(); 
-                    let html2=`
-                    <label for="id_image">Blog Image</label>
-                    <input type="file" name="image" accept="image/*" class="form-control-file" id="id_image">
-                        `
-                $("#place_image").html(html2);
-                    }
-
-
-
-           
+                }
                           }
         });
     });

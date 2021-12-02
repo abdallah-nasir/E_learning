@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     # "allauth.socialaccount.providers.linkedin", 
     'allauth.socialaccount.providers.linkedin_oauth2',    
     'bootstrap_datepicker_plus',
+    'django_cleanup',
     # "storages",   
     # "debug_toolbar",
 ] 

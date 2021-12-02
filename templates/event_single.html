@@ -85,19 +85,20 @@
                                             </div>
                                         </div> <!-- singel address -->
                                     </li>
-                                    {% if request.user in event.students.all %}
                                     <li>
+                                        {% if event.status == "start" and request.user in event.students.all %}
+                                     
                                         <div class="singel-address">
                                             <div class="icon">
                                                 <i class="fa fa-map"></i>
                                             </div>
                                             <div class="cont">
                                                 <h6>Zoom Link</h6>
-                                                <span>{{event.get_details.zoom}}</span>
+                                                <span><a href="{{event.get_details.zoom}}" target="__">Click The Link</a></span>
                                             </div>
                                         </div> <!-- singel address -->
+                                        {% endif %}
                                     </li>
-                                    {% endif %}
                                 </ul>
                                
 

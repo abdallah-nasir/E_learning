@@ -131,7 +131,7 @@ def videos(request,course,slug):
     return render(request,"video.html",context)
 
 def events(request):
-    events=Events.objects.filter(approved=True)
+    events=Events.objects.filter(approved=True).exclude(status="end")
     paginator = Paginator(events, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -140,6 +140,9 @@ def events(request):
 
 def event_single(request,slug):
     event=get_object_or_404(Events,slug=slug,approved=True)
+    if event.status == 'end':
+        messages.error(request,"this event has expired")
+        return redirect(reverse("home:events"))
     context={"event":event}
     return render(request,"event_single.html",context)
 
@@ -359,11 +362,11 @@ def create(request,course):
                     {
                         "amount": {
                             "currency_code": "USD",
-                            "value": course.price,
+                            "value":course.get_price(),
                             "breakdown": {
                                 "item_total": {
                                     "currency_code": "USD",
-                                    "value":  course.price
+                                    "value":  course.get_price()
                                 }
                                 },
                             },                                  

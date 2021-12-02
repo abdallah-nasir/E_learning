@@ -2,12 +2,13 @@ from django.shortcuts import render,redirect
 from django.template.defaultfilters import urlencode
 from django.urls import reverse
 from Consultant.models import Cosultant_Payment
-from home.models import Course,Payment,Events
+from home.models import Course,Payment,Events,Videos
 from Blogs.models import (Blog,Blog_Payment,Blog_Images)
 from Quiz.models import *
 from django.core.paginator import Paginator
 from .forms import *
-from django.core.mail import send_mail
+from django.core.mail import send_mail,send_mass_mail
+
 from django.conf import settings
 from accounts.forms import ChangeUserDataForm
 from .decorators import *
@@ -91,6 +92,96 @@ def blogs(request):
     context={"blogs":page_obj}
     return render(request,"dashboard_blogs.html",context)
 
+
+@login_required
+@check_user_validation
+def add_blog(request):
+    form=AddBlog(request.POST or None,request.FILES or None)
+    if request.is_ajax():
+        blog_type =request.POST["blog_type"]
+        return JsonResponse({"blog_type":blog_type})
+    if request.method == "POST":
+        if form.is_valid():
+            instance=form.save(commit=False)
+            type=form.cleaned_data.get("blog_type")
+            if type == "link":
+                link=request.POST.get("link")
+                data={"link":link}
+                instance.data=json.dumps(data)
+            instance.user=request.user
+            instance.save()
+            tag=request.POST.get("tags")
+            for i in tag.split(","):
+                tags,created=Tag.objects.get_or_create(name=i)
+                instance.tags.add(tags)
+                instance.save()
+            image=request.FILES.getlist("image")
+            instance.tags.add(tags)
+            for i in image:
+                image=Blog_Images.objects.create(blog=instance,image=i)
+                instance.image.add(image)
+                instance.save()
+            messages.success(request,"Your Blog is Waiting for Admin Approve")
+            return redirect(reverse("dashboard:blogs"))
+    context={"form":form}
+    return render(request,"dashboard_add_blog.html",context)
+
+
+@login_required
+@check_user_validation
+def edit_blog(request,slug):
+    blog=get_object_or_404(Blog,slug=slug)
+    form=AddBlog(request.POST or None , request.FILES or None,instance=blog)
+    if request.user == blog.user:
+        if request.method == "POST":
+            if form.is_valid():
+                instance=form.save(commit=False)
+                instance.approved=False
+                image=request.FILES.getlist("image")
+                if form.cleaned_data.get("blog_type") == "video":
+                    video=request.FILES.get("video")
+                    instance.video=video
+                    instance.save()
+                for i in image:
+                    image=Blog_Images.objects.create(blog=instance,image=i)
+                    instance.image.add(image)
+                    instance.save()
+                messages.success(request,"Blog Edited Successfully, Please Wait For Admin Approval")
+                return redirect(reverse("dashboard:blogs"))
+            else:
+                print("invalid")
+    else:
+        messages.error(request,"You Don't Have Permisssion")
+        return redirect(reverse("dashboard:blogs"))
+    context={"blog":blog,"form":form}
+    return render(request,"dashboard_edit_blog.html",context)
+
+@login_required
+@check_user_validation
+def delete_blog_image(request,id):
+    image=get_object_or_404(Blog_Images,id=id)
+    if image.blog.user == request.user:
+        image.delete()
+    return redirect(reverse("dashboard:edit_blog",kwargs={"slug":image.blog.slug}))
+
+@login_required
+@check_user_validation
+def delete_blog_video(request,id):
+    blog=get_object_or_404(Blog,id=id)
+    if blog.user == request.user:
+        blog.video.delete()
+    return redirect(reverse("dashboard:edit_blog",kwargs={"slug":blog.slug}))
+
+@login_required
+@check_user_validation
+def delete_blog(request,slug):
+    blog=get_object_or_404(Blog,slug=slug)
+    if request.user == blog.user:
+        blog.delete()
+    else:
+        messages.error(request,"You Don't Have Permisssion")
+        return redirect(reverse("dashboard:blogs"))
+    return redirect(reverse("dashboard:blogs"))
 @login_required
 @check_user_validation
 def courses(request):
@@ -114,7 +205,7 @@ def edit_course(request,slug):
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.save()
-                messages.success(request,"Course Added Successfully")
+                messages.success(request,"Course Edited Successfully")
                 return redirect(reverse("dashboard:courses"))
             else:
                 print("invalid")
@@ -123,76 +214,6 @@ def edit_course(request,slug):
         return redirect(reverse("dashboard:blogs"))
     context={"course":course,"form":form}
     return render(request,"dashboard_course_edit.html",context)
-
-@login_required
-@check_user_validation
-def add_blog(request):
-    form=AddBlog(request.POST or None,request.FILES or None)
-    if request.is_ajax():
-        blog_type =request.POST["blog_type"]
-        if blog_type == "link" or blog_type == "video" or blog_type == "audio":
-            blog_type ="link"
-        return JsonResponse({"blog_type":blog_type})
-    if request.method == "POST":
-        if form.is_valid():
-            instance=form.save(commit=False)
-            type=form.cleaned_data.get("blog_type")
-            if type == "link" or type == "video" or type == "audio":
-                link=request.POST.get("link")
-                data={"link":link}
-                instance.data=json.dumps(data)
-            instance.user=request.user
-            instance.save()
-            tag=request.POST.get("tags")
-            for i in tag.split(","):
-                tags,created=Tag.objects.get_or_create(name=i)
-                instance.tags.add(tags)
-                instance.save()
-            image=request.FILES.getlist("image")
-            instance.tags.add(tags)
-            for i in image:
-                image=Blog_Images.objects.create(blog=instance,image=i)
-                instance.image.add(image)
-                instance.save()
-                messages.success(request,"Your Blog is Waiting for Admin Approve")
-            return redirect(reverse("dashboard:home"))
-        else:
-            print("invalid")
-    context={"form":form}
-    return render(request,"dashboard_add_blog.html",context)
-
-
-@login_required
-@check_user_validation
-def edit_blog(request,slug):
-    blog=get_object_or_404(Blog,slug=slug)
-    form=AddBlog(request.POST or None , request.FILES or None,instance=blog)
-    if request.user == blog.user:
-        if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.save()
-                messages.success(request,"Blog Approved Successfully")
-                return redirect(reverse("dashboard:blogs"))
-            else:
-                print("invalid")
-    else:
-        messages.error(request,"You Don't Have Permisssion")
-        return redirect(reverse("dashboard:blogs"))
-    context={"blog":blog,"form":form}
-    return render(request,"dashboard_edit_blog.html",context)
-
-@login_required
-@check_user_validation
-def delete_blog(request,slug):
-    blog=get_object_or_404(Blog,slug=slug)
-    if request.user == blog.user:
-        blog.delete()
-    else:
-        messages.error(request,"You Don't Have Permisssion")
-        return redirect(reverse("dashboard:blogs"))
-    return redirect(reverse("dashboard:blogs"))
-
 
 @login_required
 @check_user_validation
@@ -209,6 +230,28 @@ def add_course(request):
             print("invalid")
     context={"form":form}
     return render(request,"dashboard_add_course.html",context)
+
+@login_required
+@check_user_validation
+def videos(request):
+    if request.user.account_type == "teacher":
+        videos=Videos.objects.filter(user=request.user).order_by("-id")
+    else:
+        videos=Videos.objects.all().order_by("-id")
+    context={"videos":videos}
+    return render(request,"dashboard_videos.html",context)
+
+@login_required
+@check_user_validation
+def delete_videos(request,slug):
+    video=get_object_or_404(Videos,slug=slug)
+    if request.user == video.user:
+        video.delete()
+        video.my_course.save()
+        return redirect(reverse("dashboard:videos"))
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("dashboard:home"))
 
 @login_required
 @check_user_validation
@@ -302,6 +345,34 @@ def delete_event(request,id):
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect("dashboard:events")
+    return redirect(reverse("dashboard:events"))
+
+@login_required
+@check_user_validation
+def finish_event(request,id):
+    event=get_object_or_404(Events,id=id)
+    if request.user == event.user:
+        event.status = "end"
+        event.save()
+        messages.success(request,"Event End Successffuly")
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect("dashboard:events")
+    return redirect(reverse("dashboard:events"))
+@login_required
+@check_user_validation
+def start_event(request,slug):
+    event=get_object_or_404(Events,slug=slug)
+    if request.user == event.user and event.status == "hold" and event.approved == True:
+        emails=event.get_students_events()
+        # html="dashboard_events.html"
+
+        event.status="start"
+        event.save()
+        messages.success(request,"Event Has Been Started")
+    else:
+        messages.error(request,"invalid event status")
+        return redirect(reverse("dashboard:events"))
     return redirect(reverse("dashboard:events"))
 
 @login_required
