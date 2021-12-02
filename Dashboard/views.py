@@ -133,8 +133,6 @@ def add_blog(request):
                 tag=request.POST.get("tags")
                 print(tag)
                 if tag:
-                    instance.tags=None
-                    instance.save()
                     for i in tag.split(","):
                         tags,created=Tag.objects.get_or_create(name=i)
                         instance.tags.add(tags)
@@ -191,13 +189,22 @@ def edit_blog(request,slug):
                         quote=request.POST.get("quote")
                         data={"quote":quote}
                         instance.data=json.dumps(data)
-                    instance.save()
-                    tag=request.POST.get("tags")
-                    print(tag)
-                    for i in tag.split(","):
-                        tags,created=Tag.objects.get_or_create(name=i)
-                        instance.tags.add(tags)
-                        instance.save()
+                    tag=form.cleaned_data.get("tags")
+                    tag_list=[]
+                    if tag:
+                        for i in tag:
+                            tag_list.append(i)
+                            if i in blog.tags.all():
+                                pass
+                            else:
+                                new_tags,created=Tag.objects.get_or_create(name=i)
+                                instance.tags.add(new_tags)
+                                instance.save()
+                        for i in instance.tags.all():
+                            if i.name in tag_list:
+                                pass
+                            else:
+                                instance.tags.remove(i)
                     image=request.FILES.getlist("image")
                     for i in image:
                         image=Blog_Images.objects.create(blog=instance,image=i)
