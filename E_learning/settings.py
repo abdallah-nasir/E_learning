@@ -78,11 +78,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # "debug_toolbar.middleware.DebugToolbarMiddleware",
-
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     'accounts.middleware.OneSessionPerUserMiddleware',
     'crum.CurrentRequestUserMiddleware',
-]
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+       ]
+
+
 
 ROOT_URLCONF = 'E_learning.urls'
 
@@ -129,12 +130,12 @@ DATABASES={
         "PORT":"5432"
     }     
 } 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'my_cache_table',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'my_cache_table',
+#     }
+# }
 #debug toolbar
 # INTERNAL_IPS = [
    
@@ -237,11 +238,12 @@ EMAIL_HOST_USER = 'abdullahnasser6@gmail.com'
 EMAIL_HOST_PASSWORD ="bbvpxmxneyglgqzt"
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL= False
-EMAIL_PORT = '587'
-#allauth  
+EMAIL_PORT = '587' 
+#allauth   
 SITE_ID=1
 LOGIN_REDIRECT_URL ="home:home"
-ACCOUNT_ADAPTER="allauth.account.adapter.DefaultAccountAdapter"
+# ACCOUNT_ADAPTER="allauth.account.adapter.DefaultAccountAdapter"
+SOCIALACCOUNT_ADAPTER ="allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS =True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True

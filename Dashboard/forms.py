@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from Blogs.models import Blog,Blog_Payment
-from home.models import Course,Branch,Videos,Events,Payment
+from home.models import Course,Branch,Videos,Events,Payment,News
+from .models import Rejects
 from Consultant.models import Cosultant_Payment
 from Quiz.models import Question ,Answers
 import os
@@ -35,11 +36,11 @@ class AddBlog(forms.ModelForm):
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
-            for i in image:
-                image_extension=os.path.splitext(i.name)[1]
-                print(image_extension)
-                if image_extension not in image_extentions:
-                    raise forms.ValidationError("invalid image extension")
+        for i in image:
+            image_extension=os.path.splitext(i.name)[1]
+            print(image_extension)
+            if image_extension.lower() not in image_extentions:
+                raise forms.ValidationError("invalid image extension")
         return image
 
 
@@ -61,11 +62,11 @@ class BlogQuoteForm(forms.ModelForm):
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
-            for i in image:
-                image_extension=os.path.splitext(i.name)[1]
-                print(image_extension)
-                if image_extension not in image_extentions:
-                    raise forms.ValidationError("invalid image extension")
+        for i in image:
+            image_extension=os.path.splitext(i.name)[1]
+            print(image_extension)
+            if image_extension.lower() not in image_extentions:
+                raise forms.ValidationError("invalid image extension")
         return image
 class BlogLinkForm(forms.ModelForm):
     link=forms.CharField(required=True,max_length=100)
@@ -82,18 +83,18 @@ class BlogLinkForm(forms.ModelForm):
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
-            for i in image:
-                image_extension=os.path.splitext(i.name)[1]
-                print(image_extension)
-                if image_extension not in image_extentions:
-                    raise forms.ValidationError("invalid image extension")
+        for i in image:
+            image_extension=os.path.splitext(i.name)[1]
+            print(image_extension)
+            if image_extension.lower() not in image_extentions:
+                raise forms.ValidationError("invalid image extension")
         return image
 class BlogVideoForm(forms.ModelForm):
-    video=forms.FileField(required=True,label="Video / Audio",widget=forms.FileInput())
+    video=forms.FileField(label="Video / Audio")
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        fields=["name","video","details","category","paid","tags","image"]
+        fields=["name","details","category","paid","tags","video","image"]
 
     def clean_image(self):
         request=get_current_request()
@@ -103,11 +104,12 @@ class BlogVideoForm(forms.ModelForm):
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
-            for i in image:
-                image_extension=os.path.splitext(i.name)[1]
-                print(image_extension)
-                if image_extension not in image_extentions:
-                    raise forms.ValidationError("invalid image extension")
+        for i in image:
+            image_extension=os.path.splitext(i.name)[1]
+            print(image_extension)
+            if image_extension.lower() not in image_extentions:
+                raise forms.ValidationError("invalid image extension")
+            
         return image
     
     def clean_video(self):
@@ -115,8 +117,8 @@ class BlogVideoForm(forms.ModelForm):
         request=get_current_request()
         blog_type=request.GET.get("blog_type")
         video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
-        if blog_type == "video":
-            if not video:
+        if blog_type == "video" or blog_type == "audio":
+            if video is False:
                 raise forms.ValidationError("please insert a video / audio")
             else:
                 video_type=os.path.splitext(video.name)[1]
@@ -138,11 +140,11 @@ class BlogGalleryForm(forms.ModelForm):
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
-            for i in image:
-                image_extension=os.path.splitext(i.name)[1]
-                print(image_extension)
-                if image_extension not in image_extentions:
-                    raise forms.ValidationError("invalid image extension")
+        for i in image:
+            image_extension=os.path.splitext(i.name)[1]
+            print(image_extension)
+            if image_extension.lower() not in image_extentions:
+                raise forms.ValidationError("invalid image extension")
         return image
 
 class AddCourse(forms.ModelForm):
@@ -156,7 +158,7 @@ class AddCourse(forms.ModelForm):
         image=self.cleaned_data.get("image")
         image_extentions=[".png",".jpg",",jpeg"]
         image_extension=os.path.splitext(image.name)[1]
-        if image_extension not in image_extentions:
+        if image_extension.lower() not in image_extentions:
             raise forms.ValidationError("invalid image extension")
         return image
 
@@ -169,6 +171,9 @@ class AddVideo(forms.ModelForm):
     def clean_video(self):
         video=self.cleaned_data.get("video")      
         video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
+        if video is False:
+            raise forms.ValidationError("insert video")
+
         video_type=os.path.splitext(video.name)[1]
         if video_type not in  video_extentions:
             raise forms.ValidationError("invalid video extension")
@@ -188,7 +193,7 @@ class AddEvent(forms.ModelForm):
         image=self.cleaned_data.get("image")
         image_extentions=[".png",".jpg",",jpeg"]
         image_extension=os.path.splitext(image.name)[1]
-        if image_extension not in image_extentions:
+        if image_extension.lower() not in image_extentions:
             raise forms.ValidationError("invalid image extension")
         return image
 class AddQuestion(forms.ModelForm):
@@ -200,48 +205,21 @@ class AddAnswer(forms.ModelForm):
     class Meta:
         model=Answers
         fields=["answer","correct"]
+class NewsForm(forms.ModelForm):
+    class Meta:
+        model=News
+        fields="__all__"
 ############################
 # Get model details for superuser
-class BlogDetail(forms.ModelForm):
-    message=forms.CharField(widget=forms.Textarea())
-    class Meta:
-        model=Blog
-        fields="__all__"
 
-class Blog_PaymentDetail(forms.ModelForm):
+class RejectForm(forms.ModelForm):
     message=forms.CharField(widget=forms.Textarea())
     class Meta:
-        model=Blog_Payment
-        fields="__all__"
-class Cosultant_PaymentDetail(forms.ModelForm):
-    message=forms.CharField(widget=forms.Textarea())
-    class Meta:
-        model=Cosultant_Payment
-        fields="__all__"
-class CourseDetail(forms.ModelForm):
-    message=forms.CharField(widget=forms.Textarea())
-    class Meta:
-        model=Course
-        fields="__all__"
-class EventsDetail(forms.ModelForm):
-    message=forms.CharField(widget=forms.Textarea())
-    class Meta:
-        model=Events
-        fields="__all__"
-class PaymentDetail(forms.ModelForm):
-    message=forms.CharField(widget=forms.Textarea())
-    class Meta:
-        model=Payment
-        fields="__all__"
-class UserDetail(forms.ModelForm):
-    password=forms.CharField(widget = forms.TextInput(attrs={'readonly':'readonly'}))
-    message=forms.CharField(widget=forms.Textarea())
-    class Meta:
-        model=User
-        fields="__all__"
+        model=Rejects
+        fields=["message"]
 
-    def __init__(self, *args, **kwargs):
-        super(UserDetail, self).__init__(*args, **kwargs)
-        for i in self.fields:
-            self.fields[i].widget.attrs['readonly'] = True
-        self.fields["message"].widget.attrs['readonly'] = False
+    # def __init__(self, *args, **kwargs):
+    #     super(UserDetail, self).__init__(*args, **kwargs)
+    #     for i in self.fields:
+    #         self.fields[i].widget.attrs['readonly'] = True
+    #     self.fields["message"].widget.attrs['readonly'] = False

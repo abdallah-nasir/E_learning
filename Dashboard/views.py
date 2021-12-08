@@ -2,9 +2,10 @@ from django.shortcuts import render,redirect
 from django.template.defaultfilters import urlencode
 from django.urls import reverse
 from Consultant.models import Cosultant_Payment
-from home.models import Course,Payment,Events,Videos
+from home.models import Course,Payment,Events,Videos,News
 from Blogs.models import (Blog,Blog_Payment,Blog_Images)
 from Quiz.models import *
+from accounts.models import TeacherForms
 from django.core.paginator import Paginator
 from .forms import *
 from django.core.mail import send_mail,send_mass_mail
@@ -39,7 +40,7 @@ def home(request):
 
 
 @login_required
-@check_user_validation
+@check_if_user_director
 def blog_payment(request):
     if request.user.account_type == "teacher":
         payments=Blog_Payment.objects.filter(user=request.user).order_by("-id")
@@ -52,7 +53,7 @@ def blog_payment(request):
     return render(request,"dashboard_blog_payment.html",context)
 
 @login_required
-@check_user_validation
+@check_if_user_director
 def course_payment(request):
     if request.user.account_type == "teacher":
         courses=Payment.objects.filter(user=request.user).order_by("-id")
@@ -67,7 +68,7 @@ def course_payment(request):
 
 
 @login_required
-@check_user_validation
+@check_if_user_director
 def consultant_payment(request):
     if request.user.account_type == "teacher":
         consultant=Cosultant_Payment.objects.filter(user=request.user).order_by("-id")
@@ -171,15 +172,17 @@ def edit_blog(request,slug):
         else:
             form=AddBlog(request.POST or None,request.FILES or None,instance=blog)
         form_number=1
-    except:
+    except: 
         form=BlogTypeForm(request.GET or None,instance=blog)
-
+  
         form_number=2
     if request.user == blog.user:
         if request.method == "POST":
+            Rejects.objects.filter(user=request.user,type="blogs",content_id=blog.id).delete()
             if form_number == 1:
                 if form.is_valid():
                     instance=form.save(commit=False)
+                    instance.approved=False
                     type=request.GET["blog_type"]
                     if type == "link":
                         link=request.POST.get("link")
@@ -189,6 +192,7 @@ def edit_blog(request,slug):
                         quote=request.POST.get("quote")
                         data={"quote":quote}
                         instance.data=json.dumps(data)
+                    instance.blog_type=type
                     tag=form.cleaned_data.get("tags")
                     tag_list=[]
                     if tag:
@@ -206,10 +210,32 @@ def edit_blog(request,slug):
                             else:
                                 instance.tags.remove(i)
                     image=request.FILES.getlist("image")
-                    for i in image:
-                        image=Blog_Images.objects.create(blog=instance,image=i)
-                        instance.image.add(image)
+                    if image != []:
+                        if type != "gallery":
+                            this_image=image[-1]
+                            if len(blog.image.all()) > 1:
+                                blog.image.all().delete()
+                                image=Blog_Images.objects.create(blog=instance,image=this_image)
+                                instance.image.add(image)
+                                instance.save()
+                            elif blog.image.last() != this_image:
+
+                                blog.image.all().delete()
+                                image=Blog_Images.objects.create(blog=instance,image=this_image)
+                                instance.image.add(image)
+                                instance.save()
+                        else:
+                            for i in image:
+                                image=Blog_Images.objects.create(blog=instance,image=i)
+                                instance.image.add(image)
+                                instance.save()
+                    if type == "audio" or type == "video":
+                        video_audio=form.cleaned_data.get("video")
+                        instance.video=video_audio
                         instance.save()
+                    else:
+                        if blog.video:
+                            blog.video.delete()
                     messages.success(request,"Your Blog is Waiting for Admin Approve")
                     return redirect(reverse("dashboard:blogs"))
     else:
@@ -264,6 +290,8 @@ def edit_course(request,slug):
     form=AddCourse(request.POST or None , request.FILES or None,instance=course)
     if request.user == course.Instructor:
         if request.method == "POST":
+            Rejects.objects.filter(user=request.user,type="course",content_id=course.id).delete()
+
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.save()
@@ -383,6 +411,8 @@ def edit_event(request,id):
     form.initial["zoom_link"]=event.get_details()["zoom"]
     if request.user == event.user:
         if request.method == "POST":
+            Rejects.objects.filter(user=request.user,type="events",content_id=id).delete()
+
             if form.is_valid():
                 instance=form.save(commit=False)
                 zoom=form.cleaned_data.get("zoom_link")
@@ -599,8 +629,8 @@ def delete_answer(request,slug,id):
     if request.user == course.Instructor:
         try:
             course.quiz.answers.get(id=id).delete()
-            if  course.quiz.questions.count() == 0:
-                course.quiz.delete()
+            # if  course.quiz.questions.count() == 0:
+            #     course.quiz.delete()
         except:
             messages.error(request,"invalid answer")
             return redirect(reverse("dashboard:courses"))
@@ -614,10 +644,13 @@ def delete_answer(request,slug,id):
 def teachers(request):
     if request.user.is_superuser or request.user.is_director:
         teacher=User.objects.filter(account_type="teacher").order_by("-id")
+        paginator = Paginator(teacher, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
     else:
         messages.error(request,"You Don't have Permission")
         return redirect(reverse("dashboard:home"))
-    context={"teachers":teacher}
+    context={"teachers":page_obj}
     return render(request,"dashboard_teachers.html",context)
 
 def get_choices_keys():
@@ -646,7 +679,7 @@ def approve(request):
             elif qs == "payment":
                 query=Payment.check_reject.get_query_set().order_by("-id")
             elif qs == "teacher":
-                query=User.objects.filter(account_type="teacher",is_active=False)
+                query=TeacherForms.check_reject.get_query_set().order_by("-id")
             else:
                 query=False
         except:
@@ -661,7 +694,7 @@ def approve(request):
 @login_required
 def show_demo_blog(request,slug):
     if request.user.is_superuser :
-        blog=get_object_or_404(Blog,slug=slug)
+        blog=get_object_or_404(Blog,approved=False,slug=slug)
     else:
         messages.error(request,"You Don't Have permission")
         return redirect(reverse("home:home"))
@@ -711,8 +744,10 @@ def approve_content(request,id):
                 query.save()
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "teacher":
-                query=get_object_or_404(User,id=id,is_active=False,account_type="teacher")
-                query.is_active=True
+                query=get_object_or_404(TeacherForms,id=id,approved=False)
+                query.approved=True
+                query.teacher.is_active=True
+                query.teacher.save()
                 query.save()
                 messages.success(request,"Teacher Approved Successfully")
         except:
@@ -721,63 +756,124 @@ def approve_content(request,id):
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("home:home"))
     redirect_url = reverse('dashboard:approve')
+
     # parameters = urlencode()
     return redirect(f'{redirect_url}?approve={qs}') 
 
 @login_required
 def reject(request,id):
-    if request.user.is_superuser :
+    if request.user.is_superuser:
         try:
             qs=request.GET["reject"]
             content=Rejects.objects.filter(type=qs,content_id=id)
             if content.exists():
+                messages.error(request,"Form is ALready Rejected")
                 redirect_url = reverse('dashboard:approve')
                 return redirect(f'{redirect_url}?approve={qs}') 
-            if qs == "blogs":
+            elif qs == "blogs":
                 query=get_object_or_404(Blog,id=id,approved=False)
-                form=BlogDetail(request.POST or None ,instance=query)
                 content_user=query.user
             elif qs == "blog_payment":
                 query=get_object_or_404(Blog_Payment,id=id,pending=True)
-                form=Blog_PaymentDetail(request.POST or None ,instance=query)
                 content_user=query.user
             elif qs == "consultant_payment":
                 query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
-                form=Cosultant_PaymentDetail(request.POST or None ,instance=query)
                 content_user=query.user
             elif qs == "course":
                 query=get_object_or_404(Course,id=id,approved=False)
-                form=CourseDetail(request.POST or None ,instance=query)
                 content_user=query.Instructor
             elif qs == "events":
                 query=get_object_or_404(Events,id=id,approved=False)
-                form=EventsDetail(request.POST or None ,instance=query)
                 content_user=query.user
             elif qs == "payment":
                 query=get_object_or_404(Payment,id=id,pending=True)
-                form=PaymentDetail(request.POST or None ,instance=query)
                 content_user=query.user
             elif qs == "teacher":
-                query=get_object_or_404(User,id=id,is_active=False,account_type="teacher")
-                form=UserDetail(request.POST or None ,instance=query)
-                content_user=query
+                query=get_object_or_404(TeacherForms,id=id,approved=False)
+                content_user=query.teacher
+            form=RejectForm(request.POST or None)
             if request.method == "POST":
-                message=request.POST.get("message")
-                Rejects.objects.create(type=qs,content_id=id,user=content_user)
-                send_mail(
-                'Content Rejected',
-                message,
-                settings.EMAIL_HOST_USER,
-                [content_user.email],
-                fail_silently=False,
-            )
-                messages.success(request,"Content Rejected Successfully")
-                redirect_url = reverse('dashboard:approve')
-                return redirect(f'{redirect_url}?approve={qs}') 
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    print(form.cleaned_data.get("message"))
+                    instance.type=qs
+                    instance.user=content_user
+                    instance.content_id=id
+                    instance.save()
+                    if qs == "teacher":
+                        send_mail(
+                        'Content Rejected',
+                        form.cleaned_data.get("message"),
+                        settings.EMAIL_HOST_USER,
+                        [content_user.email],
+                        fail_silently=False,
+                        )
+                        query.delete()
+                    else:
+                        send_mail(
+                        'Content Rejected',
+                        form.cleaned_data.get("message"),
+                        settings.EMAIL_HOST_USER,
+                        [content_user.email],
+                        fail_silently=False,
+                        )
+                    # if qs == "teacher":
+                    #     print("teacher")
+                        # query.delete()
+                    messages.success(request,"Content Rejected Successfully")
+                    redirect_url = reverse('dashboard:approve')
+                    return redirect(f'{redirect_url}?approve={qs}') 
         except:
+          
             return redirect(reverse("dashboard:home"))
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("home:home"))
-    context={"form":form}
+    context={"form":form,"query":query,"qs":qs}
     return render(request,"dashboard_reject_form.html",context)
+
+@login_required
+def news(request):
+    if request.user.is_superuser or request.user.is_director:
+        news=News.objects.all().order_by("-id")
+        paginator = Paginator(news, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context={"news":page_obj}
+    else:
+        messages.error(request,"You Don't have Permission")
+        return redirect(reverse("dashboard:home"))
+    return render(request,"dashboard_news.html",context)
+
+@login_required
+@admin_director_check
+def delete_news(request,id):
+    news=get_object_or_404(News,id=id)
+    news.delete()
+    messages.success(request,"News Deleted Successfully")
+    return redirect(reverse("dashboard:news"))
+
+@login_required
+@admin_director_check
+def edit_news(request,id):
+    news=get_object_or_404(News,id=id)
+    form=NewsForm(request.POST or None,instance=news)
+    if request.method == "POST":
+        instance=form.save(commit=False)
+        instance.save()
+        messages.success(request,"News Edited Successfully")
+        return redirect(reverse("dashboard:news"))
+    context={"form":form}
+    return render(request,"dashboard_edit_news.html",context)
+
+@login_required
+@admin_director_check
+def add_news(request):
+    form=NewsForm(request.POST or None)
+    if request.method == "POST":
+        instance=form.save(commit=False)
+        instance.save()
+        messages.success(request,"News Added Successfully")
+        return redirect(reverse("dashboard:news"))
+    context={"form":form}
+    return render(request,"dashboard_add_news.html",context)

@@ -26,6 +26,13 @@
                                
                                 <div class="form-group">
                                     {{form.media}}
+                                    <!-- {% if blog.video %}
+                                    <div class="form-group">
+                                 <p><a href="{{blog.video.url}}">{{blog.video.url}}</a></p>  
+                                   <a href="{% url 'dashboard:delete_blog_video' blog.id  %}">{{blog.video.url|truncatechars:50}}<i class="fas fa-times-circle"></i>Delete</a>
+
+                                    </div>
+                                    {% endif %} -->
                                     {{form|crispy}}
                                         </div>
                                         <div  class="form-group">
@@ -36,13 +43,7 @@
                                                 {% endfor %}
                                             </div>
                                           </div>
-                                          {% if blog.video %}
-                                          <div class="form-group">
-                                       <p><a href="{{blog.video.url}}">{{blog.video.url}}</a></p>  
-                                         <a href="{% url 'dashboard:delete_blog_video' blog.id  %}">{{blog.video.url|truncatechars:50}}<i class="fas fa-times-circle"></i>Delete</a>
-     
-                                          </div>
-                                          {% endif %}
+                                    
                                 
                                 <button class="btn btn-primary" type="submit">Submit</button>
                             </form>

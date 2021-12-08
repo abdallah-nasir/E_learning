@@ -8,6 +8,7 @@ from home.models import *
 from Blogs.models import *
 from Consultant.models import Cosultant_Payment
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 from django.contrib.auth.decorators import login_required
 import json
@@ -28,9 +29,9 @@ def check_teacher_form(request):
         if form.is_valid():
             try:
                 teacher_username=form.cleaned_data["username"]
-                user=User.objects.get(username=teacher_username)
-                teacher_form=TeacherForms.objects.filter(teacher__username=teacher_username,approved=False)
-                if teacher_form.exists():
+                user=User.objects.get(Q(username=teacher_username) | Q(email=teacher_username))
+                teacher_form=TeacherForms.objects.filter(teacher=user,approved=False)
+                if teacher_form.exists() and user.is_active == False:
                     messages.error(request,"your already have a Form")
                     form=Teacher_Form()
                 else: 
@@ -40,12 +41,16 @@ def check_teacher_form(request):
                     about_me=form.cleaned_data['about_me']
                     title=form.cleaned_data['title']
                     code=form.cleaned_data['code']
-                    data={"social":{"facebook":facebook,"linkedin":linkedin,"twitter":twitter},
+                    data={"social":[{"facebook":facebook,"linkedin":linkedin,"twitter":twitter}],
                         "about_me":about_me,"title":title}
-
-                    TeacherForms.objects.create(teacher=user,data=json.dumps(data),code=code,approved=False)
-                    messages.success(request,"your request is being review by admins")
-                    form=Teacher_Form()
+                    if code == user.code:
+                        new_teacher=TeacherForms.objects.create(teacher=user,data=json.dumps(data),code=code,approved=False)
+                        user.my_data=new_teacher.data
+                        user.save()
+                        messages.success(request,"your request is being review by admins")
+                        form=Teacher_Form()
+                    else:
+                        messages.error(request,f"invalid code for user {user.username}")
             except:
                 messages.error(request,"invalid data")
                 form=Teacher_Form()

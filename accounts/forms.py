@@ -57,7 +57,7 @@ class MyCustomSignupForm(SignupForm):
         account_type=self.cleaned_data["account_type"]
         user.account_type=account_type
         user.phone=self.cleaned_data["phone"]
-        user.image=self.cleaned_data["image"]
+        user.account_image=self.cleaned_data["image"]
         user.first_name=user.username
         # if self.cleaned_data["account_type"] == "teacher":
         #     user.about_me=self.cleaned_data["about_me"]
@@ -67,7 +67,7 @@ class MyCustomSignupForm(SignupForm):
         if user.account_type == "teacher":
             user.is_active = False
             user.save()
-            msg = EmailMessage(subject="Account Created", body=f"code={user.code}", from_email=settings.EMAIL_HOST_USER, to=[user.email])
+            msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info code={user.code} ", from_email=settings.EMAIL_HOST_USER, to=[user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
             messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
@@ -99,7 +99,7 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
         account_type=self.cleaned_data["account_type"]
         user.account_type=account_type
         user.phone=self.cleaned_data["phone"]       
-        user.image=self.cleaned_data["image"]
+        user.account_image=self.cleaned_data["image"]
         user.code=random_string_generator()
         user.save()
         if user.account_type == "teacher":
@@ -186,4 +186,4 @@ User=get_user_model()
 class ChangeUserDataForm(forms.ModelForm):
     class Meta:
         model=User
-        fields=["image","first_name","last_name","phone",]
+        fields=["account_image","first_name","last_name","phone",]

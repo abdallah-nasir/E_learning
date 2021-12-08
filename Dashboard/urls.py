@@ -53,6 +53,11 @@ path("approve/<str:id>/",views.approve_content,name="approve_content"),
 #aprove
 path("reject/<str:id>/",views.reject,name="reject"),
 
+#news
+path("news/",views.news,name="news"),
+path("news/edit/<str:id>/",views.edit_news,name="edit_news"),
+path("news/add/",views.add_news,name="add_news"),
+path("news/delete/<str:id>/",views.delete_news,name="delete_news"),
 
 
 

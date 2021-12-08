@@ -91,7 +91,7 @@ class Blog(models.Model):
     blog_type=models.CharField(choices=BLOG_TYPE,max_length=20)
     approved=models.BooleanField(default=False)
     tags=TaggableManager()
-    check_reject=CheckRejectManager()
+    check_reject=CheckRejectManager()   
     objects=models.Manager()
     slug=models.SlugField(unique=True,blank=True,max_length=100)
 

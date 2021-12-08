@@ -10,6 +10,7 @@ from .manager import *
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
+from Dashboard import models as dashboard_models
 from django.conf import settings
 import json
 def random_string_generator(size=7, chars=string.digits):
@@ -23,12 +24,12 @@ ACCOUNT_TYPE=(
     ("student","student"),
     ("teacher","teacher") 
 )
-
+  
 
 class User(AbstractUser):
     account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20)
     phone=models.CharField(max_length=12)
-    image=models.ImageField(upload_to=upload_avatar)
+    account_image=models.ImageField(upload_to=upload_avatar)
     my_data=models.TextField(blank=True,null=True)
     code=models.CharField(max_length=50,blank=True,null=True)
     slug=models.SlugField(unique=True,blank=True,null=True)
@@ -37,6 +38,8 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    def image(self):
+        return self.account_image
     def get_user_data(self):
         data=json.loads(self.my_data)
         title=data["title"]
@@ -75,13 +78,38 @@ def pre_save_receiver_video(sender, instance, *args, **kwargs):
 
 auth_user=settings.AUTH_USER_MODEL
 
+class CheckTeachersManager(models.Manager):
+    def get_query_set(self):
+        rejects=dashboard_models.Rejects.objects.filter(type="teacher")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        teachers=TeacherForms.objects.filter(approved=False).exclude(id__in=list)
     
+        return teachers    
+
 class TeacherForms(models.Model):
     teacher=models.ForeignKey(auth_user,on_delete=models.CASCADE)
     approved=models.BooleanField(default=False)
     code=models.CharField(max_length=50)
     data=models.TextField()    
-
+    check_reject=CheckTeachersManager()
+    objects=models.Manager()
     def __str__(self):
         return self.teacher.username
 
+    def get_user_data(self):
+        data=json.loads(self.data)
+        title=data["title"]
+        social=[]
+        about_me=data["about_me"]
+        for i in data["social"]: 
+            if i["facebook"]:
+                facebook=i["facebook"]
+            if i["twitter"]:
+                twitter=i["twitter"]
+            if i["linkedin"]:
+                linkedin=i["linkedin"]
+        context={"about_me":about_me,"title":title,"facebook":facebook,"linkedin":linkedin,"twitter":twitter}
+        return context

@@ -20,6 +20,19 @@ def check_user_validation(function):
     wrap.__name__ = function.__name__
     return wrap
 
+
+def check_if_user_director(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.is_director:
+            messages.error(request,"You Don't Have Permission")
+            return redirect(reverse("dashboard:home"))
+        elif request.user.is_superuser or request.user.account_type == "teacher" and request.user.is_active == True:
+            return function(request, *args, **kwargs)
+
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
 def check_event_status(function):
     def wrap(request, *args, **kwargs):
         if request.user.vip == True:
@@ -34,6 +47,17 @@ def check_event_status(function):
                 return function(request, *args, **kwargs)
         else:
             return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+def admin_director_check(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.is_superuser or request.user.is_director:
+            return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"You Don't Have Permission")
+            return redirect(reverse("dashboard:events"))
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
