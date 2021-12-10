@@ -25,7 +25,7 @@ def check_user_status(function):
         if request.user.vip == True:
             messages.error(request,"You Already A Member")
             return redirect(reverse("blogs:blogs"))
-        elif Blog_Payment.objects.filter(user=request.user,pending=True,expired=False).exists():
+        elif Blog_Payment.objects.filter(user=request.user,status="pending").exists():
             messages.error(request,"You have a pending request ,our team will review your request")
             return redirect(reverse("blogs:blogs"))
         else:
@@ -38,9 +38,8 @@ def check_blogs_payment_status(function):
     def wrap(request, *args, **kwargs):
         if request.user.vip == True:
             today= datetime.date.today()
-            payment=Blog_Payment.objects.filter(user=request.user,expired=False,pending=False,ordered=True).last()
+            payment=Blog_Payment.objects.filter(user=request.user,expired=False,status="approved").last()
             if payment.expired_at <= today:
-                payment.pending=False
                 payment.expired=True
                 payment.save()
                 request.user.vip =False

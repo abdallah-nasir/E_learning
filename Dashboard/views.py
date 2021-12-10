@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.template.defaultfilters import urlencode
 from django.urls import reverse
-from Consultant.models import Cosultant_Payment
+from Consultant.models import Cosultant_Payment,Consultant,Teacher_Time
 from home.models import Course,Payment,Events,Videos,News
 from Blogs.models import (Blog,Blog_Payment,Blog_Images)
 from Quiz.models import *
@@ -51,6 +51,7 @@ def blog_payment(request):
     page_obj = paginator.get_page(page_number)
     context={"payments":page_obj}
     return render(request,"dashboard_blog_payment.html",context)
+
 
 @login_required
 @check_if_user_director
@@ -703,16 +704,17 @@ def show_demo_blog(request,slug):
 
 @login_required
 def approve_content(request,id):
-    if request.user.is_superuser :
+    if request.user.is_superuser:
         try:
             qs=request.GET["approve"]
+
             if qs == "blogs":
                 query=get_object_or_404(Blog,id=id,approved=False)
                 query.approved=True
                 query.save()
                 messages.success(request,"Blog Approved Successfully")
             elif qs == "blog_payment":
-                query=get_object_or_404(Blog_Payment,id=id,pending=True)
+                query=get_object_or_404(Blog_Payment,id=id,status="pending")
                 query.pending=False
                 query.ordered=True
                 query.save()
@@ -720,11 +722,10 @@ def approve_content(request,id):
                 query.user.save()
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "consultant_payment":
-                query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
-                query.pending=False
-                query.ordered=True
+                query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
+                query.status="approved"
+                query.consult.status="approved"
                 query.save()
-                query.consult.pending=False
                 query.consult.save()
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "course":
@@ -738,9 +739,10 @@ def approve_content(request,id):
                 query.save()
                 messages.success(request,"Event Approved Successfully")
             elif qs == "payment":
-                query=get_object_or_404(Payment,id=id,pending=True)
-                query.pending=False
-                query.ordered=True
+                query=get_object_or_404(Payment,id=id,status="pending")
+                query.status="approved"
+                query.course.students.add(query.user)
+                query.course.save()
                 query.save()
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "teacher":
@@ -774,10 +776,10 @@ def reject(request,id):
                 query=get_object_or_404(Blog,id=id,approved=False)
                 content_user=query.user
             elif qs == "blog_payment":
-                query=get_object_or_404(Blog_Payment,id=id,pending=True)
+                query=get_object_or_404(Blog_Payment,id=id,status="pending")
                 content_user=query.user
             elif qs == "consultant_payment":
-                query=get_object_or_404(Cosultant_Payment,id=id,pending=True)
+                query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
                 content_user=query.user
             elif qs == "course":
                 query=get_object_or_404(Course,id=id,approved=False)
@@ -786,7 +788,7 @@ def reject(request,id):
                 query=get_object_or_404(Events,id=id,approved=False)
                 content_user=query.user
             elif qs == "payment":
-                query=get_object_or_404(Payment,id=id,pending=True)
+                query=get_object_or_404(Payment,id=id,status="pending")
                 content_user=query.user
             elif qs == "teacher":
                 query=get_object_or_404(TeacherForms,id=id,approved=False)
@@ -800,23 +802,18 @@ def reject(request,id):
                     instance.user=content_user
                     instance.content_id=id
                     instance.save()
+                    # send_mail(
+                    #     form.cleaned_data.get("subject"),
+                    #     form.cleaned_data.get("message"),
+                    #     settings.EMAIL_HOST_USER,
+                    #     [content_user.email],
+                    #     fail_silently=False,
+                    #     )
                     if qs == "teacher":
-                        send_mail(
-                        'Content Rejected',
-                        form.cleaned_data.get("message"),
-                        settings.EMAIL_HOST_USER,
-                        [content_user.email],
-                        fail_silently=False,
-                        )
                         query.delete()
                     else:
-                        send_mail(
-                        'Content Rejected',
-                        form.cleaned_data.get("message"),
-                        settings.EMAIL_HOST_USER,
-                        [content_user.email],
-                        fail_silently=False,
-                        )
+                        query.status="declined"
+                        query.save()
                     # if qs == "teacher":
                     #     print("teacher")
                         # query.delete()
@@ -877,3 +874,54 @@ def add_news(request):
         return redirect(reverse("dashboard:news"))
     context={"form":form}
     return render(request,"dashboard_add_news.html",context)
+
+@login_required
+@check_user_validation
+def consultants(request):
+    if request.user.account_type == "teacher":
+        consultants=Consultant.objects.filter(user=request.user,status="approved").order_by("-id")
+    else:
+        consultants=Consultant.objects.all()
+    paginator = Paginator(consultants, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"consultants":consultants}
+    return render(request,"dashboard_consultants.html",context)
+
+@login_required
+@check_user_validation
+def consultants_sessions(request):
+    if request.user.account_type == "teacher":
+        sessions=Teacher_Time.objects.filter(user=request.user).order_by("-id")
+    else:
+        sessions=Teacher_Time.objects.all().order_by("-id")
+
+    paginator = Paginator(sessions, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"sessions":sessions}
+    return render(request,"dashboard_consultants_sessions.html",context)
+
+@login_required
+@check_user_validation
+@check_if_teacher_have_consultants
+def add_consultant(request):
+    form=CosultantAddForm(request.POST or None)
+    if request.method == "POST":
+        instance=form.save(commit=False)
+        instance.user=request.user
+        instance.save()
+        messages.success(request,"Consultant Added Successfully")
+        return redirect(reverse("dashboard:consultants_sessions"))
+    context={"form":form}
+    return render(request,"dashboard_add_consultant.html",context)
+
+@login_required
+@check_user_validation
+def complete_consultant(request,id):
+    consult=get_object_or_404(Consultant,id=id,status="approved")
+    if request.user == consult.teacher.user:
+        consult.status="completed"
+        consult.save()
+        messages.success(request,"Consultant Completed Successfully")
+    return redirect(reverse("dashboard:consultants"))

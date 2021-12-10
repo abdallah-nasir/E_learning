@@ -22,7 +22,7 @@ def check_if_user_in_course(function):
 def check_if_user_in_pending_payment(function):
     def wrap(request, *args, **kwargs):
         course =get_object_or_404(Course,slug=kwargs["course"])
-        if Payment.objects.filter(user=request.user,course=course,pending=True).exists():
+        if Payment.objects.filter(user=request.user,course=course,status="pending").exists():
             messages.error(request,"you already have a pending payment")
             return redirect(reverse("home:course",kwargs={"slug":course.slug}))
         else:

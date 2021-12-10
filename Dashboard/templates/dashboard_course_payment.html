@@ -28,8 +28,7 @@
                                             <th>Method</th>
                                             <th>Transaction</th>
                                             <th>Course</th>
-                                            <th>Pending</th>
-                                            <th>Enrolled</th>
+                                            <th>Status</th>
 
                                         </tr>
                                     </thead>
@@ -41,8 +40,7 @@
                                         <td>{{i.method}}</td>
                                         <td>{{i.transaction_number}}</td>
                                         <td>{{i.course.name}}</td>
-                                        <td>{{i.pending}}</td>
-                                        <td>{{i.ordered}}</td>
+                                        <td>{{i.status}}</td>
 
                                     </tr>
                                     {% endfor %}

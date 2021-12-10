@@ -2,10 +2,10 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 class ConsultantAdmin(admin.ModelAdmin):
-    list_display=["id","pending","completed"]
+    list_display=["id","status"]
 
 class ConsultantPaymentAdmin(admin.ModelAdmin):
-    list_display=["method","id","pending","ordered"]
+    list_display=["method","id","status"]
 admin.site.register(Category)
 admin.site.register(Teacher_Time)
 admin.site.register(Consultant,ConsultantAdmin)

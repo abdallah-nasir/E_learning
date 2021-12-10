@@ -9,10 +9,10 @@ from django.contrib import messages
 def check_user_is_has_consul(function):
     def wrap(request, *args, **kwargs):
         teacher=get_object_or_404(Teacher_Time,id=kwargs["teacher"])
-        consult = Consultant.objects.filter(Q(user=request.user,teacher=teacher,completed=False) | Q(user=request.user,teacher=teacher,pending=True))
+        consult = Consultant.objects.filter(Q(user=request.user,teacher=teacher,status="pending") | Q(user=request.user,teacher=teacher,status="approved")) 
         if consult:
             messages.error(request,"You Already Have Pending Consultant")
-            return redirect(reverse("home:home"))
+            return redirect(reverse("consultant:home"))
         else:
             return function(request, *args, **kwargs)
 

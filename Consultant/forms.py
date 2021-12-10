@@ -3,7 +3,7 @@ from .models import *
 from home.forms import PaymentMethodForm
 
 class CosultantForm(forms.ModelForm):
-    name=forms.ModelChoiceField(queryset=Category.objects.all(),label="Category")
+    name=forms.ModelChoiceField(queryset=Category.objects.all(),label="Category",initial=None)
     teacher=forms.ModelChoiceField(required=False,queryset=Teacher_Time.objects.none(),label="Teacher")
     date=forms.DateTimeInput()
     class Meta:

@@ -17,7 +17,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import F
 def home(request):
     category=Category.objects.all()
-    form=CosultantForm(request.POST or None)
+    form=CosultantForm(request.POST or None,initial={'name':None})
     context={"form":form,"category":category}
     return render(request,"consultant.html",context)
 
@@ -33,7 +33,7 @@ def teacher_ajax(request):
         return JsonResponse({"message":"asd"})
     else:
         return JsonResponse({"message":"not ajax request"})
-
+  
 
 def teacher_ajax_table(request):
     form=CosultantForm(request.POST or None)
@@ -46,7 +46,7 @@ def teacher_ajax_table(request):
         for i in teacher:
             url=f"/consultant/payment/{i.id}/"
             list.append({"id":i.id,"username":i.user.username.title(),
-                "category":i.category.name,"date":i.date.date(),"from":i.from_time.strftime("%I:%M %p"),"to":i.to_time.strftime("%I:%M %p"),
+                "category":i.category.name,"date":i.date,"from":i.from_time.strftime("%I:%M %p"),"to":i.to_time.strftime("%I:%M %p"),
             "url":url,"price":i.price})
         print(list)
     return JsonResponse(list,safe=False)
@@ -62,9 +62,9 @@ def consultant_payment(request,teacher):
             image=form.cleaned_data["image"]
             number=form.cleaned_data["number"]
             consult=Consultant.objects.create(user=request.user
-                ,teacher=teacher,pending=True)
+                ,teacher=teacher,status="pending")
             payment=Cosultant_Payment.objects.create(method=method,transaction_number=number,
-                consult=consult,user=request.user,pending=True,payment_image=image)
+                consult=consult,user=request.user,status="pending",payment_image=image)
             msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[payment.user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
@@ -140,14 +140,14 @@ def paypal_capture(request,order_id,teacher_id):
 
         teacher=get_object_or_404(Teacher_Time,id=teacher_id)
         try:
-            if data["status"] == "COMPLETED" and request.user.vip == False:
+            if data["status"] == "COMPLETED" :
                 for i in data["purchase_units"]:
                     for b in i['payments']["captures"]:
                         transaction=b["id"]
                 consult=Consultant.objects.create(user=request.user
-                    ,teacher=teacher,pending=True)
+                    ,teacher=teacher,status="pending")
                 payment=Cosultant_Payment.objects.create(method="Paypal",transaction_number=transaction,
-                   consult=consult,user=request.user,pending=True)
+                   consult=consult,user=request.user,status="pending")
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
                 msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[consult.user.email])

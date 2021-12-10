@@ -13,7 +13,7 @@ class Category(models.Model):
 class Teacher_Time(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     category=models.ForeignKey(Category,on_delete=models.SET_NULL,null=True)
-    date=models.DateTimeField(auto_now_add=False)
+    date=models.DateField(auto_now_add=False)
     from_time=models.TimeField(auto_now_add=False)
     to_time=models.TimeField(auto_now_add=False)
     price=models.FloatField(default=0)
@@ -27,12 +27,18 @@ PAYMENTS=(
     ("Vodafone Cash","Vodafone Cash"),
     ("Paypal","Paypal")
 )
+PAYMENT_CHOICES=(
+    ("pending","pending"),
+    ("approved","approved"),
+    ("declined","declined"),
+    ("completed","completed"),
 
+    )
 class Consultant(models.Model):
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.CASCADE)
-    completed=models.BooleanField(default=False)
-    pending=models.BooleanField(default=False)
+    # completed=models.BooleanField(default=False)
+    status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     zoom=models.TextField(blank=True)
     def __str__(self):
         return self.user.username
@@ -50,9 +56,14 @@ class CheckRejectConsultant(models.Manager):
         for i in rejects:
             # i.content_id
             list.append(i.content_id)
-        consult=Cosultant_Payment.objects.filter(pending=True).exclude(id__in=list)
+        consult=Cosultant_Payment.objects.filter(status="pending").exclude(id__in=list)
         return consult
-        
+PAYMENT_CHOICES=(
+("pending","pending"),
+("approved","approved"),   
+("declined","declined"),
+
+)    
 class Cosultant_Payment(models.Model):
     consult=models.ForeignKey(Consultant,on_delete=models.SET_NULL,null=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
@@ -60,8 +71,7 @@ class Cosultant_Payment(models.Model):
     payment_image=models.ImageField(upload_to=upload_consultant_payment,null=True)
     transaction_number=models.CharField(max_length=50,null=True)
     created_at=models.DateTimeField(auto_now_add=True)
-    pending=models.BooleanField(default=False)
-    ordered=models.BooleanField(default=False)
+    status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     check_reject=CheckRejectConsultant()
     objects=models.Manager()
     def __str__(self):

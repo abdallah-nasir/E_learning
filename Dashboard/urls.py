@@ -59,6 +59,14 @@ path("news/edit/<str:id>/",views.edit_news,name="edit_news"),
 path("news/add/",views.add_news,name="add_news"),
 path("news/delete/<str:id>/",views.delete_news,name="delete_news"),
 
+#consultants
+path("consultants/sessions/",views.consultants_sessions,name="consultants_sessions"),
+path("consultants/",views.consultants,name="consultants"),
+path("add/consultants/",views.add_consultant,name="add_consultant"),
+path("complete_consultant/consultants/<str:id>/",views.complete_consultant,name="complete_consultant"),
+
+
+
 
 
 ]  

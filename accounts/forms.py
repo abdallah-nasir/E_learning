@@ -5,6 +5,9 @@ from allauth.socialaccount.models import SocialAccount
 import os
 from django.db.models.query_utils import Q
 from django.core.mail import send_mail,EmailMessage
+from home.models import Payment
+from Consultant.models import  Cosultant_Payment
+from Blogs.models import Blog_Payment
 from .models import TeacherForms,User
 from django.contrib import messages
 from django.conf import settings
@@ -187,3 +190,19 @@ class ChangeUserDataForm(forms.ModelForm):
     class Meta:
         model=User
         fields=["account_image","first_name","last_name","phone",]
+
+class BlogPaymentFom(forms.ModelForm):
+    class Meta:
+        model=Blog_Payment
+        fields=["payment_image","transaction_number"]
+
+
+class CoursePaymentFom(forms.ModelForm):
+    class Meta:
+        model=Payment
+        fields=["payment_image","transaction_number"]
+
+class ConsultantPaymentFom(forms.ModelForm):
+    class Meta:
+        model=Cosultant_Payment
+        fields=["payment_image","transaction_number"]

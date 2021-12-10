@@ -323,7 +323,7 @@ def payment_method_create(request,course):
             number=payment_form.cleaned_data["number"]
             Payment.objects.create(user=request.user,method=method,
             payment_image=image,transaction_number=number,course=course,       
-                pending=True)
+                status="pending")
             msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[request.user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
@@ -401,9 +401,9 @@ def capture(request,order_id,course):
         response = client.execute(capture_order)
         data = response.result.__dict__['_dict']
         print(data)
-        payment=Payment.objects.create(user=request.user,course_id=course,pending=True)
+        payment=Payment.objects.create(user=request.user,course_id=course,status="pending")
         try:
-            if data["status"] == "COMPLETED" and payment.ordered == False:
+            if data["status"] == "COMPLETED" and payment.status == "pending":
                 for i in data["purchase_units"]:
                     for b in i['payments']["captures"]:
                         transaction=b["id"]

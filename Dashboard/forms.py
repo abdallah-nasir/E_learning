@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from Blogs.models import Blog,Blog_Payment
 from home.models import Course,Branch,Videos,Events,Payment,News
 from .models import Rejects
-from Consultant.models import Cosultant_Payment
+from Consultant.models import Cosultant_Payment,Teacher_Time
 from Quiz.models import Question ,Answers
 import os
 from crum import get_current_request   
@@ -209,14 +209,26 @@ class NewsForm(forms.ModelForm):
     class Meta:
         model=News
         fields="__all__"
+    
+
+class CosultantAddForm(forms.ModelForm):
+    date=forms.DateField(widget=DatePickerInput(format='%m/%d/%y'))
+    from_time=forms.TimeField(widget=TimePickerInput(format='%H:%M:%S'))
+    to_time=forms.TimeField(widget=TimePickerInput(format='%I:%M:%S'))
+    class Meta:
+        model=Teacher_Time 
+        fields="__all__"
+        exclude=["user"]
+
 ############################
 # Get model details for superuser
 
 class RejectForm(forms.ModelForm):
+    subject=forms.CharField()
     message=forms.CharField(widget=forms.Textarea())
     class Meta:
         model=Rejects
-        fields=["message"]
+        fields=["subject","message"]
 
     # def __init__(self, *args, **kwargs):
     #     super(UserDetail, self).__init__(*args, **kwargs)

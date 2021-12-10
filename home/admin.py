@@ -3,7 +3,7 @@ from .models import *
 # Register your models here.
 
 class PaymentAdmin(admin.ModelAdmin):
-    list_display=("method","pending")
+    list_display=("method","status")
 
 admin.site.register(Branch)
 admin.site.register(Category)

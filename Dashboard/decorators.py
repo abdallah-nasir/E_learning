@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib import messages
 from home.models import Events
+from Consultant.models import  Consultant
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 import datetime
@@ -58,6 +59,19 @@ def admin_director_check(function):
         else:
             messages.error(request,"You Don't Have Permission")
             return redirect(reverse("dashboard:events"))
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+def check_if_teacher_have_consultants(function):
+    def wrap(request, *args, **kwargs):
+        consult=Consultant.objects.filter(user=request.user,status="approved")
+        if consult:
+            messages.error(request,"You Should Complete Previous Sessions First")
+            return redirect(reverse("dashboard:consultants"))
+        else:
+            return function(request, *args, **kwargs)
+
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap

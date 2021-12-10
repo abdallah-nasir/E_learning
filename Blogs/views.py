@@ -114,13 +114,13 @@ def payment_pricing(request,id):
     form=PaymentForm(request.POST or None,request.FILES or None)
     if request.method == 'POST':
         if form.is_valid():
-            if request.user.vip == False and not Blog_Payment.objects.filter(user=request.user,pending=True).exists():
+            if request.user.vip == False and not Blog_Payment.objects.filter(user=request.user,status="pending").exists():
                 now= datetime.date.today()
                 method=form.cleaned_data["payment_method"]
                 image=form.cleaned_data["image"]
                 number=form.cleaned_data["number"]
                 payment=Blog_Payment.objects.create(user=request.user,
-                method=method,payment_image=image, transaction_number=number,pending=True,created_at=now)
+                method=method,payment_image=image, transaction_number=number,status="pending",created_at=now)
                 if price.get_duration() == 'month':
                     payment.created_at = now
                     payment.expired_at= now + datetime.timedelta(days=30)
@@ -212,7 +212,7 @@ def paypal_capture(request,order_id,price_id):
                         transaction=b["id"]
                 now= datetime.date.today()
                 payment=Blog_Payment.objects.create(method="Paypal",
-                transaction_number=transaction,pending=True,user=request.user,created_at=now)
+                transaction_number=transaction,status="pending",user=request.user,created_at=now)
                 if price.get_duration() == 'month':
                     payment.expired_at= now + datetime.timedelta(days=30)
                 else:

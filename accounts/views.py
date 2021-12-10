@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,reverse
 from django.contrib.auth import logout 
 from django.contrib import messages
-from .forms import Teacher_Form ,ChangeUserDataForm
+from .forms import *
 from .models import TeacherForms
 from .models import User
 from home.models import *
@@ -9,7 +9,7 @@ from Blogs.models import *
 from Consultant.models import Cosultant_Payment
 from django.core.paginator import Paginator
 from django.db.models import Q
-
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 import json
 # Create your views here.
@@ -122,3 +122,64 @@ def events(request):
     page_obj = paginator.get_page(page_number)
     context={"events":page_obj}
     return render(request,"account_events.html",context)
+
+
+@login_required
+def edit_blog_payment(request,id):
+    payment=get_object_or_404(Blog_Payment,id=id,status="declined")
+    if request.user == payment.user:
+        if payment.method == "Paypal":
+            messages.error(request,"You Can't Edit Paypal Payment")
+            return redirect(reverse("accounts:blog_payment"))
+        form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
+
+        if request.method == "POST":
+            if form.is_valid():
+                instance=form.save()
+                messages.success(request,"Payment Edited Successfully")
+                return redirect(reverse("accounts:blog_payment"))
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("accounts:blog_payment"))
+    context={"form":form}
+    return render(request,"edit_blog_payment.html",context)
+
+@login_required
+def edit_course_payment(request,id):
+    payment=get_object_or_404(Payment,id=id,status="declined")
+    if request.user == payment.user:
+        if payment.method == "Paypal":
+            messages.error(request,"You Can't Edit Paypal Payment")
+            return redirect(reverse("accounts:course_payment"))
+        form=CoursePaymentFom(request.POST or None,request.FILES or None,instance=payment)
+
+        if request.method == "POST":
+            if form.is_valid():
+                instance=form.save()
+                messages.success(request,"Payment Edited Successfully")
+                return redirect(reverse("accounts:course_payment"))
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("accounts:course_payment"))
+    context={"form":form}
+    return render(request,"edit_course_payment.html",context)
+
+@login_required
+def edit_consultant_payment(request,id):
+    payment=get_object_or_404(Cosultant_Payment,id=id,status="declined")
+    if request.user == payment.user:
+        if payment.method == "Paypal":
+            messages.error(request,"You Can't Edit Paypal Payment")
+            return redirect(reverse("accounts:consultant_payment"))
+        form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
+
+        if request.method == "POST":
+            if form.is_valid():
+                instance=form.save()
+                messages.success(request,"Payment Edited Successfully")
+                return redirect(reverse("accounts:consultant_payment"))
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("accounts:consultant_payment"))
+    context={"form":form}
+    return render(request,"edit_consultant_payment.html",context)

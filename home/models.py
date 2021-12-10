@@ -224,26 +224,7 @@ class Course(models.Model):
         return quiz
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
- 
-@receiver(pre_save, sender=Course)
-def pre_save_receiver(sender, instance, *args, **kwargs):
-    instance.duration=0
-    if instance.id:
-        for i in instance.videos.all():
-            instance.videos.add(i)
-            media_info = MediaInfo.parse(i.video)
-            duration_in_ms = media_info.tracks[0].duration    
-            time_in_sec=duration_in_ms/1000
-            print(time_in_sec)
-            instance.duration +=time_in_sec        
-    if not instance.slug: 
-        instance.slug = slugify(instance.name)
-        if Course.objects.filter(slug=instance.slug).exists():
-            slug=f"{instance.name}-{random_string_generator()}"
-            instance.slug = slugify(slug)
-        else:
-            slug=f"{instance.name}"
-            instance.slug = slugify(slug)
+
       
 
     # def reviews_count(self):
@@ -356,16 +337,22 @@ class CheckRejectPayment(models.Manager):
         for i in rejects:
             # i.content_id
             list.append(i.content_id)
-        payment=Payment.objects.filter(pending=True).exclude(id__in=list)
+        payment=Payment.objects.filter(status="pending").exclude(id__in=list)
         return payment
+
+PAYMENT_CHOICES=(
+    ("pending","pending"),
+    ("approved","approved"),
+    ("declined","declined"),
+
+)
 class Payment(models.Model):
     method=models.CharField(choices=PAYMENTS,max_length=50)
     payment_image=models.ImageField(upload_to=upload_payment_images,null=True)
     transaction_number=models.CharField(max_length=50,null=True)
     course=models.ForeignKey(Course,on_delete=models.SET_NULL,null=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
-    pending=models.BooleanField(default=False)
-    ordered=models.BooleanField(default=False)
+    status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     check_reject=CheckRejectPayment()
     objects=models.Manager()
     def __str__(self):
@@ -373,7 +360,7 @@ class Payment(models.Model):
 
 class News(models.Model):
     name=models.CharField(max_length=200)
-    link=models.URLField(blank=True,null=True,default="#",max_length=200)
+    link=models.CharField(blank=True,null=True,default="#",max_length=200)
     # approved=models.BooleanField(default=False)
     def __str__(self):
         return str(self.id)

@@ -196,16 +196,22 @@ class CheckRejectBlogPaymentManager(models.Manager):
         for i in rejects:
             # i.content_id
             list.append(i.content_id)
-        payments=Blog_Payment.objects.filter(pending=True).exclude(id__in=list)
+        payments=Blog_Payment.objects.filter(status="pending").exclude(id__in=list)
         return payments
+
+PAYMENT_CHOICES=(
+    ("pending","pending"),
+    ("approved","approved"),
+    ("declined","declined"),
+
+    )
 class Blog_Payment(models.Model):
     method=models.CharField(choices=PAYMENTS,max_length=50)
     payment_image=models.ImageField(upload_to=upload_blog_payment,blank=True,null=True)
     # phone=models.CharField(null=True,max_length=20)
     transaction_number=models.CharField(max_length=50,null=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
-    pending=models.BooleanField(default=False)
-    ordered=models.BooleanField(default=False)
+    status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     objects=models.Manager()
     check_reject=CheckRejectBlogPaymentManager()
     created_at=models.DateField()
