@@ -154,7 +154,7 @@ def add_blog(request):
 @login_required
 @check_user_validation
 def edit_blog(request,slug):
-    blog=get_object_or_404(Blog,slug=slug)
+    blog=get_object_or_404(Blog,slug=slug,status="declined")
     blog_type_list=["standard","gallery","video","audio","quote","link"]
     try:
         type=request.GET["blog_type"]
@@ -237,6 +237,8 @@ def edit_blog(request,slug):
                     else:
                         if blog.video:
                             blog.video.delete()
+                    instance.status="pending"
+                    instance.save()
                     messages.success(request,"Your Blog is Waiting for Admin Approve")
                     return redirect(reverse("dashboard:blogs"))
     else:
@@ -343,6 +345,27 @@ def delete_videos(request,slug):
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("dashboard:home"))
+
+@login_required
+@check_user_validation
+def edit_videos(request,slug):
+    video=get_object_or_404(Videos,slug=slug,my_course__status="approved")
+    if request.user == video.user:
+        form=EditVideo(request.POST or None,request.FILES or None,instance=video)
+        if request.method == "POST":
+            instance=form.save(commit=False)
+            # if request.FILES.get("video") != None:
+            #     video.video.delete()
+            #     instance.video=request.FILES.get("video") 
+                # print("here")     
+            instance.save()
+            messages.success(request,"video edited successfully")
+            return redirect(reverse("dashboard:videos"))
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("dashboard:home"))
+    context={"form":form}
+    return render(request,"dashboard_edit_video.html",context)
 
 @login_required
 @check_user_validation
@@ -668,17 +691,17 @@ def approve(request):
             choices={"Teachers":"teacher","Blogs":"blogs","Blog Payments":"blog_payment","Consultant Payment":"consultant_payment",
                 "Course":"course","Course Payments":"payment","Events":"events"}
             if qs == "blogs":
-                query=Blog.check_reject.get_query_set().order_by("-id")
+                query=Blog.objects.filter(status="pending").order_by("-id")
             elif qs == "blog_payment":  
                 query=Blog_Payment.check_reject.get_query_set().order_by("-id")
             elif qs == "consultant_payment": 
-                query=Cosultant_Payment.check_reject.get_query_set().order_by("-id")
+                query=Cosultant_Payment.objects.filter(status="pending").order_by("-id")
             elif qs == "course":
-                query=Course.check_reject.get_query_set().order_by("-id")
+                query=Course.objects.filter(status="pending").order_by("-id")
             elif qs == "events":
                 query=Events.check_reject.get_query_set().order_by("-id")
             elif qs == "payment":
-                query=Payment.check_reject.get_query_set().order_by("-id")
+                query=Payment.objects.filter(status="pending").order_by("-id")
             elif qs == "teacher":
                 query=TeacherForms.check_reject.get_query_set().order_by("-id")
             else:
@@ -695,7 +718,7 @@ def approve(request):
 @login_required
 def show_demo_blog(request,slug):
     if request.user.is_superuser :
-        blog=get_object_or_404(Blog,approved=False,slug=slug)
+        blog=get_object_or_404(Blog,status="pending",slug=slug)
     else:
         messages.error(request,"You Don't Have permission")
         return redirect(reverse("home:home"))
@@ -709,16 +732,15 @@ def approve_content(request,id):
             qs=request.GET["approve"]
 
             if qs == "blogs":
-                query=get_object_or_404(Blog,id=id,approved=False)
-                query.approved=True
+                query=get_object_or_404(Blog,id=id,status="pending")
+                query.status="approved"
                 query.save()
                 messages.success(request,"Blog Approved Successfully")
             elif qs == "blog_payment":
                 query=get_object_or_404(Blog_Payment,id=id,status="pending")
-                query.pending=False
-                query.ordered=True
+                query.status="approved"
                 query.save()
-                query.user.vip == True
+                query.user.vip = True
                 query.user.save()
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "consultant_payment":
@@ -729,8 +751,8 @@ def approve_content(request,id):
                 query.consult.save()
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "course":
-                query=get_object_or_404(Course,id=id,approved=False)
-                query.approved=True
+                query=get_object_or_404(Course,id=id,status="pending")
+                query.status="approved"
                 query.save()
                 messages.success(request,"Course Approved Successfully")
             elif qs == "events":
@@ -773,7 +795,7 @@ def reject(request,id):
                 redirect_url = reverse('dashboard:approve')
                 return redirect(f'{redirect_url}?approve={qs}') 
             elif qs == "blogs":
-                query=get_object_or_404(Blog,id=id,approved=False)
+                query=get_object_or_404(Blog,id=id,status="pending")
                 content_user=query.user
             elif qs == "blog_payment":
                 query=get_object_or_404(Blog_Payment,id=id,status="pending")
@@ -782,7 +804,7 @@ def reject(request,id):
                 query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
                 content_user=query.user
             elif qs == "course":
-                query=get_object_or_404(Course,id=id,approved=False)
+                query=get_object_or_404(Course,id=id,status="pending")
                 content_user=query.Instructor
             elif qs == "events":
                 query=get_object_or_404(Events,id=id,approved=False)

@@ -27,7 +27,8 @@ path("delete/videos/<str:slug>/",views.delete_videos,name="delete_videos"),
 path("add/course/",views.add_course,name="add_course"),
 path("add/video/<str:slug>/",views.add_video,name="add_video"),
 path("edit/courses/<str:slug>/",views.edit_course,name="edit_course"),
-   
+path("edit/video/<str:slug>/",views.edit_videos,name="edit_videos"),
+
 #events
 path("events/",views.events,name="events"),
 path("add/events/",views.add_event,name="add_event"),

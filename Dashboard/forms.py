@@ -178,6 +178,22 @@ class AddVideo(forms.ModelForm):
         if video_type not in  video_extentions:
             raise forms.ValidationError("invalid video extension")
         return video
+
+class EditVideo(forms.ModelForm):
+    class Meta:
+        model=Videos
+        fields=['name',"video","details"]
+    def clean_video(self):
+        video=self.cleaned_data.get("video")      
+        video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
+        if video is False:
+            raise forms.ValidationError("insert video")
+
+        video_type=os.path.splitext(video.name)[1]
+        if video_type not in  video_extentions:
+            raise forms.ValidationError("invalid video extension")
+        return video
+
 from bootstrap_datepicker_plus import DatePickerInput,TimePickerInput,DateTimePickerInput
 class AddEvent(forms.ModelForm):
     date=forms.DateField(widget=DatePickerInput(format='%m/%d/%y'))

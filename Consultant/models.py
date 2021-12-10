@@ -76,3 +76,11 @@ class Cosultant_Payment(models.Model):
     objects=models.Manager()
     def __str__(self):
         return self.method
+
+    def check_if_rejected(self):
+        rejects=Rejects.objects.filter(type="consultant_payment",content_id=self.id,user=self.user)
+        if rejects.exists():
+            reject=rejects
+        else:
+            reject=False
+        return reject

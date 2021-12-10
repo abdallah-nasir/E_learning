@@ -24,7 +24,7 @@ from .decorators import *
 
 @login_required()
 def home(request):
-    blogs=Blog.objects.filter(approved=True)
+    blogs=Blog.objects.filter(status="approved")
     paginator = Paginator(blogs, 9) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -50,7 +50,7 @@ def single_blog(request,slug):
 @login_required()
 def blog_search(request):
     qs=request.GET.get("search")
-    blog=Blog.objects.filter(Q(name__icontains=qs,approved=True) | Q(details__icontains=qs,approved=True) | Q(category__name__icontains=qs,approved=True) |Q(tags__name__icontains=qs,approved=True)).distinct() 
+    blog=Blog.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(category__name__icontains=qs,status="approved") |Q(tags__name__icontains=qs,status="approved")).distinct() 
     print(blog)
     if len(blog) == 0:
         qs=None
@@ -231,7 +231,7 @@ def paypal_capture(request,order_id,price_id):
 
 @login_required()
 def blogs_type(request,type):
-    blogs=Blog.objects.filter(approved=True,blog_type=type)
+    blogs=Blog.objects.filter(status="approved",blog_type=type)
     paginator = Paginator(blogs, 1) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

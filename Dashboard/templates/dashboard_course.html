@@ -31,6 +31,7 @@
                                              <th>Discount</th>
                                             <th>Videos</th>
                                             <th>Students</th>
+                                            <th>Course Status</th>
                                             <th>Status</th>
                                             <th>Action</th>
 
@@ -49,6 +50,7 @@
                                         <td>{{i.videos.count}}</td>
                                         <td>{{i.students.count}}</td>
                                         <td>{{i.course_status}}</td>
+                                         <td>{{i.status}}</td>
                                         <td>
                                     <a class="btn btn-success" href="{% url 'dashboard:add_video' i.slug %}">Add Video</a>
                                             {% if i.quiz %}

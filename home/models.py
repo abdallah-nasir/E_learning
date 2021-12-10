@@ -144,9 +144,13 @@ class CheckRejectCourse(models.Manager):
         for i in rejects:
             # i.content_id
             list.append(i.content_id)
-        course=Course.objects.filter(approved=False).exclude(id__in=list)
+        course=Course.objects.filter(status="approved").exclude(id__in=list)
         return course
-        
+COURSE_STATUS=(
+    ("pending","pending"),
+    ("approved","approved"),
+    ("declined","declined")
+)
 class Course(models.Model):
     name=models.CharField(max_length=150)
     videos=models.ManyToManyField(Videos)
@@ -160,7 +164,7 @@ class Course(models.Model):
     quiz=models.ForeignKey(Quiz,blank=True,null=True,on_delete=models.SET_NULL)
     course_status=models.CharField(choices=CHOICES,max_length=50)
     details=models.TextField()   
-    approved=models.BooleanField(default=False)
+    status=models.CharField(choices=COURSE_STATUS,max_length=50,default="pending")
     stars=models.FloatField(default=0)
     objects=models.Manager()
     check_reject=CheckRejectCourse()
@@ -171,7 +175,7 @@ class Course(models.Model):
         return self.name
 
     def same(self):
-        courses=Course.objects.filter(branch=self.branch,approved=True).exclude(id=self.id).order_by("-id")[:4]
+        courses=Course.objects.filter(branch=self.branch,status="approved").exclude(id=self.id).order_by("-id")[:4]
         return courses
     def get_duration_model(self):
         return time.strftime('%H:%M:%S',  time.gmtime(self.duration))
@@ -222,6 +226,16 @@ class Course(models.Model):
             quiz=None
 
         return quiz
+@receiver(pre_save, sender=Course)
+def pre_save_receiver(sender, instance, *args, **kwargs):       
+    if not instance.slug: 
+        instance.slug = slugify(instance.name)
+        if Course.objects.filter(slug=instance.slug).exists():
+            slug=f"{instance.name}-{random_string_generator()}"
+            instance.slug = slugify(slug)
+        else:
+            slug=f"{instance.name}"
+            instance.slug = slugify(slug)
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -271,7 +285,7 @@ class Events(models.Model):
     def __str__(self):
         return self.name
     def get_students_events(self):
-        course=Course.objects.filter(branch=self.category,approved=True,Instructor=self.user)
+        course=Course.objects.filter(branch=self.category,status="approved",Instructor=self.user)
         list=[]
         for i in course:
             for b in i.students.all():
@@ -357,6 +371,14 @@ class Payment(models.Model):
     objects=models.Manager()
     def __str__(self):
         return self.method
+
+    def check_if_rejected(self):
+        rejects=Rejects.objects.filter(type="payment",content_id=self.id,user=self.user)
+        if rejects.exists():
+            reject=rejects
+        else:
+            reject=False
+        return reject
 
 class News(models.Model):
     name=models.CharField(max_length=200)

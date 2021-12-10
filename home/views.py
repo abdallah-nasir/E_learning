@@ -26,7 +26,7 @@ class FailedJsonResponse(JsonResponse):
 
 def global_search(request):
     qs=request.GET.get("qs")
-    courses=Course.objects.filter(Q(name__icontains=qs,approved=True) | Q(details__icontains=qs,approved=True) | Q(branch__name__icontains=qs,approved=True) | Q(branch__category__name__icontains=qs,approved=True) | Q(Instructor__username=qs,approved=True)).distinct() 
+    courses=Course.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(branch__name__icontains=qs,status="approved") | Q(branch__category__name__icontains=qs,status="approved") | Q(Instructor__username=qs,status="approved")).distinct() 
     if len(courses) == 0:
         page_obj=[]
         qs=None
@@ -39,7 +39,7 @@ def global_search(request):
 
 def course_search(request):
     qs=request.GET.get("qs")
-    course=Course.objects.filter(Q(name__icontains=qs,approved=True) | Q(details__icontains=qs,approved=True) | Q(branch__name__icontains=qs,approved=True) | Q(branch__category__name__icontains=qs,approved=True)).distinct() 
+    course=Course.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(branch__name__icontains=qs,status="approved") | Q(branch__category__name__icontains=qs,status="approved")).distinct() 
 
     if len(course) == 0:
         page_obj=[]
@@ -52,13 +52,13 @@ def course_search(request):
 
 def home(request):
     events=Events.objects.filter(approved=True).order_by("-date")[:5]
-    courses=Course.objects.filter(approved=True).order_by("-id")[0:5]
+    courses=Course.objects.filter(status="approved").order_by("-id")[0:5]
     teachers=User.objects.filter(account_type="teacher").order_by("?")[:4]
     context={"events":events,"courses":courses,"teachers":teachers}
     return render(request,"home.html",context)
     
 def courses(request):
-    course=Course.objects.filter(approved=True)
+    course=Course.objects.filter(status="approved")
     paginator = Paginator(course, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -67,7 +67,7 @@ def courses(request):
 
 def branch(request,slug):
     branch=get_object_or_404(Branch,slug=slug)
-    course=Course.objects.filter(branch=branch,approved=True)
+    course=Course.objects.filter(branch=branch,status="approved")
     paginator = Paginator(course, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -76,7 +76,7 @@ def branch(request,slug):
 
 videos_api="x80ZObZyzzTqvuG676i2EBCdN4NgnTfQ6LGIyB13tfePqUGeO2L2DVIWwyshEZ8W"
 def single_course(request,slug):
-    course=get_object_or_404(Course,slug=slug,approved=True)
+    course=get_object_or_404(Course,slug=slug,status="approved")
     payment_form=PaymentMethodForm()
     form=ReviewForm(request.POST or None)
     print(request.user.username)
@@ -156,7 +156,7 @@ def teachers(request):
 
 def teacher_single(request,slug):
     teacher=get_object_or_404(User,slug=slug)
-    courses=Course.objects.filter(Instructor=teacher,approved=True)
+    courses=Course.objects.filter(Instructor=teacher,status="approved")
     reviews=Teacher_review.objects.filter(teacher=teacher).order_by("-id")
     if request.method == "POST":
         if request.user.is_authenticated:

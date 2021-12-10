@@ -130,12 +130,12 @@ DATABASES={
         "PORT":"5432"
     }     
 } 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-#         'LOCATION': 'my_cache_table',
-#     }
-# }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
 #debug toolbar
 # INTERNAL_IPS = [
    
@@ -242,7 +242,7 @@ EMAIL_PORT = '587'
 #allauth   
 SITE_ID=1
 LOGIN_REDIRECT_URL ="home:home"
-# ACCOUNT_ADAPTER="allauth.account.adapter.DefaultAccountAdapter"
+ACCOUNT_ADAPTER="allauth.account.adapter.DefaultAccountAdapter"
 SOCIALACCOUNT_ADAPTER ="allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS =True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"

@@ -29,7 +29,7 @@
                                             <th>Category</th>
                                             <th>Comments</th>
                                             <th>Paid</th>
-                                            <th>Approved</th>
+                                            <th>status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -42,8 +42,11 @@
                                         <td>{{i.category|truncatewords:10}}</td>
                                         <td>{{i.comments.count}}</td>
                                         <td>{{i.paid}}</td>
-                                        <td>{{i.approved}}</td>
-                                        <td><a href="{% url 'dashboard:edit_blog' i.slug %}" class="btn btn-success">Edit</a>
+                                        <td>{{i.status}}</td>
+                                        <td>
+                                          {% if i.status == "declined" %}
+                                        <a href="{% url 'dashboard:edit_blog' i.slug %}" class="btn btn-success">Edit</a>
+                                        {% endif %}
                                         <button class="btn btn-danger" data-toggle="modal" data-target="#blog-{{i.id}}">Delete</button></td>
                                     </tr>
 

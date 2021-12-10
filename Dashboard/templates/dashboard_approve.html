@@ -264,9 +264,8 @@
                                             <th>Duration</th>
                                             <th>Category</th>
                                             <th>Price</th>
-                                            {% if i.discount %}
-                                            <th>Discount</th>
-                                            {% endif %}
+                                            <th>Discount</th>                                   
+                                             <th>Course Status</th>
                                             <th>Status</th>
                                             <th>Reviews</th>
                                             <th>Action</th>
@@ -286,10 +285,11 @@
                                           <td>{{i.get_duration_model}}</td>
                                           <td>{{i.branch.name.title|truncatechars:20}}</td>
                                           <td>{{i.price}}</td>
-                                          {% if i.discount %}
+                                       
                                           <td>{{i.discount}}</td>
-                                          {% endif %}
+                                 
                                           <td>{{i.course_status}}</td>
+                                          <td>{{i.status}}</td>
                                           <td>{{i.reviews.count}}</td>
 
 

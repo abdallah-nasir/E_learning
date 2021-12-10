@@ -76,6 +76,12 @@ class CheckRejectManager(models.Manager):
         
 def upload_blog_videos(instance,filename):
     return (f"blogs/videos/{instance.slug}/{filename}")
+
+BLOG_STATUS=(
+    ("pending","pending"),
+    ("approved","approved"),
+    ("declined","declined")
+)
 class Blog(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -89,7 +95,7 @@ class Blog(models.Model):
     paid=models.BooleanField(default=False)
     comments=models.ManyToManyField(Blog_Comment,related_name="blog_comments",blank=True)
     blog_type=models.CharField(choices=BLOG_TYPE,max_length=20)
-    approved=models.BooleanField(default=False)
+    status=models.CharField(choices=BLOG_STATUS,max_length=50,default="pending")
     tags=TaggableManager()
     check_reject=CheckRejectManager()   
     objects=models.Manager()
@@ -132,7 +138,7 @@ class Blog(models.Model):
         return link
 
     def same_category(self):
-        blogs=Blog.objects.filter(approved=True,category=self.category).order_by("-created_at")[:5]
+        blogs=Blog.objects.filter(status="approved",category=self.category).order_by("-created_at")[:5]
         return blogs
 
     def get_comments(self):
@@ -166,11 +172,11 @@ def recent_categories():
     cat=Category.objects.order_by("-id")[:6]
     return cat
 def blog_slider():
-    blogs=Blog.objects.filter(approved=True).order_by("-created_at")[:5]
+    blogs=Blog.objects.filter(status="approved").order_by("-created_at")[:5]
     return blogs
 
 def recent_blogs():
-    blog=Blog.objects.filter(approved=True).order_by("-created_at")[:6]
+    blog=Blog.objects.filter(status="approved").order_by("-created_at")[:6]
     return blog
 
 class Blog_Views(models.Model):
@@ -220,7 +226,14 @@ class Blog_Payment(models.Model):
 
     def __str__(self):
         return self.method
-        
+
+    def check_if_rejected(self):
+        rejects=Rejects.objects.filter(type="blog_payment",content_id=self.id,user=self.user)
+        if rejects.exists():
+            reject=rejects
+        else:
+            reject=False
+        return reject
 class Prices(models.Model):
     name=models.CharField(max_length=50)
     price=models.FloatField(default=0)
