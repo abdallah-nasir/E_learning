@@ -218,8 +218,6 @@ class Blog_Payment(models.Model):
     transaction_number=models.CharField(max_length=50,null=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
-    objects=models.Manager()
-    check_reject=CheckRejectBlogPaymentManager()
     created_at=models.DateField()
     expired_at=models.DateField(blank=True,null=True)
     expired=models.BooleanField(default=False)
@@ -228,12 +226,8 @@ class Blog_Payment(models.Model):
         return self.method
 
     def check_if_rejected(self):
-        rejects=Rejects.objects.filter(type="blog_payment",content_id=self.id,user=self.user)
-        if rejects.exists():
-            reject=rejects
-        else:
-            reject=False
-        return reject
+        rejects=Rejects.objects.filter(type="blog_payment",content_id=self.id,user=self.user).delete()
+        return rejects
 class Prices(models.Model):
     name=models.CharField(max_length=50)
     price=models.FloatField(default=0)

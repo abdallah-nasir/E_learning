@@ -340,7 +340,7 @@ def delete_videos(request,slug):
     video=get_object_or_404(Videos,slug=slug)
     if request.user == video.user:
         video.delete()
-        video.my_course.save()
+        video.total_duration()
         return redirect(reverse("dashboard:videos"))
     else:
         messages.error(request,"You Don't Have Permission")
@@ -405,6 +405,7 @@ def events(request):
 
 @login_required
 @check_user_validation
+@check_if_teacher_has_event
 def add_event(request):
     form=AddEvent(request.POST or None,request.FILES or None)
     if request.method == "POST":
@@ -427,9 +428,8 @@ def add_event(request):
 
 @login_required
 @check_user_validation
-@check_event_status
 def edit_event(request,id):
-    event=get_object_or_404(Events,id=id)
+    event=get_object_or_404(Events,id=id,status="declined")
     form=AddEvent(request.POST or None,request.FILES or None,instance=event)
     form.initial["details"]=event.get_details()["details"]
     form.initial["zoom_link"]=event.get_details()["zoom"]
@@ -443,6 +443,8 @@ def edit_event(request,id):
                 details=form.cleaned_data.get("details")
                 data={'zoom':zoom,"details":details}
                 instance.details=json.dumps(data)  
+                instance.status="pending"
+                instance.get_similar_event()
                 instance.save() 
                 messages.success(request,"Event updated successfully")
                 return redirect("dashboard:events")
@@ -468,9 +470,9 @@ def delete_event(request,id):
 def finish_event(request,id):
     event=get_object_or_404(Events,id=id)
     if request.user == event.user:
-        event.status = "end"
+        event.status = "completed"
         event.save()
-        messages.success(request,"Event End Successffuly")
+        messages.success(request,"Event End Successfully")
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect("dashboard:events")
@@ -478,8 +480,8 @@ def finish_event(request,id):
 @login_required
 @check_user_validation
 def start_event(request,slug):
-    event=get_object_or_404(Events,slug=slug)
-    if request.user == event.user and event.status == "hold" and event.approved == True:
+    event=get_object_or_404(Events,slug=slug,status="approved")
+    if request.user == event.user:
         emails=event.get_students_events()
         # html="dashboard_events.html"
 
@@ -693,13 +695,13 @@ def approve(request):
             if qs == "blogs":
                 query=Blog.objects.filter(status="pending").order_by("-id")
             elif qs == "blog_payment":  
-                query=Blog_Payment.check_reject.get_query_set().order_by("-id")
+                query=Blog_Payment.objects.filter(status="pending").order_by("-id")
             elif qs == "consultant_payment": 
                 query=Cosultant_Payment.objects.filter(status="pending").order_by("-id")
             elif qs == "course":
                 query=Course.objects.filter(status="pending").order_by("-id")
             elif qs == "events":
-                query=Events.check_reject.get_query_set().order_by("-id")
+                query=Events.objects.filter(status="pending").order_by("-id")
             elif qs == "payment":
                 query=Payment.objects.filter(status="pending").order_by("-id")
             elif qs == "teacher":
@@ -756,8 +758,8 @@ def approve_content(request,id):
                 query.save()
                 messages.success(request,"Course Approved Successfully")
             elif qs == "events":
-                query=get_object_or_404(Events,id=id,approved=False)
-                query.approved=True
+                query=get_object_or_404(Events,id=id,status="pending")
+                query.status="approved"
                 query.save()
                 messages.success(request,"Event Approved Successfully")
             elif qs == "payment":
@@ -807,7 +809,7 @@ def reject(request,id):
                 query=get_object_or_404(Course,id=id,status="pending")
                 content_user=query.Instructor
             elif qs == "events":
-                query=get_object_or_404(Events,id=id,approved=False)
+                query=get_object_or_404(Events,id=id,status="pending")
                 content_user=query.user
             elif qs == "payment":
                 query=get_object_or_404(Payment,id=id,status="pending")

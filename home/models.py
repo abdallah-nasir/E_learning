@@ -93,11 +93,21 @@ class Videos(models.Model):
         self.duration =time_in_sec
         self.duration=time.strftime('%H:%M:%S',  time.gmtime(self.duration))
         return self.duration
-
+    def total_duration(self):
+        self.my_course.duration=0
+        self.my_course.save()
+        for i in self.my_course.videos.all():
+            media_info = MediaInfo.parse(i.video)
+            duration_in_ms = media_info.tracks[0].duration    
+            time_in_sec=duration_in_ms/1000
+            self.my_course.duration +=time_in_sec
+            self.my_course.save()
 @receiver(pre_save, sender=Videos)
 def pre_save_receiver_video(sender, instance, *args, **kwargs):
     if not instance.slug:
+        instance.slug = slugify(instance.name)
         if Videos.objects.filter(slug=instance.slug).exists():
+            print("hererere")
             slug=f"{instance.name}-{random_string_generator()}"
             instance.slug = slugify(slug) 
         else:       
@@ -109,7 +119,12 @@ def pre_save_receiver_video(sender, instance, *args, **kwargs):
     time_in_sec=duration_in_ms/1000
     my_time=time.strftime('%H:%M:%S',  time.gmtime(time_in_sec))
     instance.duration=time_in_sec
-    instance.my_course.total_duration()
+    if instance.video not in instance.my_course.videos.all():
+        media_info = MediaInfo.parse(instance.video)
+        duration_in_ms = media_info.tracks[0].duration    
+        time_in_sec=duration_in_ms/1000
+        instance.my_course.duration +=time_in_sec
+
 class Teacher_review(models.Model):       
     user=models.ForeignKey(User,related_name="student_review",on_delete=models.CASCADE)
     review=models.TextField(blank=True,null=True)
@@ -197,7 +212,7 @@ class Course(models.Model):
             price=self.price
         return price
     def related_events(self):
-        events=Events.objects.filter(user=self.Instructor,category=self.branch)[:4]
+        events=Events.objects.filter(user=self.Instructor,category=self.branch,status="approved")[:4]
         return events
 
     def total_rate(self):
@@ -260,9 +275,11 @@ class CheckRejectEvent(models.Manager):
         return events
 
 EVENT_STATUS=(
-    ("hold","hold"),
+    ("approved","approved"),
+    ("declined","declined"),
+    ("pending","pending"),
     ("start","start"),
-    ("end","end")
+    ("completed","completed")
 )
 class Events(models.Model):
     name=models.CharField(max_length=100)
@@ -272,14 +289,10 @@ class Events(models.Model):
     details=models.TextField()
     image=models.ImageField(upload_to=upload_events_images)
     date=models.DateField()
-    status=models.CharField(choices=EVENT_STATUS,max_length=20,default="hold")
+    status=models.CharField(choices=EVENT_STATUS,max_length=20,default="pending")
     start_time=models.TimeField(auto_now_add=False)
     end_time=models.TimeField(auto_now_add=False)
     place=models.CharField(max_length=100)
-    objects=models.Manager()
-    check_reject=CheckRejectEvent()
-    expired=models.BooleanField(default=False)
-    approved=models.BooleanField(default=False)
     # map=models.CharField(max_length=100)
     slug=models.SlugField(unique=True,blank=True)
     def __str__(self):
@@ -311,7 +324,9 @@ class Events(models.Model):
         details=data["details"]
         context={"zoom":zoom,"details":details}
         return context
-
+    def get_similar_event(self):
+        rejects=Rejects.objects.filter(user=self.user,type="events",content_id=self.id).delete()
+        return rejects
 @receiver(pre_save, sender=Events)
 def pre_save_receiver(sender, instance, *args, **kwargs):       
     if not instance.slug: 
@@ -373,12 +388,8 @@ class Payment(models.Model):
         return self.method
 
     def check_if_rejected(self):
-        rejects=Rejects.objects.filter(type="payment",content_id=self.id,user=self.user)
-        if rejects.exists():
-            reject=rejects
-        else:
-            reject=False
-        return reject
+        rejects=Rejects.objects.filter(type="payment",content_id=self.id,user=self.user).delete()
+        return rejects
 
 class News(models.Model):
     name=models.CharField(max_length=200)

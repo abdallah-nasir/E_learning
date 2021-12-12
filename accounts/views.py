@@ -136,11 +136,9 @@ def edit_blog_payment(request,id):
         if request.method == "POST":
             if form.is_valid():
                 instance=form.save()
-                rejects=instance.check_if_rejected()
-                if rejects:
-                    rejects.delete()
-                    instance.status="pending"
-                    instance.save()
+                instance.check_if_rejected()
+                instance.status="pending"
+                instance.save()
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:blog_payment"))
     else:
@@ -161,11 +159,10 @@ def edit_course_payment(request,id):
         if request.method == "POST":
             if form.is_valid():
                 instance=form.save()
-                rejects=instance.check_if_rejected()
-                if rejects:
-                    rejects.delete()
-                    instance.status="pending"
-                    instance.save()
+                instance.check_if_rejected()
+
+                instance.status="pending"
+                instance.save()
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:course_payment"))
     else:
@@ -187,10 +184,8 @@ def edit_consultant_payment(request,id):
             if form.is_valid():
                 instance=form.save()
                 rejects=instance.check_if_rejected()
-                if rejects:
-                    rejects.delete()
-                    instance.status="pending"
-                    instance.save()
+                instance.status="pending"
+                instance.save()
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:consultant_payment"))
     else:

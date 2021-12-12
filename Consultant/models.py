@@ -78,9 +78,5 @@ class Cosultant_Payment(models.Model):
         return self.method
 
     def check_if_rejected(self):
-        rejects=Rejects.objects.filter(type="consultant_payment",content_id=self.id,user=self.user)
-        if rejects.exists():
-            reject=rejects
-        else:
-            reject=False
-        return reject
+        rejects=Rejects.objects.filter(type="consultant_payment",content_id=self.id,user=self.user).delete()
+        return rejects

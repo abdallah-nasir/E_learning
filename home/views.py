@@ -131,7 +131,7 @@ def videos(request,course,slug):
     return render(request,"video.html",context)
 
 def events(request):
-    events=Events.objects.filter(approved=True).exclude(status="end")
+    events=Events.objects.filter(Q(status="approved")|Q(status="start")).distinct()
     paginator = Paginator(events, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -139,9 +139,11 @@ def events(request):
     return render(request,"events.html",context)
 
 def event_single(request,slug):
-    event=get_object_or_404(Events,slug=slug,approved=True)
-    if event.status == 'end':
-        messages.error(request,"this event has expired")
+    event=get_object_or_404(Events,slug=slug)
+    if event.status == "approved" or event.status =="start":
+        pass
+    else:
+        messages.error(request,"invalid event date")
         return redirect(reverse("home:events"))
     context={"event":event}
     return render(request,"event_single.html",context)

@@ -34,18 +34,12 @@ def check_if_user_director(function):
     wrap.__name__ = function.__name__
     return wrap
 
-def check_event_status(function):
+def check_if_teacher_has_event(function):
     def wrap(request, *args, **kwargs):
-        if request.user.vip == True:
-            today= datetime.date.today()
-            event=get_object_or_404(Events,id=kwargs["id"])
-            if event.end_time <= today:
-                event.expired=True
-                event.save()
-                messages.error(request,"Event Has Expired")
-                return redirect(reverse("dashboard:events"))
-            else:
-                return function(request, *args, **kwargs)
+        events=Events.objects.filter(user=request.user,status="start")
+        if events:
+            messages.error(request,"Finish Previous Event First")
+            return redirect(reverse("dashboard:events"))
         else:
             return function(request, *args, **kwargs)
     wrap.__doc__ = function.__doc__
