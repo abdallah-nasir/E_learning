@@ -51,7 +51,7 @@ def course_search(request):
     return render(request,"course_search.html",{"course":page_obj,"qs":qs})
 
 def home(request):
-    events=Events.objects.filter(approved=True).order_by("-date")[:5]
+    events=Events.objects.filter(status="approved").order_by("-date")[:5]
     courses=Course.objects.filter(status="approved").order_by("-id")[0:5]
     teachers=User.objects.filter(account_type="teacher").order_by("?")[:4]
     context={"events":events,"courses":courses,"teachers":teachers}
