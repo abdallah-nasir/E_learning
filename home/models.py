@@ -71,7 +71,9 @@ CHOICES=(
 )
 class Videos(models.Model):
     name=models.CharField(max_length=100)     
-    video=models.FileField(upload_to=upload_course_videos)
+    # video=models.FileField(upload_to=upload_course_videos)
+    video_url=models.URLField()
+    video_uid=models.CharField(default="0",max_length=200)
     # video=EmbedVideoField()
     # thumbnail=models.ImageField(blank=True,null=True)
     user=models.ForeignKey(User,on_delete=models.CASCADE) 
@@ -85,23 +87,21 @@ class Videos(models.Model):
     def get_duration_model(self):
         return time.strftime('%H:%M:%S',  time.gmtime(self.duration))
 
-    def video_duration(self):
-        media_info = MediaInfo.parse(self.video)
-        duration_in_ms = media_info.tracks[0].duration    
-        time_in_sec=duration_in_ms/1000
-        print(time_in_sec)
-        self.duration =time_in_sec
-        self.duration=time.strftime('%H:%M:%S',  time.gmtime(self.duration))
-        return self.duration
+    # def video_duration(self):
+    #     media_info = MediaInfo.parse(self.video)
+    #     duration_in_ms = media_info.tracks[0].duration    
+    #     time_in_sec=duration_in_ms/1000
+    #     print(time_in_sec)
+    #     self.duration =time_in_sec
+    #     self.duration=time.strftime('%H:%M:%S',  time.gmtime(self.duration))
+        # return self.duration
     def total_duration(self):
         self.my_course.duration=0
         self.my_course.save()
         for i in self.my_course.videos.all():
-            media_info = MediaInfo.parse(i.video)
-            duration_in_ms = media_info.tracks[0].duration    
-            time_in_sec=duration_in_ms/1000
-            self.my_course.duration +=time_in_sec
-            self.my_course.save()
+            self.my_course.duration +=i.duration
+        self.my_course.save()
+        return self.my_course.duration
 @receiver(pre_save, sender=Videos)
 def pre_save_receiver_video(sender, instance, *args, **kwargs):
     if not instance.slug:
@@ -113,17 +113,17 @@ def pre_save_receiver_video(sender, instance, *args, **kwargs):
         else:       
             slug=f"{instance.name}"
             instance.slug = slugify(slug) 
-    media_info = MediaInfo.parse(instance.video)
-    # duration in milliseconds
-    duration_in_ms = media_info.tracks[0].duration
-    time_in_sec=duration_in_ms/1000
-    my_time=time.strftime('%H:%M:%S',  time.gmtime(time_in_sec))
-    instance.duration=time_in_sec
-    if instance.video not in instance.my_course.videos.all():
-        media_info = MediaInfo.parse(instance.video)
-        duration_in_ms = media_info.tracks[0].duration    
-        time_in_sec=duration_in_ms/1000
-        instance.my_course.duration +=time_in_sec
+    # media_info = MediaInfo.parse(instance.video)
+    # # duration in milliseconds
+    # duration_in_ms = media_info.tracks[0].duration
+    # time_in_sec=duration_in_ms/1000
+    # my_time=time.strftime('%H:%M:%S',  time.gmtime(time_in_sec))
+    # instance.duration=time_in_sec
+    # if instance.video not in instance.my_course.videos.all():
+    #     media_info = MediaInfo.parse(instance.video)
+    #     duration_in_ms = media_info.tracks[0].duration    
+    #     time_in_sec=duration_in_ms/1000
+    #     instance.my_course.duration +=time_in_sec
 
 class Teacher_review(models.Model):       
     user=models.ForeignKey(User,related_name="student_review",on_delete=models.CASCADE)
@@ -184,6 +184,7 @@ class Course(models.Model):
     objects=models.Manager()
     check_reject=CheckRejectCourse()
     likes=models.PositiveIntegerField(default=0)
+    collection=models.CharField(max_length=200,default="#")     #this is for bunny collection
     reviews=models.ManyToManyField(Reviews,blank=True,related_name="course_reviews")
     slug=models.SlugField(unique=True,blank=True)
     def __str__(self):  

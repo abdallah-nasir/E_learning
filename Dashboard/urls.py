@@ -65,7 +65,9 @@ path("consultants/sessions/",views.consultants_sessions,name="consultants_sessio
 path("consultants/",views.consultants,name="consultants"),
 path("add/consultants/",views.add_consultant,name="add_consultant"),
 path("complete_consultant/consultants/<str:id>/",views.complete_consultant,name="complete_consultant"),
-
+############
+path("test/",views.test,name="test"),
+path("check/videos/<str:slug>/",views.check_video,name="check_video"),
 
 
 

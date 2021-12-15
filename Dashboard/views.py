@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.template.defaultfilters import urlencode
 from django.urls import reverse
 from Consultant.models import Cosultant_Payment,Consultant,Teacher_Time
-from home.models import Course,Payment,Events,Videos,News
+from home.models import Course,Payment,Events,Videos,News,Videos
 from Blogs.models import (Blog,Blog_Payment,Blog_Images)
 from Quiz.models import *
 from accounts.models import TeacherForms
@@ -20,13 +20,14 @@ from django.shortcuts import get_object_or_404
 from taggit.models import Tag
 from .models import *
 from django.contrib.auth.decorators import user_passes_test
-import json
+import json,requests
+
 from django.contrib.auth import get_user_model
 User=get_user_model()
 urlencode
 # Create your views here.
-
-
+AccessKey="0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
+library_id="19804"
 @login_required
 @check_user_validation
 def home(request):
@@ -293,11 +294,11 @@ def edit_course(request,slug):
     form=AddCourse(request.POST or None , request.FILES or None,instance=course)
     if request.user == course.Instructor:
         if request.method == "POST":
-            Rejects.objects.filter(user=request.user,type="course",content_id=course.id).delete()
-
             if form.is_valid():
                 instance=form.save(commit=False)
+                instance.status = "pending"
                 instance.save()
+                Rejects.objects.filter(user=request.user,type="course",content_id=course.id).delete()
                 messages.success(request,"Course Edited Successfully")
                 return redirect(reverse("dashboard:courses"))
             else:
@@ -314,11 +315,23 @@ def add_course(request):
     form=AddCourse(request.POST or None,request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
-           instance=form.save(commit=False)
-           instance.Instructor=request.user
-           instance.save()
-           messages.success(request,"course added successfully")
-           return redirect(reverse("dashboard:add_video",kwargs={"slug":instance.slug}))
+            instance=form.save(commit=False)
+            instance.Instructor=request.user
+            instance.save()
+            url = f"http://video.bunnycdn.com/library/{library_id}/collections"
+            json = {"name":instance.name}
+            headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/*+json",
+                "AccessKey": AccessKey
+            }
+            response = requests.post( url, json=json, headers=headers)
+            data=response.json()
+            instance.collection=data["guid"]
+            instance.save()
+
+            messages.success(request,"course added successfully")
+            return redirect(reverse("dashboard:add_video",kwargs={"slug":instance.slug}))
         else:
             print("invalid")
     context={"form":form}
@@ -339,8 +352,15 @@ def videos(request):
 def delete_videos(request,slug):
     video=get_object_or_404(Videos,slug=slug)
     if request.user == video.user:
+        url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
+        headers = {
+        "Accept": "application/json",
+        "AccessKey": AccessKey
+                }
+        response = requests.delete( url, headers=headers)
         video.delete()
         video.total_duration()
+        messages.success(request,"Video deleted successfully")
         return redirect(reverse("dashboard:videos"))
     else:
         messages.error(request,"You Don't Have Permission")
@@ -349,16 +369,20 @@ def delete_videos(request,slug):
 @login_required
 @check_user_validation
 def edit_videos(request,slug):
-    video=get_object_or_404(Videos,slug=slug,my_course__status="approved")
+    video=get_object_or_404(Videos,slug=slug,my_course__status="declined")
     if request.user == video.user:
-        form=EditVideo(request.POST or None,request.FILES or None,instance=video)
+        form=EditVideo(request.POST or None,instance=video)
         if request.method == "POST":
             instance=form.save(commit=False)
             # if request.FILES.get("video") != None:
             #     video.video.delete()
             #     instance.video=request.FILES.get("video") 
                 # print("here")     
+            instance.my_course.status = "pending"  
+            instance.my_course.save()
+        
             instance.save()
+            Rejects.objects.filter(user=request.user,type="course",content_id=video.my_course.id).delete()
             messages.success(request,"video edited successfully")
             return redirect(reverse("dashboard:videos"))
     else:
@@ -369,6 +393,7 @@ def edit_videos(request,slug):
 
 @login_required
 @check_user_validation
+@check_if_teacher_have_pending_video_upload
 def add_video(request,slug):
     form=AddVideo(request.POST or None,request.FILES or None)
     course=get_object_or_404(Course,slug=slug)
@@ -381,7 +406,33 @@ def add_video(request,slug):
                 instance.save()
                 instance.my_course.videos.add(instance)
                 instance.my_course.save()
-                
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos"         
+                json = {"title":instance.slug,"collectionId":instance.my_course.collection}
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/*+json",
+                    "AccessKey": AccessKey
+                }
+                response = requests.post( url, json=json, headers=headers)
+                data=response.json()
+                print(data)
+                instance.video_uid=data["guid"]
+                instance.save()
+
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos/{instance.video_uid}"
+                file=form.cleaned_data.get("video")
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/*+json",
+                    "AccessKey": AccessKey
+                }
+                response = requests.put( url, data=file, headers=headers)
+                response = requests.get( url, headers=headers)
+                data=response.json()
+                instance.duration=data["length"]  
+                instance.video_url=f"https://video.bunnycdn.com/play/{library_id}/{instance.video_uid}"
+                instance.total_duration()
+                instance.save()
                 messages.success(request,"Video added successfully")
                 form=AddVideo()
             else:
@@ -391,7 +442,57 @@ def add_video(request,slug):
         return redirect(reverse("dashboard:blogs"))
     context={"form":form}
     return render(request,"dashboard_add_video.html",context)
+@login_required
+@check_user_validation
+def check_video(request,slug):
+    video=get_object_or_404(Videos,slug=slug)
+    if request.user == video.user and video.video_url == "":
+        form=UploadVideoForm(request.POST or None,request.FILES or None)
+        if request.method == "POST" and form.is_valid():
+            if video.video_url != "":
+                messages.error(request,"video is already uploaded")
+                return redirect(reverse("dashboard:videos"))
+            url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
+            headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/*+json",
+                    "AccessKey": AccessKey
+                }
+            response = requests.get( url,headers=headers)
+            data=response.json()
+            if data["encodeProgress"] !=100:
+                headers = {
+            "Accept": "application/json",
+                "AccessKey": AccessKey
+                        }
+                response = requests.delete( url,headers=headers)
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos"
+                headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/*+json",
+                "AccessKey": AccessKey
+            }
+                json={"title":video.slug,"collectionId":video.my_course.collection}
+                response = requests.post( url,json=json,headers=headers)
+                data=response.json()
+                print(data)
+                video.video_uid=data["guid"]
+                video.save()
+                file=form.cleaned_data.get("file")
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
+                headers = {
+            "Accept": "application/json",
+                "AccessKey": AccessKey}
+                response = requests.put( url,data=file,headers=headers)
+                data=response.json()
+                print(data)
 
+    else:
+        messages.error(request,"video is already uploaded")
+        return redirect(reverse("dashboard:videos"))
+    context={"form":form}
+    return render(request,"dashboard_check_video.html",context)
+  
 
 @login_required
 @check_user_validation
@@ -949,3 +1050,33 @@ def complete_consultant(request,id):
         consult.save()
         messages.success(request,"Consultant Completed Successfully")
     return redirect(reverse("dashboard:consultants"))
+
+
+import requests
+from django.http import JsonResponse
+def test(request):
+    form=UploadVideoForm(request.POST or None,request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            title=form.cleaned_data.get("title")
+            url = "http://video.bunnycdn.com/library/19804/videos"
+            payload = {"title":title}
+            headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/*+json",
+        "AccessKey": "0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
+
+            }
+            response=requests.post(url,headers=headers,json=payload)
+            # url = "http://video.bunnycdn.com/library/19804/videos/5781aea5-7d0f-482f-bc45-151406110dd8"
+            # headers = {
+            #     "Accept": "application/json",
+            #     "AccessKey": "0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
+            # }
+
+            # file=request.FILES.get("file")
+            # response = requests.put(url,data=file,headers=headers)
+
+            # return JsonResponse(response.data,safe=False)
+    context={"form":form}
+    return render(request,"dashboard_test.html",context)

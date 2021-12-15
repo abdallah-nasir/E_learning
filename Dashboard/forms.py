@@ -163,36 +163,36 @@ class AddCourse(forms.ModelForm):
         return image
 
 class AddVideo(forms.ModelForm):
+    video=forms.FileField()
     class Meta:
         model=Videos
-
         fields=['name',"video","details"]
 
     def clean_video(self):
         video=self.cleaned_data.get("video")      
-        video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
+        video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov",".avi"]
         if video is False:
             raise forms.ValidationError("insert video")
 
         video_type=os.path.splitext(video.name)[1]
-        if video_type not in  video_extentions:
+        if video_type.lower() not in  video_extentions:
             raise forms.ValidationError("invalid video extension")
         return video
 
 class EditVideo(forms.ModelForm):
     class Meta:
         model=Videos
-        fields=['name',"video","details"]
-    def clean_video(self):
-        video=self.cleaned_data.get("video")      
-        video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
-        if video is False:
-            raise forms.ValidationError("insert video")
+        fields=['name',"details"]
+    # def clean_video(self):
+    #     video=self.cleaned_data.get("video")      
+    #     video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
+    #     if video is False:
+    #         raise forms.ValidationError("insert video")
 
-        video_type=os.path.splitext(video.name)[1]
-        if video_type not in  video_extentions:
-            raise forms.ValidationError("invalid video extension")
-        return video
+    #     video_type=os.path.splitext(video.name)[1]
+    #     if video_type not in  video_extentions:
+    #         raise forms.ValidationError("invalid video extension")
+    #     return video
 
 from bootstrap_datepicker_plus import DatePickerInput,TimePickerInput,DateTimePickerInput
 class AddEvent(forms.ModelForm):
@@ -236,6 +236,9 @@ class CosultantAddForm(forms.ModelForm):
         fields="__all__"
         exclude=["user"]
 
+class UploadVideoForm(forms.Form):
+    # title=forms.CharField(max_length=50)
+    file=forms.FileField()
 ############################
 # Get model details for superuser
 
