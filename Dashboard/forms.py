@@ -149,6 +149,7 @@ class BlogGalleryForm(forms.ModelForm):
 
 class AddCourse(forms.ModelForm):
     branch=forms.ModelChoiceField(label="Category",queryset=Branch.objects.all())
+    image=forms.ImageField()
     # videos=forms.FileField()
     class Meta:
         model=Course
@@ -156,6 +157,7 @@ class AddCourse(forms.ModelForm):
 
     def clean_image(self):
         image=self.cleaned_data.get("image")
+        print(image)
         image_extentions=[".png",".jpg",",jpeg"]
         image_extension=os.path.splitext(image.name)[1]
         if image_extension.lower() not in image_extentions:

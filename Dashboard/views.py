@@ -28,6 +28,7 @@ urlencode
 # Create your views here.
 AccessKey="0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
 library_id="19804"
+storage_name="agartha"
 @login_required
 @check_user_validation
 def home(request):
@@ -318,6 +319,21 @@ def add_course(request):
             instance=form.save(commit=False)
             instance.Instructor=request.user
             instance.save()
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/{instance.slug}/{instance.slug}"
+            headers = {
+                "Content-Type": "application/octet-stream",
+                "AccessKey": AccessKey
+            }
+
+            file=instance.cleaned_data.get("image")
+            response = requests.put(image_url,data=file, headers=headers)
+            data=response.json()
+            try:
+                if data["HttpCode"] == 201:
+                    instance.image = f"https://storage.bunnycdn.com/{storage_name}/{instance.slug}/{instance.slug}"
+                    instance.save()
+            except:
+                pass
             url = f"http://video.bunnycdn.com/library/{library_id}/collections"
             json = {"name":instance.name}
             headers = {
@@ -358,8 +374,9 @@ def delete_videos(request,slug):
         "AccessKey": AccessKey
                 }
         response = requests.delete( url, headers=headers)
+        video.my_course.duration -=video.duration
+        video.my_course.save()
         video.delete()
-        video.total_duration()
         messages.success(request,"Video deleted successfully")
         return redirect(reverse("dashboard:videos"))
     else:
@@ -427,12 +444,14 @@ def add_video(request,slug):
                     "AccessKey": AccessKey
                 }
                 response = requests.put( url, data=file, headers=headers)
+                instance.video_url=f"https://iframe.mediadelivery.net/embed/{library_id}/{instance.video_uid}?autoplay=false"
                 response = requests.get( url, headers=headers)
                 data=response.json()
+                print(data)
                 instance.duration=data["length"]  
-                instance.video_url=f"https://video.bunnycdn.com/play/{library_id}/{instance.video_uid}"
-                instance.total_duration()
                 instance.save()
+                instance.my_course.duration +=instance.duration
+                instance.my_course.save()
                 messages.success(request,"Video added successfully")
                 form=AddVideo()
             else:

@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib import messages
 from .models import Course,Payment
+from Dashboard.models import Rejects
 from django.shortcuts import get_object_or_404
 def check_if_user_in_course(function):
     def wrap(request, *args, **kwargs):
@@ -24,6 +25,9 @@ def check_if_user_in_pending_payment(function):
         course =get_object_or_404(Course,slug=kwargs["course"])
         if Payment.objects.filter(user=request.user,course=course,status="pending").exists():
             messages.error(request,"you already have a pending payment")
+            return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+        elif Payment.objects.filter(user=request.user,course=course,status="declined"):
+            messages.error(request,"Please check you declined payment")
             return redirect(reverse("home:course",kwargs={"slug":course.slug}))
         else:
             return function(request, *args, **kwargs)

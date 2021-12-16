@@ -19,6 +19,8 @@ from datetime import datetime
 from django.forms import ValidationError
 from django.core.cache import cache
 # Create your views here.
+library_id="19804"
+
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -97,9 +99,9 @@ def single_course(request,slug):
         else:
             messages.error(request, 'login first')
 
-    context={"course":course,"form":form,"payment_form":payment_form} 
+    context={"course":course,"form":form,"payment_form":payment_form,"frame":library_id} 
     return render(request,"course-single.html",context)
-
+ 
 def videos(request,course,slug):
     video=get_object_or_404(Videos,slug=slug)
     if not request.user in video.my_course.students.all():

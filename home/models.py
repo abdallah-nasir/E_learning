@@ -72,7 +72,7 @@ CHOICES=(
 class Videos(models.Model):
     name=models.CharField(max_length=100)     
     # video=models.FileField(upload_to=upload_course_videos)
-    video_url=models.URLField()
+    video_url=models.URLField(max_length=200)
     video_uid=models.CharField(default="0",max_length=200)
     # video=EmbedVideoField()
     # thumbnail=models.ImageField(blank=True,null=True)
@@ -170,7 +170,7 @@ class Course(models.Model):
     name=models.CharField(max_length=150)
     videos=models.ManyToManyField(Videos)
     Instructor=models.ForeignKey(User,related_name="instractor",on_delete=models.CASCADE)
-    image=models.ImageField(upload_to=upload_course_image)
+    image=models.URLField(max_length=200)
     students=models.ManyToManyField(User,blank=True)
     duration=models.FloatField(default=0)
     branch=models.ForeignKey(Branch,null=True,on_delete=models.SET_NULL)
