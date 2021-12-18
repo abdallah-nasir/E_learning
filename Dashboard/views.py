@@ -27,8 +27,10 @@ User=get_user_model()
 urlencode
 # Create your views here.
 AccessKey="0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
+Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
 library_id="19804"
 storage_name="agartha"
+agartha_cdn="agartha1.b-cdn.net"
 @login_required
 @check_user_validation
 def home(request):
@@ -293,13 +295,35 @@ def courses(request):
 def edit_course(request,slug):
     course=get_object_or_404(Course,slug=slug)
     form=AddCourse(request.POST or None , request.FILES or None,instance=course)
+    # form.initial["course_image"].required=False
     if request.user == course.Instructor:
         if request.method == "POST":
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.status = "pending"
+                try:
+                    if request.FILES["image"]:
+                        print(request.FILES["image"])
+                        image_url=f"https://storage.bunnycdn.com/{storage_name}/{instance.slug}/{instance.slug}"
+                        headers = {
+                        "AccessKey": Storage_Api,
+                        "Content-Type": "application/octet-stream",
+                            }
+                        file=form.cleaned_data.get("image")
+                        print(file)
+                        response = requests.delete(image_url,headers=headers)
+                        response = requests.put(image_url,data=file,headers=headers)
+                        data=response.json()
+                        try:
+                            if data["HttpCode"] == 201:
+                                instance.image = f"https://{agartha_cdn}/{instance.slug}/{instance.slug}"
+                                instance.save()
+                        except:
+                            pass
+                except:
+                    pass
+                    
                 instance.save()
-                Rejects.objects.filter(user=request.user,type="course",content_id=course.id).delete()
                 messages.success(request,"Course Edited Successfully")
                 return redirect(reverse("dashboard:courses"))
             else:
@@ -310,6 +334,16 @@ def edit_course(request,slug):
     context={"course":course,"form":form}
     return render(request,"dashboard_course_edit.html",context)
 
+def edit_course_image(request,id):
+    course=get_object_or_404(Course,id=id)
+    if request.user == course.Instructor:
+        course.image=""
+        course.save()
+        url = f"https://storage.bunnycdn.com/{storage_name}/{course.slug}/{course.slug}"
+        headers = {"AccessKey":Storage_Api}
+        response = requests.delete( url, headers=headers)
+    return redirect(reverse("dashboard:edit_course",kwargs={"slug":course.slug}))
+ 
 @login_required
 @check_user_validation
 def add_course(request):
@@ -321,21 +355,23 @@ def add_course(request):
             instance.save()
             image_url=f"https://storage.bunnycdn.com/{storage_name}/{instance.slug}/{instance.slug}"
             headers = {
+                "AccessKey": Storage_Api,
                 "Content-Type": "application/octet-stream",
-                "AccessKey": AccessKey
-            }
+                }
 
-            file=instance.cleaned_data.get("image")
-            response = requests.put(image_url,data=file, headers=headers)
+            file=form.cleaned_data.get("image")
+            response = requests.put(image_url,data=file,headers=headers)
             data=response.json()
+            print(data)
             try:
                 if data["HttpCode"] == 201:
-                    instance.image = f"https://storage.bunnycdn.com/{storage_name}/{instance.slug}/{instance.slug}"
+                    instance.image = f"https://{agartha_cdn}/{instance.slug}/{instance.slug}"
+                    
                     instance.save()
             except:
                 pass
             url = f"http://video.bunnycdn.com/library/{library_id}/collections"
-            json = {"name":instance.name}
+            json = {"name":instance.slug}
             headers = {
                 "Accept": "application/json",
                 "Content-Type": "application/*+json",
@@ -349,7 +385,7 @@ def add_course(request):
             messages.success(request,"course added successfully")
             return redirect(reverse("dashboard:add_video",kwargs={"slug":instance.slug}))
         else:
-            print("invalid")
+            print(form.errors)
     context={"form":form}
     return render(request,"dashboard_add_course.html",context)
 
@@ -444,13 +480,14 @@ def add_video(request,slug):
                     "AccessKey": AccessKey
                 }
                 response = requests.put( url, data=file, headers=headers)
-                instance.video_url=f"https://iframe.mediadelivery.net/embed/{library_id}/{instance.video_uid}?autoplay=false"
+                instance.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{instance.video_uid}?autoplay=false"
                 response = requests.get( url, headers=headers)
                 data=response.json()
                 print(data)
                 instance.duration=data["length"]  
                 instance.save()
                 instance.my_course.duration +=instance.duration
+                instance.my_course.status ="pending"
                 instance.my_course.save()
                 messages.success(request,"Video added successfully")
                 form=AddVideo()
@@ -465,10 +502,10 @@ def add_video(request,slug):
 @check_user_validation
 def check_video(request,slug):
     video=get_object_or_404(Videos,slug=slug)
-    if request.user == video.user and video.video_url == "":
+    if request.user == video.user and video.video == None:
         form=UploadVideoForm(request.POST or None,request.FILES or None)
         if request.method == "POST" and form.is_valid():
-            if video.video_url != "":
+            if video.video !=None:
                 messages.error(request,"video is already uploaded")
                 return redirect(reverse("dashboard:videos"))
             url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
@@ -513,6 +550,27 @@ def check_video(request,slug):
     return render(request,"dashboard_check_video.html",context)
   
 
+@login_required
+@check_user_validation
+def get_video_length(request,id):
+    video=get_object_or_404(Videos,id=id)
+    if request.user == video.user:
+        if video.video:
+            if video.duration <=0:
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/*+json",
+                    "AccessKey": AccessKey
+                }
+                response = requests.get( url,headers=headers)
+                data=response.json()
+                video.duration=data["length"]
+                video.save()
+                video.my_course.duration +=video.duration
+                video.my_course.save()
+                messages.success(request,"Video updated successfully")
+    return redirect(reverse("dashboard:videos"))
 @login_required
 @check_user_validation
 def events(request):
@@ -1074,28 +1132,6 @@ def complete_consultant(request,id):
 import requests
 from django.http import JsonResponse
 def test(request):
-    form=UploadVideoForm(request.POST or None,request.FILES or None)
-    if request.method == "POST":
-        if form.is_valid():
-            title=form.cleaned_data.get("title")
-            url = "http://video.bunnycdn.com/library/19804/videos"
-            payload = {"title":title}
-            headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/*+json",
-        "AccessKey": "0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
-
-            }
-            response=requests.post(url,headers=headers,json=payload)
-            # url = "http://video.bunnycdn.com/library/19804/videos/5781aea5-7d0f-482f-bc45-151406110dd8"
-            # headers = {
-            #     "Accept": "application/json",
-            #     "AccessKey": "0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
-            # }
-
-            # file=request.FILES.get("file")
-            # response = requests.put(url,data=file,headers=headers)
-
-            # return JsonResponse(response.data,safe=False)
+    print(request,request.data)
     context={"form":form}
     return render(request,"dashboard_test.html",context)

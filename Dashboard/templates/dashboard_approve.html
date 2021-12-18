@@ -201,9 +201,8 @@
                                             <th>User</th>
                                             <th>Teacher</th>
                                             <th>Transaction Number</th>
-                                            {% if i.image %}
                                              <th>Image</th>
-                                             {% endif %}
+                                        
                                              <th>Action</th>
                                         </tr>
                                         
@@ -215,10 +214,14 @@
                                         <td>{{i.user.username}}</td>
                                         <td>{{i.consult.teacher.user.username}}</td>
                                         <td>{{i.transaction_number}}</td>
-                                        {% if i.image %}
-                                        <td><a href="{{i.payment_image.url}}">image link</a>{{i.transaction_number}}</td>
-
-                                        {% endif %}
+                                            <td>
+                                            {% if i.image %}
+                                            <a href="{{i.payment_image}}">image link</a>
+                                             {% endif %}
+                                        </td>
+                                       
+                                        <td>{{i.transaction_number}}</td>
+                                       
                                         <td>
                                             <button class="btn btn-success" data-toggle="modal" data-target="#consult_payment-{{i.id}}">Approve</button>
                                             <a href="{% url 'dashboard:reject' i.id %}?reject=consultant_payment" class="btn btn-danger">Reject</a>
@@ -266,6 +269,7 @@
                                             <th>Price</th>
                                             <th>Discount</th>                                   
                                              <th>Course Status</th>
+                                             <th>Image</th>
                                             <th>Status</th>
                                             <th>Reviews</th>
                                             <th>Action</th>
@@ -290,6 +294,7 @@
                                  
                                           <td>{{i.course_status}}</td>
                                           <td>{{i.status}}</td>
+                                          <td><a href="{{i.image}}">image link</a></td>
                                           <td>{{i.reviews.count}}</td>
 
 
@@ -411,8 +416,12 @@
                                         <td>{{i.method}}</td>
                                         <td>{{i.transaction_number}}</td>
                                         <td>{{i.course.name|truncatechars:20}}</td>
-                                       
-                                        <td><a target="__" href="{{i.payment_image.url}}">image link</a></td>
+                                       <td>
+                                        {% if i.payment_image %}
+                                           <a target="__" href="{{i.payment_image.url}}">image link</a>
+                                           {% endif %}
+                                        </td>
+                                     
                                       
 
                                         <td>

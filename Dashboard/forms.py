@@ -149,7 +149,7 @@ class BlogGalleryForm(forms.ModelForm):
 
 class AddCourse(forms.ModelForm):
     branch=forms.ModelChoiceField(label="Category",queryset=Branch.objects.all())
-    image=forms.ImageField()
+    # course_image=forms.ImageField(label="image",required=True)
     # videos=forms.FileField()
     class Meta:
         model=Course
@@ -157,15 +157,19 @@ class AddCourse(forms.ModelForm):
 
     def clean_image(self):
         image=self.cleaned_data.get("image")
-        print(image)
-        image_extentions=[".png",".jpg",",jpeg"]
-        image_extension=os.path.splitext(image.name)[1]
-        if image_extension.lower() not in image_extentions:
-            raise forms.ValidationError("invalid image extension")
+        request=get_current_request()
+        try:
+            if request.FILES["image"]:
+                image_extentions=[".png",".jpg",",jpeg"]
+                image_extension=os.path.splitext(image.name)[1]
+                if image_extension.lower() not in image_extentions:
+                    raise forms.ValidationError("invalid image extension")
+        except:
+            pass
         return image
+        
 
 class AddVideo(forms.ModelForm):
-    video=forms.FileField()
     class Meta:
         model=Videos
         fields=['name',"video","details"]

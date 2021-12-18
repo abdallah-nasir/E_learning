@@ -76,7 +76,7 @@ def check_if_teacher_have_pending_video_upload(function):
     def wrap(request, *args, **kwargs):
         course=get_object_or_404(Course,Instructor=request.user,slug=kwargs["slug"])
         if course:
-            if course.videos.filter(video_url='').exists():
+            if course.videos.filter(video=None).exists():
                 print("eeee")
                 messages.error(request,"You Should Upload Previous Videos First")
                 return redirect(reverse("dashboard:videos"))
