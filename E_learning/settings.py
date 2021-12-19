@@ -184,12 +184,12 @@ LOCALE_PATHS=(
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
-MEDIA_URL="/media/"
-MEDIA_ROOT= BASE_DIR/"media"
-STATIC_ROOT=BASE_DIR/"static"
+STATIC_URL = 'https://agartha2.b-cdn.net/static'
+# MEDIA_URL="/media/"
+# MEDIA_ROOT= BASE_DIR/"media"
+STATIC_ROOT="https://agartha2.b-cdn.net/static"
 STATICFILES_DIRS=[
-    BASE_DIR/"static_in_env"  
+    "https://agartha2.b-cdn.net/static"  
 ]    
 STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
 django_heroku.settings(locals())

@@ -13,42 +13,42 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+   
     <!--====== Title ======-->
-    <title>Edubin - LMS Education HTML Template</title>
+    <title>Edubin - LMS Education HTML Template </title>
     
     <!--====== Favicon Icon ======-->
-    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
+    <link rel="shortcut icon" href="https://agartha2.b-cdn.net/static/favicon.png" type="image/png">
 
     <!--====== Slick css ======-->
-    <link rel="stylesheet" href="{% static 'css/slick.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/slick.css">
 
     <!--====== Animate css ======-->
-    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/animate.css">
     
     <!--====== Nice Select css ======-->
-    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/nice-select.css">
     
     <!--====== Nice Number css ======-->
-    <link rel="stylesheet" href="{% static 'css/jquery.nice-number.min.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/jquery.nice-number.min.css">
 
     <!--====== Magnific Popup css ======-->
-    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/magnific-popup.css">
 
     <!--====== Bootstrap css ======-->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/bootstrap.min.css">
     
     <!--====== Fontawesome css ======-->
-    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/font-awesome.min.css">
     
     <!--====== Default css ======-->
-    <link rel="stylesheet" href="{% static 'css/default.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/default.css">
     
     <!--====== Style css ======-->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/style.css">
     
     <!--====== Responsive css ======-->
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="stylesheet" href="https://agartha2.b-cdn.net/static/css/responsive.css">
   
 <style type="text/css">
 
@@ -127,7 +127,7 @@ cursor:pointer;
                                 {% endfor %}
                             </marquee>
                                 </div>
-                
+                               
                       
                     </div>
                 </div> <!-- row -->
@@ -158,7 +158,12 @@ cursor:pointer;
                                 </div>
                             </div>
                             <div class="button float-left">
-                                <a href="#" class="main-btn">{% trans 'Apply Now' %}</a>
+                                {% if request.user.is_authenticated %}
+                                <a href="{% url 'account_logout' %}" class="main-btn">{% trans 'Logout' %}</a>
+                                {% else %}
+                                <a href="{% url 'account_login' %}" class="main-btn">{% trans 'Login' %}</a>
+
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -210,18 +215,8 @@ cursor:pointer;
                                        
                                     </li> 
                                     <li class="nav-item">
-                                        <a href="#">{% trans 'Profile' %}</a>
-                                        <ul class="sub-menu">
-                      
-                                            <li><a href="{% url 'accounts:account_info' %}">{% trans 'Profile' %}</a></li>
-                                            {% if request.user.is_authenticated %}
-                                            <li ><a href="{% url 'accounts:logout' %}">{% trans 'Logout' %}</a></li>  
-                                            {% else %}
-                                           
-                                            <li ><a href="{% url 'account_login' %}">{% trans 'Login' %}</a></li>  
-            
-                                            {% endif %}
-                                        </ul> 
+                                        <a href="{% url 'accounts:account_info' %}">{% trans 'Profile' %}</a>
+                                         
                                     </li>
 
                                     <li class="nav-item">
@@ -443,43 +438,43 @@ cursor:pointer;
     
     
     <!--====== jquery js ======-->
-    <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
-    <script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/vendor/jquery-1.12.4.min.js"></script>
 
     <!--====== Bootstrap js ======-->
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/bootstrap.min.js"></script>
     
     <!--====== Slick js ======-->
-    <script src="{% static 'js/slick.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/slick.min.js"></script>
     
     <!--====== Magnific Popup js ======-->
-    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/jquery.magnific-popup.min.js"></script>
     
     <!--====== Counter Up js ======-->
-    <script src="{% static 'js/waypoints.min.js' %}"></script>
-    <script src="{% static 'js/jquery.counterup.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/waypoints.min.js"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/jquery.counterup.min.js"></script>
     
     <!--====== Nice Select js ======-->
-    <script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/jquery.nice-select.min.js"></script>
     
     <!--====== Nice Number js ======-->
-    <script src="{% static 'js/jquery.nice-number.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/jquery.nice-number.min.js"></script>
     
     <!--====== Count Down js ======-->
-    <script src="{% static 'js/jquery.countdown.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/jquery.countdown.min.js"></script>
     
     <!--====== Validator js ======-->
-    <script src="{% static 'js/validator.min.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/validator.min.js"></script>
     
     <!--====== Ajax Contact js ======-->
-    <script src="{% static 'js/ajax-contact.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/ajax-contact.js"></script>
     
     <!--====== Main js ======-->
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/main.js"></script>
     
     <!--====== Map js ======-->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDC3Ip9iVC0nIxC6V14CKLQ1HZNF_65qEQ"></script>
-    <script src="{% static 'js/map-script.js' %}"></script>
+    <script src="https://agartha2.b-cdn.net/static/js/map-script.js"></script>
 
 </body>
 <script style="text/javascript">

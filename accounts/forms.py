@@ -11,7 +11,11 @@ from Blogs.models import Blog_Payment
 from .models import TeacherForms,User
 from django.contrib import messages
 from django.conf import settings
-import random,string
+import random,string,requests
+Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
+library_id="19804"
+storage_name="agartha"
+agartha_cdn="agartha1.b-cdn.net"
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 class MyCustomLoginForm(LoginForm):
@@ -60,14 +64,28 @@ class MyCustomSignupForm(SignupForm):
         account_type=self.cleaned_data["account_type"]
         user.account_type=account_type
         user.phone=self.cleaned_data["phone"]
-        user.account_image=self.cleaned_data["image"]
+        image_url=f"https://storage.bunnycdn.com/{storage_name}/{user.username}/{user.username}"
+        headers = {
+                "AccessKey": Storage_Api,
+                "Content-Type": "application/octet-stream",
+                }
+
+        file=self.cleaned_data.get("image")
+        response = requests.put(image_url,data=file,headers=headers)
+        data=response.json()
+        try:
+            if data["HttpCode"] == 201:
+                user.account_image = f"https://{agartha_cdn}/{user.username}/{user.username}"
+        except:
+            pass
         user.first_name=user.username
         # if self.cleaned_data["account_type"] == "teacher":
         #     user.about_me=self.cleaned_data["about_me"]
         #     user.title=self.cleaned_data["about_me"]
-        user.code=random_string_generator()
         user.save()
         if user.account_type == "teacher":
+            user.code=random_string_generator()
+
             user.is_active = False
             user.save()
             msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info code={user.code} ", from_email=settings.EMAIL_HOST_USER, to=[user.email])
