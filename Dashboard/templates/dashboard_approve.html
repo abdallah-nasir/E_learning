@@ -269,9 +269,10 @@
                                             <th>Price</th>
                                             <th>Discount</th>                                   
                                              <th>Course Status</th>
-                                             <th>Image</th>
                                             <th>Status</th>
+                                            <th>Image</th>
                                             <th>Reviews</th>
+                                             <th>Videos</th>
                                             <th>Action</th>
                                         </tr>
                                         
@@ -294,9 +295,9 @@
                                  
                                           <td>{{i.course_status}}</td>
                                           <td>{{i.status}}</td>
-                                          <td><a href="{{i.image}}">image link</a></td>
+                                          <td><a target="_blank" href="{{i.image}}">image link</a></td>
                                           <td>{{i.reviews.count}}</td>
-
+                                          <td><a href="{% url 'dashboard:course_videos' i.id %}">Videos</a></td>
 
                                         <td>
                                             <button class="btn btn-success" data-toggle="modal" data-target="#course-{{i.id}}">Approve</button>

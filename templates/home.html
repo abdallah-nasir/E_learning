@@ -240,7 +240,7 @@
                     <div class="singel-course">
                         <div class="thum">
                             <div class="image">
-                                <img src="{{i.image.url}}" alt="Course">
+                                <img src="{{i.image}}" alt="Course">
                             </div>
                             <div class="price">
                                 <span>${{i.price|floatformat}}</span>
@@ -262,7 +262,7 @@
                             </div>
                             <div class="course-teacher">
                                 <div class="thum">
-                                    <a href="{% url 'home:course' i.slug %}"><img src="{{i.Instructor.image.url}}" alt="teacher"></a>
+                                    <a href="{% url 'home:course' i.slug %}"><img src="{{i.Instructor.image}}" alt="teacher"></a>
                                 </div>
                              
                                 <div class="name">
@@ -374,7 +374,7 @@
                             <div class="col-sm-6">
                                 <div class="singel-teachers mt-30 text-center">
                                     <div class="image">
-                                        <img src="{{i.image.url}}" alt="Teachers">
+                                        <img src="{{i.image}}" alt="Teachers">
                                     </div>
                                     <div class="cont">
                                         <a href="#"><h6>{{i.get_full_ame.title}}</h6></a>

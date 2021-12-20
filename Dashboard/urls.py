@@ -22,6 +22,8 @@ path("delete/videos/blogs/<str:id>/",views.delete_blog_video,name="delete_blog_v
 #### course
 path("courses/",views.courses,name="courses"),
 path("videos/",views.videos,name="videos"),
+path("videos/<str:id>/",views.course_videos,name="course_videos"),
+
 path("delete/videos/<str:slug>/",views.delete_videos,name="delete_videos"),
 
 path("add/course/",views.add_course,name="add_course"),

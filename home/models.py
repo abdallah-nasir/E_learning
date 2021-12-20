@@ -69,6 +69,7 @@ CHOICES=(
     ("complete","complete"),
    
 )
+
 class Videos(models.Model):
     name=models.CharField(max_length=100)     
     # video=models.FileField(upload_to=upload_course_videos)

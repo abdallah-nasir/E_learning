@@ -1,13 +1,1 @@
-
-Event System 
-add course old price 
-upload certificate
-
-
-Event System (expire date - category[same course category] - teacher[same course teacher])
-When reject add (other request)
-[swift - iban ]
-add reference code to payment form (before payment page)
-landing (two landing page to dashboard)
-section for markters
-
+videos approve

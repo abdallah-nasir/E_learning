@@ -29,8 +29,7 @@
                                             <th>Video</th>
                                             <th>Duration</th>
                                             <th>Status</th>
-                                            <th>Action</th>
-
+                                            <th>Video</th>
 
                                         </tr>
                                     </thead>
@@ -43,40 +42,15 @@
                                         <td>{{i.name|truncatewords:10}}</td>
                                         <td>{{i.get_duration_model}}</td>
                                         <td>{{i.my_course.status}}</td>
-                                        <td>
-                                          {% if i.duration == 0 %}
-                                        <a  class="btn btn-warning" href="{% url 'dashboard:check_video' i.slug %}">Check</a>
-                                            {% endif %}
-                                    <a data-toggle="modal" data-target="#video-{{i.id}}" class="btn btn-danger" href="#">Delete</a>
-                                                  {% if i.my_course.status == "declined" %}
-                                          <a href="{% url 'dashboard:edit_videos' i.slug %}" class="btn btn-success" >Edit</a>
-
-                                                  {% endif %}
+                                        <td><a target="_blank" href="https://video.bunnycdn.com/play/19804/87d16a31-0e81-4b46-9601-9dc78c45fbed">Link</a></td>
+                                                
         
                                 </td>
 
 
                                     </tr>
                                     <!-- Modal -->
-<div class="modal fade" id="video-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Delete Video</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          Are you Sure ?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <a href="{% url 'dashboard:delete_videos' i.slug  %}" type="button" class="btn btn-danger">Delete</a>
-        </div>
-      </div>
-    </div>
-  </div>
+
                                     {% endfor %}
                                    </tbody>
                                 </table>

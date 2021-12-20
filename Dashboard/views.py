@@ -353,7 +353,7 @@ def add_course(request):
             instance=form.save(commit=False)
             instance.Instructor=request.user
             instance.save()
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/{instance.slug}/{instance.slug}"
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{instance.slug}"
             headers = {
                 "AccessKey": Storage_Api,
                 "Content-Type": "application/octet-stream",
@@ -365,7 +365,7 @@ def add_course(request):
             print(data)
             try:
                 if data["HttpCode"] == 201:
-                    instance.image = f"https://{agartha_cdn}/{instance.slug}/{instance.slug}"
+                    instance.image = f"https://{agartha_cdn}/courses/{instance.slug}/{instance.slug}"
                     
                     instance.save()
             except:
@@ -398,6 +398,13 @@ def videos(request):
         videos=Videos.objects.all().order_by("-id")
     context={"videos":videos}
     return render(request,"dashboard_videos.html",context)
+
+@login_required
+@admin_director_check
+def course_videos(request,id):
+    videos=Videos.objects.filter(my_course=id).order_by("-id")
+    context={"videos":videos}
+    return render(request,"dashboard_course_videos.html",context)
 
 @login_required
 @check_user_validation
@@ -448,6 +455,7 @@ def edit_videos(request,slug):
 @check_user_validation
 @check_if_teacher_have_pending_video_upload
 def add_video(request,slug):
+    
     form=AddVideo(request.POST or None,request.FILES or None)
     course=get_object_or_404(Course,slug=slug)
     if request.user == course.Instructor:
@@ -458,6 +466,7 @@ def add_video(request,slug):
                 instance.my_course=course
                 instance.save()
                 instance.my_course.videos.add(instance)
+                instance.my_course.status ="pending"
                 instance.my_course.save()
                 url = f"http://video.bunnycdn.com/library/{library_id}/videos"         
                 json = {"title":instance.slug,"collectionId":instance.my_course.collection}
@@ -486,9 +495,7 @@ def add_video(request,slug):
                 print(data)
                 instance.duration=data["length"]  
                 instance.save()
-                instance.my_course.duration +=instance.duration
-                instance.my_course.status ="pending"
-                instance.my_course.save()
+                instance.total_duration()
                 messages.success(request,"Video added successfully")
                 form=AddVideo()
             else:
@@ -502,20 +509,27 @@ def add_video(request,slug):
 @check_user_validation
 def check_video(request,slug):
     video=get_object_or_404(Videos,slug=slug)
-    if request.user == video.user and video.video == None:
+    if request.user == video.user and video.duration == 0:
         form=UploadVideoForm(request.POST or None,request.FILES or None)
-        if request.method == "POST" and form.is_valid():
-            if video.video !=None:
-                messages.error(request,"video is already uploaded")
-                return redirect(reverse("dashboard:videos"))
-            url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
-            headers = {
+        url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
+        headers = {
                     "Accept": "application/json",
                     "Content-Type": "application/*+json",
                     "AccessKey": AccessKey
                 }
-            response = requests.get( url,headers=headers)
-            data=response.json()
+        my_response = requests.get( url,headers=headers)
+        data=my_response.json() 
+        print(data)
+        if data["encodeProgress"] ==100:
+            video.duration=data["length"]
+            video.save()
+            video.total_duration()
+            messages.success(request,"Video Updated Successfully")
+            return redirect(reverse("dashboard:videos"))
+        if request.method == "POST" and form.is_valid():
+            if video.duration != 0:
+                messages.error(request,"video is already uploaded")
+                return redirect(reverse("dashboard:videos"))
             if data["encodeProgress"] !=100:
                 headers = {
             "Accept": "application/json",
@@ -531,8 +545,8 @@ def check_video(request,slug):
                 json={"title":video.slug,"collectionId":video.my_course.collection}
                 response = requests.post( url,json=json,headers=headers)
                 data=response.json()
-                print(data)
                 video.video_uid=data["guid"]
+                video.video="https://iframe.mediadelivery.net/embed/{library_id}/{instance.video_uid}?autoplay=false"
                 video.save()
                 file=form.cleaned_data.get("file")
                 url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
@@ -540,15 +554,20 @@ def check_video(request,slug):
             "Accept": "application/json",
                 "AccessKey": AccessKey}
                 response = requests.put( url,data=file,headers=headers)
-                data=response.json()
+                data=my_response.json()
+                video.duration = data["length"]
+                video.save()
                 print(data)
+                video.total_duration()
+                messages.success(request,"Video Uploaded Successfully")
+                return redirect(reverse("dashboard:videos"))
 
     else:
         messages.error(request,"video is already uploaded")
         return redirect(reverse("dashboard:videos"))
     context={"form":form}
     return render(request,"dashboard_check_video.html",context)
-  
+
 
 @login_required
 @check_user_validation
