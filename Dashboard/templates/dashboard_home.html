@@ -8,7 +8,7 @@
           
             <div class="d-flex flex-column align-items-center text-center p-3 py-5">
                 <h3 style="text-align:center;">Account Profile</h3>
-                <img class="rounded-circle mt-5" width="150px" src="{{request.user.image.url}}">
+                <img class="rounded-circle mt-5" width="150px" src="{{request.user.image}}">
                 <span class="font-weight-bold">{{request.user.get_full_name.title}}</span>
                 <span class="text-black-50">{{request.user.email}}</span>
                 <span> </span></div>

@@ -18,9 +18,13 @@ from django.core.cache import cache
 from datetime import datetime
 from django.forms import ValidationError
 from django.core.cache import cache
+import requests
 # Create your views here.
+AccessKey="0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
+Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
 library_id="19804"
-
+storage_name="agartha"
+agartha_cdn="agartha1.b-cdn.net"
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -76,7 +80,6 @@ def branch(request,slug):
     context={"course":page_obj,"branch":branch}
     return render(request,"branch.html",context)
 
-videos_api="x80ZObZyzzTqvuG676i2EBCdN4NgnTfQ6LGIyB13tfePqUGeO2L2DVIWwyshEZ8W"
 def single_course(request,slug):
     course=get_object_or_404(Course,slug=slug,status="approved")
     payment_form=PaymentMethodForm()
@@ -325,9 +328,23 @@ def payment_method_create(request,course):
             method=payment_form.cleaned_data["payment_method"]
             image=payment_form.cleaned_data["image"]
             number=payment_form.cleaned_data["number"]
-            Payment.objects.create(user=request.user,method=method,
-            payment_image=image,transaction_number=number,course=course,       
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{course.slug}/{image}"
+            headers = {
+                "AccessKey": Storage_Api,
+                "Content-Type": "application/octet-stream",
+                }
+            response = requests.put(image_url,data=image,headers=headers)
+            data=response.json()
+            print(data)
+ 
+            payment=Payment.objects.create(user=request.user,method=method,transaction_number=number,course=course,       
                 status="pending")
+            try:
+                if data["HttpCode"] == 201:
+                    payment.payment_image = f"https://{agartha_cdn}/course-payment/{course.slug}/{image}"
+                    payment.save()
+            except:
+                pass
             msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[request.user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
@@ -335,8 +352,8 @@ def payment_method_create(request,course):
             return redirect(reverse("home:course",kwargs={"slug":course.slug}))
         else:
             print("invalid")
-            for i in payment_form.errors.values():
-                messages.error(request,i)
+            # for i in payment_form.errors.values():
+            #     messages.error(request,i)
             return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
             # return redirect(reverse("home:course",kwargs={"slug":course.slug}))
 

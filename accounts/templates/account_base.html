@@ -107,6 +107,21 @@
                     </div>
                 </div>
             </li>
+               <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefive"
+                    aria-expanded="true" aria-controls="collapsefive">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Consultants</span>
+                </a>
+                <div id="collapsefive" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">All Consultants:</h6>
+                        <a class="collapse-item" href="{% url 'accounts:consultants' %}">Consultants</a>
+                        <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
+                        <a class="collapse-item" href="cards.html">Course Payments</a> -->
+                    </div>
+                </div>
+            </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="{% url 'home:home' %}" >
                     <i class="fas fa-fw fa-cog"></i>
@@ -223,7 +238,7 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{request.user.get_full_name.title}}</span>
                                 <img class="img-profile rounded-circle"
-                                    src="{{request.user.image.url}}">
+                                    src="{{request.user.image}}">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"

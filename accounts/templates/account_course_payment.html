@@ -46,7 +46,7 @@
                                         <td>{{i.transaction_number}}</td>
                                         <td>{{i.course.name|truncatewords:20}}</td>
                                         {% if i.payment_image %}
-                                        <td><a target="__blank" href="{{i.payment_image.url}}">Image Link</a></td>
+                                        <td><a target="__blank" href="{{i.payment_image}}">Image Link</a></td>
                                             {% else %}
                                         <td>Null</td>
                                             {% endif %}

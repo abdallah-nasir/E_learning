@@ -182,8 +182,6 @@ class Course(models.Model):
     details=models.TextField()   
     status=models.CharField(choices=COURSE_STATUS,max_length=50,default="pending")
     stars=models.FloatField(default=0)
-    objects=models.Manager()
-    check_reject=CheckRejectCourse()
     likes=models.PositiveIntegerField(default=0)
     collection=models.CharField(max_length=200,default="#")     #this is for bunny collection
     reviews=models.ManyToManyField(Reviews,blank=True,related_name="course_reviews")

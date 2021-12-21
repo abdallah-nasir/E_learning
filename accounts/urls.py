@@ -12,6 +12,8 @@ path("consultant/payment/",views.consultant_payment,name="consultant_payment"),
 # path("profile/blogs/",views.blogs,name="blogs"),
 path("courses/",views.courses,name="courses"),
 path("events/",views.events,name="events"),
+path("consultants/",views.consultants,name="consultants"),
+
 path("edit/blog/payment/<str:id>/",views.edit_blog_payment,name="edit_blog_payment"),
 path("edit/course/payment/<str:id>/",views.edit_course_payment,name="edit_course_payment"),
 path("edit/consultant/payment/<str:id>/",views.edit_consultant_payment,name="edit_consultant_payment"),

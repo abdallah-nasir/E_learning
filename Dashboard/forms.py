@@ -167,7 +167,27 @@ class AddCourse(forms.ModelForm):
         except:
             pass
         return image
-        
+
+class EditCourse(forms.ModelForm):
+    branch=forms.ModelChoiceField(label="Category",queryset=Branch.objects.all())
+    image=forms.ImageField(label="image",required=False)
+    # videos=forms.FileField()
+    class Meta:
+        model=Course
+        fields=['name',"image","branch","details","price","discount","course_status"]
+
+    def clean_image(self):
+        image=self.cleaned_data.get("image")
+        request=get_current_request()
+        try:
+            if request.FILES["image"]:
+                image_extentions=[".png",".jpg",",jpeg"]
+                image_extension=os.path.splitext(image.name)[1]
+                if image_extension.lower() not in image_extentions:
+                    raise forms.ValidationError("invalid image extension")
+        except:
+            pass
+        return image
 
 class AddVideo(forms.ModelForm):
     class Meta:

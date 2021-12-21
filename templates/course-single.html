@@ -98,7 +98,7 @@ width:100% !important;
                                 <li>
                                     <div class="teacher-name">
                                         <div class="thum">
-                                            <img src="{{course.Instructor.image.url}}" style="max-height: 4rem;" alt="Teacher">
+                                            <img src="{{course.Instructor.image}}" style="max-height: 4rem;" alt="Teacher">
                                         </div>
                                         <div class="name">
                                             <span>Teacher</span>
@@ -209,7 +209,7 @@ width:100% !important;
                                     <div class="instructor-cont">
                                         <div class="instructor-author">
                                             <div class="author-thum">
-                                                <img src="{{course.Instructor.image.url}}" style="max-height:10rem;" alt="Instructor">
+                                                <img src="{{course.Instructor.image}}" style="max-height:10rem;" alt="Instructor">
                                             </div>
                                             <div class="author-name">
                                                 <a href="{% url 'home:teacher' course.Instructor.slug %}"><h5>{{course.Instructor.first_name.title}} {{course.Instructor.last_name.title}}</h5></a>
@@ -244,7 +244,7 @@ width:100% !important;
                                                <div class="singel-reviews">
                                                     <div class="reviews-author">
                                                         <div class="author-thum">
-                                                            <img src="{{i.user.image.url}}" style="max-height: 5rem;" alt="Reviews">
+                                                            <img src="{{i.user.image}}" style="max-height: 5rem;" alt="Reviews">
                                                         </div>
                                                         <div class="author-name">
                                                             <h6>{{i.user.first_name.title}} {{i.user.last_name.title}}</h6>
@@ -389,13 +389,13 @@ width:100% !important;
                                 </div>
                             </div> <!-- course features -->
                         </div>
-                        <div class="col-lg-12 col-md-6">
+                        <!-- <div class="col-lg-12 col-md-6">
                             <div class="You-makelike mt-30">
                                 <h4>You make like </h4> 
                                 {% for i in same %}
                                 <div class="singel-makelike mt-20">
                                     <div class="image">
-                                        <img src="{{i.image.url}}" style="max-height:7rem;" alt="Image">
+                                        <img src="{{i.image}}" style="max-height:7rem;" alt="Image">
                                     </div>
                                     <div class="cont">
                                         <a href="{% url 'home:course' i.slug %}"><h4>{{i.name}}</h4></a>
@@ -407,7 +407,7 @@ width:100% !important;
                                 </div>
                                     {% endfor %}
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="col-lg-12 col-md-6">
                             <div class="You-makelike mt-30">
@@ -417,7 +417,7 @@ width:100% !important;
                                     <a href="#"><h4>{{event.name|truncatewords:10}}</h4></a>
                                    
                                 </div>
-                                <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image.url}}); max-height:7rem; margin-top:0px;">
+                                <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image}}); max-height:7rem; margin-top:0px;">
                                     <div data-countdown="{{event.date|date:'Y/m/d'}}"></div>
                                    
                                 </div> 
@@ -436,12 +436,12 @@ width:100% !important;
                             <h3>Releted Courses</h3>
                         </div>
                         <div class="row">
-                            {% for i in same %}
+                            {% for i in course.same %}
                             <div class="col-md-6">
                                 <div class="singel-course mt-30">
                                     <div class="thum">
                                         <div class="image">
-                                            <img src="{{i.image.url}}" alt="Course">
+                                            <img src="{{i.image}}" alt="Course">
                                         </div>
                                         <div class="price">
                                             <span>${{i.price|floatformat}}</span>
@@ -470,7 +470,7 @@ width:100% !important;
                                         </div>
                                         <div class="course-teacher">
                                             <div class="thum">
-                                                <a href="#"><img src="{{i.Instructor.image.url}}" alt="teacher"></a>
+                                                <a href="#"><img src="{{i.Instructor.image}}" alt="teacher"></a>
                                             </div>
                                             <div class="name">
                                                 <a href="#"><h6>{{i.Instructor.get_full_name.title}}</h6></a>
@@ -543,7 +543,7 @@ width:100% !important;
 
         <div class="modal-footer">
           <button type="button" class="btn" id="cancel" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn"id="submit-button" >Save changes</button>
+          <button type="submit" onclick="this.disabled=true,this.form.submit();" class="btn"id="submit-button" >Submit</button>
         </div>
     </form>
 </div>

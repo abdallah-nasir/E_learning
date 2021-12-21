@@ -205,22 +205,26 @@ class Teacher_Form(forms.ModelForm):
 from django.contrib.auth import get_user_model
 User=get_user_model()
 class ChangeUserDataForm(forms.ModelForm):
+    account_image=forms.ImageField(required=False)
     class Meta:
         model=User
         fields=["account_image","first_name","last_name","phone",]
 
 class BlogPaymentFom(forms.ModelForm):
+    payment_image=forms.ImageField(required=True)
     class Meta:
         model=Blog_Payment
         fields=["payment_image","transaction_number"]
 
 
 class CoursePaymentFom(forms.ModelForm):
+    payment_image=forms.ImageField(required=True)
     class Meta:
         model=Payment
         fields=["payment_image","transaction_number"]
 
 class ConsultantPaymentFom(forms.ModelForm):
+    payment_image=forms.ImageField(required=True)
     class Meta:
         model=Cosultant_Payment
         fields=["payment_image","transaction_number"]

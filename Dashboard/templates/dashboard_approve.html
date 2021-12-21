@@ -200,10 +200,10 @@
                                         <tr>
                                             <th>User</th>
                                             <th>Teacher</th>
+                                            <th>Date</th>
                                             <th>Transaction Number</th>
                                              <th>Image</th>
-                                        
-                                             <th>Action</th>
+                                            <th>Action</th>
                                         </tr>
                                         
                                     </thead>
@@ -213,14 +213,12 @@
                                     <tr>
                                         <td>{{i.user.username}}</td>
                                         <td>{{i.consult.teacher.user.username}}</td>
+                                        <td>{{i.consult.teacher.date}}</td>
                                         <td>{{i.transaction_number}}</td>
                                             <td>
-                                            {% if i.image %}
-                                            <a href="{{i.payment_image}}">image link</a>
-                                             {% endif %}
-                                        </td>
+                                        <a href="{{i.payment_image}}">image link</a>
+                                            </td>
                                        
-                                        <td>{{i.transaction_number}}</td>
                                        
                                         <td>
                                             <button class="btn btn-success" data-toggle="modal" data-target="#consult_payment-{{i.id}}">Approve</button>
@@ -419,7 +417,7 @@
                                         <td>{{i.course.name|truncatechars:20}}</td>
                                        <td>
                                         {% if i.payment_image %}
-                                           <a target="__" href="{{i.payment_image.url}}">image link</a>
+                                           <a target="__" href="{{i.payment_image}}">image link</a>
                                            {% endif %}
                                         </td>
                                      

@@ -171,13 +171,13 @@ LANGUAGES = (            # supported languages
     ("ar",_("Arabic")),
 )
 TIME_ZONE = 'Africa/Cairo'
-STATIC_URL = '/static/'
+STATIC_URL = 'https://agartha2.b-cdn.net/static/'
 # MEDIA_URL="/media/"
 # MEDIA_ROOT= BASE_DIR/"media"
-STATIC_ROOT=BASE_DIR/"static"
+STATIC_ROOT="https://agartha2.b-cdn.net"
 STATICFILES_DIRS=[
-  "static_in_env"
-]   
+    "https://agartha2.b-cdn.net/static"  
+]      
 # for translation
 LOCALE_PATHS=(   
     os.path.join(BASE_DIR,"locale/"),

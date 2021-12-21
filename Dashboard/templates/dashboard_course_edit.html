@@ -24,7 +24,24 @@
                                 {% csrf_token %}
                                
                                 <div class="form-group">
-                                    {{form|crispy}}                                 
+                                   
+                                   {{form.name|as_crispy_field}}                               
+                                   <div  class="form-group">
+                                    <label for="id_image">Course Image</label>
+                                    <div class="col">
+                                       
+                                      <a href="{{course.image}}" target="__blank"><img style="max-width: 200px;" class="img-thumbnail" src="{{course.image}}"></a>
+                                       
+                                    </div>
+                                  </div>
+                            
+                                   {{form.image|as_crispy_field}}         
+                                   {{form.branch|as_crispy_field}}         
+                                   {{form.details|as_crispy_field}}         
+                                   {{form.price|as_crispy_field}}         
+                                   {{form.discount|as_crispy_field}}         
+                                   {{form.course_status|as_crispy_field}}
+
                                 </div>
                                 
                                 <button class="btn btn-primary" type="submit">Submit</button>

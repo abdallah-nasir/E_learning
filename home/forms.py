@@ -27,16 +27,19 @@ class PaymentMethodForm(forms.Form):
     number=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Your Transaction Number ID"}),label="Transaction Number")
 
     def clean(self):
-        image=self.cleaned_data.get("image")
-        size=image.size / (1024 * 1024)
-        type=os.path.splitext(image.name)[1]
-        print(size)
-        list_type=[".jpg",".jpeg",".png"]
-        if size > 2:
-            raise forms.ValidationError("image size is more 2 MB")
-        elif type not in list_type:   
-            raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
-    
+        try:
+            image=self.cleaned_data.get("image")
+            size=image.size / (1024 * 1024)
+            type=os.path.splitext(image.name)[1]
+            print(size)
+            list_type=[".jpg",".jpeg",".png"]
+            if size > 2:
+                raise forms.ValidationError("image size is more 2 MB")
+            elif type not in list_type:   
+                raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
+        except:
+            raise forms.ValidationError(f"invalid image")
+
     # def __init__(self,*args,**kwargs):
     #     super(PaymentMethodForm, self).__init__(*args, **kwargs)
         

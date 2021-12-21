@@ -32,13 +32,42 @@ library_id="19804"
 storage_name="agartha"
 agartha_cdn="agartha1.b-cdn.net"
 @login_required
-@check_user_validation
+@check_user_validation   
 def home(request):
     form=ChangeUserDataForm(request.POST or None,request.FILES or None,instance=request.user)
+    form.initial["account_image"]=None
     if request.method == 'POST':
-        if form.is_valid():
+        if form.is_valid():     
             instance=form.save(commit=False)
+            try:
+                if request.FILES["account_image"]:
+                    print(request.FILES["account_image"])
+                    file_name=request.FILES["account_image"]
+                    url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{instance.slug}/"
+                    headers = {
+                        "Accept": "*/*", 
+                        "AccessKey":Storage_Api}
+                    response = requests.get(url, headers=headers) 
+                    data=response.json()
+                    for i in data:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{instance.slug}/{i['ObjectName']}"
+                        response = requests.delete(url,headers=headers)
+                    url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{instance.slug}/{file_name}"
+                    file=form.cleaned_data.get("account_image")
+                    response = requests.put(url,data=file,headers=headers)
+                    data=response.json()
+                    try:
+                        if data["HttpCode"] == 201:
+                            instance.account_image = f"https://{agartha_cdn}/accounts/{instance.slug}/{file_name}"
+                            instance.save()
+                    except:
+                        pass
+            except:
+                pass
             instance.save()
+            form=ChangeUserDataForm(instance=request.user)
+            form.initial["account_image"]=None
+            messages.success(request,"Profile Updated Successfully")
     context={"form":form}
     return render(request,"dashboard_home.html",context)
 
@@ -294,8 +323,8 @@ def courses(request):
 @check_user_validation
 def edit_course(request,slug):
     course=get_object_or_404(Course,slug=slug)
-    form=AddCourse(request.POST or None , request.FILES or None,instance=course)
-    # form.initial["course_image"].required=False
+    form=EditCourse(request.POST or None , request.FILES or None,instance=course)
+    form.initial["image"]=None
     if request.user == course.Instructor:
         if request.method == "POST":
             if form.is_valid():
@@ -304,25 +333,32 @@ def edit_course(request,slug):
                 try:
                     if request.FILES["image"]:
                         print(request.FILES["image"])
-                        image_url=f"https://storage.bunnycdn.com/{storage_name}/{instance.slug}/{instance.slug}"
+                        file_name=request.FILES["image"]
+                        url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/"
                         headers = {
-                        "AccessKey": Storage_Api,
-                        "Content-Type": "application/octet-stream",
+                            "Accept": "*/*", 
+                            "AccessKey":Storage_Api}
+                        response = requests.get(url, headers=headers) 
+                        data=response.json()
+                        for i in data:
+                            url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{i['ObjectName']}"
+                            headers = {
+                                "Content-Type": "application/octet-stream",
+                                "AccessKey": Storage_Api
                             }
+                            response = requests.delete(url,headers=headers)
+                        url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{file_name}"
                         file=form.cleaned_data.get("image")
-                        print(file)
-                        response = requests.delete(image_url,headers=headers)
-                        response = requests.put(image_url,data=file,headers=headers)
+                        response = requests.put(url,data=file,headers=headers)
                         data=response.json()
                         try:
                             if data["HttpCode"] == 201:
-                                instance.image = f"https://{agartha_cdn}/{instance.slug}/{instance.slug}"
+                                instance.image = f"https://{agartha_cdn}/courses/{instance.slug}/{file_name}"
                                 instance.save()
                         except:
                             pass
                 except:
                     pass
-                    
                 instance.save()
                 messages.success(request,"Course Edited Successfully")
                 return redirect(reverse("dashboard:courses"))
@@ -353,7 +389,8 @@ def add_course(request):
             instance=form.save(commit=False)
             instance.Instructor=request.user
             instance.save()
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{instance.slug}"
+            file_name=request.FILES["image"]
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{file_name}"
             headers = {
                 "AccessKey": Storage_Api,
                 "Content-Type": "application/octet-stream",
@@ -365,7 +402,7 @@ def add_course(request):
             print(data)
             try:
                 if data["HttpCode"] == 201:
-                    instance.image = f"https://{agartha_cdn}/courses/{instance.slug}/{instance.slug}"
+                    instance.image = f"https://{agartha_cdn}/courses/{instance.slug}/{file_name}"
                     
                     instance.save()
             except:
@@ -403,7 +440,7 @@ def videos(request):
 @admin_director_check
 def course_videos(request,id):
     videos=Videos.objects.filter(my_course=id).order_by("-id")
-    context={"videos":videos}
+    context={"videos":videos,"library_id":library_id}
     return render(request,"dashboard_course_videos.html",context)
 
 @login_required
@@ -988,12 +1025,7 @@ def reject(request,id):
     if request.user.is_superuser:
         try:
             qs=request.GET["reject"]
-            content=Rejects.objects.filter(type=qs,content_id=id)
-            if content.exists():
-                messages.error(request,"Form is ALready Rejected")
-                redirect_url = reverse('dashboard:approve')
-                return redirect(f'{redirect_url}?approve={qs}') 
-            elif qs == "blogs":
+            if qs == "blogs":
                 query=get_object_or_404(Blog,id=id,status="pending")
                 content_user=query.user
             elif qs == "blog_payment":
@@ -1113,7 +1145,7 @@ def consultants(request):
 @check_user_validation
 def consultants_sessions(request):
     if request.user.account_type == "teacher":
-        sessions=Teacher_Time.objects.filter(user=request.user).order_by("-id")
+        sessions=Teacher_Time.objects.filter(user=request.user,available=True).order_by("-id")
     else:
         sessions=Teacher_Time.objects.all().order_by("-id")
 
@@ -1122,6 +1154,24 @@ def consultants_sessions(request):
     page_obj = paginator.get_page(page_number)
     context={"sessions":sessions}
     return render(request,"dashboard_consultants_sessions.html",context)
+
+@login_required
+@check_user_validation
+def delete_session(request,id):
+    session=get_object_or_404(Teacher_Time,id=id,available=True)
+    session.available=False
+    session.save()
+    messages.success(request,"Session Deactivated")
+    return redirect(reverse("dashboard:consultants_sessions"))
+
+@login_required
+@check_user_validation
+def active_session(request,id):
+    session=get_object_or_404(Teacher_Time,id=id,available=False)
+    session.available=True
+    session.save()
+    messages.success(request,"Session Activated")
+    return redirect(reverse("dashboard:consultants_sessions"))
 
 @login_required
 @check_user_validation

@@ -9,8 +9,8 @@ def check_if_user_in_course(function):
     def wrap(request, *args, **kwargs):
 
         course =get_object_or_404(Course,slug=kwargs["course"])
-        if request.user in course.students.all():
-            messages.error(request,"sorry you should buy course first")
+        if course.students.filter(username=request.user).exists():
+            messages.error(request,"you already have this course")
             return redirect(reverse("home:course",kwargs={"slug":course.slug}))
         else:
             return function(request, *args, **kwargs)
@@ -25,10 +25,10 @@ def check_if_user_in_pending_payment(function):
         course =get_object_or_404(Course,slug=kwargs["course"])
         if Payment.objects.filter(user=request.user,course=course,status="pending").exists():
             messages.error(request,"you already have a pending payment")
-            return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+            return redirect(reverse("accounts:course_payment"))
         elif Payment.objects.filter(user=request.user,course=course,status="declined"):
             messages.error(request,"Please check you declined payment")
-            return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+            return redirect(reverse("accounts:course_payment"))
         else:
             return function(request, *args, **kwargs)
     wrap.__doc__ = function.__doc__

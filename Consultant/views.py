@@ -4,7 +4,7 @@ from .models import *
 from .forms import *
 from .decorators import check_user_is_has_consul
 from django.http import JsonResponse
-import json
+import json,requests
 from django.contrib import messages
 from datetime import datetime as dt
 from django.core.mail import EmailMessage
@@ -12,7 +12,11 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 # Create your views here.
-
+Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
+storage_name="agartha"
+library_id="19804"
+storage_name="agartha"
+agartha_cdn="agartha1.b-cdn.net"
 
 from django.db.models import F
 def home(request):
@@ -26,7 +30,7 @@ def teacher_ajax(request):
     if request.is_ajax():
         if form.is_valid():
             category=form.cleaned_data.get("name")
-            teacher=Teacher_Time.objects.filter(category=category).values('user__username',"user__id").distinct()
+            teacher=Teacher_Time.objects.filter(category=category,available=True).values('user__username',"user__id").distinct()
             return JsonResponse(list(teacher),safe=False)
         else:
             print("invalid")
@@ -40,7 +44,7 @@ def teacher_ajax_table(request):
     if request.is_ajax():
         print("ajax")
         teacher=request.POST.get("teacher")
-        teacher=Teacher_Time.objects.filter(user_id=teacher)
+        teacher=Teacher_Time.objects.filter(user_id=teacher,available=True)
         list=[]
         host=request.META['HTTP_HOST']
         for i in teacher:
@@ -54,7 +58,7 @@ def teacher_ajax_table(request):
 @login_required()
 @check_user_is_has_consul
 def consultant_payment(request,teacher):
-    teacher=get_object_or_404(Teacher_Time,id=teacher)
+    teacher=get_object_or_404(Teacher_Time,id=teacher,available=True)
     form=PaymentForm(request.POST or None ,request.FILES or None)
     if request.method == 'POST':
         if form.is_valid():
@@ -64,7 +68,21 @@ def consultant_payment(request,teacher):
             consult=Consultant.objects.create(user=request.user
                 ,teacher=teacher,status="pending")
             payment=Cosultant_Payment.objects.create(method=method,transaction_number=number,
-                consult=consult,user=request.user,status="pending",payment_image=image)
+                consult=consult,user=request.user,status="pending")
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{payment.user.slug}/{payment.consult.teacher.date}/{image}"
+            headers = {
+                "AccessKey": Storage_Api,
+                "Content-Type": "application/octet-stream",
+                }
+            response = requests.put(image_url,data=image,headers=headers)
+            data=response.json()
+            print(data)
+            try:
+                if data["HttpCode"] == 201:
+                    payment.payment_image = f"https://{agartha_cdn}/consultant-payment/{payment.user.slug}/{payment.consult.teacher.date}/{image}"
+                    payment.save()
+            except:
+                pass
             msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[payment.user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()

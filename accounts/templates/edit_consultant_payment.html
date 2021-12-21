@@ -23,9 +23,17 @@
                             <form method="POST" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 
-                                <div class="form-group">
-                                    
-                                    {{form|crispy }}
+                                <div class="form-group">                           
+                                    <div  class="form-group">
+                                        <label for="id_image">Payment Image</label>
+                                        <div class="col">
+                                           
+                                          <a href="{{payment.payment_image}}" target="__blank"><img style="max-width: 200px;" class="img-thumbnail" src="{{payment.payment_image}}"></a>
+                                           
+                                        </div>
+                                      </div>
+                                    {{form.payment_image|as_crispy_field}}
+                                    {{form.transaction_number|as_crispy_field}}                                    
                                 </div>
                                 
                                 <button class="btn btn-primary" type="submit">Submit</button>

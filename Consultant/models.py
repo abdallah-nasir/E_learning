@@ -17,6 +17,7 @@ class Teacher_Time(models.Model):
     from_time=models.TimeField(auto_now_add=False)
     to_time=models.TimeField(auto_now_add=False)
     price=models.FloatField(default=0)
+    available=models.BooleanField(default=True)
     def __str__(self):
         return self.user.username
 
@@ -72,8 +73,8 @@ class Cosultant_Payment(models.Model):
     transaction_number=models.CharField(max_length=50,null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
-    check_reject=CheckRejectConsultant()
-    objects=models.Manager()
+    # check_reject=CheckRejectConsultant()
+    # objects=models.Manager()
     def __str__(self):
         return self.method
 
