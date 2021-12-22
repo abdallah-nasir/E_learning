@@ -1,9 +1,13 @@
 {% extends 'dashboard_base.html' %}
 {% load crispy_forms_tags %}
 
-
 {% block content %}
 
+<style>
+.not-visible{
+    display:none;
+}
+</style>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -19,24 +23,14 @@
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                         </div>
+                        <div id="alert-box"></div>
+                        <div id="image-box"></div>
                         <div class="card-body">
-                            
-                            <form method="POST" enctype="multipart/form-data" >
-                                {% csrf_token %}
-                               
-                                <div class="form-group">
-                                        <div  class="form-group">
-                                            {{form|crispy}}
-
-                                </div>
-                                
-                                <button class="btn btn-primary" type="submit">Submit</button>
-                            </form>
-                         
-                          
+                          {{data}}
                         </div>
                     </div>
 
                 </div>
                 <!-- /.container-fluid -->
+
 {% endblock %}

@@ -192,7 +192,7 @@ class EditCourse(forms.ModelForm):
 class AddVideo(forms.ModelForm):
     class Meta:
         model=Videos
-        fields=['name',"video","details"]
+        fields=['name',"details"]
 
     def clean_video(self):
         video=self.cleaned_data.get("video")      
@@ -264,7 +264,7 @@ class CosultantAddForm(forms.ModelForm):
 
 class UploadVideoForm(forms.Form):
     # title=forms.CharField(max_length=50)
-    file=forms.FileField()
+    video=forms.FileField()
 ############################
 # Get model details for superuser
 

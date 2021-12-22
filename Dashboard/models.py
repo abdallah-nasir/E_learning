@@ -21,3 +21,5 @@ class Rejects(models.Model):
         return self.user.username
 
   
+class Test(models.Model):
+    video=models.FileField()

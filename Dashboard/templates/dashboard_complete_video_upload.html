@@ -24,7 +24,7 @@
                             <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{% url 'dashboard:check_video' video %}" enctype="multipart/form-data" id="upload-form">
+                            <form method="POST" action="{% url 'dashboard:complete_add_video' video %}" enctype="multipart/form-data" id="upload-form">
                                 {% csrf_token %}
                                
                                 <div class="form-group">
@@ -98,6 +98,7 @@
                     
                         $("#result").html(html1);
                         window.location.href = '/dashboard/videos/';
+
                       },
                       error:function(error){
                         $('#spinner').remove();

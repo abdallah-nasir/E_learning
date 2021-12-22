@@ -172,12 +172,20 @@ LANGUAGES = (            # supported languages
 )
 TIME_ZONE = 'Africa/Cairo'
 STATIC_URL = 'https://agartha2.b-cdn.net/static/'
-# MEDIA_URL="/media/"
-# MEDIA_ROOT= BASE_DIR/"media"
+# MEDIA_URL="https://agartha2.b-cdn.net/static/"
+# MEDIA_ROOT="https://agartha2.b-cdn.net""
 STATIC_ROOT="https://agartha2.b-cdn.net"
 STATICFILES_DIRS=[
-    "https://agartha2.b-cdn.net/static"  
-]      
+  "https://agartha2.b-cdn.net/static"
+]  
+    
+# STATIC_URL = '/static/'
+# # MEDIA_URL="https://agartha2.b-cdn.net/static/"
+# # MEDIA_ROOT="https://agartha2.b-cdn.net""
+# STATIC_ROOT=BASE_DIR/"static"
+# STATICFILES_DIRS=[
+#   BASE_DIR/"static_in_env"
+# ]     
 # for translation
 LOCALE_PATHS=(   
     os.path.join(BASE_DIR,"locale/"),

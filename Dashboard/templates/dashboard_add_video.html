@@ -3,7 +3,11 @@
 
 
 {% block content %}
-
+<style>
+    .not-visible{
+        display:none;
+    }
+    </style>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -20,11 +24,13 @@
                             <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                         </div>
                         <div class="card-body">
-                            <form method="POST" enctype="multipart/form-data" >
+                            <form method="POST">
                                 {% csrf_token %}
                                
                                 <div class="form-group">
-                                    {{form|crispy}}
+                                    {{form.name|as_crispy_field}}
+                                    {{form.details|as_crispy_field}}
+                                
                                 </div>
                                 
                                 <button onclick="this.disabled=true,this.form.submit();" class="btn btn-primary" type="submit">Submit</button>
@@ -34,4 +40,7 @@
 
                 </div>
                 <!-- /.container-fluid -->
+
+
+               
 {% endblock %}

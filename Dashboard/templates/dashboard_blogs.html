@@ -44,7 +44,7 @@
                                         <td>{{i.paid}}</td>
                                         <td>{{i.status}}</td>
                                         <td>
-                                          {% if i.status == "declined" %}
+                                          {% if i.status != "pending" %}
                                         <a href="{% url 'dashboard:edit_blog' i.slug %}" class="btn btn-success">Edit</a>
                                         {% endif %}
                                         <button class="btn btn-danger" data-toggle="modal" data-target="#blog-{{i.id}}">Delete</button></td>

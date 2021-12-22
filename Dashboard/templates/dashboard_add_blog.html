@@ -29,7 +29,7 @@
                                     {{form|crispy}}
                                 </div>
                                 
-                                <button class="btn btn-primary" type="submit">Submit</button>
+                                <button onclick="this.disabled=true,this.form.submit();" class="btn btn-primary" type="submit">Submit</button>
                             </form>
                             {% elif form_number == 2 %}
                             <form method="GET">

@@ -31,6 +31,10 @@ Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
 library_id="19804"
 storage_name="agartha"
 agartha_cdn="agartha1.b-cdn.net"
+class FailedJsonResponse(JsonResponse):
+    def __init__(self, data):
+        super().__init__(data)
+        self.status_code = 400
 @login_required
 @check_user_validation   
 def home(request):
@@ -174,9 +178,24 @@ def add_blog(request):
                         instance.save()
                 image=request.FILES.getlist("image")
                 for i in image:
-                    image=Blog_Images.objects.create(blog=instance,image=i)
-                    instance.image.add(image)
-                    instance.save()
+                    image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{i}"
+                    headers = {
+                        "AccessKey": Storage_Api,
+                    "Content-Type": "application/octet-stream",
+                    }
+
+                    response = requests.put(image_url,data=i,headers=headers)
+                    data=response.json()
+                    print(data)
+                    try:
+                        if data["HttpCode"] == 201:
+                            image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{i}"
+                            image=Blog_Images.objects.create(blog=instance,image=image_location)
+                            instance.image.add(image)
+                            instance.save()
+                    except:
+                        pass
+ 
                 messages.success(request,"Your Blog is Waiting for Admin Approve")
                 return redirect(reverse("dashboard:blogs"))
 
@@ -187,96 +206,138 @@ def add_blog(request):
 @login_required
 @check_user_validation
 def edit_blog(request,slug):
-    blog=get_object_or_404(Blog,slug=slug,status="declined")
+    blog=get_object_or_404(Blog,slug=slug)
     blog_type_list=["standard","gallery","video","audio","quote","link"]
-    try:
-        type=request.GET["blog_type"]
-        if type not in blog_type_list:
-            return redirect(reverse("dashboard:blogs"))
-        elif type == "link":
-            form=BlogLinkForm(request.POST or None,request.FILES or None,instance=blog)
-            form.initial["link"] = blog.get_link()
-        elif type == "quote":
-            form=BlogQuoteForm(request.POST or None,request.FILES or None,instance=blog)
-            form.initial["quote"]=blog.get_quote()
-        elif type == "video" or type == "audio":
-            form=BlogVideoForm(request.POST or None,request.FILES or None,instance=blog)
-        elif type == 'gallery':
-            form=BlogGalleryForm(request.POST or None,request.FILES or None,instance=blog)
-        else:
-            form=AddBlog(request.POST or None,request.FILES or None,instance=blog)
-        form_number=1
-    except: 
-        form=BlogTypeForm(request.GET or None,instance=blog)
-  
-        form_number=2
-    if request.user == blog.user:
-        if request.method == "POST":
-            Rejects.objects.filter(user=request.user,type="blogs",content_id=blog.id).delete()
-            if form_number == 1:
-                if form.is_valid():
-                    instance=form.save(commit=False)
-                    instance.approved=False
-                    type=request.GET["blog_type"]
-                    if type == "link":
-                        link=request.POST.get("link")
-                        data={"link":link}
-                        instance.data=json.dumps(data)
-                    if type == "quote":
-                        quote=request.POST.get("quote")
-                        data={"quote":quote}
-                        instance.data=json.dumps(data)
-                    instance.blog_type=type
-                    tag=form.cleaned_data.get("tags")
-                    tag_list=[]
-                    if tag:
-                        for i in tag:
-                            tag_list.append(i)
-                            if i in blog.tags.all():
-                                pass
-                            else:
-                                new_tags,created=Tag.objects.get_or_create(name=i)
-                                instance.tags.add(new_tags)
-                                instance.save()
-                        for i in instance.tags.all():
-                            if i.name in tag_list:
-                                pass
-                            else:
-                                instance.tags.remove(i)
-                    image=request.FILES.getlist("image")
-                    if image != []:
-                        if type != "gallery":
-                            this_image=image[-1]
-                            if len(blog.image.all()) > 1:
-                                blog.image.all().delete()
-                                image=Blog_Images.objects.create(blog=instance,image=this_image)
-                                instance.image.add(image)
-                                instance.save()
-                            elif blog.image.last() != this_image:
+    if blog.status != "pending":
+        try:
+            type=request.GET["blog_type"]
+            if type not in blog_type_list:
+                return redirect(reverse("dashboard:blogs"))
+            elif type == "link":
+                form=BlogLinkForm(request.POST or None,request.FILES or None,instance=blog)
+                form.initial["link"] = blog.get_link()
+            elif type == "quote":
+                form=BlogQuoteForm(request.POST or None,request.FILES or None,instance=blog)
+                form.initial["quote"]=blog.get_quote()
+            elif type == "video" or type == "audio":
+                form=BlogVideoForm(request.POST or None,request.FILES or None,instance=blog)
+            elif type == 'gallery':
+                form=BlogGalleryForm(request.POST or None,request.FILES or None,instance=blog)
+            else:
+                form=AddBlog(request.POST or None,request.FILES or None,instance=blog)
+            form_number=1
+        except: 
+            form=BlogTypeForm(request.GET or None,instance=blog)
+    
+            form_number=2
+        if request.user == blog.user:
+            if request.method == "POST":
+                if form_number == 1:
+                    if form.is_valid():
+                        instance=form.save(commit=False)
+                        instance.approved=False
+                        type=request.GET["blog_type"]
+                        if type == "link":
+                            link=request.POST.get("link")
+                            data={"link":link}
+                            instance.data=json.dumps(data)
+                        if type == "quote":
+                            quote=request.POST.get("quote")
+                            data={"quote":quote}
+                            instance.data=json.dumps(data)
+                        instance.blog_type=type
+                        tag=form.cleaned_data.get("tags")
+                        tag_list=[]
+                        if tag:
+                            for i in tag:
+                                tag_list.append(i)
+                                if i in blog.tags.all():
+                                    pass
+                                else:
+                                    new_tags,created=Tag.objects.get_or_create(name=i)
+                                    instance.tags.add(new_tags)
+                                    instance.save()
+                            for i in instance.tags.all():
+                                if i.name in tag_list:
+                                    pass
+                                else:
+                                    instance.tags.remove(i)
+                        image=request.FILES.getlist("image")
+                        if image != []:
+                            if type != "gallery":
+                                this_image=image[-1]
+                                if len(blog.image.all()) > 1:
+                                    blog.image.all().delete()
+                                    image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{this_image}"
+                                    headers = {
+                                        "AccessKey": Storage_Api,
+                                    "Content-Type": "application/octet-stream",
+                                    }
 
-                                blog.image.all().delete()
-                                image=Blog_Images.objects.create(blog=instance,image=this_image)
-                                instance.image.add(image)
-                                instance.save()
+                                    response = requests.put(image_url,data=this_image,headers=headers)
+                                    data=response.json()
+                                    print(data)
+                                    try:
+                                        if data["HttpCode"] == 201:
+                                            image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{this_image}"
+                                            image=Blog_Images.objects.create(blog=instance,image=image_location)
+                                            instance.image.add(image)
+                                            instance.save()
+                                    except:
+                                        pass
+                                elif blog.image.last() != this_image:
+
+                                    blog.image.all().delete()
+                                    image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{this_image}"
+                                    headers = {
+                                        "AccessKey": Storage_Api,
+                                    "Content-Type": "application/octet-stream",
+                                    }
+
+                                    response = requests.put(image_url,data=this_image,headers=headers)
+                                    data=response.json()
+                                    print(data)
+                                    try:
+                                        if data["HttpCode"] == 201:
+                                            image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{this_image}"
+                                            image=Blog_Images.objects.create(blog=instance,image=image_location)
+                                            instance.image.add(image)
+                                            instance.save()
+                                    except:
+                                        pass
+                            else:
+                                for i in image:
+                                    image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{i}"
+                                    headers = {
+                                        "AccessKey": Storage_Api,
+                                    "Content-Type": "application/octet-stream",
+                                    }
+
+                                    response = requests.put(image_url,data=i,headers=headers)
+                                    data=response.json()
+                                    print(data)
+                                    try:
+                                        if data["HttpCode"] == 201:
+                                            image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{i}"
+                                            image=Blog_Images.objects.create(blog=instance,image=image_location)
+                                            instance.image.add(image)
+                                            instance.save()
+                                    except:
+                                        pass
+                        if type == "audio" or type == "video":
+                            video_audio=form.cleaned_data.get("video")
+                            instance.video=video_audio
+                            instance.save()
                         else:
-                            for i in image:
-                                image=Blog_Images.objects.create(blog=instance,image=i)
-                                instance.image.add(image)
-                                instance.save()
-                    if type == "audio" or type == "video":
-                        video_audio=form.cleaned_data.get("video")
-                        instance.video=video_audio
+                            if blog.video:
+                                blog.video.delete()
+                        instance.status="pending"
                         instance.save()
-                    else:
-                        if blog.video:
-                            blog.video.delete()
-                    instance.status="pending"
-                    instance.save()
-                    messages.success(request,"Your Blog is Waiting for Admin Approve")
-                    return redirect(reverse("dashboard:blogs"))
-    else:
-        messages.error(request,"You Don't Have Permisssion")
-        return redirect(reverse("dashboard:blogs"))
+                        messages.success(request,"Your Blog is Waiting for Admin Approve")
+                        return redirect(reverse("dashboard:blogs"))
+        else:
+            messages.error(request,"You Don't Have Permisssion")
+            return redirect(reverse("dashboard:blogs"))
     context={"blog":blog,"form":form,"form_number":form_number}
     return render(request,"dashboard_edit_blog.html",context)
 
@@ -466,8 +527,8 @@ def delete_videos(request,slug):
 @login_required
 @check_user_validation
 def edit_videos(request,slug):
-    video=get_object_or_404(Videos,slug=slug,my_course__status="declined")
-    if request.user == video.user:
+    video=get_object_or_404(Videos,slug=slug)
+    if request.user == video.user and video.my_course.status !="pending":
         form=EditVideo(request.POST or None,instance=video)
         if request.method == "POST":
             instance=form.save(commit=False)
@@ -492,8 +553,7 @@ def edit_videos(request,slug):
 @check_user_validation
 @check_if_teacher_have_pending_video_upload
 def add_video(request,slug):
-    
-    form=AddVideo(request.POST or None,request.FILES or None)
+    form=AddVideo(request.POST or None)
     course=get_object_or_404(Course,slug=slug)
     if request.user == course.Instructor:
         if request.method == "POST":
@@ -517,8 +577,28 @@ def add_video(request,slug):
                 print(data)
                 instance.video_uid=data["guid"]
                 instance.save()
+                return redirect(reverse("dashboard:complete_add_video",kwargs={"slug":instance.slug}))
+            else:
+                print("invalid")
+    else:
+        messages.error(request,"You Don't Have Permisssion")
+        return redirect(reverse("dashboard:blogs"))
+    context={"form":form,"course":course.slug}
+    return render(request,"dashboard_add_video.html",context)
 
-                url = f"http://video.bunnycdn.com/library/{library_id}/videos/{instance.video_uid}"
+@login_required
+@check_user_validation
+def complete_add_video(request,slug):
+    video=get_object_or_404(Videos,slug=slug,user=request.user)
+    form=UploadVideoForm(request.POST or None,request.FILES or None)
+    if video.video or video.duration > 0:
+        messages.error(request,"video is already uploaded")
+        return redirect(reverse("dashboard:videos"))
+    else:
+        if request.is_ajax():
+            if form.is_valid():
+                print("valid")
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
                 file=form.cleaned_data.get("video")
                 headers = {
                     "Accept": "application/json",
@@ -526,22 +606,17 @@ def add_video(request,slug):
                     "AccessKey": AccessKey
                 }
                 response = requests.put( url, data=file, headers=headers)
-                instance.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{instance.video_uid}?autoplay=false"
+                video.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{video.video_uid}?autoplay=false"
                 response = requests.get( url, headers=headers)
                 data=response.json()
                 print(data)
-                instance.duration=data["length"]  
-                instance.save()
-                instance.total_duration()
+                video.duration=data["length"]  
+                video.save()
+                video.total_duration()
                 messages.success(request,"Video added successfully")
-                form=AddVideo()
-            else:
-                print("invalid")
-    else:
-        messages.error(request,"You Don't Have Permisssion")
-        return redirect(reverse("dashboard:blogs"))
-    context={"form":form}
-    return render(request,"dashboard_add_video.html",context)
+                return JsonResponse({"message":"1","url":"/dashoard/videos/"})
+    context={"form":form,"video":video.slug}
+    return render(request,"dashboard_complete_video_upload.html",context)
 @login_required
 @check_user_validation
 def check_video(request,slug):
@@ -563,46 +638,49 @@ def check_video(request,slug):
             video.total_duration()
             messages.success(request,"Video Updated Successfully")
             return redirect(reverse("dashboard:videos"))
-        if request.method == "POST" and form.is_valid():
-            if video.duration != 0:
-                messages.error(request,"video is already uploaded")
-                return redirect(reverse("dashboard:videos"))
-            if data["encodeProgress"] !=100:
-                headers = {
-            "Accept": "application/json",
-                "AccessKey": AccessKey
-                        }
-                response = requests.delete( url,headers=headers)
-                url = f"http://video.bunnycdn.com/library/{library_id}/videos"
-                headers = {
+        if request.method == "POST":
+            if form.is_valid():
+                if video.duration != 0:
+                    messages.error(request,"video is already uploaded")
+                    return redirect(reverse("dashboard:videos"))
+                if data["encodeProgress"] !=100:
+                    headers = {
                 "Accept": "application/json",
-                "Content-Type": "application/*+json",
-                "AccessKey": AccessKey
-            }
-                json={"title":video.slug,"collectionId":video.my_course.collection}
-                response = requests.post( url,json=json,headers=headers)
-                data=response.json()
-                video.video_uid=data["guid"]
-                video.video="https://iframe.mediadelivery.net/embed/{library_id}/{instance.video_uid}?autoplay=false"
-                video.save()
-                file=form.cleaned_data.get("file")
-                url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
-                headers = {
-            "Accept": "application/json",
-                "AccessKey": AccessKey}
-                response = requests.put( url,data=file,headers=headers)
-                data=my_response.json()
-                video.duration = data["length"]
-                video.save()
-                print(data)
-                video.total_duration()
-                messages.success(request,"Video Uploaded Successfully")
-                return redirect(reverse("dashboard:videos"))
+                    "AccessKey": AccessKey
+                            }
+                    response = requests.delete( url,headers=headers)
+                    url = f"http://video.bunnycdn.com/library/{library_id}/videos"
+                    headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/*+json",
+                    "AccessKey": AccessKey
+                }
+                    json={"title":video.slug,"collectionId":video.my_course.collection}
+                    response = requests.post( url,json=json,headers=headers)
+                    data=response.json()
+                    video.video_uid=data["guid"]
+                    video.video="https://iframe.mediadelivery.net/embed/{library_id}/{instance.video_uid}?autoplay=false"
+                    video.save()
+                    file=form.cleaned_data.get("video")
+                    url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
+                    headers = {
+                    "Accept": "application/json",
+                    "AccessKey": AccessKey}
+                    response = requests.put( url,data=file,headers=headers)
+                    data=my_response.json()
+                    video.duration = data["length"]
+                    video.save()
+                    print(data)
+                    video.total_duration()
+                    messages.success(request,"Video Uploaded Successfully")
+                    return JsonResponse({"message":"1","url":"/dashoard/videos/"})
+            else:
+                return FailedJsonResponse({"message":"1","url":"/dashoard/videos/"})
 
     else:
         messages.error(request,"video is already uploaded")
         return redirect(reverse("dashboard:videos"))
-    context={"form":form}
+    context={"form":form,"video":video.slug}
     return render(request,"dashboard_check_video.html",context)
 
 
@@ -1201,6 +1279,15 @@ def complete_consultant(request,id):
 import requests
 from django.http import JsonResponse
 def test(request):
-    print(request,request.data)
-    context={"form":form}
+    video=Videos.objects.last()
+    url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
+    headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/*+json",
+            "AccessKey": AccessKey
+        }
+    response = requests.get( url,headers=headers)
+    data=response.json()
+    print(data)
+    context={"data":data}
     return render(request,"dashboard_test.html",context)

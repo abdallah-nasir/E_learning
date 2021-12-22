@@ -39,21 +39,21 @@
                                             <label for="id_image">Blog Image</label>
                                             <div class="col">
                                                 {% for i in blog.image.all %}
-                                              <a href="{{i.image.url}}" target="__blank"><img style="max-width: 200px;" class="img-thumbnail" src="{{i.image.url}}"></a><a href="{% url 'dashboard:delete_blog_image' i.id %}"><i class="fas fa-times-circle"></i></a>
+                                              <a href="{{i.image}}" target="__blank"><img style="max-width: 200px;" class="img-thumbnail" src="{{i.image}}"></a><a href="{% url 'dashboard:delete_blog_image' i.id %}"><i class="fas fa-times-circle"></i></a>
                                                 {% endfor %}
                                             </div>
                                           </div>
                                     
                                 
-                                <button class="btn btn-primary" type="submit">Submit</button>
-                            </form>
+                                          <button onclick="this.disabled=true,this.form.submit();" class="btn btn-primary" type="submit">Submit</button>
+                                        </form>
                             {% elif form_number == 2 %}
                             <form method="GET">
                                 <div class="form-group">
                                     {{form|crispy}}
                                 </div>
                                 
-                                <button class="btn btn-primary" type="submit">Submit</button>
+                                <button onclick="this.disabled=true,this.form.submit();" class="btn btn-primary" type="submit">Submit</button>
                             </form>
                             {% endif %}
                           
