@@ -77,6 +77,9 @@ path("active_session/<str:id>/",views.active_session,name="active_session"),
 ###prices
 path("prices/",views.prices,name="prices"),
 path("price/edit/<str:id>/",views.edit_price,name="edit_price"),
+###
+# Add user to course
+path("user/course/add/",views.add_student_course,name="add_student_course"),
 
 ############
 path("test/",views.test,name="test"),

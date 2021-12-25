@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from Blogs.models import Blog,Blog_Payment,Prices
 from home.models import Course,Branch,Videos,Events,Payment,News
-from .models import Rejects
+from .models import Rejects,AddStudentCourse
 from Consultant.models import Cosultant_Payment,Teacher_Time
 from Quiz.models import Question ,Answers
 import os
@@ -290,3 +290,29 @@ class PriceForm(forms.ModelForm):
     class Meta:
         model=Prices
         fields=["name","price","duration","data"]
+
+
+class AddUserToCourseForm(forms.Form):
+    student=forms.CharField(max_length=30,required=True,widget=forms.TextInput(attrs={"placeholder":"student username"}))
+    course=forms.ModelChoiceField(queryset=Course.objects.none())
+
+    def clean_student(self):
+        user=self.cleaned_data["student"]
+        if User.objects.filter(username=user).exists():
+            pass
+        else:
+            raise forms.ValidationError("invalid username")
+
+    def clean_course(self):
+        request=get_current_request()
+        course=self.cleaned_data["course"]
+        if Course.objects.filter(Instructor=request.user,name=course,status="approved").exists():
+            pass
+        else:
+            raise forms.ValidationError("invalid course")
+
+    def __init__(self, *args, **kwargs):
+        super(AddUserToCourseForm, self).__init__(*args, **kwargs)
+        request=get_current_request()
+        self.fields["course"].queryset = Course.objects.filter(Instructor=request.user)
+

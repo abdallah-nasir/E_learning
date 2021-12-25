@@ -313,6 +313,25 @@
                     </div>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsestudentcourse"
+                    aria-expanded="true" aria-controls="collapsestudentcourse">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Add User To Course</span>
+                </a>
+                <div id="collapsestudentcourse" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Add User:</h6>
+                        <a class="collapse-item" href="{% url 'dashboard:add_student_course' %}">Add User</a>
+                        <!-- <a class="collapse-item" href="register.html"></a>
+                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Other Pages:</h6>
+                        <a class="collapse-item" href="404.html">404 Page</a>
+                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
+                    </div>
+                </div>
+            </li>
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
             <div class="sidebar-heading">
@@ -338,6 +357,7 @@
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=events">Events</a>
 
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=teacher">Teachers</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=add_user">User Course</a>
 
                         <!-- <a class="collapse-item" href="register.html"></a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>

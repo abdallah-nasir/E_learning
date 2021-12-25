@@ -456,6 +456,58 @@
                                    </tbody>
                                 </table>
                            
+                                  {% elif qs == "add_user" %}
+                                <h3>Users</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Course</th>
+                                            <th>Teacher</th>
+                                            
+                                        <th>Action</th>            
+                                        </tr>
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.student.username}}</td>
+                                        <td><a href="{% url 'home:course' i.course.slug %}" target="_blank" >{{i.course.name|truncatewords:10}}</a></td>
+                                        <td>{{i.teacher.username}}</td>
+                                        <td>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#payment_course-{{i.id}}">Approve</button>
+                                <a href="{% url 'dashboard:reject' i.id %}?reject=add_user" class="btn btn-danger">Reject</a>
+                            </td>
+                                     
+                                     
+                                    </tr>
+                                    <div class="modal fade" id="payment_course-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve User To Course</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=add_user" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                           
 
                                 {% endif %}
 

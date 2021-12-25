@@ -1022,6 +1022,8 @@ def approve(request):
                 query=Payment.objects.filter(status="pending").order_by("-id")
             elif qs == "teacher":
                 query=TeacherForms.check_reject.get_query_set().order_by("-id")
+            elif qs == "add_user":
+               query= AddStudentCourse.objects.filter(status="pending").order_by("-id")
             else:
                 query=False
         except:
@@ -1092,6 +1094,14 @@ def approve_content(request,id):
                 query.teacher.save()
                 query.save()
                 messages.success(request,"Teacher Approved Successfully")
+            elif qs == "add_user":
+                query = get_object_or_404(AddStudentCourse,id=id,status="pending")
+                query.status="approved"
+                query.course.students.add(query.student)
+                query.course.save()
+                query.save()
+                messages.success(request,"User Added Successfully")
+
         except:
             return redirect(reverse("dashboard:home"))
     else:
@@ -1128,6 +1138,9 @@ def reject(request,id):
             elif qs == "teacher":
                 query=get_object_or_404(TeacherForms,id=id,approved=False)
                 content_user=query.teacher
+            elif qs == "add_user":
+                query=get_object_or_404(AddStudentCourse,id=id,status="pending")
+                content_user=query.student
             form=RejectForm(request.POST or None)
             if request.method == "POST":
                 if form.is_valid():
@@ -1311,6 +1324,29 @@ def edit_price(request,id):
         return redirect(reverse("dashboard:home"))
     context={"form":form}
     return render(request,"dashboard_edit_prices.html",context)
+
+@login_required
+@check_user_validation
+def add_student_course(request):
+    form=AddUserToCourseForm(request.POST or None)
+    if request.method =="POST":
+        if form.is_valid():
+            user=request.POST.get("student")
+            course=request.POST.get("course")
+            teacher_course=get_object_or_404(Course,Instructor=request.user,id=course,status="approved")
+            student_course=get_object_or_404(User,username=user)
+            if student_course in teacher_course.students.all():
+                messages.error(request,"user is already in course")
+            elif AddStudentCourse.objects.filter(course=teacher_course,student=student_course,status="pending").exists():
+                messages.error(request,"you already have a pending request for this user")
+
+                # return redirect(reverse("dashboard:"))
+            else:
+                AddStudentCourse.objects.create(teacher=request.user,student=student_course,course=teacher_course,status="pending")
+                messages.success(request,"your request is being processed by admins")
+                # return redirect(reverse())
+    context={"form":form}
+    return render(request,"dashboard_add_user_to_course.html",context)
 
 import requests
 from django.http import JsonResponse

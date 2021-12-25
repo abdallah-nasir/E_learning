@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.conf import settings
+# from Home_Models import Course
 User=get_user_model()
 
 # Create your models here.
@@ -11,6 +13,7 @@ TYPE=(
     ("events","events"),
     ("payment","payment"),
     ("teacher","teacher"),
+    ("add_user","add_user")
 )
 class Rejects(models.Model):
     type=models.CharField(choices=TYPE,max_length=50)
@@ -20,6 +23,19 @@ class Rejects(models.Model):
     def __str__(self):
         return self.user.username
 
+status=(
+    ("pending",("pending")),
+    ("approved",("approved")),
+    ("declined",("declined")),
+)
+class AddStudentCourse(models.Model):
+    teacher=models.ForeignKey(User,related_name="course_teacher",on_delete=models.CASCADE)
+    student=models.ForeignKey(User,related_name="course_student",on_delete=models.CASCADE)
+    course=models.ForeignKey(settings.COURSE_MODEL,on_delete=models.CASCADE)
+    status=models.CharField(choices=status,max_length=50)
+
+    def  __str__(self):
+        return self.teacher.username
   
 class Test(models.Model):
     video=models.FileField()
