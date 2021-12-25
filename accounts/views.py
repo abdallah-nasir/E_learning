@@ -26,8 +26,15 @@ def logout_view(request):
         messages.success(request,"you have logged out")
         return redirect(reverse("home:home"))
 
+
+from django.contrib.sites.models import Site
+
+def random_string_generator(size=7, chars=string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 def check_teacher_form(request):
     form=Teacher_Form(request.POST or None)
+
     if request.method == 'POST':
         if form.is_valid():
             try:
@@ -270,3 +277,27 @@ def edit_consultant_payment(request,id):
         return redirect(reverse("accounts:consultant_payment"))
     context={"form":form}
     return render(request,"edit_consultant_payment.html",context)
+
+ 
+def code_reset(request):
+    form=CodeForm(request.POST or None)
+    if request.method =="POST":
+        if form.is_valid():
+            email=form.cleaned_data.get("email")
+            user=User.objects.filter(email=email)
+            if user:
+                this_user=user.last()
+                if this_user.is_active == True:
+                    messages.error(request,"your account is active")
+                else:
+                    this_user.code=random_string_generator()
+                    this_user.save()
+                    msg = EmailMessage(subject="Account Created", body=f"code:{this_user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[this_user.email])
+                    msg.content_subtype = "html"  # Main content is now text/html
+                    msg.send()
+                    messages.success(request,"code has been sent to your email")
+            else:
+                messages.error(request,"invalid user")
+        form=CodeForm()
+    context={"form":form}
+    return render(request,"account_code.html",context)

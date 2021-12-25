@@ -121,9 +121,9 @@ def payment_pricing(request,id):
                 number=form.cleaned_data["number"]
                 payment=Blog_Payment.objects.create(user=request.user,
                 method=method,payment_image=image, transaction_number=number,status="pending",created_at=now)
-                if price.get_duration() == 'month':
+                if price.get_duration() == 'monthly':
                     payment.created_at = now
-                    payment.expired_at= now + datetime.timedelta(days=30)
+                    payment.expired_at= now + datetime.timedelta(days=30*6)
                 else:
                     payment.expired_at= now + datetime.timedelta(days=365)
                 payment.save()
@@ -213,8 +213,8 @@ def paypal_capture(request,order_id,price_id):
                 now= datetime.date.today()
                 payment=Blog_Payment.objects.create(method="Paypal",
                 transaction_number=transaction,status="pending",user=request.user,created_at=now)
-                if price.get_duration() == 'month':
-                    payment.expired_at= now + datetime.timedelta(days=30)
+                if price.get_duration() == 'monthly':
+                    payment.expired_at= now + datetime.timedelta(days=30*6)
                 else:
                     payment.expired_at= now + datetime.timedelta(days=365)
                 payment.save()

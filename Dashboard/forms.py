@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from Blogs.models import Blog,Blog_Payment
+from Blogs.models import Blog,Blog_Payment,Prices
 from home.models import Course,Branch,Videos,Events,Payment,News
 from .models import Rejects
 from Consultant.models import Cosultant_Payment,Teacher_Time
@@ -280,3 +280,13 @@ class RejectForm(forms.ModelForm):
     #     for i in self.fields:
     #         self.fields[i].widget.attrs['readonly'] = True
     #     self.fields["message"].widget.attrs['readonly'] = False
+
+DURATION_PRICE=(
+    ("monthly","monthly"),
+    ("annually","annually")
+)
+class PriceForm(forms.ModelForm):
+    duration=forms.ChoiceField(choices=DURATION_PRICE,required=True)
+    class Meta:
+        model=Prices
+        fields=["name","price","duration","data"]

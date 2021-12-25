@@ -107,9 +107,15 @@ class TeacherForms(models.Model):
         for i in data["social"]: 
             if i["facebook"]:
                 facebook=i["facebook"]
+            else:
+                facebook=None
             if i["twitter"]:
                 twitter=i["twitter"]
+            else:
+                twitter=None
             if i["linkedin"]:
                 linkedin=i["linkedin"]
+            else:
+                linkedin=None
         context={"about_me":about_me,"title":title,"facebook":facebook,"linkedin":linkedin,"twitter":twitter}
         return context

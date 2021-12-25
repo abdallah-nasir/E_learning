@@ -12,6 +12,8 @@ from .models import TeacherForms,User
 from django.contrib import messages
 from django.conf import settings
 import random,string,requests
+from crum import get_current_request   
+
 Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
 library_id="19804"
 storage_name="agartha"
@@ -88,7 +90,8 @@ class MyCustomSignupForm(SignupForm):
 
             user.is_active = False
             user.save()
-            msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info code={user.code} ", from_email=settings.EMAIL_HOST_USER, to=[user.email])
+            msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
+                               your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
             messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
@@ -129,7 +132,8 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
             msg = EmailMessage(subject="Account Created", body=f"code={user.code}", from_email=settings.EMAIL_HOST_USER, to=[user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
-            messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
+            messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
+                               your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/")
         # Add your own processing here.
 
         # You must return the original result.
@@ -228,3 +232,8 @@ class ConsultantPaymentFom(forms.ModelForm):
     class Meta:
         model=Cosultant_Payment
         fields=["payment_image","transaction_number"]
+
+
+class CodeForm(forms.Form):
+    email=forms.EmailField(required=True,widget=forms.EmailInput(attrs={"placeholder":"Enter your Email"}))
+  

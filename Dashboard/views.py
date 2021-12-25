@@ -3,7 +3,7 @@ from django.template.defaultfilters import urlencode
 from django.urls import reverse
 from Consultant.models import Cosultant_Payment,Consultant,Teacher_Time
 from home.models import Course,Payment,Events,Videos,News,Videos
-from Blogs.models import (Blog,Blog_Payment,Blog_Images)
+from Blogs.models import (Blog,Blog_Payment,Blog_Images,Prices)
 from Quiz.models import *
 from accounts.models import TeacherForms
 from django.core.paginator import Paginator
@@ -135,70 +135,73 @@ def blogs(request):
 @login_required
 @check_user_validation
 def add_blog(request):
-    blog_type_list=["standard","gallery","video","audio","quote","link"]
-    try:
-        type=request.GET["blog_type"]
-        if type not in blog_type_list:
-            return redirect(reverse("dashboard:blogs"))
-        elif type == "link":
-            form=BlogLinkForm(request.POST or None,request.FILES or None)
-        elif type == "quote":
-            form=BlogQuoteForm(request.POST or None,request.FILES or None)
-        elif type == "video" or type == "audio":
-            form=BlogVideoForm(request.POST or None,request.FILES or None)
-        elif type == 'gallery':
-            form=BlogGalleryForm(request.POST or None,request.FILES or None)
-        else:
-            form=AddBlog(request.POST or None,request.FILES or None)
-        form_number=1
-    except:
-        form=BlogTypeForm(request.GET or None)
-        form_number=2
-    if request.method == "POST":
-        if form_number == 1:
-            if form.is_valid():
-                instance=form.save(commit=False)
-                if type == "link":
-                    link=request.POST.get("link")
-                    data={"link":link}
-                    instance.data=json.dumps(data)
-                if type == "quote":
-                    quote=request.POST.get("quote")
-                    data={"quote":quote}
-                    instance.data=json.dumps(data)
-                instance.user=request.user
-                instance.blog_type = type
-                instance.save()
-                tag=request.POST.get("tags")
-                print(tag)
-                if tag:
-                    for i in tag.split(","):
-                        tags,created=Tag.objects.get_or_create(name=i)
-                        instance.tags.add(tags)
-                        instance.save()
-                image=request.FILES.getlist("image")
-                for i in image:
-                    image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{i}"
-                    headers = {
-                        "AccessKey": Storage_Api,
-                    "Content-Type": "application/octet-stream",
-                    }
-
-                    response = requests.put(image_url,data=i,headers=headers)
-                    data=response.json()
-                    print(data)
-                    try:
-                        if data["HttpCode"] == 201:
-                            image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{i}"
-                            image=Blog_Images.objects.create(blog=instance,image=image_location)
-                            instance.image.add(image)
-                            instance.save()
-                    except:
-                        pass
- 
-                messages.success(request,"Your Blog is Waiting for Admin Approve")
+    if request.user.account_type == 'teacher':
+        blog_type_list=["standard","gallery","video","audio","quote","link"]
+        try:
+            type=request.GET["blog_type"]
+            if type not in blog_type_list:
                 return redirect(reverse("dashboard:blogs"))
+            elif type == "link":
+                form=BlogLinkForm(request.POST or None,request.FILES or None)
+            elif type == "quote":
+                form=BlogQuoteForm(request.POST or None,request.FILES or None)
+            elif type == "video" or type == "audio":
+                form=BlogVideoForm(request.POST or None,request.FILES or None)
+            elif type == 'gallery':
+                form=BlogGalleryForm(request.POST or None,request.FILES or None)
+            else:
+                form=AddBlog(request.POST or None,request.FILES or None)
+            form_number=1
+        except:
+            form=BlogTypeForm(request.GET or None)
+            form_number=2
+        if request.method == "POST":
+            if form_number == 1:
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    if type == "link":
+                        link=request.POST.get("link")
+                        data={"link":link}
+                        instance.data=json.dumps(data)
+                    if type == "quote":
+                        quote=request.POST.get("quote")
+                        data={"quote":quote}
+                        instance.data=json.dumps(data)
+                    instance.user=request.user
+                    instance.blog_type = type
+                    instance.save()
+                    tag=request.POST.get("tags")
+                    print(tag)
+                    if tag:
+                        for i in tag.split(","):
+                            tags,created=Tag.objects.get_or_create(name=i)
+                            instance.tags.add(tags)
+                            instance.save()
+                    image=request.FILES.getlist("image")
+                    for i in image:
+                        image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{i}"
+                        headers = {
+                            "AccessKey": Storage_Api,
+                        "Content-Type": "application/octet-stream",
+                        }
 
+                        response = requests.put(image_url,data=i,headers=headers)
+                        data=response.json()
+                        print(data)
+                        try:
+                            if data["HttpCode"] == 201:
+                                image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{i}"
+                                image=Blog_Images.objects.create(blog=instance,image=image_location)
+                                instance.image.add(image)
+                                instance.save()
+                        except:
+                            pass
+    
+                    messages.success(request,"Your Blog is Waiting for Admin Approve")
+                    return redirect(reverse("dashboard:blogs"))
+    else:
+        messages.error(request,"you must be a teacher")
+        return redirect(reverse("dashboard:blogs"))
     context={"form":form,"form_number":form_number}
     return render(request,"dashboard_add_blog.html",context)
 
@@ -449,6 +452,7 @@ def add_course(request):
         if form.is_valid():
             instance=form.save(commit=False)
             instance.Instructor=request.user
+            instance.image=None
             instance.save()
             file_name=request.FILES["image"]
             image_url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{file_name}"
@@ -632,7 +636,7 @@ def check_video(request,slug):
         my_response = requests.get( url,headers=headers)
         data=my_response.json() 
         print(data)
-        if data["encodeProgress"] ==100:
+        if data["encodeProgress"] ==100 or  data["status"] == 2 or data["status"] == 4:
             video.duration=data["length"]
             video.save()
             video.total_duration()
@@ -1275,6 +1279,38 @@ def complete_consultant(request,id):
         messages.success(request,"Consultant Completed Successfully")
     return redirect(reverse("dashboard:consultants"))
 
+@login_required
+def prices(request):
+    if request.user.is_superuser:
+        prices=Prices.objects.all()
+    else:
+        return redirect(reverse("dashoard:home"))
+    context={"prices":prices}
+    return render(request,"dashboard_prices.html",context)
+
+@login_required
+def edit_price(request,id):
+    price=get_object_or_404(Prices,id=id)
+    if request.user.is_superuser:
+        prices=get_object_or_404(Prices,id=id)
+        form=PriceForm(request.POST or None,instance=price)
+        form.initial["data"]=prices.get_details()
+        form.initial["duration"]=prices.get_duration()
+        if request.method =="POST":
+            if form.is_valid():
+                instance=form.save(commit=False)
+                data=form.cleaned_data.get("data")
+                duration=form.cleaned_data.get("duration")
+                price_data={"duration":duration,"details":data}
+                instance.data=json.dumps(price_data)
+                form.save() 
+                messages.success(request,"price changed")
+                return redirect(reverse("dashboard:prices"))
+    else:
+        messages.error(request,"you dont't have permission")
+        return redirect(reverse("dashboard:home"))
+    context={"form":form}
+    return render(request,"dashboard_edit_prices.html",context)
 
 import requests
 from django.http import JsonResponse
@@ -1291,3 +1327,5 @@ def test(request):
     print(data)
     context={"data":data}
     return render(request,"dashboard_test.html",context)
+
+

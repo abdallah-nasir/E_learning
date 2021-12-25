@@ -6,6 +6,8 @@ urlpatterns = [
 path("logout/",views.logout_view,name="logout"),
 path("validate/teacher/",views.check_teacher_form,name="validate_teacher"),
 path("",views.account_info,name="account_info"),
+path("code/reset/",views.code_reset,name="code"),
+
 path("blog/payment/",views.blog_payment,name="blog_payment"),
 path("course/payment/",views.course_payment,name="course_payment"),
 path("consultant/payment/",views.consultant_payment,name="consultant_payment"),

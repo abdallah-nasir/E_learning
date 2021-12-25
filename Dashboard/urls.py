@@ -73,7 +73,10 @@ path("complete_consultant/consultants/<str:id>/",views.complete_consultant,name=
 path("delete_session/<str:id>/",views.delete_session,name="delete_session"),
 path("active_session/<str:id>/",views.active_session,name="active_session"),
 
-
+####
+###prices
+path("prices/",views.prices,name="prices"),
+path("price/edit/<str:id>/",views.edit_price,name="edit_price"),
 
 ############
 path("test/",views.test,name="test"),

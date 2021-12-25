@@ -162,7 +162,7 @@ def teachers(request):
     return render(request,"teachers.html",context)
 
 def teacher_single(request,slug):
-    teacher=get_object_or_404(User,slug=slug)
+    teacher=get_object_or_404(User,slug=slug,account_type="teacher",is_active=True)
     courses=Course.objects.filter(Instructor=teacher,status="approved")
     reviews=Teacher_review.objects.filter(teacher=teacher).order_by("-id")
     if request.method == "POST":

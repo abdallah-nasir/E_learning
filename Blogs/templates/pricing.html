@@ -148,9 +148,9 @@
                 </div>
                 <div class="plan-features">
                     <ul>
-                        {% for b in i.get_details %}
-                        <li>{{b}}</li>
-                        {% endfor %}
+                     
+                        <li>{{i.get_details}}</li>
+                       
                     </ul> 
                     <a class="button" href="{% url 'blogs:payment' i.id %}">Sign Up</a>
                 </div>
