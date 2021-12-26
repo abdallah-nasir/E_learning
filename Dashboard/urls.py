@@ -80,6 +80,9 @@ path("price/edit/<str:id>/",views.edit_price,name="edit_price"),
 ###
 # Add user to course
 path("user/course/add/",views.add_student_course,name="add_student_course"),
+###
+# Add user to director
+path("user/director/add/",views.add_user_director,name="add_user_director"),
 
 ############
 path("test/",views.test,name="test"),

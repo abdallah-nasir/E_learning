@@ -39,22 +39,23 @@ def check_teacher_form(request):
         if form.is_valid():
             try:
                 teacher_username=form.cleaned_data["username"]
-                user=User.objects.get(Q(username=teacher_username) | Q(email=teacher_username))
-                teacher_form=TeacherForms.objects.filter(teacher=user,approved=False)
-                if teacher_form.exists() and user.is_active == False:
+                username=User.objects.filter(Q(username=teacher_username,account_type="teacher") | Q(email=teacher_username,account_type="teacher"))
+                user=username.last()
+                teacher_form=TeacherForms.objects.filter(teacher=user,status="pending")
+                if teacher_form.exists():
                     messages.error(request,"your already have a Form")
                     form=Teacher_Form()
                 else: 
-                    facebook=form.cleaned_data['facebook']
-                    linkedin=form.cleaned_data['linkedin']
-                    twitter=form.cleaned_data['twitter']
-                    about_me=form.cleaned_data['about_me']
-                    title=form.cleaned_data['title']
                     code=form.cleaned_data['code']
-                    data={"social":[{"facebook":facebook,"linkedin":linkedin,"twitter":twitter}],
-                        "about_me":about_me,"title":title}
                     if code == user.code:
-                        new_teacher=TeacherForms.objects.create(teacher=user,data=json.dumps(data),code=code,approved=False)
+                        facebook=form.cleaned_data['facebook']
+                        linkedin=form.cleaned_data['linkedin']
+                        twitter=form.cleaned_data['twitter']
+                        about_me=form.cleaned_data['about_me']
+                        title=form.cleaned_data['title']
+                        data={"social":[{"facebook":facebook,"linkedin":linkedin,"twitter":twitter}],
+                        "about_me":about_me,"title":title}
+                        new_teacher=TeacherForms.objects.create(teacher=user,data=json.dumps(data),code=code,status="pending")
                         user.my_data=new_teacher.data
                         user.save()
                         messages.success(request,"your request is being review by admins")

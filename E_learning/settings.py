@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-gq)0=tf4ty9d(r=cygqos=o+a0x=d^e&f4hmg=@fooo)6uq4=c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1","188.166.152.244","www.agartha.academy","agartha.academy"]
 
 
 # Application definition
@@ -126,9 +126,10 @@ DATABASES = {
 #         "ENGINE":"django.db.backends.postgresql_psycopg2",
 #         "NAME":"defaultdb",
 #         "USER":"doadmin",
-#         "PASSWORD":"RWVpYZTInFIqnyTy",
-#         "HOST":"agartha-do-user-10425555-0.b.db.ondigitalocean.com",
-#         "PORT":"25060"
+#         "PASSWORD":"KZgXyyf1suqKHVq2",
+#         "HOST":"db-postgresql-lon1-26713-do-user-10425555-0.b.db.ondigitalocean.com",
+#         "PORT":"25060",
+#         'OPTIONS': {'sslmode': 'require'},
 #     }      
 # } 
 CACHES = {

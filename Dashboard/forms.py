@@ -6,6 +6,7 @@ from .models import Rejects,AddStudentCourse
 from Consultant.models import Cosultant_Payment,Teacher_Time
 from Quiz.models import Question ,Answers
 import os
+from django.db.models import Q
 from crum import get_current_request   
 User=get_user_model()
 
@@ -316,3 +317,12 @@ class AddUserToCourseForm(forms.Form):
         request=get_current_request()
         self.fields["course"].queryset = Course.objects.filter(Instructor=request.user)
 
+
+class AddUserDirector(forms.Form):
+    user=forms.CharField(max_length=30,required=True,widget=forms.TextInput(attrs={"placeholder":"username or email"}))
+    def clean_user(self):
+        user=self.cleaned_data["user"]
+        if User.objects.filter(Q(username=user,account_type="teacher") | Q(email=user,account_type="teacher")).exists():
+            pass
+        else:
+            raise forms.ValidationError("invalid username")

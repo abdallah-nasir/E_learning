@@ -9,7 +9,7 @@ from accounts.models import TeacherForms
 from django.core.paginator import Paginator
 from .forms import *
 from django.core.mail import send_mail,send_mass_mail
-
+from django.db.models import Q
 from django.conf import settings
 from accounts.forms import ChangeUserDataForm
 from .decorators import *
@@ -430,7 +430,7 @@ def edit_course(request,slug):
                 print("invalid")
     else:
         messages.error(request,"You Don't Have Permisssion")
-        return redirect(reverse("dashboard:blogs"))
+        return redirect(reverse("dashboard:courses"))
     context={"course":course,"form":form}
     return render(request,"dashboard_course_edit.html",context)
 
@@ -1021,7 +1021,7 @@ def approve(request):
             elif qs == "payment":
                 query=Payment.objects.filter(status="pending").order_by("-id")
             elif qs == "teacher":
-                query=TeacherForms.check_reject.get_query_set().order_by("-id")
+                query=TeacherForms.objects.filter(status="pending").order_by("-id")
             elif qs == "add_user":
                query= AddStudentCourse.objects.filter(status="pending").order_by("-id")
             else:
@@ -1088,8 +1088,8 @@ def approve_content(request,id):
                 query.save()
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "teacher":
-                query=get_object_or_404(TeacherForms,id=id,approved=False)
-                query.approved=True
+                query=get_object_or_404(TeacherForms,id=id,status="pending")
+                query.status="approved"
                 query.teacher.is_active=True
                 query.teacher.save()
                 query.save()
@@ -1136,7 +1136,7 @@ def reject(request,id):
                 query=get_object_or_404(Payment,id=id,status="pending")
                 content_user=query.user
             elif qs == "teacher":
-                query=get_object_or_404(TeacherForms,id=id,approved=False)
+                query=get_object_or_404(TeacherForms,id=id,status="pending")
                 content_user=query.teacher
             elif qs == "add_user":
                 query=get_object_or_404(AddStudentCourse,id=id,status="pending")
@@ -1150,18 +1150,16 @@ def reject(request,id):
                     instance.user=content_user
                     instance.content_id=id
                     instance.save()
-                    # send_mail(
-                    #     form.cleaned_data.get("subject"),
-                    #     form.cleaned_data.get("message"),
-                    #     settings.EMAIL_HOST_USER,
-                    #     [content_user.email],
-                    #     fail_silently=False,
-                    #     )
-                    if qs == "teacher":
-                        query.delete()
-                    else:
-                        query.status="declined"
-                        query.save()
+                    send_mail(
+                        form.cleaned_data.get("subject"),
+                        form.cleaned_data.get("message"),
+                        settings.EMAIL_HOST_USER,
+                        [content_user.email],
+                        fail_silently=False,
+                        )
+                 
+                    query.status="declined"
+                    query.save()
                     # if qs == "teacher":
                     #     print("teacher")
                         # query.delete()
@@ -1347,6 +1345,33 @@ def add_student_course(request):
                 # return redirect(reverse())
     context={"form":form}
     return render(request,"dashboard_add_user_to_course.html",context)
+
+@login_required
+def add_user_director(request):
+    form=AddUserDirector(request.POST or None)
+    if request.user.is_superuser:
+        directors=User.objects.filter(is_director=True,account_type="teacher")
+        if request.method =="POST":
+            if form.is_valid():
+                user=request.POST.get("user")
+                print(user)
+                this_user=User.objects.filter(Q(username=user,account_type="teacher") | Q(email=user,account_type="teacher"))
+                if this_user.exists():
+                    user=this_user.last() 
+                    if user.is_director:
+                        messages.error(request,"this user is already a director ")
+                    else:
+                        user.is_director =True
+                        user.save()
+                        messages.success(request,"user added successfully")
+                        form=AddUserDirector()
+
+    else:
+        messages.error(request,"you don't have permission")
+        return(redirect(reverse("dashboard:home")))
+    context={"form":form,"directors":directors}
+    return render(request,"dashboard_add_user_director.html",context)
+
 
 import requests
 from django.http import JsonResponse

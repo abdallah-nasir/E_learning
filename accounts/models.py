@@ -89,13 +89,16 @@ class CheckTeachersManager(models.Manager):
     
         return teachers    
 
+USER_STATUS=(
+    ("pending","pending"),
+    ("approved","approved"),
+    ("declined","declined")
+)
 class TeacherForms(models.Model):
     teacher=models.ForeignKey(auth_user,on_delete=models.CASCADE)
-    approved=models.BooleanField(default=False)
+    status=models.CharField(choices=USER_STATUS,default="pending",max_length=50)
     code=models.CharField(max_length=50)
     data=models.TextField()    
-    check_reject=CheckTeachersManager()
-    objects=models.Manager()
     def __str__(self):
         return self.teacher.username
 

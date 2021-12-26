@@ -40,25 +40,22 @@ ACCOUNT_TYPE=(
 class MyCustomSignupForm(SignupForm):
     account_type=forms.ChoiceField(label="Are You",required=True,choices=ACCOUNT_TYPE)
     phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
-    image=forms.ImageField(label="Profile Picture",required=True)
+    image=forms.ImageField(label="Profile Picture",required=False)
     
     # about_me=forms.CharField(widget=forms.HiddenInput())
     # title=forms.CharField(widget=forms.HiddenInput())
     def clean(self):
         image=self.cleaned_data.get("image")
-        size=image.size / (1024 * 1024)
-        type=os.path.splitext(image.name)[1]
-        print(size)
-        list_type=[".jpg",".jpeg",".png"]
-        if size > 2:
-            raise forms.ValidationError("image size is more 2 MB")
-        elif type not in list_type:   
-            raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
-        # if self.cleaned_data.get("account_type") == "teacher":
-        #     if self.cleaned_data.get("about_me") == None:
-        #         raise forms.ValidationError("You Should Tell us brief about you")
-        #     if self.cleaned_data.get("title") == None:
-        #         raise forms.ValidationError("Title is missing")      
+        if image:
+            size=image.size / (1024 * 1024)
+            type=os.path.splitext(image.name)[1]
+            print(size)
+            list_type=[".jpg",".jpeg",".png"]
+            if size > 2:
+                raise forms.ValidationError("image size is more 2 MB")
+            elif type not in list_type:   
+                raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
+    
     def save(self, request):
         # Ensure you call the parent class's save.
         # .save() returns a User object.
@@ -66,20 +63,24 @@ class MyCustomSignupForm(SignupForm):
         account_type=self.cleaned_data["account_type"]
         user.account_type=account_type
         user.phone=self.cleaned_data["phone"]
-        image_url=f"https://storage.bunnycdn.com/{storage_name}/{user.username}/{user.username}"
-        headers = {
-                "AccessKey": Storage_Api,
-                "Content-Type": "application/octet-stream",
-                }
+        image=request.POST.get("image")
+        if image:
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{user.username}/{user.username}"
+            headers = {
+                    "AccessKey": Storage_Api,
+                    "Content-Type": "application/octet-stream",
+                    }
 
-        file=self.cleaned_data.get("image")
-        response = requests.put(image_url,data=file,headers=headers)
-        data=response.json()
-        try:
-            if data["HttpCode"] == 201:
-                user.account_image = f"https://{agartha_cdn}/{user.username}/{user.username}"
-        except:
-            pass
+            file=self.cleaned_data.get("image")
+            response = requests.put(image_url,data=file,headers=headers)
+            data=response.json()
+            try:
+                if data["HttpCode"] == 201:
+                    user.account_image = f"https://{agartha_cdn}/accounts/{user.username}/{user.username}"
+            except:
+                pass
+        else:
+            user.account_image="https://agartha1.b-cdn.net/default_image/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
         user.first_name=user.username
         # if self.cleaned_data["account_type"] == "teacher":
         #     user.about_me=self.cleaned_data["about_me"]
@@ -106,37 +107,57 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
     def clean(self):
         image=self.cleaned_data.get("image")
         print(image)
-        size=image.size / (1024 * 1024)
-        type=os.path.splitext(image.name)[1]
-        print(size)
-        list_type=[".jpg",".jpeg",".png"]
-        if size > 2:
-            raise forms.ValidationError("image size is more 2 MB")
-        elif type not in list_type:   
-            raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
+        if image:
+            size=image.size / (1024 * 1024)
+            type=os.path.splitext(image.name)[1]
+            print(size)
+            list_type=[".jpg",".jpeg",".png"]
+            if size > 2:
+                raise forms.ValidationError("image size is more 2 MB")
+            elif type not in list_type:   
+                raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
     
     def save(self, request):
-
         # Ensure you call the parent class's save.
         # .save() returns a User object.
-        user = super(MyCustomSocialSignupForm, self).save(request)
+        user = super(MyCustomSignupForm, self).save(request)
         account_type=self.cleaned_data["account_type"]
         user.account_type=account_type
-        user.phone=self.cleaned_data["phone"]       
-        user.account_image=self.cleaned_data["image"]
-        user.code=random_string_generator()
+        user.phone=self.cleaned_data["phone"]
+        image=request.POST.get("image")
+        if image:
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{user.username}/{user.username}"
+            headers = {
+                    "AccessKey": Storage_Api,
+                    "Content-Type": "application/octet-stream",
+                    }
+
+            file=self.cleaned_data.get("image")
+            response = requests.put(image_url,data=file,headers=headers)
+            data=response.json()
+            try:
+                if data["HttpCode"] == 201:
+                    user.account_image = f"https://{agartha_cdn}/accounts/{user.username}/{user.username}"
+            except:
+                pass
+        else:
+            user.account_image="https://agartha1.b-cdn.net/default_image/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
+
+        user.first_name=user.username
+        # if self.cleaned_data["account_type"] == "teacher":
+        #     user.about_me=self.cleaned_data["about_me"]
+        #     user.title=self.cleaned_data["about_me"]
         user.save()
         if user.account_type == "teacher":
+            user.code=random_string_generator()
+
             user.is_active = False
             user.save()
-            msg = EmailMessage(subject="Account Created", body=f"code={user.code}", from_email=settings.EMAIL_HOST_USER, to=[user.email])
+            msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
+                               your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[user.email])
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
-            messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
-                               your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/")
-        # Add your own processing here.
-
-        # You must return the original result.
+            messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
         return user
 
 class Teacher_Form(forms.ModelForm):
@@ -157,10 +178,9 @@ class Teacher_Form(forms.ModelForm):
 
     def clean_username(self): 
         username=self.cleaned_data["username"]
-        teacher=User.objects.filter(Q(username__iexact=username) | Q(email__iexact=username))
+        teacher=User.objects.filter(Q(username__iexact=username,account_type="teacher",is_active=False) | Q(email__iexact=username,account_type="teacher",is_active=False))
         if teacher.exists():
-            if teacher[0].account_type !="teacher" and teacher[0].is_active == True:
-                raise forms.ValidationError("not a teacher account")
+            pass
         else:
             raise forms.ValidationError("invalid user")
         return username
@@ -168,14 +188,12 @@ class Teacher_Form(forms.ModelForm):
     def clean_code(self): 
         name=self.cleaned_data.get("username")
         code=self.cleaned_data["code"]
+        teacher=User.objects.filter(Q(username__iexact=name,account_type="teacher",is_active=False) | Q(email__iexact=name,account_type="teacher",is_active=False))
         if code == "0":
             raise forms.ValidationError("code cant be 0")
-        teacher=User.objects.filter(Q(username__iexact=name) | Q(email__iexact=name))
-        if teacher.exists():
-            if teacher[0].account_type !="teacher" and teacher[0].is_active == True and teacher[0].code != code:
-                raise forms.ValidationError("invalid user")
-        else:
-            raise forms.ValidationError("invalid code")
+        elif teacher.exists():
+            if teacher[0].code != code:
+                raise forms.ValidationError("invalid code")
         return code   
 
 
