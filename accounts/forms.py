@@ -232,6 +232,37 @@ class ChangeUserDataForm(forms.ModelForm):
         model=User
         fields=["account_image","first_name","last_name","phone",]
 
+class ChangeTeacherDataForm(forms.ModelForm):
+    account_image=forms.ImageField(required=False)
+    facebook=forms.CharField(max_length=120)
+    twitter=forms.CharField(max_length=120)
+    linkedin=forms.CharField(max_length=120)
+    about_me=forms.CharField(widget=forms.Textarea())
+    title=forms.CharField(max_length=120)
+    class Meta:
+        model=User
+        fields=["account_image","first_name","last_name","phone","facebook","twitter","linkedin","title","about_me"]
+
+    def clean_facebook(self): 
+        facebook=self.cleaned_data.get("facebook")
+        print(facebook[0:25])
+        if facebook and facebook[0:25] != "https://www.facebook.com/":
+            raise forms.ValidationError("invalid url")
+        return facebook   
+    
+    def clean_linkedin(self): 
+        linkedin=self.cleaned_data.get("linkedin")
+       
+        if linkedin and linkedin[0:25] != "https://www.linkedin.com/":
+            raise forms.ValidationError("invalid url")
+        return linkedin  
+    
+    def clean_twitter(self): 
+        twitter=self.cleaned_data.get("twitter")
+       
+        if twitter and twitter[0:20] != "https://twitter.com/":
+            raise forms.ValidationError("invalid url")
+        return twitter  
 class BlogPaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
     class Meta:

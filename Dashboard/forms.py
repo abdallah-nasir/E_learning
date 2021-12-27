@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from Blogs.models import Blog,Blog_Payment,Prices
-from home.models import Course,Branch,Videos,Events,Payment,News
+from Blogs.models import Category as Blog_Category
+from home.models import Course,Branch,Videos,Events,Payment,News,Category
 from .models import Rejects,AddStudentCourse
 from Consultant.models import Cosultant_Payment,Teacher_Time
 from Quiz.models import Question ,Answers
@@ -346,3 +347,20 @@ class AddUserDirector(forms.Form):
             pass
         else:
             raise forms.ValidationError("invalid username")
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model=Category
+        fields="__all__"
+        exclude=["slug"]
+class BranchForm(forms.ModelForm):
+    class Meta:
+        model=Branch
+        fields="__all__"
+        exclude=["slug"]
+class BlogForm(forms.ModelForm):
+    class Meta:
+        model=Blog_Category
+        fields="__all__"
+        exclude=["slug"]

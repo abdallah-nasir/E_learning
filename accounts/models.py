@@ -44,15 +44,21 @@ class User(AbstractUser):
         data=json.loads(self.my_data)
         title=data["title"]
         social=[]
-        for i in data["social"]: 
-            if i["facebook"]:
-                social.append({"facebook":i["facebook"]})
-            if i["twitter"]:
-                social.append({"twitter":i["twitter"]}) 
-            if i["linkedin"]:
-                social.append({"linkedin":i["linkedin"]})
         about_me=data["about_me"]
-        context={"about_me":about_me,"title":title,"social":social}
+        for i in data["social"]:      
+            if i["facebook"]:
+                facebook=i["facebook"]
+            else:
+                facebook=None
+            if i["twitter"]:
+                twitter=i["twitter"]
+            else:
+                twitter=None
+            if i["linkedin"]:
+                linkedin=i["linkedin"]
+            else:
+                linkedin=None
+        context={"about_me":about_me,"title":title,"facebook":facebook,"linkedin":linkedin,"twitter":twitter}
         return context
 class LoggedInUser(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='logged_in_user')

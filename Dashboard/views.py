@@ -11,7 +11,7 @@ from .forms import *
 from django.core.mail import send_mail,send_mass_mail
 from django.db.models import Q
 from django.conf import settings
-from accounts.forms import ChangeUserDataForm
+from accounts.forms import ChangeUserDataForm,ChangeTeacherDataForm
 from .decorators import *
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -35,11 +35,16 @@ class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
         self.status_code = 400
-@login_required
+@login_required 
 @check_user_validation   
 def home(request):
-    form=ChangeUserDataForm(request.POST or None,request.FILES or None,instance=request.user)
+    form=ChangeTeacherDataForm(request.POST or None,request.FILES or None,instance=request.user)
     form.initial["account_image"]=None
+    form.initial["facebook"]=request.user.get_user_data()["facebook"]
+    form.initial["linkedin"]=request.user.get_user_data()["facebook"]
+    form.initial["twitter"]=request.user.get_user_data()["facebook"]
+    form.initial["title"]=request.user.get_user_data()["facebook"]
+    form.initial["about_me"]=request.user.get_user_data()["facebook"]
     if request.method == 'POST':
         if form.is_valid():     
             instance=form.save(commit=False)
@@ -1417,4 +1422,33 @@ def test(request):
     context={"data":data}
     return render(request,"dashboard_test.html",context)
 
-
+@login_required
+@check_user_validation
+def add_category(request):
+    form=CategoryForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,"category added successfully")
+    context={"form":form}
+    return render(request,"dashboard_add_category.html",context)
+@login_required
+@check_user_validation
+def add_branch(request):
+    form=BranchForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,"branch added successfully")
+    context={"form":form}
+    return render(request,"dashboard_add_branch.html",context)
+@login_required
+@check_user_validation
+def add_blog_category(request):
+    form=BlogForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,"blog category added successfully")
+    context={"form":form}
+    return render(request,"dashboard_add_blog_category.html",context)

@@ -83,8 +83,13 @@ path("user/course/add/",views.add_student_course,name="add_student_course"),
 ###
 # Add user to director
 path("user/director/add/",views.add_user_director,name="add_user_director"),
+### add category 
+path("category/add/",views.add_category,name="add_category"),
+path("branch/add/",views.add_branch,name="add_branch"),
+path("blog-category/add/",views.add_blog_category,name="add_blog_category"),
 
-############
+
+#############
 path("test/",views.test,name="test"),
 path("check/videos/<str:slug>/",views.check_video,name="check_video"),
 
