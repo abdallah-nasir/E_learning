@@ -173,21 +173,21 @@ LANGUAGES = (            # supported languages
     ("ar",_("Arabic")),
 )
 TIME_ZONE = 'Africa/Cairo'
-STATIC_URL = 'https://agartha2.b-cdn.net/static/'
-# MEDIA_URL="https://agartha2.b-cdn.net/static/"
-# MEDIA_ROOT="https://agartha2.b-cdn.net""
-STATIC_ROOT="https://agartha2.b-cdn.net"
-STATICFILES_DIRS=[
-  "https://agartha2.b-cdn.net/static"
-]  
-    
-# STATIC_URL = '/static/'
+# STATIC_URL = 'https://agartha2.b-cdn.net/static/'
 # # MEDIA_URL="https://agartha2.b-cdn.net/static/"
 # # MEDIA_ROOT="https://agartha2.b-cdn.net""
-# STATIC_ROOT=BASE_DIR/"static"
+# STATIC_ROOT="https://agartha2.b-cdn.net"
 # STATICFILES_DIRS=[
-#   BASE_DIR/"static_in_env"
-# ]     
+#   "https://agartha2.b-cdn.net/static"
+# ]  
+    
+STATIC_URL = '/static/'
+# MEDIA_URL="https://agartha2.b-cdn.net/static/"
+# MEDIA_ROOT="https://agartha2.b-cdn.net""
+STATIC_ROOT=BASE_DIR/"static"
+STATICFILES_DIRS=[
+  BASE_DIR/"static_in_env"
+]     
 # for translation
 LOCALE_PATHS=(   
     os.path.join(BASE_DIR,"locale/"),
@@ -313,6 +313,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+COURSE_MODEL="home.Course"
 
 
             # CkEditor
@@ -340,4 +341,3 @@ CKEDITOR_ALLOW_NONIMAGE_FILES = False
 CKEDITOR_RESTRICT_BY_USER =True
 CKEDITOR_BROWSE_SHOW_DIRS =False
 CKEDITOR_FORCE_JPEG_COMPRESSION =True
-COURSE_MODEL="home.Course"

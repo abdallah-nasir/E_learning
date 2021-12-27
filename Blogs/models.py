@@ -11,7 +11,7 @@ from Dashboard.models import Rejects
 from django.shortcuts import render
 from django.conf import settings
 from ckeditor.fields import RichTextField
-from ckeditor_uploader.fields import RichTextUploadingField
+# from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 from django.contrib.auth import get_user_model
 User=get_user_model()
@@ -85,7 +85,7 @@ BLOG_STATUS=(
 class Blog(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
-    details=RichTextUploadingField()
+    details=RichTextField()
     data=models.TextField(blank=True)
     image=models.ManyToManyField(Blog_Images,related_name="blog_comment",blank=True)
     video=models.FileField(blank=True,null=True,upload_to=upload_blog_videos)

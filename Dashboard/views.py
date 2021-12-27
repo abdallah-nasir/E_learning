@@ -156,6 +156,7 @@ def add_blog(request):
             form=BlogTypeForm(request.GET or None)
             form_number=2
         if request.method == "POST":
+            print(request.FILES)
             if form_number == 1:
                 if form.is_valid():
                     instance=form.save(commit=False)
@@ -544,7 +545,6 @@ def edit_videos(request,slug):
             instance.my_course.save()
         
             instance.save()
-            Rejects.objects.filter(user=request.user,type="course",content_id=video.my_course.id).delete()
             messages.success(request,"video edited successfully")
             return redirect(reverse("dashboard:videos"))
     else:
@@ -728,6 +728,21 @@ def add_event(request):
         if form.is_valid():
             instance=form.save(commit=False)
             instance.user=request.user
+            instance.image=None
+            image=request.FILES["image"]
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
+            headers = {
+                    "AccessKey": Storage_Api,
+                    "Content-Type": "application/octet-stream",
+                    }
+
+            response = requests.put(image_url,data=image,headers=headers)
+            data=response.json()
+            try:
+                if data["HttpCode"] == 201:
+                    instance.image = f"https://{agartha_cdn}/events/{instance.user.username}/{image}"
+            except:
+                pass
             zoom=form.cleaned_data.get("zoom_link")
             details=form.cleaned_data.get("details")
             data={'zoom':zoom,"details":details}
@@ -746,13 +761,11 @@ def add_event(request):
 @check_user_validation
 def edit_event(request,id):
     event=get_object_or_404(Events,id=id,status="declined")
-    form=AddEvent(request.POST or None,request.FILES or None,instance=event)
+    form=Edit_event(request.POST or None,request.FILES or None,instance=event)
     form.initial["details"]=event.get_details()["details"]
     form.initial["zoom_link"]=event.get_details()["zoom"]
     if request.user == event.user:
         if request.method == "POST":
-            Rejects.objects.filter(user=request.user,type="events",content_id=id).delete()
-
             if form.is_valid():
                 instance=form.save(commit=False)
                 zoom=form.cleaned_data.get("zoom_link")
@@ -760,6 +773,21 @@ def edit_event(request,id):
                 data={'zoom':zoom,"details":details}
                 instance.details=json.dumps(data)  
                 instance.status="pending"
+                if instance.image:
+                    image=request.FILES["image"]
+                    image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
+                    headers = {
+                            "AccessKey": Storage_Api,
+                            "Content-Type": "application/octet-stream",
+                            }
+
+                    response = requests.put(image_url,data=image,headers=headers)
+                    data=response.json()
+                    try:
+                        if data["HttpCode"] == 201:
+                            instance.image = f"https://{agartha_cdn}/events/{instance.user.username}/{image}"
+                    except:
+                        pass
                 instance.get_similar_event()
                 instance.save() 
                 messages.success(request,"Event updated successfully")

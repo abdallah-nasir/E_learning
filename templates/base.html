@@ -593,17 +593,12 @@ $(document).on('click',"#love-add",function(){
                
                 if(res.color == "yellow" ){
                     let html_data2=`
-                    <li id="love-add" class="love-add-${_productId}" data-index="${_productId}"><a><i style="color:#ffc600;"  id="love-color-${_productId}"  class="fa fa-heart"></i><span>${res.count}</span></a></li> `;
+                    <li ><a><i style="color:#ffc600;"  id="love-color-${_productId}"  class="fa fa-heart"></i><span>${res.count}</span></a></li> `;
                
                     $(".love-add-"+_productId).html(html_data2);
                     _vm.attr('disabled',false);
                 }
-                else if(res.color == "white"){
-                    let html_data2=`
-                    <li id="love-add" class="love-add-${_productId}" data-index="${_productId}"><a><i id="love-color-${_productId}"  class="fa fa-heart"></i><span>${res.count}</span></a></li> `;
-                    $(".love-add-"+_productId).html(html_data2);
-                    _vm.attr('disabled',false);
-                }
+             
             
                         },
             error:function(res){

@@ -38,13 +38,13 @@
                             <a href="#"><span><i class="fa fa-calendar"></i> {{event.date|date:"d M Y"}}</span></a>
                             <a href="#"><span><i class="fa fa-clock-o"></i>{{event.start_time|date:"h a"}} - {{event.end_time|date:"h a"}}</span></a>
                             <a href="#"><span><i class="fa fa-map-marker"></i> {{event.place}}</span></a>
-                            <img src="{{event.image.url}}" alt="Event">
+                            <img src="{{event.image}}" alt="Event">
                             <p>{{event.get_details.details}}</p>
                         </div> <!-- events left -->
                     </div>
                     <div class="col-lg-4">
                         <div class="events-right">
-                            <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image.url}}); max-height:7rem;">
+                            <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image}}); max-height:7rem;">
                                 <div data-countdown="{{event.date|date:'Y/m/d'}}"></div>
                                 <div class="events-coundwon-btn pt-30">
                                     <a href="#" class="main-btn">Book Your Seat</a>

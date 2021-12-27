@@ -239,6 +239,26 @@ class AddEvent(forms.ModelForm):
         if image_extension.lower() not in image_extentions:
             raise forms.ValidationError("invalid image extension")
         return image
+
+class Edit_event(forms.ModelForm):
+    date=forms.DateField(widget=DatePickerInput(format='%m/%d/%y'))
+    start_time=forms.TimeField(widget=TimePickerInput(format='%H:%M:%S'))
+    end_time=forms.TimeField(widget=TimePickerInput(format='%I:%M:%S'))
+    zoom_link=forms.CharField(max_length=300,required=False)
+    image=forms.ImageField(required=False)
+    # about=forms.CharField(widget=forms.Textarea())
+    class Meta:
+        model=Events    
+        fields=['name',"category","image","details","date","start_time","end_time","place","zoom_link"]
+
+    def clean_image(self):
+        image=self.cleaned_data.get("image")
+        if image:
+            image_extentions=[".png",".jpg",",jpeg"]
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in image_extentions:
+                raise forms.ValidationError("invalid image extension")
+        return image
 class AddQuestion(forms.ModelForm):
     class Meta:
         model=Question

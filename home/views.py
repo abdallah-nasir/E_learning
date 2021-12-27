@@ -271,7 +271,7 @@ def wishlist_remove(request):
 # @login_required()
 def wishlist_add(request):
     if request.user.is_authenticated:
-        id=request.GET["id"]
+        id=request.GET["id"]   
         my_course=get_object_or_404(Course,id=id)
         try:
             wishlist,created=Wishlist.objects.get_or_create(user=request.user)
@@ -281,12 +281,12 @@ def wishlist_add(request):
                 my_course.likes +=1
                 my_course.save()
                 print("added")
-                return JsonResponse({"color":"yellow","id":my_course.id,"shop":wishlist.course.count(),"count":my_course.likes})
-            else:
-                wishlist.course.remove(my_course)
-                my_course.likes -=1
-                my_course.save()
-                return JsonResponse({"color":"white","id":my_course.id,"shop":wishlist.course.count(),"count":my_course.likes})
+            return JsonResponse({"color":"yellow","id":my_course.id,"shop":wishlist.course.count(),"count":my_course.likes})
+            # else:
+            #     wishlist.course.remove(my_course)
+            #     my_course.likes -=1
+            #     my_course.save()
+            #     return JsonResponse({"color":"white","id":my_course.id,"shop":wishlist.course.count(),"count":my_course.likes})
         except: 
             return FailedJsonResponse({"message":"invalid id"})
     else:
