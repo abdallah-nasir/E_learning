@@ -12,12 +12,32 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 import json,requests 
+from allauth.account.views import SignupView,LoginView
+from allauth.account.forms import LoginForm,SignupForm
 Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
 storage_name="agartha"
-
+  
 # Create your views here.
 
+class CustomSignupView(SignupView):
+    # here we add some context to the already existing context
+    def get_context_data(self, **kwargs):
+        # we get context data from original view
+        context = super(CustomSignupView,
+                        self).get_context_data(**kwargs)
+        context['login_form'] = LoginForm() # add form to context
+        return context
 
+class CustomSigninView(LoginView):
+    # here we add some context to the already existing context
+    def get_context_data(self, **kwargs):
+        # we get context data from original view
+        context = super(LoginView,
+                        self).get_context_data(**kwargs)
+        context['signup_form'] = SignupForm() # add form to context
+        return context  
+
+        
 def logout_view(request):
     if not request.user.is_authenticated:
         return redirect(reverse("home:home"))
@@ -68,7 +88,7 @@ def check_teacher_form(request):
     context={"form":form}
     return render(request,"check_teacher.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def account_info(request):
     form=ChangeUserDataForm(request.POST or None,request.FILES or None,instance=request.user)
     form.initial["account_image"]=None
@@ -107,7 +127,7 @@ def account_info(request):
     context={"form":form} 
     return render(request,"account_user_info.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def blog_payment(request):
     payments=Blog_Payment.objects.filter(user=request.user).order_by("-id")
     paginator = Paginator(payments, 10) # Show 25 contacts per page.
@@ -116,7 +136,7 @@ def blog_payment(request):
     context={"payments":page_obj}
     return render(request,"account_blog_payment.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def course_payment(request):
     courses=Payment.objects.filter(user=request.user).order_by("-id")
     paginator = Paginator(courses, 10) # Show 25 contacts per page.
@@ -126,7 +146,7 @@ def course_payment(request):
     return render(request,"account_course_payment.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 def consultant_payment(request):
     consultant=Cosultant_Payment.objects.filter(user=request.user).order_by("-id")
     paginator = Paginator(consultant, 10) # Show 25 contacts per page.
@@ -135,7 +155,7 @@ def consultant_payment(request):
     context={"payments":page_obj}
     return render(request,"account_consultant_payment.html",context)
 
-# @login_required
+# @login_required(login_url="accounts:login")
 # def blogs(request):
 #     blogs=Blog.objects.filter(user=request.user).order_by("-id")
 #     paginator = Paginator(blogs, 10) # Show 25 contacts per page.
@@ -144,7 +164,7 @@ def consultant_payment(request):
 #     context={"blogs":page_obj}
 #     return render(request,"account_blogs.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def courses(request):
     courses=Course.objects.filter(students=request.user).order_by("-id")
     paginator = Paginator(courses, 10) # Show 25 contacts per page.
@@ -153,7 +173,7 @@ def courses(request):
     context={"courses":page_obj}
     return render(request,"account_course.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def events(request):
     events=Events.objects.filter(students=request.user).order_by("-id")
     paginator = Paginator(events, 10) # Show 25 contacts per page.
@@ -162,7 +182,7 @@ def events(request):
     context={"events":page_obj}
     return render(request,"account_events.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def consultants(request):
     consult=Consultant.objects.filter(Q(user=request.user,status="approved") | Q(user=request.user,status="completed")).order_by("-id")
     paginator = Paginator(consult, 10) # Show 25 contacts per page.
@@ -171,7 +191,7 @@ def consultants(request):
     context={"consult":page_obj}
     return render(request,"account_consult.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def edit_blog_payment(request,id):
     payment=get_object_or_404(Blog_Payment,id=id,status="declined")
     if request.user == payment.user:
@@ -207,7 +227,7 @@ def edit_blog_payment(request,id):
     context={"form":form}
     return render(request,"edit_blog_payment.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def edit_course_payment(request,id):
     payment=get_object_or_404(Payment,id=id,status="declined")
     if request.user == payment.user:
@@ -243,7 +263,7 @@ def edit_course_payment(request,id):
     context={"form":form,"payment":payment} 
     return render(request,"edit_course_payment.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def edit_consultant_payment(request,id):
     payment=get_object_or_404(Cosultant_Payment,id=id,status="declined")
     if request.user == payment.user:

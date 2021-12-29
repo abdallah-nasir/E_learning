@@ -35,7 +35,7 @@ class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
         self.status_code = 400
-@login_required 
+@login_required(login_url="accounts:login") 
 @check_user_validation   
 def home(request):
     form=ChangeTeacherDataForm(request.POST or None,request.FILES or None,instance=request.user)
@@ -81,7 +81,7 @@ def home(request):
     return render(request,"dashboard_home.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_if_user_director
 def blog_payment(request):
     if request.user.account_type == "teacher":
@@ -95,7 +95,7 @@ def blog_payment(request):
     return render(request,"dashboard_blog_payment.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_if_user_director
 def course_payment(request):
     if request.user.account_type == "teacher":
@@ -110,7 +110,7 @@ def course_payment(request):
     return render(request,"dashboard_course_payment.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_if_user_director
 def consultant_payment(request):
     if request.user.account_type == "teacher":
@@ -123,7 +123,7 @@ def consultant_payment(request):
     context={"payments":page_obj}
     return render(request,"dashboard_consultant_payment.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def blogs(request):
     if request.user.account_type == 'teacher':
@@ -137,7 +137,7 @@ def blogs(request):
     return render(request,"dashboard_blogs.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def add_blog(request):
     if request.user.account_type == 'teacher':
@@ -212,7 +212,7 @@ def add_blog(request):
     return render(request,"dashboard_add_blog.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def edit_blog(request,slug):
     blog=get_object_or_404(Blog,slug=slug)
@@ -350,7 +350,7 @@ def edit_blog(request,slug):
     context={"blog":blog,"form":form,"form_number":form_number}
     return render(request,"dashboard_edit_blog.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_blog_image(request,id):
     image=get_object_or_404(Blog_Images,id=id)
@@ -358,7 +358,7 @@ def delete_blog_image(request,id):
         image.delete()
     return redirect(reverse("dashboard:edit_blog",kwargs={"slug":image.blog.slug}))
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_blog_video(request,id):
     blog=get_object_or_404(Blog,id=id)
@@ -366,7 +366,7 @@ def delete_blog_video(request,id):
         blog.video.delete()
     return redirect(reverse("dashboard:edit_blog",kwargs={"slug":blog.slug}))
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_blog(request,slug):
     blog=get_object_or_404(Blog,slug=slug)
@@ -376,7 +376,7 @@ def delete_blog(request,slug):
         messages.error(request,"You Don't Have Permisssion")
         return redirect(reverse("dashboard:blogs"))
     return redirect(reverse("dashboard:blogs"))
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def courses(request):
     if request.user.account_type == 'teacher':
@@ -389,7 +389,7 @@ def courses(request):
     context={"courses":page_obj}
     return render(request,"dashboard_course.html",context)
    
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def edit_course(request,slug):
     course=get_object_or_404(Course,slug=slug)
@@ -450,7 +450,7 @@ def edit_course_image(request,id):
         response = requests.delete( url, headers=headers)
     return redirect(reverse("dashboard:edit_course",kwargs={"slug":course.slug}))
  
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def add_course(request):
     form=AddCourse(request.POST or None,request.FILES or None)
@@ -497,7 +497,7 @@ def add_course(request):
     context={"form":form}
     return render(request,"dashboard_add_course.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def videos(request):
     if request.user.account_type == "teacher":
@@ -507,14 +507,14 @@ def videos(request):
     context={"videos":videos}
     return render(request,"dashboard_videos.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @admin_director_check
 def course_videos(request,id):
     videos=Videos.objects.filter(my_course=id).order_by("-id")
     context={"videos":videos,"library_id":library_id}
     return render(request,"dashboard_course_videos.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_videos(request,slug):
     video=get_object_or_404(Videos,slug=slug)
@@ -534,7 +534,7 @@ def delete_videos(request,slug):
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("dashboard:home"))
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def edit_videos(request,slug):
     video=get_object_or_404(Videos,slug=slug)
@@ -558,7 +558,7 @@ def edit_videos(request,slug):
     context={"form":form}
     return render(request,"dashboard_edit_video.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 @check_if_teacher_have_pending_video_upload
 def add_video(request,slug):
@@ -595,7 +595,7 @@ def add_video(request,slug):
     context={"form":form,"course":course.slug}
     return render(request,"dashboard_add_video.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def complete_add_video(request,slug):
     video=get_object_or_404(Videos,slug=slug,user=request.user)
@@ -626,7 +626,7 @@ def complete_add_video(request,slug):
                 return JsonResponse({"message":"1","url":"/dashoard/videos/"})
     context={"form":form,"video":video.slug}
     return render(request,"dashboard_complete_video_upload.html",context)
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def check_video(request,slug):
     video=get_object_or_404(Videos,slug=slug)
@@ -693,7 +693,7 @@ def check_video(request,slug):
     return render(request,"dashboard_check_video.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def get_video_length(request,id):
     video=get_object_or_404(Videos,id=id)
@@ -714,7 +714,7 @@ def get_video_length(request,id):
                 video.my_course.save()
                 messages.success(request,"Video updated successfully")
     return redirect(reverse("dashboard:videos"))
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def events(request):
     if request.user.account_type == "teacher":
@@ -724,7 +724,7 @@ def events(request):
     context={"events":events}
     return render(request,"dashboard_events.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 @check_if_teacher_has_event
 def add_event(request):
@@ -762,7 +762,7 @@ def add_event(request):
     return render(request,"dashboard_add_events.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def edit_event(request,id):
     event=get_object_or_404(Events,id=id,status="declined")
@@ -803,7 +803,7 @@ def edit_event(request,id):
     context={"form":form}
     return render(request,"dashboard_add_events.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_event(request,id):
     event=get_object_or_404(Events,id=id)
@@ -814,7 +814,7 @@ def delete_event(request,id):
         return redirect("dashboard:events")
     return redirect(reverse("dashboard:events"))
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def finish_event(request,id):
     event=get_object_or_404(Events,id=id)
@@ -826,7 +826,7 @@ def finish_event(request,id):
         messages.error(request,"You Don't Have Permission")
         return redirect("dashboard:events")
     return redirect(reverse("dashboard:events"))
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def start_event(request,slug):
     event=get_object_or_404(Events,slug=slug,status="approved")
@@ -842,7 +842,7 @@ def start_event(request,slug):
         return redirect(reverse("dashboard:events"))
     return redirect(reverse("dashboard:events"))
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def quiz(request,slug):
     course=get_object_or_404(Course,slug=slug)
@@ -855,7 +855,7 @@ def quiz(request,slug):
     return render(request,"dashboard_quiz.html",context)
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def add_quiestions(request,slug):
     form=AddQuestion(request.POST or None)
@@ -886,7 +886,7 @@ def add_quiestions(request,slug):
     context={"form":form}  
     return render(request,"dashboard_add_question.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def edit_quiestions(request,course,slug):
     course=get_object_or_404(Course,slug=course)
@@ -915,7 +915,7 @@ def edit_quiestions(request,course,slug):
     context={"form":form}  
     return render(request,"dashboard_edit_question.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_question(request,slug,id):
     course=get_object_or_404(Course,slug=slug)
@@ -934,7 +934,7 @@ def delete_question(request,slug,id):
     return redirect(reverse("dashboard:quiz",kwargs={"slug":course.slug}))
 
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def add_answer(request,course,slug):
     form=AddAnswer(request.POST or None)
@@ -968,7 +968,7 @@ def add_answer(request,course,slug):
     context={"form":form}  
     return render(request,"dashboard_add_answer.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def edit_answer(request,course,id):
     course=get_object_or_404(Course,slug=course)
@@ -997,7 +997,7 @@ def edit_answer(request,course,id):
     context={"form":form}  
     return render(request,"dashboard_edit_answer.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_answer(request,slug,id):
     course=get_object_or_404(Course,slug=slug)
@@ -1014,7 +1014,7 @@ def delete_answer(request,slug,id):
         return redirect("dashboard:courses")
     return redirect(reverse("dashboard:quiz",kwargs={"slug":course.slug}))
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def teachers(request):
     if request.user.is_superuser or request.user.is_director:
@@ -1034,7 +1034,7 @@ def get_choices_keys():
         print(i)
     return True
 
-@login_required
+@login_required(login_url="accounts:login")
 def approve(request):
     if request.user.is_superuser :
         try:
@@ -1068,7 +1068,7 @@ def approve(request):
     context={"query":query,"qs":qs,"choices":choices}
     return render(request,"dashboard_approve.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def show_demo_blog(request,slug):
     if request.user.is_superuser :
         blog=get_object_or_404(Blog,status="pending",slug=slug)
@@ -1078,7 +1078,7 @@ def show_demo_blog(request,slug):
     context={"blog":blog}
     return render(request,"dashboard_show_demo_blog.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def approve_content(request,id):
     if request.user.is_superuser:
         try:
@@ -1145,7 +1145,7 @@ def approve_content(request,id):
     # parameters = urlencode()
     return redirect(f'{redirect_url}?approve={qs}') 
 
-@login_required
+@login_required(login_url="accounts:login")
 def reject(request,id):
     if request.user.is_superuser:
         try:
@@ -1208,7 +1208,7 @@ def reject(request,id):
     context={"form":form,"query":query,"qs":qs}
     return render(request,"dashboard_reject_form.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def news(request):
     if request.user.is_superuser or request.user.is_director:
         news=News.objects.all().order_by("-id")
@@ -1221,7 +1221,7 @@ def news(request):
         return redirect(reverse("dashboard:home"))
     return render(request,"dashboard_news.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @admin_director_check
 def delete_news(request,id):
     news=get_object_or_404(News,id=id)
@@ -1229,7 +1229,7 @@ def delete_news(request,id):
     messages.success(request,"News Deleted Successfully")
     return redirect(reverse("dashboard:news"))
 
-@login_required
+@login_required(login_url="accounts:login")
 @admin_director_check
 def edit_news(request,id):
     news=get_object_or_404(News,id=id)
@@ -1242,7 +1242,7 @@ def edit_news(request,id):
     context={"form":form}
     return render(request,"dashboard_edit_news.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @admin_director_check
 def add_news(request):
     form=NewsForm(request.POST or None)
@@ -1254,7 +1254,7 @@ def add_news(request):
     context={"form":form}
     return render(request,"dashboard_add_news.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def consultants(request):
     if request.user.account_type == "teacher":
@@ -1267,7 +1267,7 @@ def consultants(request):
     context={"consultants":consultants}
     return render(request,"dashboard_consultants.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def consultants_sessions(request):
     if request.user.account_type == "teacher":
@@ -1281,7 +1281,7 @@ def consultants_sessions(request):
     context={"sessions":sessions}
     return render(request,"dashboard_consultants_sessions.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_session(request,id):
     session=get_object_or_404(Teacher_Time,id=id,available=True)
@@ -1290,7 +1290,7 @@ def delete_session(request,id):
     messages.success(request,"Session Deactivated")
     return redirect(reverse("dashboard:consultants_sessions"))
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def active_session(request,id):
     session=get_object_or_404(Teacher_Time,id=id,available=False)
@@ -1299,7 +1299,7 @@ def active_session(request,id):
     messages.success(request,"Session Activated")
     return redirect(reverse("dashboard:consultants_sessions"))
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 @check_if_teacher_have_consultants
 def add_consultant(request):
@@ -1313,7 +1313,7 @@ def add_consultant(request):
     context={"form":form}
     return render(request,"dashboard_add_consultant.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def complete_consultant(request,id):
     consult=get_object_or_404(Consultant,id=id,status="approved")
@@ -1323,7 +1323,7 @@ def complete_consultant(request,id):
         messages.success(request,"Consultant Completed Successfully")
     return redirect(reverse("dashboard:consultants"))
 
-@login_required
+@login_required(login_url="accounts:login")
 def prices(request):
     if request.user.is_superuser:
         prices=Prices.objects.all()
@@ -1332,7 +1332,7 @@ def prices(request):
     context={"prices":prices}
     return render(request,"dashboard_prices.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def edit_price(request,id):
     price=get_object_or_404(Prices,id=id)
     if request.user.is_superuser:
@@ -1356,7 +1356,7 @@ def edit_price(request,id):
     context={"form":form}
     return render(request,"dashboard_edit_prices.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def add_student_course(request):
     form=AddUserToCourseForm(request.POST or None)
@@ -1379,7 +1379,7 @@ def add_student_course(request):
     context={"form":form}
     return render(request,"dashboard_add_user_to_course.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 def add_user_director(request):
     form=AddUserDirector(request.POST or None)
     if request.user.is_superuser:
@@ -1422,7 +1422,7 @@ def test(request):
     context={"data":data}
     return render(request,"dashboard_test.html",context)
 
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def add_category(request):
     form=CategoryForm(request.POST or None)
@@ -1432,7 +1432,7 @@ def add_category(request):
             messages.success(request,"category added successfully")
     context={"form":form}
     return render(request,"dashboard_add_category.html",context)
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def add_branch(request):
     form=BranchForm(request.POST or None)
@@ -1442,7 +1442,7 @@ def add_branch(request):
             messages.success(request,"branch added successfully")
     context={"form":form}
     return render(request,"dashboard_add_branch.html",context)
-@login_required
+@login_required(login_url="accounts:login")
 @check_user_validation
 def add_blog_category(request):
     form=BlogForm(request.POST or None)

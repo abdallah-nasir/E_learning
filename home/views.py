@@ -238,7 +238,7 @@ def contact(request):
         messages.success(request,"thank you for your message")
     context={}
     return render(request,"contact.html",context)
-@login_required()
+@login_required(login_url="accounts:login")
 def wishlist(request,slug):
     wishlist,created=Wishlist.objects.get_or_create(user=request.user)
     if len(wishlist.course.all()) == 0:
@@ -268,7 +268,7 @@ def wishlist_remove(request):
         print("here")
         return FailedJsonResponse({"message":"error message"})
 
-# @login_required()
+# @login_required(login_url="accounts:login")
 def wishlist_add(request):
     if request.user.is_authenticated:
         id=request.GET["id"]   
@@ -292,15 +292,56 @@ def wishlist_add(request):
     else:
         print("here")
         return FailedJsonResponse({"message":"error message"})
+@login_required(login_url="accounts:login")
+@check_if_user_in_course
+@check_if_user_in_pending_payment
+def checkout(request,course):
+    form=CashForm(request.POST or None,request.FILES or None)
+    my_course=get_object_or_404(Course,slug=course)
+    if request.method == "POST":
+        methods=["Bank Transaction","Western Union","Vodafone Cash"]
+        if form.is_valid():
+            try:
+                method= request.POST["payment"]
+            
+                if method in methods:
+                    image=request.FILES["payment_image"]
+                    number=form.cleaned_data["number"]
+                    image_url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{my_course.slug}/{image}"
+                    headers = {
+                        "AccessKey": Storage_Api,
+                        "Content-Type": "application/octet-stream",
+                        }
+                    response = requests.put(image_url,data=image,headers=headers)
+                    data=response.json()
+                    print(data)
 
-def checkout(request):
-    return render(request,"checkout.html")
+                    payment=Payment.objects.create(user=request.user,method=method,transaction_number=number,course=my_course,       
+                        status="pending")
+                    try:
+                        if data["HttpCode"] == 201:
+                            payment.payment_image = f"https://{agartha_cdn}/course-payment/{my_course.slug}/{image}"
+                            payment.save()
+                    except:
+                        pass
+                    msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[request.user.email])
+                    msg.content_subtype = "html"  # Main content is now text/html
+                    msg.send()
+                    messages.success(request,"We Have sent an Email, Please check your Inbox")
+                    return redirect(reverse("home:course",kwargs={"slug":my_course.slug}))
+                else:
+                    return redirect(reverse("home:home"))
+            except:
+                return redirect(reverse("home:home"))
+
+    context={"form":form,"course":my_course}
+    return render(request,"checkout.html",context)
 from allauth.account.forms import SignupForm,LoginForm
 
 def test(request):   
     return render(request,"test.html")
         
-
+ 
 #######################################
 #payment
 def payment_method_ajax(request):
@@ -317,53 +358,18 @@ def payment_method_ajax(request):
         else:
             return FailedJsonResponse({"payment":payment_form.errors})
 
-@login_required()
+@login_required(login_url="accounts:login")
 @check_if_user_in_course
 @check_if_user_in_pending_payment
 def payment_method_create(request,course):
-    course=get_object_or_404(Course,slug=course)
-    if request.method == 'POST':
-        payment_form=PaymentMethodForm(request.POST , request.FILES)
-        if payment_form.is_valid():
-            method=payment_form.cleaned_data["payment_method"]
-            image=payment_form.cleaned_data["image"]
-            number=payment_form.cleaned_data["number"]
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{course.slug}/{image}"
-            headers = {
-                "AccessKey": Storage_Api,
-                "Content-Type": "application/octet-stream",
-                }
-            response = requests.put(image_url,data=image,headers=headers)
-            data=response.json()
-            print(data)
- 
-            payment=Payment.objects.create(user=request.user,method=method,transaction_number=number,course=course,       
-                status="pending")
-            try:
-                if data["HttpCode"] == 201:
-                    payment.payment_image = f"https://{agartha_cdn}/course-payment/{course.slug}/{image}"
-                    payment.save()
-            except:
-                pass
-            msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[request.user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send()
-            messages.success(request,"We Have sent an Email, Please check your Inbox")
-            return redirect(reverse("home:course",kwargs={"slug":course.slug}))
-        else:
-            print("invalid")
-            # for i in payment_form.errors.values():
-            #     messages.error(request,i)
-            return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
-            # return redirect(reverse("home:course",kwargs={"slug":course.slug}))
-
+    print(request.GET.get("course"))
 
 from paypalcheckoutsdk.orders import OrdersCreateRequest
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
 from paypalcheckoutsdk.core import SandboxEnvironment,PayPalHttpClient
 CLIENT_ID="AZDbi4r4DSUE9nyMkO0QQjoMwgpfLjpKV7oYbbx_OlumnJM3xtNNoCkHAkevpHfunFJAaqCUSBvnLJez" # paypal
 CLIENT_SECRET="ED45Xje6Z5SyKQe3EPTblfvM9gOidJTXq342B602AGNi4stk4i9wduEtYTbPzcGBDhTVAZ0cmbZg5b2w" # paypl
-@login_required()
+@login_required(login_url="accounts:login")
 @check_if_user_in_course
 @check_if_user_in_pending_payment
 def create(request,course):
@@ -413,7 +419,7 @@ def create(request,course):
         print("not here")
         return JsonResponse({'details': "invalid request"})         
 
-@login_required()
+@login_required(login_url="accounts:login")
 def capture(request,order_id,course):       
     if request.method=="POST": 
         capture_order = OrdersCaptureRequest(order_id)

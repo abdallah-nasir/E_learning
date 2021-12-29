@@ -24,7 +24,7 @@ path("cart/<str:slug>/",views.wishlist,name="cart"),
 path("wishlist-add/",views.wishlist_add,name="wishlist_add"),
 path("wishlist-remove/",views.wishlist_remove,name="wishlist_remove"),
 #checkout
-path("checkout/",views.checkout,name="cart"),
+path("checkout/courses/<str:course>/",views.checkout,name="checkout"),
 path("payment/success/",views.success,name="success"),
 path("payment/failed/",views.failed,name="failed"),   
   

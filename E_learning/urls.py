@@ -21,7 +21,6 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.conf.urls.static import static
 import os 
-from . import views
 # import debug_toolbar
 # from allauth.urls
 
@@ -41,8 +40,8 @@ urlpatterns += i18n_patterns(
     path('consultant/', include('Consultant.urls',namespace="consultant")),  
     path('dashboard/', include('Dashboard.urls',namespace="dashboard")),  
     # path('__debug__/', include(debug_toolbar.urls)),
-
-    re_path('rosetta/', include('rosetta.urls')),prefix_default_language=False)
+    re_path('rosetta/', include('rosetta.urls')),prefix_default_language=False,
+)
        
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)

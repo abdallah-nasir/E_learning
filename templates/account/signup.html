@@ -1,160 +1,207 @@
-{% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load i18n %}
 {% load account socialaccount %}
-
-{% block content %}
 {% get_providers as socialaccount_providers %}
 
-<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
-
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>CodePen - Log in/Sign up screen animation</title>
+    <link rel="stylesheet" href="{% static 'login/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login/css/util.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login/css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'login/fonts/iconic/css/material-design-iconic-font.min.css' %}">
+    <script src="https://code.iconify.design/2/2.1.0/iconify.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous"> -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
 <style type="text/css">
-#id_account_type{
-  display: flex !important;;
-}
-    body{
-        background-color: #edf0f2;
-    }
-.login-or {
-position: relative;
-color: #aaa;
-margin-top: 10px;
-margin-bottom: 10px;
-padding-top: 10px;
-padding-bottom: 10px;
-}
-.span-or {
-display: block;
-position: absolute;
-left: 50%;
-top: -2px;
-margin-left: -25px;
-background-color:#edf0f2;
-width: 50px;
-text-align: center;
-}
-.hr-or {
-height: 1px;
-margin-top: 0px !important;
-margin-bottom: 0px !important;
-}
-h1,h2,h3{
-font-family: 'Kaushan Script', cursive;
-text-align:center;
-margin-bottom: auto;
-}
-.google {
-    color:#666;
-    width:100%;
-    height:40px;
-    text-align:center;
-    outline:none;
-    border: 1px solid lightgrey;
-}
-.google:hover{
-  color:#fff;
-  background-color:#0074f0;
-
-}
-.mybtn{
-    border-radius:50px;
-    }
+  .btn-signin{
+    background-color:#0e4fe6 !important;
+    color:#fff;
+  }
+.frame{
+height: auto !important;
+max-height: 55rem !important;
+  }
 </style>
-<div class="container">
-
-    <div style="margin-bottom: 15px;" class="row">
-   
-        <div class="col col-lg-4 col-md-12 col-sm-12 offset-lg-4">
-            {% for message in messages %}
+</head>
+<body>
+  {% if messages %}
+  {% for message in messages %}
+    <!-- partial:index.partial.html -->
+    <div style='text-align: center;' class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+      <strong>{{message.tags}}!</strong>{{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div> 
+    {%  endfor %}
+    {% endif %}
     
-            <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-              <strong>{{message.tags}}!</strong>{{message}}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>   
-            {% endfor %}
-            <h1>Signup</h1>
-          <form  id="form" action="{% url 'account_signup' %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-                {{form|crispy}}  
-                       </div>
-        
+    <div class="limiter">
  
-             <div class="form-group">
-                <p class="text-center">Already have Account? <a href="{% url 'account_login' %}" id="signup">Login here</a></p>
-             </div> 
-            <br>
-            {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-            {% endif %}
-            <button onclick="this.disabled=true,this.form.submit();" type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">Signup</button>
-          </form>
-          <div id="tesst">
-           
-        </div>
+        <div class="container-login100" style="background-image: url('{% static 'login/imasges/bg-01.jpg' %}');">
+            <div class="frame">
+                <div class="nav">
+                    <ul class="links">
+                        <li class="signin-active"><a class="btn">Sign in</a></li>
+                        <li class="signup-inactive"><a class="btn">Sign up </a></li>
+                    </ul>
+                </div>
+                
+                <div ng-app ng-init="checked = false">
+                    <form class="form-signin" action="{% url 'accounts:login' %}" method="post" >
+                      {% csrf_token %}
+                      {% for error in login_form.non_field_errors %}
+                      <div style='text-align: center;' class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong></strong>{{error|escape}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div> 
+                          {% endfor %}
+                    
+          
+                        <label for="username">Username / Email</label>
+                          <input class="form-styling" type="text" name="login" placeholder="" />
+                         {% for error in login_form.username.errors %}
+                        <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                           {% endfor %}
+                           <br>
+                            <label for="password">Password</label>
+                          <input class="form-styling" type="password" name="password" placeholder="" />
+                          {% for error in login_form.password.errors %}
+                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                             {% endfor %}
+                        <input type="checkbox" name="remember" id="checkbox" />
+                        <label for="checkbox"><span class="ui"></span>Keep me signed in</label>
+                        <div class="btn-animate">
+                          {% if redirect_field_value %}
+                          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                          {% endif %}
+                            <button type="submit" class="btn-signin">SIGN IN</button>
+                        </div>
+                    </form>
+                   
+                    <form class="form-signup" action="{% url 'accounts:signup' %}" method="POST" name="form" >
+                      {% csrf_token %}
+                      {% for error in form.non_field_errors %}
+                      <div style='text-align: center;' class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong></strong>{{error|escape}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div> 
+                          {% endfor %}
+                          <label for="fullname">User name</label>
+                          <input class="form-styling" type="text" name="username" placeholder="" />
+                          {% for error in form.username.errors %}
+                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                             {% endfor %}
+                          <label for="email">Email</label>
+                          <input class="form-styling" type="text" name="email" placeholder="" />
+                          {% for error in form.email.errors %}
+                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                             {% endfor %}
+                          <label for="id_account_type">
+                              Are You
+                          </label>
+  
+                          <select name="account_type" class="form-styling select form-control" id="id_account_type" placeholder="">
+                              <option value="student" class="form-styling">student</option>
+                              <option value="teacher" class="form-styling">teacher</option>
+                          </select>
+                          {% for error in form.account_type.errors %}
+                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                             {% endfor %}
+                          <label for="phone" >Phone Number</label>
+                          <input class="form-styling" type="text" name="phone" placeholder="" />
+                          {% for error in form.phone.errors %}
+                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                             {% endfor %}
+                             {{form.captcha}}
+                          <label for="password1">Password</label>
+                          <input class="form-styling" type="password" name="password1" placeholder="" />
+                          {% for error in form.password1.errors %}
+                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                             {% endfor %}
+                          <label for="password2">Confirm password</label>
+                          <input class="form-styling" type="password" name="password2" placeholder="" />
+                          {% for error in form.password2.errors %}
+                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                             {% endfor %}
+                          {% if redirect_field_value %}
+                          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                          {% endif %}
+                            <button type="submit" class="btn-signup">SIGN IN</button>
+
+                        
+                      
+                    </form>
+                    <!-- <div class="success">
+                        <svg width="270" height="270" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                             viewBox="0 0 60 60" id="check" ng-class="checked ? 'checked' : ''">
+                            <path fill="#ffffff" d="M40.61,23.03L26.67,36.97L13.495,23.788c-1.146-1.147-1.359-2.936-0.504-4.314
+                  c3.894-6.28,11.169-10.243,19.283-9.348c9.258,1.021,16.694,8.542,17.622,17.81c1.232,12.295-8.683,22.607-20.849,22.042
+                  c-9.9-0.46-18.128-8.344-18.972-18.218c-0.292-3.416,0.276-6.673,1.51-9.578" />
+                            <div class="successtext">
+                                <p> Thanks for signing up! Check your email for confirmation.</p>
+                            </div>
+                        </svg>
+                    </div> -->
+                </div>
+                <br>
+                <div class="forgot">
+                    <a href="#">Forgot your password?</a>
+                </div>
+
+                <div class="txt1 text-center signin-social">
+                    <span>
+                        <label> Or Sign Up Using </label>
+                    </span>
+                </div>
+                <br>
+              
+                <div class="signin-social flex-c-m">
+                  {% for provider in socialaccount_providers %}
+                  {% if provider.name == "Facebook" %}
+                    <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" class="login100-social-item bg1">
+                        <span class="iconify" data-icon="ic:outline-facebook"></span>
+                    </a>
+                    {% elif provider.name == "LinkedIn" %}
+                    <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" class="login100-social-item bg2">
+                        <span class="iconify" data-icon="zmdi:linkedin-box"></span>
+                    </a>
+                    {% elif provider.name == "Google" %}
+                    <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" class="login100-social-item bg3">
+                        <!--<i class="fa fa-google"></i>-->
+                        <span class="iconify" data-icon="flat-color-icons:google"></span>
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- <div>
+                    <div class="cover-photo"></div>
+                    <div class="profile-photo"></div>
+                    <h1 class="welcome">Welcome, Chris</h1>
+                    <a class="btn-goback" value="Refresh" onClick="history.go()">Go back</a>
+                </div> -->
+            </div>
 
         </div>
-     
     </div>
-</div>
-    
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-<script style="text/javascript">
-   $(document).ready(function() {
-      $("#id_phone").keydown(function(event) {
-          // Allow: backspace, delete, tab, escape, and enter
-          if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
-              // Allow: Ctrl+A
-              (event.keyCode == 65 && event.ctrlKey === true) ||
-              // Allow: home, end, left, right
-              (event.keyCode >= 35 && event.keyCode <= 39)) {
-              // let it happen, don't do anything
-              return;
-          } else {
-              // Ensure that it is a number and stop the keypress
-              if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
-                  event.preventDefault();
-              }
-          }
-      });
-  });
-
-$("#id_account_type").change(function () {
-      const type = $(this).val();  // get the selected subject ID from the HTML dropdown list 
-      $.ajax({                       // initialize an AJAX request
-          type: "POST",
-          url: '{% url "home:home" %}',
-          data: {
-              'type': type,       // add the country id to the POST parameters
-              'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function (data) {   // `data` is from `get_topics_ajax` view function
-            if(data.name == "teacher"){
-              $("#tesst").show();
-           let html_data=`
-           <label class='requiredField' for='id_about_me'>About You</label>
-           <textarea id='id_about_me' class='textarea form-control' name='about_me' cols='40' rows='5' ></textarea>`;
-              $("#tesst").html(html_data);
-            }
-           else if(data.name == "student"){
-              $("#tesst").hide();
-               }
-             
-
-             
-           
-         }
-      });
-  });
-
-
-   </script>
-   
-{% endblock %}
+        <!-- partial -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.14/angular.min.js'></script>
+        <script src="{% static 'login/script.js' %}"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+         -->
+</body>
+</html>

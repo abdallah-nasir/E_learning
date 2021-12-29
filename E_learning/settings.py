@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.linkedin_oauth2',    
     'bootstrap_datepicker_plus',
     'django_cleanup',
+    'captcha',
     # "storages",   
     # "debug_toolbar",
 ] 
@@ -78,10 +79,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
+   
     'accounts.middleware.OneSessionPerUserMiddleware',
     'crum.CurrentRequestUserMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    #  "debug_toolbar.middleware.DebugToolbarMiddleware",
        ]
 
 
@@ -334,10 +336,13 @@ CKEDITOR_CONFIGS = {
 
 }
 
-
 CKEDITOR_UPLOAD_PATH = "ckeditor/"
 CKEDITOR_IMAGE_BACKEND ="pillow"
 CKEDITOR_ALLOW_NONIMAGE_FILES = False
 CKEDITOR_RESTRICT_BY_USER =True
 CKEDITOR_BROWSE_SHOW_DIRS =False
 CKEDITOR_FORCE_JPEG_COMPRESSION =True
+
+### google recaptcha
+RECAPTCHA_PUBLIC_KEY = "6Lfj99MdAAAAAL4WwAN00kA0crEh_K5K0HX9Bt5J"
+RECAPTCHA_PRIVATE_KEY = "6Lfj99MdAAAAAKWwKULbY8AvmsTDQBxj13jPIAiN"

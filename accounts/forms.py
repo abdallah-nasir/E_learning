@@ -13,6 +13,8 @@ from django.contrib import messages
 from django.conf import settings
 import random,string,requests
 from crum import get_current_request   
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV2Checkbox
 
 Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
 library_id="19804"
@@ -21,7 +23,6 @@ agartha_cdn="agartha1.b-cdn.net"
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 class MyCustomLoginForm(LoginForm):
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # here you can change the fields
@@ -41,7 +42,8 @@ class MyCustomSignupForm(SignupForm):
     account_type=forms.ChoiceField(label="Are You",required=True,choices=ACCOUNT_TYPE)
     phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
     image=forms.ImageField(label="Profile Picture",required=False)
-    
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
+
     # about_me=forms.CharField(widget=forms.HiddenInput())
     # title=forms.CharField(widget=forms.HiddenInput())
     def clean(self):
@@ -102,6 +104,7 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
     account_type=forms.ChoiceField(required=True,choices=ACCOUNT_TYPE)
     phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
     image=forms.ImageField(required=True)
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
 
 
     def clean(self):

@@ -369,23 +369,16 @@ width:100% !important;
                                     {% else %}
                                     <span>Price : <b>${{course.price|floatformat}}</b></span>
                                     {% endif %}
-                                    {% if request.user.is_authenticated %}
+                                   
                                     {% if request.user in course.students.all %}
-                                    {% if course.get_total_quiz %}
-                                    <a  class="main-btn" id="paid"  href="{% url 'quiz:home' course.slug course.get_total_quiz  %}">Take Quiz</a>
-                                    {% else %}
-                                    <a  class="main-btn" id="paid"  href="{% url 'quiz:home' course.slug course.get_total_quiz  %}">Take Quiz</a>
-
-                                    {% endif %}
+                                <a  class="main-btn" id="paid"  href="{% url 'quiz:home' course.slug course.get_total_quiz  %}">Take Quiz</a>
                                     <!-- <a  class="main-btn disabled" id="paid" disabled>Paid</a> -->
                                     {% else %}
-                                    <a href="#" class="main-btn"  data-toggle="modal" data-target="#payment-{{course.id}}">Enroll Now</a>
-
+                                    <a href="{% url 'home:checkout' course.slug %}" class="main-btn">Enroll Now</a>
                                     {% endif %}
-                                    {% else %}
-                                    <a href="{% url 'account_login' %}" class="main-btn">Enroll Now</a>
+                                   
 
-                                    {% endif %}
+                                   
                                 </div>
                             </div> <!-- course features -->
                         </div>
@@ -500,57 +493,7 @@ width:100% !important;
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
-{% if request.user.is_authenticated and request.user not in course.students.all %}
-  <!-- Modal -->
-  <div class="modal fade" id="payment-{{course.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Payment Method</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <div id="paypal-button-container"></div>
-            <h2 id="test"><span>OR</span></h2>
-            <h3 style="text-align:center;"><span id="black-col">Cash</span><span id="yellow-col">Payment</span> </h3>
-            <form action="{% url 'home:payment_method_create' course.slug %}" method="POST" id="payment_form" enctype="multipart/form-data">
-                {% csrf_token %}
 
-                <div class="form-group">
-                    <input type="hidden" class="ajax_course" data-index="{{course.id}}" value="{{course.id}}">
-                    {{payment_form|crispy}}
-                    
-                </div>   
-               
-                <div class="form-group" >
-                    <label for="copyMe" class='requiredField'>IBAN</label>
-                    <div style="display: flex;" >
-                        <input type="text" style="flex: 1;" id="copyMe" class="form-control" value="123454897"> 
-                        <a class="btn btn-primary" onclick="copyMyText()">Copy To Clipboard</a>        
-    
-                    </div>
-                </div>    
-                <div class="form-group" >
-                    <label for="copyMe" class='requiredField'>Bank Swift Key</label>
-                    <div style="display: flex;" >
-                        <input type="text" style="flex: 1;" id="BankAccount" class="form-control" value="910111213141516"> 
-                        <a class="btn btn-primary" onclick="copyMyBank()">Copy To Clipboard</a>        
-    
-                    </div>
-                </div>  
-
-        <div class="modal-footer">
-          <button type="button" class="btn" id="cancel" data-dismiss="modal">Close</button>
-          <button type="submit" onclick="this.disabled=true,this.form.submit();" class="btn"id="submit-button" >Submit</button>
-        </div>
-    </form>
-</div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
     <!--====== COURSES SINGEl PART ENDS ======-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
@@ -561,7 +504,7 @@ width:100% !important;
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#id_number").keydown(function(event) {
+        $("#number").keydown(function(event) {
             // Allow: backspace, delete, tab, escape, and enter
             if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
                 // Allow: Ctrl+A

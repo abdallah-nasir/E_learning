@@ -55,7 +55,7 @@ def teacher_ajax_table(request):
         print(list)
     return JsonResponse(list,safe=False)
 
-@login_required()
+@login_required(login_url="accounts:login")
 @check_user_is_has_consul
 def consultant_payment(request,teacher):
     teacher=get_object_or_404(Teacher_Time,id=teacher,available=True)
@@ -100,7 +100,7 @@ from paypalcheckoutsdk.core import SandboxEnvironment,PayPalHttpClient
 CLIENT_ID="AZDbi4r4DSUE9nyMkO0QQjoMwgpfLjpKV7oYbbx_OlumnJM3xtNNoCkHAkevpHfunFJAaqCUSBvnLJez" # paypal
 CLIENT_SECRET="ED45Xje6Z5SyKQe3EPTblfvM9gOidJTXq342B602AGNi4stk4i9wduEtYTbPzcGBDhTVAZ0cmbZg5b2w" # paypl
 
-@login_required()
+@login_required(login_url="accounts:login")
 @check_user_is_has_consul
 def paypal_create(request,teacher):
     if request.method =="POST":
@@ -146,7 +146,7 @@ def paypal_create(request,teacher):
     else:
         return JsonResponse({'details': "invalid request"})         
 
-@login_required()
+@login_required(login_url="accounts:login")
 def paypal_capture(request,order_id,teacher_id):       
     if request.method=="POST": 
         capture_order = OrdersCaptureRequest(order_id)

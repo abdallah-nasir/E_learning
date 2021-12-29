@@ -22,7 +22,7 @@ from django.forms import ValidationError
 from .decorators import *
 
 
-@login_required()
+@login_required(login_url="accounts:login")
 def home(request):
     blogs=Blog.objects.filter(status="approved")
     paginator = Paginator(blogs, 9) # Show 25 contacts per page.
@@ -36,7 +36,7 @@ def home(request):
     except:
         return render(request,"blogs.html",context)
 
-@login_required()
+@login_required(login_url="accounts:login")
 @check_user_is_member
 @check_blogs_payment_status
 def single_blog(request,slug):
@@ -47,7 +47,7 @@ def single_blog(request,slug):
     context={"blog":blog,"categories":categories,"comment_form":comment_form}
     return render(request,"blog.html",context)
 
-@login_required()
+@login_required(login_url="accounts:login")
 def blog_search(request):
     qs=request.GET.get("search")
     blog=Blog.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(category__name__icontains=qs,status="approved") |Q(tags__name__icontains=qs,status="approved")).distinct() 
@@ -60,7 +60,7 @@ def blog_search(request):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
     return render(request,"blog_search.html",{"blogs":page_obj,"qs":qs})
-@login_required()
+@login_required(login_url="accounts:login")
 def blog_comment(request,id):
     if request.user.is_authenticated:
         form=CommentForm(request.POST)
@@ -78,7 +78,7 @@ def blog_comment(request,id):
         messages.error(request,"You Should Sign in First")
     return redirect(reverse("blogs:blog",kwargs={"slug":instance.blog.slug}))
 
-@login_required()
+@login_required(login_url="accounts:login")
 def blog_comment_reply(request,id,reply):
     if request.user.is_authenticated:
         form=ReplyForm(request.POST)
@@ -100,13 +100,13 @@ def blog_comment_reply(request,id,reply):
         messages.error(request,"You Should Sign in First")
     return redirect(reverse("blogs:blog",kwargs={"slug":instance.blog.slug}))
 import datetime
-@login_required()
+@login_required(login_url="accounts:login")
 def pricing(request):
     prices=Prices.objects.all()
  
     return render(request,"pricing.html",{'prices':prices})
 
-@login_required()
+@login_required(login_url="accounts:login")
 @check_user_status
 @check_blogs_payment_status
 def payment_pricing(request,id):
@@ -148,7 +148,7 @@ from paypalcheckoutsdk.core import SandboxEnvironment,PayPalHttpClient
 CLIENT_ID="AZDbi4r4DSUE9nyMkO0QQjoMwgpfLjpKV7oYbbx_OlumnJM3xtNNoCkHAkevpHfunFJAaqCUSBvnLJez" # paypal
 CLIENT_SECRET="ED45Xje6Z5SyKQe3EPTblfvM9gOidJTXq342B602AGNi4stk4i9wduEtYTbPzcGBDhTVAZ0cmbZg5b2w" # paypl
 
-@login_required()
+@login_required(login_url="accounts:login")
 @check_user_status
 @check_blogs_payment_status
 def paypal_create(request,id):
@@ -194,7 +194,7 @@ def paypal_create(request,id):
     else:
         return JsonResponse({'details': "invalid request"})         
 
-@login_required()
+@login_required(login_url="accounts:login")
 def paypal_capture(request,order_id,price_id):       
     if request.method=="POST": 
         capture_order = OrdersCaptureRequest(order_id)
@@ -229,7 +229,7 @@ def paypal_capture(request,order_id,price_id):
         except:
             return JsonResponse({"status":0})
 
-@login_required()
+@login_required(login_url="accounts:login")
 def blogs_type(request,type):
     blogs=Blog.objects.filter(status="approved",blog_type=type)
     paginator = Paginator(blogs, 1) # Show 25 contacts per page.

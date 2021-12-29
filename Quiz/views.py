@@ -13,14 +13,18 @@ from django.core.mail import send_mail,EmailMessage
 
 # Create your views here.
 
-@login_required()
+@login_required(login_url="accounts:login")
 @check_course_status
 def quiz(request,slug,question):
     my_course=get_object_or_404(Course,slug=slug)
     if my_course.quiz:
         if request.user in my_course.students.all():
             quiz=my_course.quiz
-            quiz_question=quiz.questions.get(slug=question)
+            try:
+                quiz_question=quiz.questions.get(slug=question)
+            except:
+                messages.error(request,"course is on progress")
+                return redirect(reverse("home:course",kwargs={"slug":slug}))
             answers=quiz_question.answer.all()
             user_progress=quiz.get_student_answers_percent(student=request.user)
             default_progress=quiz.check_if_user_answer_question(student=request.user,question=quiz_question)
@@ -55,7 +59,7 @@ def quiz(request,slug,question):
     context={"quiz":quiz,"course":my_course,"next":next,"prev":prev,"question":quiz_question,"answers":answers,"user_progress":user_progress,"default_progress":default_progress}
     return render(request,"quiz.html",context) 
      
-@login_required()   
+@login_required(login_url="accounts:login")   
 @check_course_status
 def quiz_result(request,slug):
     course=get_object_or_404(Course,slug=slug)
