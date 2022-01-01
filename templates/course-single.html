@@ -374,6 +374,7 @@ width:100% !important;
                                 <a  class="main-btn" id="paid"  href="{% url 'quiz:home' course.slug course.get_total_quiz  %}">Take Quiz</a>
                                     <!-- <a  class="main-btn disabled" id="paid" disabled>Paid</a> -->
                                     {% else %}
+                            
                                     <a href="{% url 'home:checkout' course.slug %}" class="main-btn">Enroll Now</a>
                                     {% endif %}
                                    
@@ -493,6 +494,7 @@ width:100% !important;
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
+
 
     <!--====== COURSES SINGEl PART ENDS ======-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>

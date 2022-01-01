@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-gq)0=tf4ty9d(r=cygqos=o+a0x=d^e&f4hmg=@fooo)6uq4=c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1","188.166.152.244","www.agartha.academy","agartha.academy"]
+ALLOWED_HOSTS = ["127.0.0.1","www.agartha.academy","agartha.academy"]
 
 
 # Application definition
@@ -71,10 +71,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     
     'django.middleware.security.SecurityMiddleware',
-   
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-       'django.middleware.common.CommonMiddleware',
-        'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -82,14 +81,14 @@ MIDDLEWARE = [
    
     'accounts.middleware.OneSessionPerUserMiddleware',
     'crum.CurrentRequestUserMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
     #  "debug_toolbar.middleware.DebugToolbarMiddleware",
        ]
 
 
 
 ROOT_URLCONF = 'E_learning.urls'
-
+# APPEND_SLASH=False 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -126,15 +125,15 @@ DATABASES = {
 # DATABASES={
 #     "default":{
 #         "ENGINE":"django.db.backends.postgresql_psycopg2",
-#         "NAME":"defaultdb",
-#         "USER":"doadmin",
-#         "PASSWORD":"KZgXyyf1suqKHVq2",
-#         "HOST":"db-postgresql-lon1-26713-do-user-10425555-0.b.db.ondigitalocean.com",
-#         "PORT":"25060",
-#         'OPTIONS': {'sslmode': 'require'},
+#         "NAME":"agarthaa_e_learining",
+#         "USER":"agarthaa_root",
+#         "PASSWORD":"AgarthaNew",
+#         "HOST":"localhost",
+#         "PORT":"5432",
+#         # 'OPTIONS': {'sslmode': 'require'},
 #     }      
-# } 
-CACHES = {
+# }  
+CACHES = { 
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'my_cache_table',
@@ -211,8 +210,8 @@ MESSAGE_TAGS = {
 # "Email Backend"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'abdullahnasser6@gmail.com'
-EMAIL_HOST_PASSWORD ="bbvpxmxneyglgqzt"
+EMAIL_HOST_USER = 'agartha.new@gmail.com'
+EMAIL_HOST_PASSWORD ="wydaouprzdfqqbgx"
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL= False
 EMAIL_PORT = '587' 
@@ -342,7 +341,6 @@ CKEDITOR_ALLOW_NONIMAGE_FILES = False
 CKEDITOR_RESTRICT_BY_USER =True
 CKEDITOR_BROWSE_SHOW_DIRS =False
 CKEDITOR_FORCE_JPEG_COMPRESSION =True
-
 ### google recaptcha
 RECAPTCHA_PUBLIC_KEY = "6Lfj99MdAAAAAL4WwAN00kA0crEh_K5K0HX9Bt5J"
 RECAPTCHA_PRIVATE_KEY = "6Lfj99MdAAAAAKWwKULbY8AvmsTDQBxj13jPIAiN"

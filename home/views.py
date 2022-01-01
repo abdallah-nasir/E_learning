@@ -19,12 +19,16 @@ from datetime import datetime
 from django.forms import ValidationError
 from django.core.cache import cache
 import requests
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 AccessKey="0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
 Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
 library_id="19804"
 storage_name="agartha"
 agartha_cdn="agartha1.b-cdn.net"
+PAYMOB_API_KEY = "ZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKSVV6VXhNaUo5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRFNE1ESTVMQ0p1WVcxbElqb2lhVzVwZEdsaGJDSjkuU0VhV0IwbjlMVklMeHVKd1NqTFVldDNWc0pqMDVMZjBOVUNuTmZROGZJOFdxREswb3FUOE1pYjBUeTY2MHlXZzRsUGNXU3dhTHZDc0x5RVd1LUtRaVE="  # PAYMOB
+PAYMOB_FRAME="269748"
+PAYMOB_COURSE_INT=585334
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -292,6 +296,14 @@ def wishlist_add(request):
     else:
         print("here")
         return FailedJsonResponse({"message":"error message"})
+
+
+#######################################
+#payment
+
+def random_integer_generator(size = 8, chars = string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 @login_required(login_url="accounts:login")
 @check_if_user_in_course
 @check_if_user_in_pending_payment
@@ -334,16 +346,9 @@ def checkout(request,course):
             except:
                 return redirect(reverse("home:home"))
 
-    context={"form":form,"course":my_course}
-    return render(request,"checkout.html",context)
-from allauth.account.forms import SignupForm,LoginForm
-
-def test(request):   
-    return render(request,"test.html")
-        
+    context={"form":form,"course":my_course,"frame": PAYMOB_FRAME, "payment_token": 11}
+    return render(request,"checkout.html",context)        
  
-#######################################
-#payment
 def payment_method_ajax(request):
     course_id=request.POST.get("ajax_course")
     print(course_id)
@@ -358,11 +363,7 @@ def payment_method_ajax(request):
         else:
             return FailedJsonResponse({"payment":payment_form.errors})
 
-@login_required(login_url="accounts:login")
-@check_if_user_in_course
-@check_if_user_in_pending_payment
-def payment_method_create(request,course):
-    print(request.GET.get("course"))
+
 
 from paypalcheckoutsdk.orders import OrdersCreateRequest
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
@@ -450,6 +451,131 @@ def capture(request,order_id,course):
         except:
             return JsonResponse({"status":0})
 
+# #paymob
+
+
+@login_required(login_url="accounts:login")
+@check_if_user_in_course
+@check_if_user_in_pending_payment
+def paymob_payment(request,course):
+    if request.is_ajax():     
+        
+        # return JsonResponse({"frame":PAYMOB_FRAME,"token":123})
+
+        my_course=get_object_or_404(Course,slug=course)
+        merchant_order_id=request.user.id + int(random_integer_generator())
+        url_1 = "https://accept.paymob.com/api/auth/tokens"
+        data_1 = {"api_key": PAYMOB_API_KEY}
+        r_1 = requests.post(url_1, json=data_1)
+        token = r_1.json().get("token")
+        print(token)
+        data_2 = {
+            "auth_token": token,
+            "delivery_needed": "false",
+                "amount_cents":my_course.get_price() * 100,
+                "currency": "EGP",
+                "merchant_order_id": merchant_order_id,  # 81
+
+                "items": [
+        {
+            "name": my_course.slug,
+            "amount_cents": my_course.get_price() * 100,
+            "description": my_course.name,
+            "quantity": "1"
+        },
+    
+        ],
+                "shipping_data": {
+                    "apartment": "803",
+                    "email": request.user.email,
+                    "floor": "42",
+                    "first_name": request.user.username,
+                    "street": "Ethan Land",
+                    "building": "8028",
+                    "phone_number": request.user.phone,
+                    "postal_code": "01898",
+                    "extra_description": "8 Ram , 128 Giga",
+                    "city": "Jaskolskiburgh",
+                    "country": "CR",
+                    "last_name": request.user.last_name,
+                    "state": "Utah"
+                },
+                "shipping_details": {
+                    "notes": " test",
+                    "number_of_packages": 1,
+                    "weight": 1,
+                    "weight_unit": "Kilogram",
+                    "length": 1,
+                    "width": 1,
+                    "height": 1,
+                    "contents": "product of some sorts"
+                }
+            }
+        url_2 = "https://accept.paymob.com/api/ecommerce/orders"
+        r_2 = requests.post(url_2, json=data_2)
+        my_id = r_2.json().get("id")
+        if my_id == None:
+            print("none")
+            r_2 = requests.get(url_2, json=data_2)
+            my_id = r_2.json().get("results")[0]["id"]
+
+        data_3 = {
+            "auth_token": token,
+            "amount_cents": my_course.get_price() * 100,
+            "expiration": 15*60,
+            "order_id": my_id,
+            "billing_data": {
+                "apartment": "803",
+                "email": request.user.email,
+                "floor": "42",
+                "first_name": request.user.username,
+                "street": "Ethan Land",
+                "building": "8028",
+                "phone_number": request.user.phone,
+                "shipping_method": "PKG",
+                "postal_code": "01898",
+                "city": "Jaskolskiburgh",
+                "country": "CR",
+                "last_name": request.user.last_name,
+                "state": "Utah"
+            },
+            "currency": "EGP",
+            "integration_id": PAYMOB_COURSE_INT,
+            "lock_order_when_paid": "true"
+        }
+        url_3 = "https://accept.paymob.com/api/acceptance/payment_keys"
+        r_3 = requests.post(url_3, json=data_3)
+        payment_token = (r_3.json().get("token"))
+        print(payment_token)
+        return JsonResponse({"frame":PAYMOB_FRAME,"token":payment_token})
+
+
+
+@csrf_exempt    
+def check_paymob_course_payment(request):
+    try:
+        id=request.GET["id"]
+        url_1 = "https://accept.paymob.com/api/auth/tokens"
+        data_1 = {"api_key": PAYMOB_API_KEY}
+        r_1 = requests.post(url_1, json=data_1)
+        token = r_1.json().get("token")
+        url_2=f"https://accept.paymob.com/api/acceptance/transactions/{id}"
+        header= {"Bearer":token}
+        r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
+        data=r_2.json() 
+        print(data) 
+        course_slug=data['order']["items"][0]["name"]
+        course=Course.objects.get(slug=course_slug)
+        username=data["order"]["shipping_data"]["first_name"]
+        user=User.objects.get(username=username)
+        transaction_number=request.GET["id"]
+        Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
+        messages.success(request,"your request is being review by admin")
+    except:
+        pass
+    return redirect(reverse("accounts:course_payment"))
+#######################################
+#payment
 
 def success(request):   
     return render(request,"success.html")

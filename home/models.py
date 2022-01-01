@@ -353,9 +353,8 @@ def upload_payment_images(instance,filename):
     return place  
 
 PAYMENTS=(
-    ("Bank Transaction","Bank Transaction"),
+    ("Paymob","Paymob"),
     ("Western Union","Western Union"),
-    ("Vodafone Cash","Vodafone Cash"),
     ("Paypal","Paypal")
 )
 
@@ -382,8 +381,6 @@ class Payment(models.Model):
     course=models.ForeignKey(Course,on_delete=models.SET_NULL,null=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
-    check_reject=CheckRejectPayment()
-    objects=models.Manager()
     def __str__(self):
         return self.method
 

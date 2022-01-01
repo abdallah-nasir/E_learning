@@ -52,7 +52,7 @@ max-height: 55rem !important;
                         <li class="signup-inactive"><a class="btn">Sign up </a></li>
                     </ul>
                 </div>
-                
+               
                 <div ng-app ng-init="checked = false">
                     <form class="form-signin" action="{% url 'accounts:login' %}" method="post" >
                       {% csrf_token %}
@@ -137,7 +137,7 @@ max-height: 55rem !important;
                           {% if redirect_field_value %}
                           <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
                           {% endif %}
-                            <button type="submit" class="btn-signup">SIGN IN</button>
+                          <button type="submit" class="btn-signup">SIGN IN</button>
 
                         
                       
@@ -156,7 +156,7 @@ max-height: 55rem !important;
                 </div>
                 <br>
                 <div class="forgot">
-                    <a href="#">Forgot your password?</a>
+                    <a href="{% url 'account_reset_password' %}">Forgot your password?</a>
                 </div>
 
                 <div class="txt1 text-center signin-social">

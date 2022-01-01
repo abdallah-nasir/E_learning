@@ -12,8 +12,9 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 import json,requests 
+from .forms import MyCustomLoginForm,MyCustomSignupForm
 from allauth.account.views import SignupView,LoginView
-from allauth.account.forms import LoginForm,SignupForm
+# from allauth.account.forms import LoginForm,SignupForm
 Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
 storage_name="agartha"
   
@@ -25,7 +26,7 @@ class CustomSignupView(SignupView):
         # we get context data from original view
         context = super(CustomSignupView,
                         self).get_context_data(**kwargs)
-        context['login_form'] = LoginForm() # add form to context
+        context['login_form'] = MyCustomLoginForm() # add form to context
         return context
 
 class CustomSigninView(LoginView):
@@ -34,7 +35,7 @@ class CustomSigninView(LoginView):
         # we get context data from original view
         context = super(LoginView,
                         self).get_context_data(**kwargs)
-        context['signup_form'] = SignupForm() # add form to context
+        context['signup_form'] = MyCustomSignupForm() # add form to context
         return context  
 
         

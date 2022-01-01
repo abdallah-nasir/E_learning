@@ -23,9 +23,8 @@ class Teacher_Time(models.Model):
 
         
 PAYMENTS=(
-    ("Bank Transaction","Bank Transaction"),
+    ("Paymob","Paymob"),
     ("Western Union","Western Union"),
-    ("Vodafone Cash","Vodafone Cash"),
     ("Paypal","Paypal")
 )
 PAYMENT_CHOICES=(

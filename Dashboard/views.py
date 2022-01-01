@@ -582,6 +582,7 @@ def add_video(request,slug):
                     "AccessKey": AccessKey
                 }
                 response = requests.post( url, json=json, headers=headers)
+                print(response)
                 data=response.json()
                 print(data)
                 instance.video_uid=data["guid"]
