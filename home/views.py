@@ -1,6 +1,7 @@
 from django.db.models.query_utils import Q
 from django.shortcuts import render,redirect,reverse
 from .models import *
+import os
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from .forms import *
@@ -12,6 +13,8 @@ from django.db.models import Q
 from itertools import chain
 from django.conf import settings
 from accounts.models import User
+from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment
+from Blogs.models import Blog_Payment,Prices
 from django.core.mail import send_mail,EmailMessage
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
@@ -21,14 +24,14 @@ from django.core.cache import cache
 import requests
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
-AccessKey="0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
-Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
-library_id="19804"
-storage_name="agartha"
-agartha_cdn="agartha1.b-cdn.net"
-PAYMOB_API_KEY = "ZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKSVV6VXhNaUo5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRFNE1ESTVMQ0p1WVcxbElqb2lhVzVwZEdsaGJDSjkuU0VhV0IwbjlMVklMeHVKd1NqTFVldDNWc0pqMDVMZjBOVUNuTmZROGZJOFdxREswb3FUOE1pYjBUeTY2MHlXZzRsUGNXU3dhTHZDc0x5RVd1LUtRaVE="  # PAYMOB
-PAYMOB_FRAME="269748"
-PAYMOB_COURSE_INT=585334
+AccessKey=os.environ["AccessKey"]
+Storage_Api=os.environ["Storage_Api"]
+library_id=os.environ["library_id"]
+storage_name=os.environ['storage_name']
+agartha_cdn=os.environ['agartha_cdn']
+PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
+PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
+PAYMOB_COURSE_INT=os.environ["PAYMOB_COURSE_INT"]
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -61,12 +64,31 @@ def course_search(request):
     return render(request,"course_search.html",{"course":page_obj,"qs":qs})
 
 def home(request):
-    events=Events.objects.filter(status="approved").order_by("-date")[:5]
-    courses=Course.objects.filter(status="approved").order_by("-id")[0:5]
-    teachers=User.objects.filter(account_type="teacher").order_by("?")[:4]
-    context={"events":events,"courses":courses,"teachers":teachers}
+    data=cache.get("data")
+    if data ==None:
+        data=get_home_data()
+        cache.set("data",data,60*15)
+        print("here")
+    else:
+        data=cache.get("data")
+        print("there")
+        print(data)
+    context={"data":data}
     return render(request,"home.html",context)
-    
+
+def subscribe(request):
+    form=SubscribeForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            instance=form.save(commit=False)
+            email=form.cleaned_data.get("email")
+            instance.save()
+            user=User.objects.filter(email=email)
+            if user.exists():
+                instance.user=user[0]
+                instance.save()
+            messages.success(request,"you have subscribed to our daily news")
+    return redirect(reverse("home:home"))
 def courses(request):
     course=Course.objects.filter(status="approved")
     paginator = Paginator(course, 8) # Show 25 contacts per page.
@@ -307,6 +329,7 @@ def random_integer_generator(size = 8, chars = string.digits):
 @login_required(login_url="accounts:login")
 @check_if_user_in_course
 @check_if_user_in_pending_payment
+@check_if_user_data_complete
 def checkout(request,course):
     form=CashForm(request.POST or None,request.FILES or None)
     my_course=get_object_or_404(Course,slug=course)
@@ -368,11 +391,12 @@ def payment_method_ajax(request):
 from paypalcheckoutsdk.orders import OrdersCreateRequest
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
 from paypalcheckoutsdk.core import SandboxEnvironment,PayPalHttpClient
-CLIENT_ID="AZDbi4r4DSUE9nyMkO0QQjoMwgpfLjpKV7oYbbx_OlumnJM3xtNNoCkHAkevpHfunFJAaqCUSBvnLJez" # paypal
-CLIENT_SECRET="ED45Xje6Z5SyKQe3EPTblfvM9gOidJTXq342B602AGNi4stk4i9wduEtYTbPzcGBDhTVAZ0cmbZg5b2w" # paypl
+CLIENT_ID=os.environ["CLIENT_ID"]
+CLIENT_SECRET=os.environ["CLIENT_SECRET"]
 @login_required(login_url="accounts:login")
 @check_if_user_in_course
 @check_if_user_in_pending_payment
+@check_if_user_data_complete
 def create(request,course):
     if request.method =="POST":
         try:
@@ -457,6 +481,7 @@ def capture(request,order_id,course):
 @login_required(login_url="accounts:login")
 @check_if_user_in_course
 @check_if_user_in_pending_payment
+@check_if_user_data_complete
 def paymob_payment(request,course):
     if request.is_ajax():     
         
@@ -480,7 +505,7 @@ def paymob_payment(request,course):
         {
             "name": my_course.slug,
             "amount_cents": my_course.get_price() * 100,
-            "description": my_course.name,
+            "description": "course",
             "quantity": "1"
         },
     
@@ -564,12 +589,28 @@ def check_paymob_course_payment(request):
         r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
         data=r_2.json() 
         print(data) 
-        course_slug=data['order']["items"][0]["name"]
-        course=Course.objects.get(slug=course_slug)
+        descrption=data["order"]["items"][0]["description"]
         username=data["order"]["shipping_data"]["first_name"]
-        user=User.objects.get(username=username)
         transaction_number=request.GET["id"]
-        Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
+        name=data['order']["items"][0]["name"]
+        user=User.objects.get(username=username)
+        if descrption == "course":
+            course=Course.objects.get(slug=name)
+            Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
+        elif descrption =="consultant":
+            teacher=Teacher_Time.objects.get(id=name)
+            consult=Consultant.objects.create(user=user,teacher=teacher,status="pending")
+            transaction_number=request.GET["id"]
+            Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,consult=consult,user=user,status="pending")
+        elif descrption == "blogs":
+            prices=Prices.objects.get(id=name)
+            now= datetime.date.today()
+            payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,user=user)
+            if prices.get_duration() == 'monthly':
+                payment.expired_at= now + datetime.timedelta(days=30*6)
+            else:
+                payment.expired_at= now + datetime.timedelta(days=365)
+            payment.save()
         messages.success(request,"your request is being review by admin")
     except:
         pass
@@ -587,4 +628,24 @@ def failed(request):
 def faqs(request):
     return render(request,"faqs.html")
 
-    
+################  errors
+
+def my_custom_page_not_found_view(request, exception, template_name="404.html"):
+    response = render(request,template_name,context={"error":404})
+    response.status_code = 404
+    return response
+  
+
+def my_custom_error_view(request, template_name="404.html"):
+    response = render(request,template_name,context={"error":500})
+    response.status_code = 500
+    return response
+def my_custom_permission_denied_view(request, exception, template_name="404.html"):
+    response = render(request,template_name,context={"error":403})
+    response.status_code = 403
+    return response
+
+def my_custom_bad_request_view(request, exception, template_name="404.html"):
+    response = render(request,template_name,context={"error":400})
+    response.status_code = 400
+    return response

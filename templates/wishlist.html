@@ -57,7 +57,7 @@
                             <div class="singel-course mt-30">
                                 <div class="thum">
                                     <div class="image">
-                                        <img src="{{i.image.url}}" alt="Course">
+                                        <img src="{{i.image}}" alt="Course">
                                     </div>
                                     <div class="price">
                                         <span>${{i.price|floatformat}}</span>
@@ -80,7 +80,7 @@
         
                                     <div class="course-teacher">
                                         <div class="thum">
-                                            <a href="#"><img src="{{i.Instructor.image.url}}" alt="teacher_{{i.Instructor.username}}"></a>
+                                            <a href="#"><img src="{{i.Instructor.image}}" alt="teacher_{{i.Instructor.username}}"></a>
                                         </div>
                                         <div class="name">
                                             <a href="#"><h6>{{i.Instructor.username.title}}</h6></a>
@@ -109,7 +109,7 @@
                                     <div class="col-md-6">
                                         <div class="thum">
                                             <div class="image">
-                                                <img src="{{i.image.url}}" alt="Course">
+                                                <img src="{{i.image}}" alt="Course">
                                             </div>
                                             <div class="price">
                                                 <span>${{i.price|floatformat}}<br></span>
@@ -131,7 +131,7 @@
                                           
                                             <div class="course-teacher">
                                                 <div class="thum">
-                                                    <a href="{% url 'home:teacher' i.Instructor.slug %}"><img src="{{i.Instructor.image.url}}" alt="teacher"></a>
+                                                    <a href="{% url 'home:teacher' i.Instructor.slug %}"><img src="{{i.Instructor.image}}" alt="teacher"></a>
                                                 </div>
                                                 <div class="name">
                                                     <a href="{% url 'home:teacher' i.Instructor.slug %}"><h6>{{i.Instructor.username.title}}</h6></a>

@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect,reverse
+import os
 from django.contrib.auth import logout 
 from django.contrib import messages
 from .forms import *
@@ -15,8 +16,8 @@ import json,requests
 from .forms import MyCustomLoginForm,MyCustomSignupForm
 from allauth.account.views import SignupView,LoginView
 # from allauth.account.forms import LoginForm,SignupForm
-Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
-storage_name="agartha"
+Storage_Api=os.environ["Storage_Api"]
+storage_name=os.environ["storage_name"]
   
 # Create your views here.
 

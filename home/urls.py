@@ -32,7 +32,8 @@ path("check/course/payment/",views.check_paymob_course_payment,name="check_cours
 path("create/<str:course>/",views.create,name="create"),
 path("capture/<str:order_id>/<str:course>/",views.capture,name="capture"),
 
-
+###### subscribe news
+path("subscribe/",views.subscribe,name="subscribe"),
 #search
 path("courses/search/",views.course_search,name="course_search"),
 path("search/",views.global_search,name="global_search"),

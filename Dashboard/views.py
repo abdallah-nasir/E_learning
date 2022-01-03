@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+import os
 from django.template.defaultfilters import urlencode
 from django.urls import reverse
 from Consultant.models import Cosultant_Payment,Consultant,Teacher_Time
@@ -26,11 +27,11 @@ from django.contrib.auth import get_user_model
 User=get_user_model()
 urlencode
 # Create your views here.
-AccessKey="0fde5d56-de0e-4403-b605b1a5d283-0d19-4c2f"
-Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
-library_id="19804"
-storage_name="agartha"
-agartha_cdn="agartha1.b-cdn.net"
+AccessKey=os.environ['AccessKey']
+Storage_Api=os.environ['Storage_Api']
+library_id=os.environ['library_id']
+storage_name=os.environ['storage_name']
+agartha_cdn=os.environ['agartha_cdn']
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -41,10 +42,10 @@ def home(request):
     form=ChangeTeacherDataForm(request.POST or None,request.FILES or None,instance=request.user)
     form.initial["account_image"]=None
     form.initial["facebook"]=request.user.get_user_data()["facebook"]
-    form.initial["linkedin"]=request.user.get_user_data()["facebook"]
-    form.initial["twitter"]=request.user.get_user_data()["facebook"]
-    form.initial["title"]=request.user.get_user_data()["facebook"]
-    form.initial["about_me"]=request.user.get_user_data()["facebook"]
+    form.initial["linkedin"]=request.user.get_user_data()["linkedin"]
+    form.initial["twitter"]=request.user.get_user_data()["twitter"]
+    form.initial["title"]=request.user.get_user_data()["title"]
+    form.initial["about_me"]=request.user.get_user_data()["about_me"]
     if request.method == 'POST':
         if form.is_valid():     
             instance=form.save(commit=False)
@@ -73,9 +74,17 @@ def home(request):
                         pass
             except:
                 pass
+            facebook=form.cleaned_data.get('facebook')
+            linkedin=form.cleaned_data.get('linkedin')
+            twitter=form.cleaned_data.get('twitter')
+            about_me=form.cleaned_data.get('about_me')
+            title=form.cleaned_data.get('title')
+            data={"social":[{"facebook":facebook,"linkedin":linkedin,"twitter":twitter}],
+            "about_me":about_me,"title":title}
+            instance.my_data=json.dumps(data)
             instance.save()
-            form=ChangeUserDataForm(instance=request.user)
-            form.initial["account_image"]=None
+            # form=ChangeUserDataForm(instance=request.user)
+            # form.initial["account_image"]=None
             messages.success(request,"Profile Updated Successfully")
     context={"form":form}
     return render(request,"dashboard_home.html",context)

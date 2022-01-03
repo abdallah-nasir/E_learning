@@ -4,12 +4,10 @@ from django.conf import settings
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail,send_mass_mail
-
+from Blogs import models as blog_model
 import string, random
 from django.utils import translation
 import Quiz.models   
-from converter import Converter
-from pymediainfo import MediaInfo
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from embed_video.fields import EmbedVideoField
@@ -19,22 +17,30 @@ import time
 import datetime
 import json
 from Dashboard.models import Rejects
-User=settings.AUTH_USER_MODEL
+from django.contrib.auth import get_user_model
+User=get_user_model()
 Quiz= Quiz.models.Quiz()
 from django.template.loader import render_to_string
 # Create your models here.
-
-def upload_course_image(instance,filename):
-    place=f"courses/images/{instance.Instructor}/{filename}"
-    return place
-def upload_course_videos(instance,filename):
-    place=f"courses/videos/{instance.user.username}/{instance.name}/{filename}"
-    return place
+def get_home_data():
+    events=Events.objects.filter(status="approved").order_by("-date")[:5]
+    courses=Course.objects.filter(status="approved").order_by("-id")[0:5]
+    teachers=User.objects.filter(account_type="teacher").order_by("?")[:4]
+    categories=Category.objects.order_by("?")[:6]
+    testimonial=Testimonials.objects.order_by("?")[:4]
+    blogs=blog_model.Blog.objects.filter(status="approved").order_by("-id")[:4]
+    context={"events":events,"courses":courses,"teachers":teachers,"blogs":blogs,"categories":categories,"testimonials":testimonial}
+    return context
 class Category(models.Model):
     name=models.CharField(max_length=100)
     slug=models.SlugField(unique=True,blank=True,null=True)
     def __str__(self):
         return self.name  
+
+    def get_courses(self):
+        courses=Course.objects.filter(branch__category=self).count()
+        return courses
+
 @receiver(pre_save, sender=Category) 
 def pre_save_receiver(sender, instance, *args, **kwargs):       
     if instance.slug == None: 
@@ -394,3 +400,21 @@ class News(models.Model):
     # approved=models.BooleanField(default=False)
     def __str__(self):
         return str(self.id)
+
+
+class Subscribe(models.Model):
+    name=models.CharField(max_length=50)
+    email=models.EmailField(max_length=100)
+    phone=models.CharField(max_length=25)
+    user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Testimonials(models.Model):
+    review=models.TextField()
+    user=models.ForeignKey(User,on_delete=models.SET_NULL,blank=False,null=True)
+
+    def __str__(self):
+        return self.user.username

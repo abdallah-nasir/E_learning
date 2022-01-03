@@ -187,9 +187,8 @@ class Blog_Views(models.Model):
         return self.blog.name
 
 PAYMENTS=(
-    ("Bank Transaction","Bank Transaction"),
+    ("Paymob","Paymob"),
     ("Western Union","Western Union"),
-    ("Vodafone Cash","Vodafone Cash"),
     ("Paypal","Paypal")
 )
 def upload_blog_payment(instance,filename):

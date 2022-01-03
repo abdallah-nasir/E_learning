@@ -84,3 +84,15 @@ class CashForm(forms.Form):
                 raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
         except:
             raise forms.ValidationError(f"invalid image")
+
+class SubscribeForm(forms.ModelForm):
+    class Meta:
+        model=Subscribe
+        exclude=["user"]
+
+
+    def clean_email(self):
+        email=self.cleaned_data.get("email")
+        if Subscribe.objects.filter(email=email).exists():
+            raise forms.ValidationError("this email is already registered in our news")
+        return email

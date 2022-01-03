@@ -15,7 +15,8 @@ admin.site.register(Wishlist)
 admin.site.register(Teacher_review)
 admin.site.register(Payment,PaymentAdmin)
 admin.site.register(News)
-
+admin.site.register(Subscribe)
+admin.site.register(Testimonials)
 
 
 

@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
 # import django_heroku
 
 from pathlib import Path
@@ -22,11 +25,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gq)0=tf4ty9d(r=cygqos=o+a0x=d^e&f4hmg=@fooo)6uq4=c'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+if DEBUG == False:
+    TEMPLATE_DEBUG = DEBUG
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = True
+    SECURE_SSL_REDIRECT=True
+    SESSION_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000 #year
+    SECURE_HSTS_PRELOAD =True
+    SESSION_COOKIE_PATH = '/;HttpOnly'
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    CSRF_COOKIE_SECURE = True 
+    SECURE_REFERRER_POLICY = 'same-origin'
+    SECURE_HSTS_INCLUDE_SUBDOMAINS =True
 ALLOWED_HOSTS = ["127.0.0.1","www.agartha.academy","agartha.academy"]
 
 
@@ -40,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',  
     #y apps
     "home", 
     "Quiz",
@@ -47,6 +63,7 @@ INSTALLED_APPS = [
     "Blogs",
     "Consultant",
     "Dashboard",
+    "Frontend",
     #my packegs
     'rosetta',
     'embed_video',
@@ -81,6 +98,7 @@ MIDDLEWARE = [
    
     'accounts.middleware.OneSessionPerUserMiddleware',
     'crum.CurrentRequestUserMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     # "whitenoise.middleware.WhiteNoiseMiddleware",
     #  "debug_toolbar.middleware.DebugToolbarMiddleware",
        ]
@@ -102,7 +120,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 "home.processors.global_wishlist",
                 "home.processors.global_news",
-
+                'social_django.context_processors.backends',  
+                'social_django.context_processors.login_redirect', 
                 
 
             ],
@@ -125,9 +144,9 @@ DATABASES = {
 # DATABASES={
 #     "default":{
 #         "ENGINE":"django.db.backends.postgresql_psycopg2",
-#         "NAME":"agarthaa_e_learining",
-#         "USER":"agarthaa_root",
-#         "PASSWORD":"AgarthaNew",
+#         "NAME":os.environ["NAME"],
+#         "USER":os.environ['USER'],
+#         "PASSWORD":os.environ['PASSWORD'],
 #         "HOST":"localhost",
 #         "PORT":"5432",
 #         # 'OPTIONS': {'sslmode': 'require'},
@@ -174,21 +193,21 @@ LANGUAGES = (            # supported languages
     ("ar",_("Arabic")),
 )
 TIME_ZONE = 'Africa/Cairo'
-# STATIC_URL = 'https://agartha2.b-cdn.net/static/'
-# # MEDIA_URL="https://agartha2.b-cdn.net/static/"
-# # MEDIA_ROOT="https://agartha2.b-cdn.net""
-# STATIC_ROOT="https://agartha2.b-cdn.net"
-# STATICFILES_DIRS=[
-#   "https://agartha2.b-cdn.net/static"
-# ]  
-    
-STATIC_URL = '/static/'
+STATIC_URL = 'https://garthaacademy.b-cdn.net/static/'
 # MEDIA_URL="https://agartha2.b-cdn.net/static/"
 # MEDIA_ROOT="https://agartha2.b-cdn.net""
-STATIC_ROOT=BASE_DIR/"static"
+STATIC_ROOT="https://garthaacademy.b-cdn.net"
 STATICFILES_DIRS=[
-  BASE_DIR/"static_in_env"
-]     
+  "https://garthaacademy.b-cdn.net/static/"
+]  
+    
+# STATIC_URL = '/static/'
+# # MEDIA_URL="https://agartha2.b-cdn.net/static/"
+# # MEDIA_ROOT="https://agartha2.b-cdn.net""
+# STATIC_ROOT=BASE_DIR/"static"
+# STATICFILES_DIRS=[
+#   BASE_DIR/"static_in_env"
+# ]     
 # for translation
 LOCALE_PATHS=(   
     os.path.join(BASE_DIR,"locale/"),
@@ -209,17 +228,19 @@ MESSAGE_TAGS = {
 }
 # "Email Backend"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'agartha.new@gmail.com'
-EMAIL_HOST_PASSWORD ="wydaouprzdfqqbgx"
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL= False
-EMAIL_PORT = '587' 
+EMAIL_HOST = 'mail.agartha.academy'
+EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
+EMAIL_HOST_PASSWORD =os.environ["EMAIL_HOST_PASSWORD"]
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL= True
+EMAIL_PORT = 465 
 #allauth   
 SITE_ID=1
 LOGIN_REDIRECT_URL ="home:home"
-ACCOUNT_ADAPTER="allauth.account.adapter.DefaultAccountAdapter"
-SOCIALACCOUNT_ADAPTER ="allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
+LOGIN_URL = 'account_login'
+LOGOUT_URL = 'account_logout'
+# ACCOUNT_ADAPTER="allauth.account.adapter.DefaultAccountAdapter"
+# SOCIALACCOUNT_ADAPTER ="allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS =True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
@@ -245,11 +266,12 @@ ACCOUNT_PRESERVE_USERNAME_CASING =False
 ACCOUNT_SESSION_REMEMBER =None
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE =True
 ACCOUNT_SIGNUP_REDIRECT_URL =LOGIN_REDIRECT_URL
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # ACCOUNT_USERNAME_BLACKLIST (=[])
 ACCOUNT_UNIQUE_EMAIL =True
 ACCOUNT_USERNAME_MIN_LENGTH =3
 ACCOUNT_USERNAME_REQUIRED =True
-SOCIALACCOUNT_AUTO_SIGNUP =False
+SOCIALACCOUNT_AUTO_SIGNUP =True
 SOCIALACCOUNT_EMAIL_VERIFICATION =ACCOUNT_EMAIL_VERIFICATION
 SOCIALACCOUNT_EMAIL_REQUIRED =ACCOUNT_EMAIL_REQUIRED
 SOCIALACCOUNT_QUERY_EMAIL =ACCOUNT_EMAIL_REQUIRED
@@ -257,16 +279,16 @@ SOCIALACCOUNT_STORE_TOKENS =True
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-        'client_id':"919138982949-ftjb5mrn6llc1s3bdnpias3peenncjes.apps.googleusercontent.com",
-        'secret':"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",
+        'client_id':os.environ["google_client_id"],
+        'secret':os.environ["google_secret"],
         'key': '',
        
     }
     },
        'facebook': {
     'APP': {
-        'client_id':"1088677928331903",
-        'secret':"e6107d02b02adff2a13f892ae9ec3296",
+        'client_id':os.environ["facebook_client_id"],
+        'secret':os.environ["facebook_secret"],
         'key': '',
        
     }
@@ -285,8 +307,8 @@ SOCIALACCOUNT_PROVIDERS = {
     #     'public-profile-url',
     # ], 
  'APP': {
-        'client_id':"866roqo1m80lvo",
-        'secret':"3I81H1GWVbhr6nXV",
+        'client_id':os.environ["linkedin_client_id"],
+        'secret':os.environ["linkedin_secret"],
         'key': '',
        
     },    
@@ -299,11 +321,17 @@ ACCOUNT_FORMS = {
     'login': 'accounts.forms.MyCustomLoginForm',
 
 } 
-SOCIALACCOUNT_FORMS = {
-    # 'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
-    'signup': 'accounts.forms.MyCustomSocialSignupForm',
-}
+# SOCIALACCOUNT_FORMS = {
+#     # 'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+#     'signup': 'accounts.forms.MyCustomSocialSignupForm',
+# }
+
+# python social auth
 AUTHENTICATION_BACKENDS = [
+
+    'social_core.backends.facebook.FacebookOAuth2',
+ 'social_core.backends.linkedin.LinkedinOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
     # ............
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -312,12 +340,39 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
     #      ...
 ]
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    # "accounts.pipeline.auth_allowed"
+)
+SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = os.environ["linkedin_client_id"]
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = os.environ["linkedin_secret"]
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ["google_client_id"]
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ["google_secret"]
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ["facebook_client_id"]
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ["facebook_secret"]
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+# SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_LOGIN_ERROR_URL ="home:home"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_liteprofile', 'r_emailaddress']
+# Add the fields so they will be requested from linkedin.
+SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['emailAddress']
+# Arrange to add the fields to UserSocialAuth.extra_data
+SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
+                                          ('firstName', 'first_name'),
+                                          ('lastName', 'last_name'),
+                                          ('emailAddress', 'email_address')]
 COURSE_MODEL="home.Course"
 
-
-            # CkEditor
+# CkEditor
 CKEDITOR_CONFIGS = {
     'awesome_ckeditor': {
           
@@ -342,5 +397,5 @@ CKEDITOR_RESTRICT_BY_USER =True
 CKEDITOR_BROWSE_SHOW_DIRS =False
 CKEDITOR_FORCE_JPEG_COMPRESSION =True
 ### google recaptcha
-RECAPTCHA_PUBLIC_KEY = "6Lfj99MdAAAAAL4WwAN00kA0crEh_K5K0HX9Bt5J"
-RECAPTCHA_PRIVATE_KEY = "6Lfj99MdAAAAAKWwKULbY8AvmsTDQBxj13jPIAiN"
+RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
+RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]

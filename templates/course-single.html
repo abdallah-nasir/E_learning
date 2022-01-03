@@ -408,7 +408,7 @@ width:100% !important;
                                 <h4>Recent Events</h4> 
                                 {% for event in course.related_events %}
                                 <div class="cont">
-                                    <a href="#"><h4>{{event.name|truncatewords:10}}</h4></a>
+                                    <a href="{% url 'home:event' event.slug %}"><h4>{{event.name|truncatewords:10}}</h4></a>
                                    
                                 </div>
                                 <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image}}); max-height:7rem; margin-top:0px;">

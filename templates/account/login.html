@@ -65,7 +65,6 @@ max-height: 55rem !important;
                       </div> 
                           {% endfor %}
                     
-          
                         <label for="username">Username / Email</label>
                           <input class="form-styling" type="text" name="login" placeholder="" />
                          {% for error in form.username.errors %}
@@ -169,15 +168,15 @@ max-height: 55rem !important;
                 <div class="signin-social flex-c-m">
                   {% for provider in socialaccount_providers %}
                   {% if provider.name == "Facebook" %}
-                    <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" class="login100-social-item bg1">
+                    <a href="#" class="login100-social-item bg1">
                         <span class="iconify" data-icon="ic:outline-facebook"></span>
                     </a>
                     {% elif provider.name == "LinkedIn" %}
-                    <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" class="login100-social-item bg2">
+                    <a href="{% url 'social:begin' backend='linkedin-oauth2' %}" class="login100-social-item bg2">
                         <span class="iconify" data-icon="zmdi:linkedin-box"></span>
                     </a>
                     {% elif provider.name == "Google" %}
-                    <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" class="login100-social-item bg3">
+                    <a href="{% url 'social:begin' backend='google-oauth2' %}" class="login100-social-item bg3">
                         <!--<i class="fa fa-google"></i>-->
                         <span class="iconify" data-icon="flat-color-icons:google"></span>
                     </a>

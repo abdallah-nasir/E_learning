@@ -16,5 +16,6 @@ path("add-blog-comment-reply/<str:id>/<str:reply>/",views.blog_comment_reply,nam
 ##### Payment 
 path("paypal/create/<str:id>/",views.paypal_create,name="paypal_create"),
 path("paypal/capture/<str:order_id>/<str:price_id>/",views.paypal_capture,name="paypal_capture"),
+path("ajax/paymob/<str:id>/",views.paymob_payment,name="paymob_payment"),
 
 ]

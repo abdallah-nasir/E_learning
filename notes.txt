@@ -1,4 +1,9 @@
-payment for director
-duration for blogs is 6 and yealry is 12  --done
-iban key redirect 
-profile image not required 
+director 
+       approve  > reject
+       payment > reject
+
+
+subscribe
+    add subscribe db 
+
+add  validation to user comments

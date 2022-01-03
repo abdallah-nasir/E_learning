@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.http.response import FileResponse
 from django.shortcuts import render,get_object_or_404
 from django.urls import path,include,re_path
+from django.conf.urls import (handler400, handler403, handler404, handler500
+)
 from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.conf.urls.static import static
@@ -30,6 +32,7 @@ urlpatterns = [
 ]
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
+    path('oauth/', include('social_django.urls', namespace='social')), 
     path('accounts/', include('allauth.urls')),    
     path('', include("home.urls",namespace="home")),
     path('quiz/', include("Quiz.urls",namespace="quiz")), 
@@ -46,3 +49,9 @@ urlpatterns += i18n_patterns(
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+
+
+handler404 = 'home.views.my_custom_page_not_found_view'
+handler500 = 'home.views.my_custom_error_view'
+handler403 = 'home.views.my_custom_permission_denied_view'
+handler400 = 'home.views.my_custom_bad_request_view'   

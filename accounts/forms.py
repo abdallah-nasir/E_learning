@@ -103,9 +103,8 @@ class MyCustomSignupForm(SignupForm):
 class MyCustomSocialSignupForm(SocialSignUpForm):
     account_type=forms.ChoiceField(required=True,choices=ACCOUNT_TYPE)
     phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
-    image=forms.ImageField(required=True)
+    # image=forms.ImageField(required=True)
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
-
 
     def clean(self):
         image=self.cleaned_data.get("image")
@@ -123,7 +122,7 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
     def save(self, request):
         # Ensure you call the parent class's save.
         # .save() returns a User object.
-        user = super(MyCustomSignupForm, self).save(request)
+        user = super(MyCustomSocialSignupForm, self).save(request)
         account_type=self.cleaned_data["account_type"]
         user.account_type=account_type
         user.phone=self.cleaned_data["phone"]
@@ -144,7 +143,7 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
             except:
                 pass
         else:
-            user.account_image="https://agartha1.b-cdn.net/default_image/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
+            user.account_image=f"https://{agartha_cdn}/default_image/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
 
         user.first_name=user.username
         # if self.cleaned_data["account_type"] == "teacher":
@@ -162,6 +161,9 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
             msg.send()
             messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
         return user
+
+
+
 
 class Teacher_Form(forms.ModelForm):
     username=forms.CharField(max_length=100,widget=forms.TextInput(attrs={"placeholder":"Username / Email"}))

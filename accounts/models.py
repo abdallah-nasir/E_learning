@@ -12,7 +12,9 @@ from django.dispatch import receiver
 import random,string
 from Dashboard import models as dashboard_models
 from django.conf import settings
-import json
+from home import models as home_models
+import json,os
+agartha_cdn=os.environ["agartha_cdn"]
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -27,9 +29,9 @@ ACCOUNT_TYPE=(
   
 
 class User(AbstractUser):
-    account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20)
+    account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20,default="student")
     phone=models.CharField(max_length=12)
-    account_image=models.ImageField(upload_to=upload_avatar)
+    account_image=models.ImageField(blank=True,null=True,default=f"https://{agartha_cdn}/default_image/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg")
     my_data=models.TextField(blank=True,null=True)
     code=models.CharField(max_length=50,blank=True,null=True)
     slug=models.SlugField(unique=True,blank=True,null=True)
@@ -60,6 +62,10 @@ class User(AbstractUser):
                 linkedin=None
         context={"about_me":about_me,"title":title,"facebook":facebook,"linkedin":linkedin,"twitter":twitter}
         return context
+
+    def get_user_courses(self):
+        courses=home_models.Course.objects.filter(Instructor=self,status="approved").count()
+        return courses
 class LoggedInUser(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='logged_in_user')
     session_key = models.CharField(max_length=100, null=True, blank=True)
@@ -128,3 +134,4 @@ class TeacherForms(models.Model):
                 linkedin=None
         context={"about_me":about_me,"title":title,"facebook":facebook,"linkedin":linkedin,"twitter":twitter}
         return context
+

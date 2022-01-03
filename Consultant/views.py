@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from .models import *
 from .forms import *
+import os
 from .decorators import check_user_is_has_consul
 from django.http import JsonResponse
 import json,requests,random,string
@@ -13,14 +14,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
-Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
-storage_name="agartha"
-library_id="19804"
-storage_name="agartha"
-agartha_cdn="agartha1.b-cdn.net"
-PAYMOB_API_KEY = "ZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKSVV6VXhNaUo5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRFNE1ESTVMQ0p1WVcxbElqb2lhVzVwZEdsaGJDSjkuU0VhV0IwbjlMVklMeHVKd1NqTFVldDNWc0pqMDVMZjBOVUNuTmZROGZJOFdxREswb3FUOE1pYjBUeTY2MHlXZzRsUGNXU3dhTHZDc0x5RVd1LUtRaVE="  # PAYMOB
-PAYMOB_FRAME="269748"
-PAYMOB_CONSULT_INT=585334
+Storage_Api=os.environ["Storage_Api"]
+storage_name=os.environ["storage_name"]
+library_id=os.environ["library_id"]
+storage_name=os.environ["storage_name"]
+agartha_cdn=os.environ['agartha_cdn']
+PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
+PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
+PAYMOB_CONSULT_INT=os.environ['PAYMOB_CONSULT_INT']
 from django.db.models import F
 def home(request):
     category=Category.objects.all()
@@ -123,7 +124,7 @@ def paymob_payment(request,teacher):
         {
             "name": teacher.id,
             "amount_cents": teacher.price * 100,
-            "description": f"Teacher {teacher.id}",
+            "description":"consultant",
             "quantity": "1"
         },
     
@@ -194,36 +195,12 @@ def paymob_payment(request,teacher):
 
 
 
-@csrf_exempt    
-def check_paymob_payment(request):
-    try:
-        id=request.GET["id"]
-        url_1 = "https://accept.paymob.com/api/auth/tokens"
-        data_1 = {"api_key": PAYMOB_API_KEY}
-        r_1 = requests.post(url_1, json=data_1)
-        token = r_1.json().get("token")
-        url_2=f"https://accept.paymob.com/api/acceptance/transactions/{id}"
-        header= {"Bearer":token}
-        r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
-        data=r_2.json() 
-        print(data) 
-        teacher_id=data['order']["items"][0]["name"]
-        username=data["order"]["shipping_data"]["first_name"]
-        user=User.objects.get(username=username)
-        teacher=Teacher_Time.objects.get(id=teacher_id)
-        consult=Consultant.objects.create(user=user,teacher=teacher,status="pending")
-        transaction_number=request.GET["id"]
-        Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,consult=consult,user=user,status="pending")
-        messages.success(request,"your request is being review by admin")
-    except:
-        pass
-    return redirect(reverse("accounts:course_payment"))
 
 from paypalcheckoutsdk.orders import OrdersCreateRequest
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
 from paypalcheckoutsdk.core import SandboxEnvironment,PayPalHttpClient
-CLIENT_ID="AZDbi4r4DSUE9nyMkO0QQjoMwgpfLjpKV7oYbbx_OlumnJM3xtNNoCkHAkevpHfunFJAaqCUSBvnLJez" # paypal
-CLIENT_SECRET="ED45Xje6Z5SyKQe3EPTblfvM9gOidJTXq342B602AGNi4stk4i9wduEtYTbPzcGBDhTVAZ0cmbZg5b2w" # paypl
+CLIENT_ID=os.environ['CLIENT_ID']
+CLIENT_SECRET=os.environ["CLIENT_SECRET"]
 
 @login_required(login_url="accounts:login")
 @check_user_is_has_consul
