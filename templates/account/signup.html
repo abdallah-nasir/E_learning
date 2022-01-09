@@ -1,207 +1,186 @@
-{% load static %}
+{% load static  %}
 {% load crispy_forms_tags %}
 {% load i18n %}
 {% load account socialaccount %}
 {% get_providers as socialaccount_providers %}
-
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
 <head>
     <meta charset="UTF-8">
-    <title>CodePen - Log in/Sign up screen animation</title>
-    <link rel="stylesheet" href="{% static 'login/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'login/css/util.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'login/css/main.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'login/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{% static 'login/fonts/iconic/css/material-design-iconic-font.min.css' %}">
+    <title>Agartha Academy</title>
+    <link rel="stylesheet" href="{% static 'login/css/sign-style.css' %}">
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     <script src="https://code.iconify.design/2/2.1.0/iconify.min.js"></script>
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous"> -->
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+  </head>
 <style type="text/css">
-  .btn-signin{
-    background-color:#0e4fe6 !important;
-    color:#fff;
-  }
-.frame{
-height: auto !important;
-max-height: 55rem !important;
-  }
+#side{
+  margin-left: 0 !important;
+}
+#col{
+    margin-top:5%;
+}
+.card-back{
+  height:149% !important;
+}
 </style>
-</head>
 <body>
-  {% if messages %}
-  {% for message in messages %}
-    <!-- partial:index.partial.html -->
-    <div style='text-align: center;' class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-      <strong>{{message.tags}}!</strong>{{message}}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div> 
-    {%  endfor %}
-    {% endif %}
-    
-    <div class="limiter">
- 
-        <div class="container-login100" style="background-image: url('{% static 'login/imasges/bg-01.jpg' %}');">
-            <div class="frame">
-                <div class="nav">
-                    <ul class="links">
-                        <li class="signin-active"><a class="btn">Sign in</a></li>
-                        <li class="signup-inactive"><a class="btn">Sign up </a></li>
-                    </ul>
-                </div>
-                
-                <div ng-app ng-init="checked = false">
-                    <form class="form-signin" action="{% url 'accounts:login' %}" method="post" >
-                      {% csrf_token %}
-                      {% for error in login_form.non_field_errors %}
-                      <div style='text-align: center;' class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong></strong>{{error|escape}}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div> 
-                          {% endfor %}
-                    
-          
-                        <label for="username">Username / Email</label>
-                          <input class="form-styling" type="text" name="login" placeholder="" />
-                         {% for error in login_form.username.errors %}
-                        <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
-                           {% endfor %}
-                           <br>
-                            <label for="password">Password</label>
-                          <input class="form-styling" type="password" name="password" placeholder="" />
-                          {% for error in login_form.password.errors %}
-                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
-                             {% endfor %}
-                        <input type="checkbox" name="remember" id="checkbox" />
-                        <label for="checkbox"><span class="ui"></span>Keep me signed in</label>
-                        <div class="btn-animate">
-                          {% if redirect_field_value %}
-                          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                          {% endif %}
-                            <button type="submit" class="btn-signin">SIGN IN</button>
-                        </div>
-                    </form>
-                   
-                    <form class="form-signup" action="{% url 'accounts:signup' %}" method="POST" name="form" >
-                      {% csrf_token %}
-                      {% for error in form.non_field_errors %}
-                      <div style='text-align: center;' class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong></strong>{{error|escape}}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div> 
-                          {% endfor %}
-                          <label for="fullname">User name</label>
-                          <input class="form-styling" type="text" name="username" placeholder="" />
-                          {% for error in form.username.errors %}
-                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
-                             {% endfor %}
-                          <label for="email">Email</label>
-                          <input class="form-styling" type="text" name="email" placeholder="" />
-                          {% for error in form.email.errors %}
-                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
-                             {% endfor %}
-                          <label for="id_account_type">
-                              Are You
-                          </label>
   
-                          <select name="account_type" class="form-styling select form-control" id="id_account_type" placeholder="">
-                              <option value="student" class="form-styling">student</option>
-                              <option value="teacher" class="form-styling">teacher</option>
-                          </select>
-                          {% for error in form.account_type.errors %}
-                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
-                             {% endfor %}
-                          <label for="phone" >Phone Number</label>
-                          <input class="form-styling" type="text" name="phone" placeholder="" />
-                          {% for error in form.phone.errors %}
-                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
-                             {% endfor %}
-                             {{form.captcha}}
-                          <label for="password1">Password</label>
-                          <input class="form-styling" type="password" name="password1" placeholder="" />
-                          {% for error in form.password1.errors %}
-                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
-                             {% endfor %}
-                          <label for="password2">Confirm password</label>
-                          <input class="form-styling" type="password" name="password2" placeholder="" />
-                          {% for error in form.password2.errors %}
-                          <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
-                             {% endfor %}
-                          {% if redirect_field_value %}
-                          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+<div class="container">
+  <div class="row">
+    
+    <div class="col" id="col">
+        {% if messages %}
+  {% for message in messages %}
+      <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+        <strong>{{message.tags}}</strong> {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {%  endfor %}
+    {% endif %}
+    {% for error in form.non_field_errors %}
+    <div style="text-align: center;" class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong></strong> {{error|escape}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+{% endfor %}
+      <div class="text-center">
+        <h6 class="mb-0 pb-3"><span>Log In </span><span>Sign Up</span></h6> 
+        <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" /> 
+        <label for="reg-log"></label>
+        <div class="card-3d-wrap mx-auto">
+            <div class="card-3d-wrapper">
+                <div class="card-front">
+                    <div class="center-wrap">
+                        <div class="section text-center">
+                            <h4 class="mb-4 pb-3" id="h4sign">Log In</h4>
+                            <form  action="{% url 'accounts:login' %}" method="POST">
+                              {% csrf_token %}
+                         
+                            <div class="form-group">
+                            
+                            <input type="text" name="login" class="form-style" placeholder="Username / Email" id="logemail" autocomplete="off" required> 
+                            <i class="input-icon uil uil-at"></i> 
+                            {% for error in login_form.login.errors %}
+                              <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                 {% endfor %}
+                          </div>
+                            <div class="form-group mt-2">
+                               <input type="password" name="password" class="form-style" placeholder="Your Password"  autocomplete="off" required> <i class="input-icon uil uil-lock-alt" ></i>
+                               {% for error in login_form.password.errors %}
+                               <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                  {% endfor %}
+                               </div> 
+                               {% if redirect_field_value %}
+                               <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                               {% endif %}
+                              <button  class="btn mt-4" id="btn-submit">submit</button>
+                            </form>
+                            <p class="mb-0 mt-4 text-center"><a href="{% url 'account_reset_password' %}" class="link">Forgot your password?</a></p>
+                            <div class="signin-social flex-c-m">
+                              {% for provider in socialaccount_providers %}
+                              {% if provider.name == 'Google' %}
+                              <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"><i class="iconify" data-icon="flat-color-icons:google" id="icon-social-g"></i></a>
+                              {% elif provider.name == "Facebook" %}
+                              <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"><i class="bi bi-facebook" id="icon-social"></i></a>
+
+                              {% elif provider.name == "LinkedIn" %}
+                              <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"><i class="bi bi-linkedin" id="icon-social"></i></a>
                           {% endif %}
-                            <button type="submit" class="btn-signup">SIGN IN</button>
-
-                        
-                      
-                    </form>
-                    <!-- <div class="success">
-                        <svg width="270" height="270" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                             viewBox="0 0 60 60" id="check" ng-class="checked ? 'checked' : ''">
-                            <path fill="#ffffff" d="M40.61,23.03L26.67,36.97L13.495,23.788c-1.146-1.147-1.359-2.936-0.504-4.314
-                  c3.894-6.28,11.169-10.243,19.283-9.348c9.258,1.021,16.694,8.542,17.622,17.81c1.232,12.295-8.683,22.607-20.849,22.042
-                  c-9.9-0.46-18.128-8.344-18.972-18.218c-0.292-3.416,0.276-6.673,1.51-9.578" />
-                            <div class="successtext">
-                                <p> Thanks for signing up! Check your email for confirmation.</p>
-                            </div>
-                        </svg>
-                    </div> -->
-                </div>
-                <br>
-                <div class="forgot">
-                    <a href="#">Forgot your password?</a>
-                </div>
-
-                <div class="txt1 text-center signin-social">
-                    <span>
-                        <label> Or Sign Up Using </label>
-                    </span>
-                </div>
-                <br>
               
-                <div class="signin-social flex-c-m">
-                  {% for provider in socialaccount_providers %}
-                  {% if provider.name == "Facebook" %}
-                    <a href="#" class="login100-social-item bg1">
-                        <span class="iconify" data-icon="ic:outline-facebook"></span>
-                    </a>
-                    {% elif provider.name == "LinkedIn" %}
-                    <a href="{% url 'social:begin' backend='linkedin-oauth2' %}" class="login100-social-item bg2">
-                        <span class="iconify" data-icon="zmdi:linkedin-box"></span>
-                    </a>
-                    {% elif provider.name == "Google" %}
-                    <a href="{% url 'social:begin' backend='google-oauth2' %}" class="login100-social-item bg3">
-                        <!--<i class="fa fa-google"></i>-->
-                        <span class="iconify" data-icon="flat-color-icons:google"></span>
-                    </a>
-                    {% endif %}
-                    {% endfor %}
+                              {% endfor %}
+
+                          </div>
+                         
+                        </div>
+                    </div>
+                  
                 </div>
-
-                <!-- <div>
-                    <div class="cover-photo"></div>
-                    <div class="profile-photo"></div>
-                    <h1 class="welcome">Welcome, Chris</h1>
-                    <a class="btn-goback" value="Refresh" onClick="history.go()">Go back</a>
-                </div> -->
+                <div class="card-back">
+                    <form  action="{% url 'accounts:signup' %}" method="POST">
+                      {% csrf_token %}
+                    <div id="center">
+                        <div class="section text-center">
+                            <h4 class="mb-4" id="h4sign">Sign Up</h4>
+                            <div class="form-group mb-2">
+                               <input type="text" name="username" class="form-style" placeholder="Your Full Name" autocomplete="off">
+                              <i class="input-icon uil uil-user"></i> 
+                              {% for error in form.username.errors %}
+                              <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                 {% endfor %}
+                            </div>
+                            <div class="form-group mt-2"> 
+                              <input type="email" name="email" class="form-style" placeholder="Your Email" id="logemail" autocomplete="off" required> 
+                              <i class="input-icon uil uil-at"></i> 
+                              {% for error in form.email.errors %}
+                              <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                 {% endfor %}
+                            </div>
+                            <div class="form-group mt-2"> 
+                              <input type="text" name="phone" class="form-style" placeholder="Your Mobile Number" id="logphone" autocomplete="off" required>
+                               <i class="input-icon uil uil-at"></i>
+                               {% for error in form.phone.errors %}
+                               <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                  {% endfor %}
+                               </div>
+                               <div class="form-group mt-2">
+                           
+                               <div class="row">
+                                <div class="col-3">
+                                    <label id="h4sign"><span style="color:red; font-size:20px">*</span> Gender:</label>
+                                </div> 
+                                <div class="col-3">
+                                    <input  name="gender" type="radio" id="typeuser1"  value="male">
+                                    <label for="typeuser1" id="lbl-are">Male</label>
+                                </div> 
+                                <div class="col-3">
+                                    <input name="gender" type="radio" id="typeuser2" value="female">
+                                    <label for="typeuser2" id="lbl-are">Female</label>
+                                </div>
+                                {% for error in form.gender.errors %}
+                                <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                   {% endfor %}
+                            </div> 
+                               </div>
+                            <div class="form-group mt-2">
+                               <input type="password" name="password1" class="form-style" placeholder="Your Password" id="logpass" autocomplete="off">
+                                <i class="input-icon uil uil-lock-alt"></i> 
+                                {% for error in form.password1.errors %}
+                                <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                   {% endfor %}
+                              </div>
+                            <div class="form-group mt-2"> 
+                              <input type="password" name="password2" class="form-style" placeholder="Confirm Password" id="logpass" autocomplete="off">
+                               <i class="input-icon uil uil-lock-alt"></i>
+                               {% for error in form.password2.errors %}
+                               <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                  {% endfor %}
+                               </div>
+                               <div class="form-group mt-2">
+                                {{form.captcha|as_crispy_field}}
+                              </div>
+                            <button  class="btn mt-4" id="btn-submit-su">submit</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
             </div>
-
         </div>
     </div>
-        <!-- partial -->
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.14/angular.min.js'></script>
-        <script src="{% static 'login/script.js' %}"></script>
-        <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
-         -->
+    </div>
+  </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+</script>
 </body>
 </html>
+

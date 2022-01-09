@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>E Learning - Dashboard</title>
+    <title>Agartha Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="{% static 'dashboard/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -63,7 +63,8 @@
                 Pages
             </div>
 
-            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- Nav Item - Pages Collapse Menu -->0
+            {% if request.user.is_director or request.user.is_superuser %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseteacher"
                     aria-expanded="true" aria-controls="collapseteacher">
@@ -78,6 +79,8 @@
                     </div>
                 </div>
             </li>
+            {% endif %}
+            {% if request.user.is_superuser %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
@@ -93,7 +96,7 @@
                     </div>
                 </div>
             </li>
-
+            {% endif %}
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOnw"
@@ -172,6 +175,7 @@
                 </div>
             </div>
         </li>
+        {% if request.user.is_superuser or request.user.is_director %}
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapceprice"
                 aria-expanded="true" aria-controls="collapceprice">
@@ -186,6 +190,7 @@
                 </div>
             </div>
         </li>
+        {% endif %}
             <!-- Divider -->
             <hr class="sidebar-divider">
 
@@ -275,6 +280,7 @@
                     </div>
                 </div>
             </li>
+            {% if request.user.is_superuser or request.user.is_director %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsenewsadd"
                     aria-expanded="true" aria-controls="collapsenewsadd">
@@ -294,6 +300,7 @@
                     </div>
                 </div>
             </li>
+            {% endif %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseaddconsultant"
                     aria-expanded="true" aria-controls="collapseaddconsultant">
@@ -313,6 +320,7 @@
                     </div>
                 </div>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsestudentcourse"
                     aria-expanded="true" aria-controls="collapsestudentcourse">
@@ -332,7 +340,7 @@
                     </div>
                 </div>
             </li>
-
+            {% if request.user.is_superuser  %}
                <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseuserdirector"
                     aria-expanded="true" aria-controls="collapseuserdirector">
@@ -353,7 +361,8 @@
                 </div>
 
             </li>
-
+{% endif %}
+{% if request.user.is_superuser or request.user.is_director %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsecategory"
                     aria-expanded="true" aria-controls="collapsecategory">
@@ -375,6 +384,8 @@
                 </div>
             
             </li>
+            {% endif %}
+            {% if request.user.is_superuser or request.user.is_director %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsebranch"
                     aria-expanded="true" aria-controls="collapsebranch">
@@ -395,6 +406,8 @@
                 </div>
            
             </li>
+            {% endif %}
+            {% if request.user.is_superuser or request.user.is_director %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseblog_category"
                     aria-expanded="true" aria-controls="collapseblog_category">
@@ -414,7 +427,9 @@
                     </div>
                 </div>
             </li>
+            {% endif %}
             <!-- Divider -->
+            {% if request.user.is_superuser %}
             <hr class="sidebar-divider d-none d-md-block">
             <div class="sidebar-heading">
                 Approve
@@ -450,6 +465,7 @@
                     </div>
                 </div>
             </li>
+            {% endif %}
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>

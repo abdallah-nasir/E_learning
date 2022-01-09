@@ -15,6 +15,7 @@ path("teachers/",views.teachers,name="teachers"),
 path("teacher/<str:slug>/",views.teacher_single,name="teacher"),
 path("about-us/",views.about,name="about"),
 path("blogs/category/<str:slug>/",views.category,name="category"),
+path("terms/",views.terms,name="terms"),
 
 path("faqs/",views.faqs,name="faqs"),
 # path("shop/",views.shop,name="shop"),

@@ -21,6 +21,17 @@ def check_user_validation(function):
     wrap.__name__ = function.__name__
     return wrap
 
+def for_admin_only(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.is_superuser:
+            return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"You Don't Have Permission")
+            return redirect(reverse("dashboard:home"))
+
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap  
 
 def check_if_user_director(function):
     def wrap(request, *args, **kwargs):
@@ -37,7 +48,7 @@ def check_if_user_director(function):
 def check_if_teacher_has_event(function):
     def wrap(request, *args, **kwargs):
         events=Events.objects.filter(user=request.user,status="start")
-        if events:
+        if events.exists():
             messages.error(request,"Finish Previous Event First")
             return redirect(reverse("dashboard:events"))
         else:

@@ -18,7 +18,8 @@ from Blogs.models import Blog_Payment,Prices
 from django.core.mail import send_mail,EmailMessage
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from datetime import datetime
+from datetime import date
+import datetime
 from django.forms import ValidationError
 from django.core.cache import cache
 import requests
@@ -578,43 +579,47 @@ def paymob_payment(request,course):
 
 @csrf_exempt    
 def check_paymob_course_payment(request):
-    try:
-        id=request.GET["id"]
-        url_1 = "https://accept.paymob.com/api/auth/tokens"
-        data_1 = {"api_key": PAYMOB_API_KEY}
-        r_1 = requests.post(url_1, json=data_1)
-        token = r_1.json().get("token")
-        url_2=f"https://accept.paymob.com/api/acceptance/transactions/{id}"
-        header= {"Bearer":token}
-        r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
-        data=r_2.json() 
-        print(data) 
-        descrption=data["order"]["items"][0]["description"]
-        username=data["order"]["shipping_data"]["first_name"]
+    # try:
+    id=request.GET["id"]
+    url_1 = "https://accept.paymob.com/api/auth/tokens"
+    data_1 = {"api_key": PAYMOB_API_KEY}
+    r_1 = requests.post(url_1, json=data_1)
+    token = r_1.json().get("token")
+    url_2=f"https://accept.paymob.com/api/acceptance/transactions/{id}"
+    header= {"Bearer":token}
+    r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
+    data=r_2.json() 
+    print(data) 
+    descrption=data["order"]["items"][0]["description"]
+    username=data["order"]["shipping_data"]["first_name"]
+    transaction_number=request.GET["id"]
+    name=data['order']["items"][0]["name"]
+    user=User.objects.get(username=username)
+    if descrption == "course":
+        print("course")
+        course=Course.objects.get(slug=name)
+        Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
+        next=("accounts:course_payment")
+    elif descrption =="consultant": 
+        teacher=Teacher_Time.objects.get(id=name)
+        consult=Consultant.objects.create(user=user,teacher=teacher,status="pending")
         transaction_number=request.GET["id"]
-        name=data['order']["items"][0]["name"]
-        user=User.objects.get(username=username)
-        if descrption == "course":
-            course=Course.objects.get(slug=name)
-            Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
-        elif descrption =="consultant":
-            teacher=Teacher_Time.objects.get(id=name)
-            consult=Consultant.objects.create(user=user,teacher=teacher,status="pending")
-            transaction_number=request.GET["id"]
-            Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,consult=consult,user=user,status="pending")
-        elif descrption == "blogs":
-            prices=Prices.objects.get(id=name)
-            now= datetime.date.today()
-            payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,user=user)
-            if prices.get_duration() == 'monthly':
-                payment.expired_at= now + datetime.timedelta(days=30*6)
-            else:
-                payment.expired_at= now + datetime.timedelta(days=365)
-            payment.save()
+        Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,consult=consult,user=user,status="pending")
+        next=("accounts:consultant_payment")
+    elif descrption == "blogs":
+        prices=Prices.objects.get(id=name)
+        now= date.today()
+        payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,user=user,created_at=now)
+        if prices.get_duration() == 'monthly':
+            payment.expired_at= now + datetime.timedelta(days=30*6)
+        else:
+            payment.expired_at= now + datetime.timedelta(days=365)
+        payment.save()
+        next=("accounts:blog_payment")
         messages.success(request,"your request is being review by admin")
-    except:
-        pass
-    return redirect(reverse("accounts:course_payment"))
+    # except:
+    #     pass
+    return redirect(reverse(next))
 #######################################
 #payment
 
@@ -627,6 +632,9 @@ def failed(request):
 
 def faqs(request):
     return render(request,"faqs.html")
+
+def terms(request):
+    return render(request,"terms.html")
 
 ################  errors
 

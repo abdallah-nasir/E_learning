@@ -136,7 +136,7 @@
 
 				<div class="swiper-container featured-posts margin-bottom">
 					<div class="swiper-wrapper">
-						{% for i in slider %}
+						{% for i in data.slider %}
 						<div class="swiper-slide">
 							<article class="post">
 								<header class="entry-header">
@@ -172,7 +172,7 @@
 				</div>
 
 				<div class="posts">
-					{% for i in blogs %}
+					{% for i in data.blogs %}
 					{% if i.blog_type == "standard" %}
 					<article class="post format-standard">
 						<header class="entry-header">
@@ -357,7 +357,7 @@
 					 <!-- Wrapper for carousel items -->
 					 <h2>Our Teachers</h2>
 					<div class="carousel-inner">
-						{% for i in recent_teachers %}
+						{% for i in data.recent_teachers %}
 						
 						<div class="item carousel-item {% if forloop.first %}active{% endif %}">
 							<div class="img-box"><img src="{{i.image}}" alt=""></div>

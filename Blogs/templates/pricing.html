@@ -144,7 +144,7 @@
         <div class="col col-lg-6">
             <div class="plan {% if i.get_duration == 'month' %}color-1{% else %}color-2{% endif %} four columns">
                 <div class="plan-price">
-                    <h3>{{i.name}}</h3> <span class="plan-currency">$</span> <span class="value">{{i.price}}</span> <span class="period">/ per {{i.get_duration}}</span>
+                    <h3>{{i.name}}</h3> <span class="plan-currency">$</span> <span class="value">{{i.price}}</span> <span class="period">/ {{i.get_duration}}</span>
                 </div>
                 <div class="plan-features">
                     <ul>

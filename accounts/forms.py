@@ -12,14 +12,16 @@ from .models import TeacherForms,User
 from django.contrib import messages
 from django.conf import settings
 import random,string,requests
+
+
 from crum import get_current_request   
 from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
 
-Storage_Api="b6a987b0-5a2c-4344-9c8099705200-890f-461b"
-library_id="19804"
-storage_name="agartha"
-agartha_cdn="agartha1.b-cdn.net"
+Storage_Api=os.environ["Storage_Api"]
+library_id=os.environ["library_id"]
+storage_name=os.environ["storage_name"]
+agartha_cdn=os.environ["agartha_cdn"]
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 class MyCustomLoginForm(LoginForm):
@@ -34,14 +36,14 @@ class MyCustomLoginForm(LoginForm):
         # You must return the original result.
         return super(MyCustomLoginForm, self).login(*args, **kwargs)
 
-ACCOUNT_TYPE=(
-    ("student","student"),
-    ("teacher","teacher")  
+GENDER=(
+    ("male","male"),
+    ("female","female")  
 ) 
 class MyCustomSignupForm(SignupForm):
-    account_type=forms.ChoiceField(label="Are You",required=True,choices=ACCOUNT_TYPE)
+    gender=forms.ChoiceField(label="Are You",required=True,choices=GENDER)
     phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
-    image=forms.ImageField(label="Profile Picture",required=False)
+    # image=forms.ImageField(label="Profile Picture",required=False)
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
 
     # about_me=forms.CharField(widget=forms.HiddenInput())
@@ -62,46 +64,34 @@ class MyCustomSignupForm(SignupForm):
         # Ensure you call the parent class's save.
         # .save() returns a User object.
         user = super(MyCustomSignupForm, self).save(request)
-        account_type=self.cleaned_data["account_type"]
-        user.account_type=account_type
+        gender=self.cleaned_data["gender"]
+        user.gender=gender
         user.phone=self.cleaned_data["phone"]
         image=request.POST.get("image")
-        if image:
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{user.username}/{user.username}"
-            headers = {
-                    "AccessKey": Storage_Api,
-                    "Content-Type": "application/octet-stream",
-                    }
+        if gender == "male":
+            user.account_image=f"https://{agartha_cdn}/default_image/male.jpg"
+        elif gender == "female":
+            user.account_image=f"https://{agartha_cdn}/default_image/female.jpg"
 
-            file=self.cleaned_data.get("image")
-            response = requests.put(image_url,data=file,headers=headers)
-            data=response.json()
-            try:
-                if data["HttpCode"] == 201:
-                    user.account_image = f"https://{agartha_cdn}/accounts/{user.username}/{user.username}"
-            except:
-                pass
-        else:
-            user.account_image="https://agartha1.b-cdn.net/default_image/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
         user.first_name=user.username
         # if self.cleaned_data["account_type"] == "teacher":
         #     user.about_me=self.cleaned_data["about_me"]
         #     user.title=self.cleaned_data["about_me"]
         user.save()
-        if user.account_type == "teacher":
-            user.code=random_string_generator()
+        # if user.account_type == "teacher":
+        #     user.code=random_string_generator()
 
-            user.is_active = False
-            user.save()
-            msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
-                               your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send()
-            messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
+        #     user.is_active = False
+        #     user.save()
+        #     msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
+        #                        your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[user.email])
+        #     msg.content_subtype = "html"  # Main content is now text/html
+        #     msg.send()
+        #     messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
         return user
    
 class MyCustomSocialSignupForm(SocialSignUpForm):
-    account_type=forms.ChoiceField(required=True,choices=ACCOUNT_TYPE)
+    gender=forms.ChoiceField(label="Are You",required=True,choices=GENDER)
     phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
     # image=forms.ImageField(required=True)
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
@@ -118,67 +108,48 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
                 raise forms.ValidationError("image size is more 2 MB")
             elif type not in list_type:   
                 raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
-    
+
     def save(self, request):
         # Ensure you call the parent class's save.
         # .save() returns a User object.
         user = super(MyCustomSocialSignupForm, self).save(request)
-        account_type=self.cleaned_data["account_type"]
-        user.account_type=account_type
+        gender=self.cleaned_data["gender"]
+        user.gender=gender
         user.phone=self.cleaned_data["phone"]
         image=request.POST.get("image")
-        if image:
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{user.username}/{user.username}"
-            headers = {
-                    "AccessKey": Storage_Api,
-                    "Content-Type": "application/octet-stream",
-                    }
-
-            file=self.cleaned_data.get("image")
-            response = requests.put(image_url,data=file,headers=headers)
-            data=response.json()
-            try:
-                if data["HttpCode"] == 201:
-                    user.account_image = f"https://{agartha_cdn}/accounts/{user.username}/{user.username}"
-            except:
-                pass
-        else:
-            user.account_image=f"https://{agartha_cdn}/default_image/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
-
+        if gender == "male":
+            user.account_image=f"https://{agartha_cdn}/default_image/male.jpg"
+        elif gender == "female":
+            user.account_image=f"https://{agartha_cdn}/default_image/female.jpg"
         user.first_name=user.username
         # if self.cleaned_data["account_type"] == "teacher":
         #     user.about_me=self.cleaned_data["about_me"]
         #     user.title=self.cleaned_data["about_me"]
         user.save()
-        if user.account_type == "teacher":
-            user.code=random_string_generator()
+        # if user.account_type == "teacher":
+        #     user.code=random_string_generator()
 
-            user.is_active = False
-            user.save()
-            msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
-                               your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[user.email])
-            msg.content_subtype = "html"  # Main content is now text/html
-            msg.send()
-            messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
+        #     user.is_active = False
+        #     user.save()
+        #     msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
+        #                        your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[user.email])
+        #     msg.content_subtype = "html"  # Main content is now text/html
+        #     msg.send()
+        #     messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
         return user
 
 
 
 
 class Teacher_Form(forms.ModelForm):
-    username=forms.CharField(max_length=100,widget=forms.TextInput(attrs={"placeholder":"Username / Email"}))
     title=forms.CharField(max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your Job Title"}))
     about_me=forms.CharField(widget=forms.Textarea(attrs={"placeholder":"Tell us more about you"}))
-
-    # password=forms.CharField(widget=forms.PasswordInput(attrs={"placeholder":"Your Password"}))
     facebook=forms.CharField(required=False,max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your facebook link"}))
     linkedin=forms.CharField(required=False,max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your linkedin link"}))
     twitter=forms.CharField(required=False,max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your twitter link"}))
-    # google_plus=forms.CharField(max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your google plus link"}))
-    code=forms.CharField(max_length=100,widget=forms.TextInput(attrs={"placeholder":"Code From Email Sent to You"}))
     class Meta:
         model=TeacherForms
-        fields=["username","code","title","about_me","facebook","linkedin","twitter"]
+        fields=["title","about_me","facebook","linkedin","twitter"]
 
 
     def clean_username(self): 
@@ -189,17 +160,6 @@ class Teacher_Form(forms.ModelForm):
         else:
             raise forms.ValidationError("invalid user")
         return username
-
-    def clean_code(self): 
-        name=self.cleaned_data.get("username")
-        code=self.cleaned_data["code"]
-        teacher=User.objects.filter(Q(username__iexact=name,account_type="teacher",is_active=False) | Q(email__iexact=name,account_type="teacher",is_active=False))
-        if code == "0":
-            raise forms.ValidationError("code cant be 0")
-        elif teacher.exists():
-            if teacher[0].code != code:
-                raise forms.ValidationError("invalid code")
-        return code   
 
 
     def clean_facebook(self): 
@@ -247,7 +207,7 @@ class ChangeTeacherDataForm(forms.ModelForm):
     class Meta:
         model=User
         fields=["account_image","first_name","last_name","phone","facebook","twitter","linkedin","title","about_me"]
-
+        kwargs={"first_name":{"required":True},"last_name":{"required":True}}
     def clean_facebook(self): 
         facebook=self.cleaned_data.get("facebook")
         print(facebook[0:25])

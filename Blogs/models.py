@@ -14,11 +14,25 @@ from ckeditor.fields import RichTextField
 # from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 from django.contrib.auth import get_user_model
+import requests
 User=get_user_model()
 
 import string,random
 
-
+def converter(self):   
+    try:
+            api=requests.get("http://api.currencylayer.com/live?access_key=bbd4b1fcbe13b2bf0b8a008bc1daa606&currencies=EGP&format = 1")
+            price=api.json()
+            for i in price["quotes"]: 
+                pass 
+            money=price["quotes"][i] * self.price
+            total=round(money)
+            self.egy_currency=total
+            self.save()
+            
+    except:
+        total=None
+    return total   
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 class Category(models.Model):
@@ -164,6 +178,14 @@ def pre_save_receiver(sender, instance, *args, **kwargs):
         else:
             slug=f"{instance.name}"
             instance.slug = slugify(slug)
+def get_blog_data():
+    teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
+    cat=Category.objects.order_by("-id")[:6]
+    slider_blogs=Blog.objects.filter(status="approved").order_by("-created_at")[:5]
+    recent_blog=Blog.objects.filter(status="approved").order_by("-created_at")[:6]
+    blogs=Blog.objects.filter(status="approved").order_by("-id")
+    context={"recent_teachers":teacher,"recent_categories":cat,"slider":slider_blogs,"recent_blogs":recent_blog,"blogs":blogs}
+    return context
 
 def recent_teachers():
     teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]

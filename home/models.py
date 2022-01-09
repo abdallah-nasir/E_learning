@@ -25,7 +25,7 @@ from django.template.loader import render_to_string
 def get_home_data():
     events=Events.objects.filter(status="approved").order_by("-date")[:5]
     courses=Course.objects.filter(status="approved").order_by("-id")[0:5]
-    teachers=User.objects.filter(account_type="teacher").order_by("?")[:4]
+    teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:4]
     categories=Category.objects.order_by("?")[:6]
     testimonial=Testimonials.objects.order_by("?")[:4]
     blogs=blog_model.Blog.objects.filter(status="approved").order_by("-id")[:4]
@@ -401,7 +401,7 @@ class News(models.Model):
     def __str__(self):
         return str(self.id)
 
-
+    
 class Subscribe(models.Model):
     name=models.CharField(max_length=50)
     email=models.EmailField(max_length=100)

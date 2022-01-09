@@ -27,12 +27,18 @@ PAYMOB_BLOG_INT=os.environ['PAYMOB_BLOG_INT']
 
 @login_required(login_url="accounts:login")
 def home(request):
-    blogs=Blog.objects.filter(status="approved")
+    blog_data=cache.get("blog_data")
+    if blog_data == None:
+        data=get_blog_data()
+        cache.set("blog_data",data,60*15)
+    else:
+        data=cache.get("blog_data")
+        
+    blogs=data["blogs"]
     paginator = Paginator(blogs, 9) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context={"blogs":page_obj,"slider":blog_slider(),
-             "recent_teachers":recent_teachers(),"recent_blogs":recent_blogs(),"recent_categories":recent_categories()}
+    context={"blogs":page_obj,"data":data}
     try:
         index=request.GET["index"]
         return render(request,"blogs_2.html",context)
@@ -64,6 +70,7 @@ def blog_search(request):
         page_obj = paginator.get_page(page_number)
     return render(request,"blog_search.html",{"blogs":page_obj,"qs":qs})
 @login_required(login_url="accounts:login")
+@complete_user_data
 def blog_comment(request,id):
     if request.user.is_authenticated:
         form=CommentForm(request.POST)
@@ -82,6 +89,7 @@ def blog_comment(request,id):
     return redirect(reverse("blogs:blog",kwargs={"slug":instance.blog.slug}))
 
 @login_required(login_url="accounts:login")
+@complete_user_data
 def blog_comment_reply(request,id,reply):
     if request.user.is_authenticated:
         form=ReplyForm(request.POST)
@@ -112,6 +120,7 @@ def pricing(request):
 @login_required(login_url="accounts:login")
 @check_user_status
 @check_blogs_payment_status
+@complete_user_data
 def payment_pricing(request,id):
     price=get_object_or_404(Prices,id=id)
     form=PaymentForm(request.POST or None,request.FILES or None)
@@ -154,6 +163,7 @@ CLIENT_SECRET=os.environ["CLIENT_SECRET"] # paypl
 @login_required(login_url="accounts:login")
 @check_user_status
 @check_blogs_payment_status
+@complete_user_data
 def paypal_create(request,id):
     if request.method =="POST":
         try:
@@ -247,6 +257,7 @@ def random_integer_generator(size = 8, chars = string.digits):
 
 @login_required(login_url="accounts:login")
 @check_user_status
+@complete_user_data
 def paymob_payment(request,id):
     if request.is_ajax():     
         # return JsonResponse({"frame":PAYMOB_FRAME,"token":123})

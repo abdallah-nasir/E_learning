@@ -13,7 +13,8 @@ import random,string
 from Dashboard import models as dashboard_models
 from django.conf import settings
 from home import models as home_models
-import json,os
+import json,os 
+default_image=os.environ["default_image"]
 agartha_cdn=os.environ["agartha_cdn"]
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -26,12 +27,16 @@ ACCOUNT_TYPE=(
     ("student","student"),
     ("teacher","teacher") 
 )
-  
+GENDER=(
+    ("male","male"),
+    ("female","female")  
+)   
 
 class User(AbstractUser):
     account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20,default="student")
     phone=models.CharField(max_length=12)
-    account_image=models.ImageField(blank=True,null=True,default=f"https://{agartha_cdn}/default_image/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg")
+    account_image=models.ImageField(blank=True,null=True,default=f"{default_image}")
+    gender=models.CharField(max_length=20,choices=GENDER,default="male")
     my_data=models.TextField(blank=True,null=True)
     code=models.CharField(max_length=50,blank=True,null=True)
     slug=models.SlugField(unique=True,blank=True,null=True)
@@ -109,9 +114,9 @@ USER_STATUS=(
 class TeacherForms(models.Model):
     teacher=models.ForeignKey(auth_user,on_delete=models.CASCADE)
     status=models.CharField(choices=USER_STATUS,default="pending",max_length=50)
-    code=models.CharField(max_length=50)
+    # code=models.CharField(max_length=50)
     data=models.TextField()    
-    def __str__(self):
+    def __str__(self):      
         return self.teacher.username
 
     def get_user_data(self):

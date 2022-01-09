@@ -1,39 +1,155 @@
+{% load static  %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load account socialaccount %}
+{% get_providers as socialaccount_providers %}
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>{% block head_title %}{% endblock %}</title>
-    {% block extra_head %}
-    {% endblock %}
+<html lang="en">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+<head>
+    <meta charset="UTF-8">
+    <title>Agartha Academy</title>
+    <link rel="stylesheet" href="{% static 'login/css/sign-style.css' %}">
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+    <script src="https://code.iconify.design/2/2.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
   </head>
-  <body>
-    {% block body %}
-    {% if messages %}
-    <div>
-      <strong>Messages:</strong>
-      <ul>
-        {% for message in messages %}
-        <li>{{message}}</li>
-        {% endfor %}
-      </ul>
-    </div>
+<style type="text/css">
+#side{
+  margin-left: 0 !important;
+}
+#col{
+    margin-top:5%;
+}
+</style>
+<body>
+  
+<div class="container">
+  <div class="row">
+    
+    <div class="col" id="col">
+        {% if messages %}
+  {% for message in messages %}
+      <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+        <strong>{{message.tags}}</strong> {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {%  endfor %}
     {% endif %}
-
-    <div>
-      <strong>Menu:</strong>
-      <ul>
-        {% if user.is_authenticated %}
-        <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
-        <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
-        {% else %}
-        <li><a href="{% url 'account_login' %}">Sign In</a></li>
-        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-        {% endif %}
-      </ul>
+    {% for error in form.non_field_errors %}
+    <div style="text-align: center;" class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong></strong> {{error|escape}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    {% block content %}
-    {% endblock %}
-    {% endblock %}
-    {% block extra_body %}
-    {% endblock %}
-  </body>
+
+{% endfor %}
+      <div class="text-center">
+        <h6 class="mb-0 pb-3"><span>Log In </span><span>Sign Up</span></h6> 
+        <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" /> 
+        <label for="reg-log"></label>
+        <div class="card-3d-wrap mx-auto">
+            <div class="card-3d-wrapper">
+                <div class="card-front">
+                    <div class="center-wrap">
+                        <div class="section text-center">
+                            <h4 class="mb-4 pb-3" id="h4sign">Log In</h4>
+                            <form  action="{% url 'accounts:login' %}" method="POST">
+                              {% csrf_token %}
+                         
+                            <div class="form-group">
+                            
+                            <input type="text" name="login" class="form-style" placeholder="Username / Email" id="logemail" autocomplete="off" required> 
+                            <i class="input-icon uil uil-at"></i> 
+                            {% for error in login_form.login.errors %}
+                              <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                 {% endfor %}
+                          </div>
+                            <div class="form-group mt-2">
+                               <input type="password" name="password" class="form-style" placeholder="Your Password"  autocomplete="off" required> <i class="input-icon uil uil-lock-alt" ></i>
+                               {% for error in login_form.password.errors %}
+                               <p style="color:rgb(231, 218, 218);">{{ error|escape }}</p>
+                                  {% endfor %}
+                               </div> 
+                               {% if redirect_field_value %}
+                               <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                               {% endif %}
+                              <button  class="btn mt-4" id="btn-submit">submit</button>
+                            </form>
+                            <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Forgot your password?</a></p>
+                            <div class="signin-social flex-c-m">
+                              <a href="#"><i class="bi bi-facebook" id="icon-social"></i></a>
+                              <a href="#"><i class="bi bi-linkedin" id="icon-social"></i></a>
+                              <a href="" class="login100-social-item bg3">
+                              <i class="iconify" data-icon="flat-color-icons:google" id="icon-social-g"></i>
+                              
+                              </a>
+                          </div>
+                         
+                        </div>
+                    </div>
+                  
+                </div>
+                <div class="card-back">
+                    <form  action="{% url 'accounts:signup' %}" method="POST">
+                      {% csrf_token %}
+                    <div class="center-wrap">
+                        <div class="section text-center">
+                            <h4 class="mb-4 pb-3" id="h4sign">Sign Up</h4>
+                            <div class="form-group">
+                               <input type="text" name="username" class="form-style" placeholder="Your Full Name" id="logname" autocomplete="off">
+                              <i class="input-icon uil uil-user"></i> 
+                            </div>
+                            <div class="form-group mt-2"> 
+                              <input type="email" name="email" class="form-style" placeholder="Your Email" id="logemail" autocomplete="off" required> 
+                              <i class="input-icon uil uil-at"></i> 
+                            </div>
+                            <div class="form-group mt-2"> 
+                              <input type="text" name="phone" class="form-style" placeholder="Your Mobile Number" id="logphone" autocomplete="off" required>
+                               <i class="input-icon uil uil-at"></i>
+                               </div>
+                           
+                            <!-- <div class="row">
+                                <div class="col-3">
+                                    <label id="h4sign"><span style="color:red; font-size:20px">*</span> Are You:</label>
+                                </div> 
+                                <div class="col-3">
+                                    <input type="radio" id="typeuser1" name="typeuser" value="Student">
+                                    <label for="Student" id="lbl-are">Student</label>
+                                </div> 
+                                <div class="col-3">
+                                    <input type="radio" id="typeuser2" name="typeuser" value="Teacher">
+                                    <label for="Teacher" id="lbl-are">Teacher</label>
+                                </div>
+                            </div> -->
+                          
+                            <div class="form-group mt-2">
+                               <input type="password" name="password1" class="form-style" placeholder="Your Password" id="logpass" autocomplete="off">
+                                <i class="input-icon uil uil-lock-alt"></i> 
+                              </div>
+                            <div class="form-group mt-2"> 
+                              <input type="password" name="password2" class="form-style" placeholder="Confirm Password" id="logpass" autocomplete="off">
+                               <i class="input-icon uil uil-lock-alt"></i>
+                               </div>
+                            <button  class="btn mt-4" id="btn-submit-su">submit</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+</script>
+</body>
 </html>
+

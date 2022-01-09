@@ -91,12 +91,9 @@ def home(request):
 
 
 @login_required(login_url="accounts:login")
-@check_if_user_director
+@for_admin_only
 def blog_payment(request):
-    if request.user.account_type == "teacher":
-        payments=Blog_Payment.objects.filter(user=request.user).order_by("-id")
-    else:
-        payments=Blog_Payment.objects.all().order_by("-id")
+    payments=Blog_Payment.objects.all().order_by("-id")
     paginator = Paginator(payments, 10) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -105,13 +102,9 @@ def blog_payment(request):
 
 
 @login_required(login_url="accounts:login")
-@check_if_user_director
+@for_admin_only
 def course_payment(request):
-    if request.user.account_type == "teacher":
-        courses=Payment.objects.filter(user=request.user).order_by("-id")
-    else:
-        courses=Payment.objects.all().order_by("-id")
-
+    courses=Payment.objects.all().order_by("-id")
     paginator = Paginator(courses, 10) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -120,22 +113,20 @@ def course_payment(request):
 
 
 @login_required(login_url="accounts:login")
-@check_if_user_director
+@for_admin_only
 def consultant_payment(request):
-    if request.user.account_type == "teacher":
-        consultant=Cosultant_Payment.objects.filter(user=request.user).order_by("-id")
-    else:
-        consultant=Cosultant_Payment.objects.all().order_by("-id")
+    consultant=Cosultant_Payment.objects.all().order_by("-id")
     paginator = Paginator(consultant, 10) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context={"payments":page_obj}
     return render(request,"dashboard_consultant_payment.html",context)
 
-@login_required(login_url="accounts:login")
-@check_user_validation
-def blogs(request):
-    if request.user.account_type == 'teacher':
+@login_required(login_url="accounts:login")  
+@check_user_validation  
+def blogs(request): 
+    if request.user.account_type == 'teacher' and request.user.is_director == False and request.user.is_superuser == False:
+        print("here") 
         blogs=Blog.objects.filter(user=request.user).order_by("-id")
     else:
         blogs=Blog.objects.all().order_by("-id")
@@ -149,73 +140,71 @@ def blogs(request):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def add_blog(request):
-    if request.user.account_type == 'teacher':
-        blog_type_list=["standard","gallery","video","audio","quote","link"]
-        try:
-            type=request.GET["blog_type"]
-            if type not in blog_type_list:
-                return redirect(reverse("dashboard:blogs"))
-            elif type == "link":
-                form=BlogLinkForm(request.POST or None,request.FILES or None)
-            elif type == "quote":
-                form=BlogQuoteForm(request.POST or None,request.FILES or None)
-            elif type == "video" or type == "audio":
-                form=BlogVideoForm(request.POST or None,request.FILES or None)
-            elif type == 'gallery':
-                form=BlogGalleryForm(request.POST or None,request.FILES or None)
-            else:
-                form=AddBlog(request.POST or None,request.FILES or None)
-            form_number=1
-        except:
-            form=BlogTypeForm(request.GET or None)
-            form_number=2
-        if request.method == "POST":
-            print(request.FILES)
-            if form_number == 1:
-                if form.is_valid():
-                    instance=form.save(commit=False)
-                    if type == "link":
-                        link=request.POST.get("link")
-                        data={"link":link}
-                        instance.data=json.dumps(data)
-                    if type == "quote":
-                        quote=request.POST.get("quote")
-                        data={"quote":quote}
-                        instance.data=json.dumps(data)
-                    instance.user=request.user
-                    instance.blog_type = type
-                    instance.save()
-                    tag=request.POST.get("tags")
-                    print(tag)
-                    if tag:
-                        for i in tag.split(","):
-                            tags,created=Tag.objects.get_or_create(name=i)
-                            instance.tags.add(tags)
-                            instance.save()
-                    image=request.FILES.getlist("image")
-                    for i in image:
-                        image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{i}"
-                        headers = {
-                            "AccessKey": Storage_Api,
-                        "Content-Type": "application/octet-stream",
-                        }
+    blog_type_list=["standard","gallery","video","audio","quote","link"]
+    try:
+        type=request.GET["blog_type"]
+        if type not in blog_type_list:
+            return redirect(reverse("dashboard:blogs"))
+        elif type == "link":
+            form=BlogLinkForm(request.POST or None,request.FILES or None)
+        elif type == "quote":
+            form=BlogQuoteForm(request.POST or None,request.FILES or None)
+        elif type == "video" or type == "audio":
+            form=BlogVideoForm(request.POST or None,request.FILES or None)
+        elif type == 'gallery':
+            form=BlogGalleryForm(request.POST or None,request.FILES or None)
+        else:
+            form=AddBlog(request.POST or None,request.FILES or None)
+        form_number=1
+    except:
+        form=BlogTypeForm(request.GET or None)
+        form_number=2
+    if request.method == "POST":
+        print(request.FILES)
+        if form_number == 1:
+            if form.is_valid():
+                instance=form.save(commit=False)
+                if type == "link":
+                    link=request.POST.get("link")
+                    data={"link":link}
+                    instance.data=json.dumps(data)
+                if type == "quote":
+                    quote=request.POST.get("quote")
+                    data={"quote":quote}
+                    instance.data=json.dumps(data)
+                instance.user=request.user
+                instance.blog_type = type
+                instance.save()
+                tag=request.POST.get("tags")
+                print(tag)
+                if tag:
+                    for i in tag.split(","):
+                        tags,created=Tag.objects.get_or_create(name=i)
+                        instance.tags.add(tags)
+                        instance.save()
+                image=request.FILES.getlist("image")
+                for i in image:
+                    image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{i}"
+                    headers = {
+                        "AccessKey": Storage_Api,
+                    "Content-Type": "application/octet-stream",
+                    }
 
-                        response = requests.put(image_url,data=i,headers=headers)
-                        data=response.json()
-                        print(data)
-                        try:
-                            if data["HttpCode"] == 201:
-                                image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{i}"
-                                image=Blog_Images.objects.create(blog=instance,image=image_location)
-                                instance.image.add(image)
-                                instance.save()
-                        except:
-                            pass
-    
-                    messages.success(request,"Your Blog is Waiting for Admin Approve")
-                    return redirect(reverse("dashboard:blogs"))
-    else:
-        messages.error(request,"you must be a teacher")
+                    response = requests.put(image_url,data=i,headers=headers)
+                    data=response.json()
+                    print(data)
+                    try:
+                        if data["HttpCode"] == 201:
+                            image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{i}"
+                            image=Blog_Images.objects.create(blog=instance,image=image_location)
+                            instance.image.add(image)
+                            instance.save()
+                    except:
+                        pass
+
+                messages.success(request,"Your Blog is Waiting for Admin Approve")
+                return redirect(reverse("dashboard:blogs"))
+
         return redirect(reverse("dashboard:blogs"))
     context={"form":form,"form_number":form_number}
     return render(request,"dashboard_add_blog.html",context)
@@ -388,7 +377,7 @@ def delete_blog(request,slug):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def courses(request):
-    if request.user.account_type == 'teacher':
+    if request.user.account_type == 'teacher' and request.user.is_director == False and request.user.is_superuser == False:
         courses=Course.objects.filter(Instructor=request.user).order_by("-id")
     else:
         courses=Course.objects.all().order_by("-id")
@@ -449,6 +438,8 @@ def edit_course(request,slug):
     context={"course":course,"form":form}
     return render(request,"dashboard_course_edit.html",context)
 
+@login_required(login_url="accounts:login")
+@check_user_validation
 def edit_course_image(request,id):
     course=get_object_or_404(Course,id=id)
     if request.user == course.Instructor:
@@ -509,7 +500,7 @@ def add_course(request):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def videos(request):
-    if request.user.account_type == "teacher":
+    if request.user.account_type == "teacher" and request.user.is_director ==False and request.user.is_superuser == False:
         videos=Videos.objects.filter(user=request.user).order_by("-id")
     else:
         videos=Videos.objects.all().order_by("-id")
@@ -702,7 +693,6 @@ def check_video(request,slug):
     context={"form":form,"video":video.slug}
     return render(request,"dashboard_check_video.html",context)
 
-
 @login_required(login_url="accounts:login")
 @check_user_validation
 def get_video_length(request,id):
@@ -727,7 +717,7 @@ def get_video_length(request,id):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def events(request):
-    if request.user.account_type == "teacher":
+    if request.user.account_type == "teacher" and request.user.is_director == False and request.user.is_superuser == False:
         events=Events.objects.filter(user=request.user).order_by("-id")
     else:
         events=Events.objects.all().order_by("-id")
@@ -981,7 +971,7 @@ def add_answer(request,course,slug):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def edit_answer(request,course,id):
-    course=get_object_or_404(Course,slug=course)
+    course=get_object_or_404(Course,slug=course,Instructor=request.user)
     if course.quiz:
         try:
             answer=course.quiz.answers.get(id=id)
@@ -1025,16 +1015,12 @@ def delete_answer(request,slug,id):
     return redirect(reverse("dashboard:quiz",kwargs={"slug":course.slug}))
 
 @login_required(login_url="accounts:login")
-@check_user_validation
+@admin_director_check
 def teachers(request):
-    if request.user.is_superuser or request.user.is_director:
-        teacher=User.objects.filter(account_type="teacher").order_by("-id")
-        paginator = Paginator(teacher, 10)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-    else:
-        messages.error(request,"You Don't have Permission")
-        return redirect(reverse("dashboard:home"))
+    teacher=User.objects.filter(account_type="teacher").order_by("-id")
+    paginator = Paginator(teacher, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context={"teachers":page_obj}
     return render(request,"dashboard_teachers.html",context)
 
@@ -1045,6 +1031,7 @@ def get_choices_keys():
     return True
 
 @login_required(login_url="accounts:login")
+@for_admin_only
 def approve(request):
     if request.user.is_superuser :
         try:
@@ -1079,16 +1066,14 @@ def approve(request):
     return render(request,"dashboard_approve.html",context)
 
 @login_required(login_url="accounts:login")
+@admin_director_check
 def show_demo_blog(request,slug):
-    if request.user.is_superuser :
-        blog=get_object_or_404(Blog,status="pending",slug=slug)
-    else:
-        messages.error(request,"You Don't Have permission")
-        return redirect(reverse("home:home"))
+    blog=get_object_or_404(Blog,status="pending",slug=slug)
     context={"blog":blog}
     return render(request,"dashboard_show_demo_blog.html",context)
 
 @login_required(login_url="accounts:login")
+@for_admin_only
 def approve_content(request,id):
     if request.user.is_superuser:
         try:
@@ -1134,6 +1119,8 @@ def approve_content(request,id):
                 query=get_object_or_404(TeacherForms,id=id,status="pending")
                 query.status="approved"
                 query.teacher.is_active=True
+                query.teacher.account_type="teacher"
+                query.teacher.my_data=query.data
                 query.teacher.save()
                 query.save()
                 messages.success(request,"Teacher Approved Successfully")
@@ -1156,6 +1143,7 @@ def approve_content(request,id):
     return redirect(f'{redirect_url}?approve={qs}') 
 
 @login_required(login_url="accounts:login")
+@for_admin_only
 def reject(request,id):
     if request.user.is_superuser:
         try:
@@ -1219,16 +1207,13 @@ def reject(request,id):
     return render(request,"dashboard_reject_form.html",context)
 
 @login_required(login_url="accounts:login")
+@admin_director_check
 def news(request):
-    if request.user.is_superuser or request.user.is_director:
-        news=News.objects.all().order_by("-id")
-        paginator = Paginator(news, 10)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        context={"news":page_obj}
-    else:
-        messages.error(request,"You Don't have Permission")
-        return redirect(reverse("dashboard:home"))
+    news=News.objects.all().order_by("-id")
+    paginator = Paginator(news, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"news":page_obj}
     return render(request,"dashboard_news.html",context)
 
 @login_required(login_url="accounts:login")
@@ -1267,10 +1252,10 @@ def add_news(request):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def consultants(request):
-    if request.user.account_type == "teacher":
+    if request.user.account_type == "teacher" and request.user.is_director == False and request.user.is_supersuser == False:
         consultants=Consultant.objects.filter(user=request.user,status="approved").order_by("-id")
     else:
-        consultants=Consultant.objects.all()
+        consultants=Consultant.objects.all().order_by("-id")
     paginator = Paginator(consultants, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -1280,7 +1265,7 @@ def consultants(request):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def consultants_sessions(request):
-    if request.user.account_type == "teacher":
+    if request.user.account_type == "teacher" and request.user.is_director == False and request.user.is_supersuser == False:
         sessions=Teacher_Time.objects.filter(user=request.user,available=True).order_by("-id")
     else:
         sessions=Teacher_Time.objects.all().order_by("-id")
@@ -1292,18 +1277,16 @@ def consultants_sessions(request):
     return render(request,"dashboard_consultants_sessions.html",context)
 
 @login_required(login_url="accounts:login")
-@check_user_validation
 def delete_session(request,id):
-    session=get_object_or_404(Teacher_Time,id=id,available=True)
+    session=get_object_or_404(Teacher_Time,user=request.user,id=id,available=True)
     session.available=False
     session.save()
     messages.success(request,"Session Deactivated")
     return redirect(reverse("dashboard:consultants_sessions"))
 
 @login_required(login_url="accounts:login")
-@check_user_validation
 def active_session(request,id):
-    session=get_object_or_404(Teacher_Time,id=id,available=False)
+    session=get_object_or_404(Teacher_Time,user=request.user,id=id,available=False)
     session.available=True
     session.save()
     messages.success(request,"Session Activated")
@@ -1334,15 +1317,14 @@ def complete_consultant(request,id):
     return redirect(reverse("dashboard:consultants"))
 
 @login_required(login_url="accounts:login")
+@admin_director_check
 def prices(request):
-    if request.user.is_superuser:
-        prices=Prices.objects.all()
-    else:
-        return redirect(reverse("dashoard:home"))
+    prices=Prices.objects.all().order_by("-id")
     context={"prices":prices}
     return render(request,"dashboard_prices.html",context)
 
 @login_required(login_url="accounts:login")
+@admin_director_check
 def edit_price(request,id):
     price=get_object_or_404(Prices,id=id)
     if request.user.is_superuser:
@@ -1390,28 +1372,25 @@ def add_student_course(request):
     return render(request,"dashboard_add_user_to_course.html",context)
 
 @login_required(login_url="accounts:login")
+@for_admin_only
 def add_user_director(request):
     form=AddUserDirector(request.POST or None)
-    if request.user.is_superuser:
-        directors=User.objects.filter(is_director=True,account_type="teacher")
-        if request.method =="POST":
-            if form.is_valid():
-                user=request.POST.get("user")
-                print(user)
-                this_user=User.objects.filter(Q(username=user,account_type="teacher") | Q(email=user,account_type="teacher"))
-                if this_user.exists():
-                    user=this_user.last() 
-                    if user.is_director:
-                        messages.error(request,"this user is already a director ")
-                    else:
-                        user.is_director =True
-                        user.save()
-                        messages.success(request,"user added successfully")
-                        form=AddUserDirector()
+    directors=User.objects.filter(is_director=True,account_type="teacher")
+    if request.method =="POST":
+        if form.is_valid():
+            user=request.POST.get("user")
+            print(user)
+            this_user=User.objects.filter(Q(username=user,account_type="teacher") | Q(email=user,account_type="teacher"))
+            if this_user.exists():
+                user=this_user.last() 
+                if user.is_director:
+                    messages.error(request,"this user is already a director ")
+                else:
+                    user.is_director =True
+                    user.save()
+                    messages.success(request,"user added successfully")
+                    form=AddUserDirector()
 
-    else:
-        messages.error(request,"you don't have permission")
-        return(redirect(reverse("dashboard:home")))
     context={"form":form,"directors":directors}
     return render(request,"dashboard_add_user_director.html",context)
 
@@ -1419,21 +1398,17 @@ def add_user_director(request):
 import requests
 from django.http import JsonResponse
 def test(request):
-    video=Videos.objects.last()
-    url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
-    headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/*+json",
-            "AccessKey": AccessKey
-        }
-    response = requests.get( url,headers=headers)
-    data=response.json()
-    print(data)
-    context={"data":data}
-    return render(request,"dashboard_test.html",context)
+    # api=requests.get("http://api.currencylayer.com/live?access_key=bbd4b1fcbe13b2bf0b8a008bc1daa606&currencies=EGP&format = 1")
+    # data=api.json()
+    # try:
+    #     price=round(data["quotes"]["USDEGP"])
+    # except:
+    #     price=None
+    # return JsonResponse(price,safe=False)
+    return render(request,"404.html")
 
 @login_required(login_url="accounts:login")
-@check_user_validation
+@admin_director_check
 def add_category(request):
     form=CategoryForm(request.POST or None)
     if request.method == "POST":
@@ -1443,7 +1418,7 @@ def add_category(request):
     context={"form":form}
     return render(request,"dashboard_add_category.html",context)
 @login_required(login_url="accounts:login")
-@check_user_validation
+@admin_director_check
 def add_branch(request):
     form=BranchForm(request.POST or None)
     if request.method == "POST":
@@ -1453,7 +1428,7 @@ def add_branch(request):
     context={"form":form}
     return render(request,"dashboard_add_branch.html",context)
 @login_required(login_url="accounts:login")
-@check_user_validation
+@admin_director_check   
 def add_blog_category(request):
     form=BlogForm(request.POST or None)
     if request.method == "POST":

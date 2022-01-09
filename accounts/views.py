@@ -5,6 +5,7 @@ from django.contrib import messages
 from .forms import *
 from .models import TeacherForms
 from .models import User
+from .decorators import check_user_is_student
 from home.models import *
 from Blogs.models import *
 from Consultant.models import Consultant, Cosultant_Payment
@@ -13,6 +14,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 import json,requests 
+from .utils import *
 from .forms import MyCustomLoginForm,MyCustomSignupForm
 from allauth.account.views import SignupView,LoginView
 # from allauth.account.forms import LoginForm,SignupForm
@@ -25,18 +27,30 @@ class CustomSignupView(SignupView):
     # here we add some context to the already existing context
     def get_context_data(self, **kwargs):
         # we get context data from original view
-        context = super(CustomSignupView,
+        context = super(SignupView,
                         self).get_context_data(**kwargs)
-        context['login_form'] = MyCustomLoginForm() # add form to context
+        context['login_form']=MyCustomLoginForm() # add form to context
+
+        if self.request.GET.get("next"):
+               context.update({"redirect_field_name":self.redirect_field_name,
+            "redirect_field_value":get_request_param(self.request, self.redirect_field_name)
+})
+      
         return context
 
 class CustomSigninView(LoginView):
     # here we add some context to the already existing context
+   
     def get_context_data(self, **kwargs):
         # we get context data from original view
         context = super(LoginView,
                         self).get_context_data(**kwargs)
-        context['signup_form'] = MyCustomSignupForm() # add form to context
+      
+        if self.request.GET.get("next"):
+               context.update({"redirect_field_name":self.redirect_field_name,
+            "redirect_field_value":get_request_param(self.request, self.redirect_field_name)
+})
+        context.update({'signup_form': MyCustomSignupForm()}) # add form to context   
         return context  
 
         
@@ -54,39 +68,46 @@ from django.contrib.sites.models import Site
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+@login_required(login_url="accounts:login")
+@check_user_is_student
 def check_teacher_form(request):
-    form=Teacher_Form(request.POST or None)
+    teacher_form=TeacherForms.objects.filter(teacher=request.user)
+    if teacher_form.exists():
+        teacher=teacher_form[0]
+        if teacher.status == "declined":
+            form=Teacher_Form(request.POST or None,instance=teacher)
+            data=json.loads(teacher.data)
+            form.initial["title"]=data["title"]
+            form.initial["about_me"]=data["about_me"]
+            form.initial["facebook"]=data["social"][0]["facebook"]
+            form.initial["linkedin"]=data["social"][0]["linkedin"]
+            form.initial["twitter"]=data["social"][0]["twitter"]
 
+        else:
+            form=Teacher_Form(request.POST or None)
+    else:
+        form=Teacher_Form(request.POST or None)
     if request.method == 'POST':
-        if form.is_valid():
-            try:
-                teacher_username=form.cleaned_data["username"]
-                username=User.objects.filter(Q(username=teacher_username,account_type="teacher") | Q(email=teacher_username,account_type="teacher"))
-                user=username.last()
-                teacher_form=TeacherForms.objects.filter(teacher=user,status="pending")
-                if teacher_form.exists():
+        if form.is_valid():  
+            if teacher_form.exists():
+                if teacher_form[0].status == "pending" or teacher_form[0].status == "approved":
                     messages.error(request,"your already have a Form")
                     form=Teacher_Form()
-                else: 
-                    code=form.cleaned_data['code']
-                    if code == user.code:
-                        facebook=form.cleaned_data['facebook']
-                        linkedin=form.cleaned_data['linkedin']
-                        twitter=form.cleaned_data['twitter']
-                        about_me=form.cleaned_data['about_me']
-                        title=form.cleaned_data['title']
-                        data={"social":[{"facebook":facebook,"linkedin":linkedin,"twitter":twitter}],
-                        "about_me":about_me,"title":title}
-                        new_teacher=TeacherForms.objects.create(teacher=user,data=json.dumps(data),code=code,status="pending")
-                        user.my_data=new_teacher.data
-                        user.save()
-                        messages.success(request,"your request is being review by admins")
-                        form=Teacher_Form()
-                    else:
-                        messages.error(request,f"invalid code for user {user.username}")
-            except:
-                messages.error(request,"invalid data")
-                form=Teacher_Form()
+                    return redirect(reverse("accounts:account_info"))
+            instance=form.save(commit=False)
+            facebook=form.cleaned_data['facebook']
+            linkedin=form.cleaned_data['linkedin']
+            twitter=form.cleaned_data['twitter']
+            about_me=form.cleaned_data['about_me']
+            title=form.cleaned_data['title']
+            data={"social":[{"facebook":facebook,"linkedin":linkedin,"twitter":twitter}],
+            "about_me":about_me,"title":title}
+            instance.teacher=request.user
+            instance.data=json.dumps(data)
+            instance.status="pending"
+            instance.save()
+            messages.success(request,"your request is being review by admins")
+            return redirect(reverse("accounts:account_info"))
     context={"form":form}
     return render(request,"check_teacher.html",context)
 

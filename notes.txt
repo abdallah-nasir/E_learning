@@ -1,9 +1,4 @@
-director 
-       approve  > reject
-       payment > reject
+change facebook developers phoje number
 
-
-subscribe
-    add subscribe db 
-
-add  validation to user comments
+privacy and terms
+messages

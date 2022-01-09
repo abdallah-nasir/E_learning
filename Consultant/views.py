@@ -3,7 +3,7 @@ from django.urls import reverse
 from .models import *
 from .forms import *
 import os
-from .decorators import check_user_is_has_consul
+from .decorators import check_user_is_has_consul,complete_user_data
 from django.http import JsonResponse
 import json,requests,random,string
 from django.contrib import messages
@@ -61,6 +61,7 @@ def teacher_ajax_table(request):
 
 @login_required(login_url="accounts:login")
 @check_user_is_has_consul
+@complete_user_data
 def consultant_payment(request,teacher):
     teacher=get_object_or_404(Teacher_Time,id=teacher,available=True)
     form=PaymentForm(request.POST or None ,request.FILES or None)
@@ -103,6 +104,7 @@ def random_integer_generator(size = 8, chars = string.digits):
 
 @login_required(login_url="accounts:login")
 @check_user_is_has_consul
+@complete_user_data
 def paymob_payment(request,teacher):
     if request.is_ajax():     
         # return JsonResponse({"frame":PAYMOB_FRAME,"token":123})
@@ -204,6 +206,7 @@ CLIENT_SECRET=os.environ["CLIENT_SECRET"]
 
 @login_required(login_url="accounts:login")
 @check_user_is_has_consul
+@complete_user_data
 def paypal_create(request,teacher):
     if request.method =="POST":
         try:

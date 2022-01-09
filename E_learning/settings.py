@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'social_django',  
+    # 'social_django',  
     #y apps
     "home", 
     "Quiz",
@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'bootstrap_datepicker_plus',
     'django_cleanup',
     'captcha',
+    "admin_honeypot",
     # "storages",   
     # "debug_toolbar",
 ] 
@@ -98,9 +99,7 @@ MIDDLEWARE = [
    
     'accounts.middleware.OneSessionPerUserMiddleware',
     'crum.CurrentRequestUserMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
-    # "whitenoise.middleware.WhiteNoiseMiddleware",
-    #  "debug_toolbar.middleware.DebugToolbarMiddleware",
+ 
        ]
 
 
@@ -120,8 +119,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 "home.processors.global_wishlist",
                 "home.processors.global_news",
-                'social_django.context_processors.backends',  
-                'social_django.context_processors.login_redirect', 
+        
                 
 
             ],
@@ -141,15 +139,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# import pymysql
+# pymysql.install_as_MySQLdb()
+# import MySQLdb
 # DATABASES={
 #     "default":{
-#         "ENGINE":"django.db.backends.postgresql_psycopg2",
+#         "ENGINE":"django.db.backends.mysql",
 #         "NAME":os.environ["NAME"],
-#         "USER":os.environ['USER'],
-#         "PASSWORD":os.environ['PASSWORD'],
+#         "USER":os.environ["USER"],
+#         "PASSWORD":os.environ["PASSWORD"],
 #         "HOST":"localhost",
-#         "PORT":"5432",
-#         # 'OPTIONS': {'sslmode': 'require'},
+#         "PORT":"3306",
+#         'OPTIONS':{'sql_mode': 'STRICT_ALL_TABLES'},
 #     }      
 # }  
 CACHES = { 
@@ -193,21 +194,21 @@ LANGUAGES = (            # supported languages
     ("ar",_("Arabic")),
 )
 TIME_ZONE = 'Africa/Cairo'
-STATIC_URL = 'https://garthaacademy.b-cdn.net/static/'
-# MEDIA_URL="https://agartha2.b-cdn.net/static/"
-# MEDIA_ROOT="https://agartha2.b-cdn.net""
-STATIC_ROOT="https://garthaacademy.b-cdn.net"
-STATICFILES_DIRS=[
-  "https://garthaacademy.b-cdn.net/static/"
-]  
-    
-# STATIC_URL = '/static/'
-# # MEDIA_URL="https://agartha2.b-cdn.net/static/"
-# # MEDIA_ROOT="https://agartha2.b-cdn.net""
-# STATIC_ROOT=BASE_DIR/"static"
+# STATIC_URL = 'https://garthaacademy.b-cdn.net/static/'
+# STATIC_ROOT="https://garthaacademy.b-cdn.net"
 # STATICFILES_DIRS=[
-#   BASE_DIR/"static_in_env"
-# ]     
+#   "https://garthaacademy.b-cdn.net/static/"
+# ]  
+    
+STATIC_URL = '/static/'
+STATIC_ROOT=BASE_DIR/"static"
+STATICFILES_DIRS=[
+  BASE_DIR/"static_in_env"
+]   
+  
+agartha_cdn=os.environ["agartha_cdn"]
+Storage_api=os.environ["Storage_Api"]
+storage_name=os.environ["storage_name"]
 # for translation
 LOCALE_PATHS=(   
     os.path.join(BASE_DIR,"locale/"),
@@ -235,12 +236,12 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL= True
 EMAIL_PORT = 465 
 #allauth   
-SITE_ID=1
+SITE_ID=1 
 LOGIN_REDIRECT_URL ="home:home"
 LOGIN_URL = 'account_login'
 LOGOUT_URL = 'account_logout'
-# ACCOUNT_ADAPTER="allauth.account.adapter.DefaultAccountAdapter"
-# SOCIALACCOUNT_ADAPTER ="allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
+# ACCOUNT_ADAPTER="accounts.adapter.MyLoginAccountAdapter"
+SOCIALACCOUNT_ADAPTER ="accounts.adapter.MySocialAccountAdapter"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS =True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
@@ -262,7 +263,7 @@ ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE =True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET =True
 ACCOUNT_LOGOUT_REDIRECT_URL ="home:home"
 ACCOUNT_PASSWORD_INPUT_RENDER_VALUE =True
-ACCOUNT_PRESERVE_USERNAME_CASING =False
+ACCOUNT_PRESERVE_USERNAME_CASING =True 
 ACCOUNT_SESSION_REMEMBER =None
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE =True
 ACCOUNT_SIGNUP_REDIRECT_URL =LOGIN_REDIRECT_URL
@@ -272,16 +273,21 @@ ACCOUNT_UNIQUE_EMAIL =True
 ACCOUNT_USERNAME_MIN_LENGTH =3
 ACCOUNT_USERNAME_REQUIRED =True
 SOCIALACCOUNT_AUTO_SIGNUP =True
-SOCIALACCOUNT_EMAIL_VERIFICATION =ACCOUNT_EMAIL_VERIFICATION
-SOCIALACCOUNT_EMAIL_REQUIRED =ACCOUNT_EMAIL_REQUIRED
-SOCIALACCOUNT_QUERY_EMAIL =ACCOUNT_EMAIL_REQUIRED
+SOCIALACCOUNT_EMAIL_VERIFICATION =True
+SOCIALACCOUNT_EMAIL_REQUIRED =True
+SOCIALACCOUNT_QUERY_EMAIL =True
 SOCIALACCOUNT_STORE_TOKENS =True
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
+    'google': {   
         'APP': {
         'client_id':os.environ["google_client_id"],
         'secret':os.environ["google_secret"],
-        'key': '',
+        'key': '',  
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+    'VERIFIED_EMAIL': True,
        
     }
     },
@@ -321,17 +327,14 @@ ACCOUNT_FORMS = {
     'login': 'accounts.forms.MyCustomLoginForm',
 
 } 
-# SOCIALACCOUNT_FORMS = {
-#     # 'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
-#     'signup': 'accounts.forms.MyCustomSocialSignupForm',
-# }
+SOCIALACCOUNT_FORMS = {
+    # 'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+    'signup': 'accounts.forms.MyCustomSocialSignupForm',
+}
 
 # python social auth
 AUTHENTICATION_BACKENDS = [
 
-    'social_core.backends.facebook.FacebookOAuth2',
- 'social_core.backends.linkedin.LinkedinOAuth2',
-    'social_core.backends.google.GoogleOAuth2',
     # ............
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -340,36 +343,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
     #      ...
 ]
-SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.social_user',
-    'social_core.pipeline.user.get_username',
-    'social_core.pipeline.social_auth.associate_by_email',
-    'social_core.pipeline.user.create_user',
-    'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',
-    'social_core.pipeline.user.user_details',
-    # "accounts.pipeline.auth_allowed"
-)
-SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = os.environ["linkedin_client_id"]
-SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = os.environ["linkedin_secret"]
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ["google_client_id"]
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ["google_secret"]
-SOCIAL_AUTH_FACEBOOK_KEY = os.environ["facebook_client_id"]
-SOCIAL_AUTH_FACEBOOK_SECRET = os.environ["facebook_secret"]
-SOCIAL_AUTH_RAISE_EXCEPTIONS = False
-# SOCIAL_AUTH_JSONFIELD_ENABLED = True
-SOCIAL_AUTH_LOGIN_ERROR_URL ="home:home"
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_liteprofile', 'r_emailaddress']
-# Add the fields so they will be requested from linkedin.
-SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['emailAddress']
-# Arrange to add the fields to UserSocialAuth.extra_data
-SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
-                                          ('firstName', 'first_name'),
-                                          ('lastName', 'last_name'),
-                                          ('emailAddress', 'email_address')]
+
 COURSE_MODEL="home.Course"
 
 # CkEditor
@@ -399,3 +373,4 @@ CKEDITOR_FORCE_JPEG_COMPRESSION =True
 ### google recaptcha
 RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
 RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

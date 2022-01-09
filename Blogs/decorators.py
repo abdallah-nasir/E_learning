@@ -33,6 +33,19 @@ def check_user_status(function):
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
+
+def complete_user_data(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.first_name == None or request.user.last_name == None or request.user.phone ==None:
+            messages.error(request,"complete your information first")
+            return redirect(reverse("accounts:account_info"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+
 import datetime
 def check_blogs_payment_status(function):
     def wrap(request, *args, **kwargs):

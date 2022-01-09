@@ -137,7 +137,7 @@
 				<div class="swiper-container featured-posts margin-bottom">
 					<div class="swiper-wrapper">
                         
-                        {% for i in slider %}
+                        {% for i in data.slider %}
 						<div class="swiper-slide">
 							<article class="post">
 								<header class="entry-header">
@@ -171,10 +171,11 @@
 				</div>
 
 <div class="grid-container">
+	{% if blogs %}
     <div class="grid-70">
 				<div class="posts posts-list">
-            {% if blogs %}
-                    {% for i in blogs %}
+           
+                    {% for i in data.blogs %}
 					{% if i.blog_type == "standard" %}
 					<article class="post format-standard">
 						<header class="entry-header">
@@ -356,7 +357,7 @@
 	<div class="widget">
 		<h3 class="widget-title">Recent Posts</h3>
 		<ul>
-            {% for i in recent_blogs %}
+            {% for i in data.recent_blogs %}
 			<li><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a> <span>{{i.created_at|date:"M d, Y"}}</span></li>
             {% endfor %}
 		</ul>
@@ -365,7 +366,7 @@
 	<div class="widget">
 		<h3 class="widget-title">Categories</h3>
 		<ul>
-            {% for i in recent_categories %}
+            {% for i in data.recent_categories %}
 			<li><a href="">{{i.name.title|truncatewords:"10"}}</a></li>
             {% endfor %}
 		</ul>
@@ -390,7 +391,7 @@
 
 
     {% else %}
-    <h1 style="margin:auto; justify-content: center; text-align:center;">Sorry,{{type}} Blog is Empty</h1>
+    <h1 style="text-align:center;">Sorry,Blog is Empty</h1>
 {% endif %}
 </div>
 
@@ -404,7 +405,7 @@
 	 <!-- Wrapper for carousel items -->
 	 <h2>Our Teachers</h2>
 	<div class="carousel-inner">
-		{% for i in recent_teachers %}
+		{% for i in data.recent_teachers %}
 		
 		<div class="item carousel-item {% if forloop.first %}active{% endif %}">
 			<div class="img-box"><img src="{{i.image}}" alt=""></div>

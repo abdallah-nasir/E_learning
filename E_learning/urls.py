@@ -26,13 +26,14 @@ import os
 # import debug_toolbar
 # from allauth.urls
 
-
+   
 urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
 ]
 urlpatterns += i18n_patterns(
-    path('admin/', admin.site.urls),
-    path('oauth/', include('social_django.urls', namespace='social')), 
+    path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
+    path('agartha/admin/dashboard/', admin.site.urls),
+    # path('oauth/', include('social_django.urls', namespace='social')), 
     path('accounts/', include('allauth.urls')),    
     path('', include("home.urls",namespace="home")),
     path('quiz/', include("Quiz.urls",namespace="quiz")), 
