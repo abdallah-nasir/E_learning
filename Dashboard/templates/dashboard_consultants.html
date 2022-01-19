@@ -27,7 +27,6 @@
                                             <th>User</th>
                                             <th>Teacher</th>
                                             <th>Category</th>
-                                            <th>Date</th>
                                             <th>From</th>
                                             <th>To</th>
                                             <th>Status</th>
@@ -41,24 +40,29 @@
                                         <td>{{i.user.username.title}}</td>
                                         <td>{{i.teacher.user.username.title}}</td>
                                         <td>{{i.teacher.category.name.title}}</td>
-
-                                        <td>{{i.teacher.date}}</td>
-                                        <td>{{i.teacher.from_time}}</td>
-                                        <td>{{i.teacher.to_time}}</td>
+                                        <td>{{i.start_time}}</td>
+                                        <td>{{i.end_time}}</td>
                                         <td>{{i.status}}</td>
                                         <td>
-                                            {% if i.status != "completed" %}
-                                        <button  data-toggle="modal" data-target="#approve-{{i.id}}" href="{% url 'dashboard:complete_consultant' i.id %}" class="btn btn-success">Complete</button>
+                                            {% if i.status == "pending" %}
+                                    <a class="btn btn-primary" href="{% url 'dashboard:accept_consultant' i.id %}" class="btn btn-success">Accept</button>
+                                            {% elif i.status == "approved" %}
+                                        <button  data-toggle="modal" data-target="#start-{{i.id}}"  class="btn btn-success">Start</button>
+                                        <a class="btn btn-primary" href="{% url 'dashboard:edit_consultant' i.id %}" class="btn btn-info">Edit</button>
+
+                                        {% elif i.status == "started" %}
+                                        <button  data-toggle="modal" data-target="#end-{{i.id}}"  class="btn btn-danger">End</button>
+
                                             {% endif %}
                                         </td>
 
 
                                     </tr>
-                                    <div class="modal fade" id="approve-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="start-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Complete Session</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel">Start Consultant</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -69,10 +73,29 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                 
-                                                <a  href="{% url 'dashboard:complete_consultant' i.id %}" class="btn btn-success">Complete</a>                                            </div>
+                                                <a  href="{% url 'dashboard:start_consultant' i.id %}" class="btn btn-success">Start</a>                                            </div>
                                             </div>
                                         </div>
                                         </div>
+                                        <div class="modal fade" id="end-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">End Consultant</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you Sure ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    
+                                                    <a  href="{% url 'dashboard:complete_consultant' i.id %}" class="btn btn-success">Complete</a>                                            </div>
+                                                </div>
+                                            </div>
+                                            </div>
                                     {% endfor %}
                                    </tbody>
                                 </table>

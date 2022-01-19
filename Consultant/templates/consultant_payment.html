@@ -36,6 +36,7 @@ li.resp-tab-item span .pic1{
 							<div id="horizontalTab" style="display: block; width: 100%; margin: 0px;">
 								<div class="pay-tabs">
 									<h2>Select Payment Method</h2>
+               
 									  <ul class="resp-tabs-list">
 										<li class="resp-tab-item" aria-controls="tab_item-0" role="tab"><span><label  style="height: 70px;" class="pic1"></label>Visa / Credit Card</span></li> 
 										  <li class="resp-tab-item" aria-controls="tab_item-2" role="tab"><span><label style="height: 70px;" class="pic2"></label>Wester Union</span></li> 
@@ -114,8 +115,8 @@ li.resp-tab-item span .pic1{
                           {{ form.number.errors }}
                           <input type="text" name="number" id="number" required="true">
                           <h5>Image receipt</h5>
-                          {{ form.payment_image.errors }}
-                          <input type="file" name="payment_image" required="true">
+                          {{ form.image.errors }}
+                          <input type="file" name="image" required="true">
                         </div>
                         <br /><br />
                         <input type="hidden" name="payment"  value="Bank Transaction">
@@ -192,7 +193,7 @@ li.resp-tab-item span .pic1{
 								</div>	
 							</div>
 						</div>	
-
+            
 		</div>
 	</div>
   <script type="text/javascript" src="{% static 'payment/js/jquery.min.js' %}"></script>
@@ -226,12 +227,13 @@ li.resp-tab-item span .pic1{
               
                         // Call your server to finalize the transaction
                         onApprove: function(data, actions) {
-                            return fetch('consultant/paypal/capture/' + data.orderID +'/{{teacher.id}}/',{
+                    
+                            return fetch("capture/"+data.orderID+"/{{request.user.id}}/",{
                                 method: 'post',
                                 headers: {"X-CSRFToken": csrftoken}
                             }).then(function(res) {
                                
-                                window.location.href = '{% url "home:success" %}';                                
+                                window.location.href = '{% url "accounts:consultant_payment" %}';                                
                                 return res.json();
                             }).then(function(orderData) {
                              
@@ -262,11 +264,11 @@ li.resp-tab-item span .pic1{
                             });
                         },
                         onCancel: function (data, actions) {
-                            return fetch('/payment/failed/',{
+                            return fetch('{% url "accounts:consultant_payment" %}',{
                                 method: 'post',
                                 headers: {"X-CSRFToken": csrftoken}
                             }).then(function(res){
-                                window.location.href = '{% url "home:failed" %}';
+                                window.location.href = '{% url "accounts:consultant_payment" %}';
                                 return res.json();
                             })
                             // Show a cancel page or return to cart

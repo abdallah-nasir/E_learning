@@ -1,4 +1,37 @@
-change facebook developers phoje number
+change facebook developers phone number
 
-privacy and terms
+privacy and terms   --done
+adjust all payment paymob failure iframe
+privacy and terms ckeditor  --done
+privacy and terms add not delete or update  --done
 messages
+remove terms from footer 
+adjust static 
+review must be required after finish 
+add certification to dashboard
+email to info
+add suport 
+add both support and infro to db (with status for each email)
+videos (extensions)
+اضافه استبيان لكل مدرس لاضافه معلوماته (link on teacher form)
+adjust quiz 
+
+----------------
+    profile for students only (redirect teacher to dashboard )
+    add logo on title 
+    add footer important
+    add social urls 
+---------------
+    remove add from dashboard
+    remove dots from news
+    end session aafter 20 minutes
+    color footer one
+    replace submit with 
+    add translation to news
+    add category image field
+    add translation to faqs
+---------------
+2000 students
+1000 course
+11000 students
+500 teacher

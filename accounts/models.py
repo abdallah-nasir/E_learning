@@ -42,9 +42,19 @@ class User(AbstractUser):
     slug=models.SlugField(unique=True,blank=True,null=True)
     vip =models.BooleanField(default=False)
     is_director=models.BooleanField(default=False)
+    terms_privacy=models.BooleanField(default=True,blank=False)
     def __str__(self):
         return self.username
-
+    def save(self, *args, **kwargs):
+        if self.slug == None:
+            self.slug = slugify(self.username)
+            if User.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.username)
+                self.slug =f"{slug}-{random_string_generator()}"
+            else:
+                self.slug = slugify(self.username)          
+        super(User, self).save()
+        
     def image(self):
         return self.account_image
     def get_user_data(self):
@@ -83,15 +93,7 @@ def create_user_session(sender, instance, created, **kwargs):
     if created:
         LoggedInUser.objects.create(user=instance)
 
-@receiver(pre_save, sender=User)
-def pre_save_receiver_video(sender, instance, *args, **kwargs):
-    instance.slug=slugify(instance.username) 
-    # if User.objects.filter(slug=instance.slug).exists():
-    #     slug=f"{instance.username}-{instance.id}"
-    #     instance.slug = slugify(slug) 
-    # else:      
-    #     slug=f"{instance.username}" 
-    #     instance.slug = slugify(slug) 
+
 
 auth_user=settings.AUTH_USER_MODEL
 

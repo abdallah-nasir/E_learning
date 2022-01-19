@@ -36,21 +36,19 @@ class Category(models.Model):
     slug=models.SlugField(unique=True,blank=True,null=True)
     def __str__(self):
         return self.name  
-
+    def save(self, *args, **kwargs):
+        if self.slug == None:
+            self.slug = slugify(self.name)
+            if Category.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+            else:
+                self.slug = slugify(self.name)          
+        super(Category, self).save()
     def get_courses(self):
         courses=Course.objects.filter(branch__category=self).count()
         return courses
 
-@receiver(pre_save, sender=Category) 
-def pre_save_receiver(sender, instance, *args, **kwargs):       
-    if instance.slug == None: 
-        instance.slug = slugify(instance.name)
-        if Category.objects.filter(slug=instance.slug).exists():
-            slug=f"{instance.name}-{random_string_generator()}"
-            instance.slug = slugify(slug)
-        else:
-            slug=f"{instance.name}"
-            instance.slug = slugify(slug)
 
 class Branch(models.Model):
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
@@ -58,17 +56,16 @@ class Branch(models.Model):
     slug=models.SlugField(unique=True,blank=True)
     def __str__(self):
         return self.name
-
-
-@receiver(pre_save, sender=Branch)
-def pre_save_receiver_video(sender, instance, *args, **kwargs):
-    if Branch.objects.filter(slug=instance.slug).exists():
-        slug=f"{instance.name}-{random_string_generator()}"
-        instance.slug = slugify(slug) 
-    else:      
-        slug=f"{instance.name}"
-        instance.slug = slugify(slug) 
-
+    def save(self, *args, **kwargs):
+        if self.slug == None:
+            self.slug = slugify(self.name)
+            if Branch.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+            else:
+                self.slug = slugify(self.name)          
+        super(Branch, self).save()
+        
 
 CHOICES=(   
     ("on process","on process"),
@@ -90,18 +87,18 @@ class Videos(models.Model):
     slug=models.SlugField(blank=True,unique=True)
     def __str__(self):
         return self.name
-
+    def save(self, *args, **kwargs):
+        if self.slug == None:
+            self.slug = slugify(self.name)
+            if Videos.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+            else:
+                self.slug = slugify(self.name)          
+        super(Videos, self).save()
     def get_duration_model(self):
         return time.strftime('%H:%M:%S',  time.gmtime(self.duration))
 
-    # def video_duration(self):
-    #     media_info = MediaInfo.parse(self.video)
-    #     duration_in_ms = media_info.tracks[0].duration    
-    #     time_in_sec=duration_in_ms/1000
-    #     print(time_in_sec)
-    #     self.duration =time_in_sec
-    #     self.duration=time.strftime('%H:%M:%S',  time.gmtime(self.duration))
-        # return self.duration
     def total_duration(self):
         self.my_course.duration=0
         self.my_course.save()
@@ -109,28 +106,6 @@ class Videos(models.Model):
             self.my_course.duration +=i.duration
         self.my_course.save()
         return self.my_course.duration
-@receiver(pre_save, sender=Videos)
-def pre_save_receiver_video(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = slugify(instance.name)
-        if Videos.objects.filter(slug=instance.slug).exists():
-            print("hererere")
-            slug=f"{instance.name}-{random_string_generator()}"
-            instance.slug = slugify(slug) 
-        else:       
-            slug=f"{instance.name}"
-            instance.slug = slugify(slug) 
-    # media_info = MediaInfo.parse(instance.video)
-    # # duration in milliseconds
-    # duration_in_ms = media_info.tracks[0].duration
-    # time_in_sec=duration_in_ms/1000
-    # my_time=time.strftime('%H:%M:%S',  time.gmtime(time_in_sec))
-    # instance.duration=time_in_sec
-    # if instance.video not in instance.my_course.videos.all():
-    #     media_info = MediaInfo.parse(instance.video)
-    #     duration_in_ms = media_info.tracks[0].duration    
-    #     time_in_sec=duration_in_ms/1000
-    #     instance.my_course.duration +=time_in_sec
 
 class Teacher_review(models.Model):       
     user=models.ForeignKey(User,related_name="student_review",on_delete=models.CASCADE)
@@ -194,7 +169,15 @@ class Course(models.Model):
     slug=models.SlugField(unique=True,blank=True)
     def __str__(self):  
         return self.name
-
+    def save(self, *args, **kwargs):
+        if self.slug == None:
+            self.slug = slugify(self.name)
+            if Course.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+            else:
+                self.slug = slugify(self.name)          
+        super(Course, self).save()
     def same(self):
         courses=Course.objects.filter(branch=self.branch,status="approved").exclude(id=self.id).order_by("-id")[:4]
         return courses
@@ -247,24 +230,12 @@ class Course(models.Model):
             quiz=None
 
         return quiz
-@receiver(pre_save, sender=Course)
-def pre_save_receiver(sender, instance, *args, **kwargs):       
-    if not instance.slug: 
-        instance.slug = slugify(instance.name)
-        if Course.objects.filter(slug=instance.slug).exists():
-            slug=f"{instance.name}-{random_string_generator()}"
-            instance.slug = slugify(slug)
-        else:
-            slug=f"{instance.name}"
-            instance.slug = slugify(slug)
+
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
       
 
-    # def reviews_count(self):
-    #     for i in self.reviews.all():
-    #         reviews=i
 
 def upload_events_images(instance,filename):
     place=f"events/{instance.user.username}/{instance.name}/{filename}"
@@ -303,6 +274,16 @@ class Events(models.Model):
     slug=models.SlugField(unique=True,blank=True)
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        if self.slug == None:
+            self.slug = slugify(self.name)
+            if Events.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+            else:
+                self.slug = slugify(self.name)          
+        super(Events, self).save()
+        
     def get_students_events(self):
         course=Course.objects.filter(branch=self.category,status="approved",Instructor=self.user)
         list=[]
@@ -333,19 +314,7 @@ class Events(models.Model):
     def get_similar_event(self):
         rejects=Rejects.objects.filter(user=self.user,type="events",content_id=self.id).delete()
         return rejects
-@receiver(pre_save, sender=Events)
-def pre_save_receiver(sender, instance, *args, **kwargs):       
-    if not instance.slug: 
-        instance.slug = slugify(instance.name)
-        if Events.objects.filter(slug=instance.slug).exists():
-            slug=f"{instance.name}-{random_string_generator()}"
-            instance.slug = slugify(slug)
-        else:
-            slug=f"{instance.name}"
-            instance.slug = slugify(slug)
 
-# class Contact(models.Model):
-#     name=
 
 class Wishlist(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -418,3 +387,21 @@ class Testimonials(models.Model):
 
     def __str__(self):
         return self.user.username
+
+EMAIL_STATUS = (
+    ("pending","pending"),
+    ("solved","solved"),
+    ("on process","on process"),
+)
+class Support_Email(models.Model):
+    
+    name = models.CharField(max_length=20)
+    email = models.EmailField(max_length=100)
+    subject = models.CharField(max_length=80)
+    phone = models.CharField(max_length=20)
+    message = models.TextField()
+    user = models.ForeignKey(User,on_delete=models.SET_NULL,blank=False,null=True)
+    status = models.CharField(max_length=20,choices=EMAIL_STATUS,default="pending")
+    def __str__(self):
+        return str(self.id) 
+

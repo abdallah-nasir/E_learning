@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from .forms import *
 from .decorators import *
+from Frontend.models import *
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.http import JsonResponse,HttpResponseRedirect
@@ -15,7 +16,7 @@ from django.conf import settings
 from accounts.models import User
 from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment
 from Blogs.models import Blog_Payment,Prices
-from django.core.mail import send_mail,EmailMessage
+from django.core.mail import send_mail,EmailMessage,get_connection
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from datetime import date
@@ -33,6 +34,17 @@ agartha_cdn=os.environ['agartha_cdn']
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
 PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
 PAYMOB_COURSE_INT=os.environ["PAYMOB_COURSE_INT"]
+SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
+SUPPORT_EMAIL_USERNAME = os.environ['SUPPORT_EMAIL_USERNAME']
+SUPPORT_EMAIL_PASSWORD = os.environ['SUPPORT_EMAIL_PASSWORD']
+SUPPORT_EMAIL_PORT = os.environ['SUPPORT_EMAIL_PORT']
+SUPPORT_MAIL_CONNECTION = get_connection(
+host= SUPPORT_EMAIL_HOST, 
+port=SUPPORT_EMAIL_PORT, 
+username=SUPPORT_EMAIL_USERNAME, 
+password=SUPPORT_EMAIL_PASSWORD, 
+use_tls=False
+) 
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -218,7 +230,12 @@ def teacher_single(request,slug):
     return render(request,"teachers-single.html",context)
 
 def about(request):
-    context={}
+    teachers=cache.get("about_teachers")
+    print(teachers)
+    if teachers == None:
+        teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:8]
+        cache.set("about_teachers",teachers,60*15)
+    context={"teachers":teachers}
     return render(request,"about.html",context)
 
 
@@ -250,19 +267,28 @@ def shop(request):
 
 
 def contact(request):
+    form = Support_Form(request.POST or None)
     if request.method == "POST":
-        name=request.POST["name"]
-        email=request.POST["email"]
-        subject=request.POST["subject"]
-        message=request.POST["message"]
-        send_mail( 
-    subject,
-    f"from {email} \n {message}",
-    email,
-    [settings.EMAIL_HOST_USER],
-    fail_silently=False,
-)
-        messages.success(request,"thank you for your message")
+        if form.is_valid():
+            instance = form.save(commit=False)
+            name=form.cleaned_data.get("name")
+            email=form.cleaned_data.get("email")
+            subject=form.cleaned_data.get("subject")
+            message=form.cleaned_data.get("message")
+            send_mail( 
+            subject,
+            message,
+            email,
+            ["support@agartha.academy"],
+            fail_silently=False,
+            connection=SUPPORT_MAIL_CONNECTION
+        )
+            instance.save()
+            user= User.objects.filter(email=email.lower())
+            if user.exists():
+                instance.user = user[0]
+                instance.save()
+            messages.success(request,"thank you for your message")
     context={}
     return render(request,"contact.html",context)
 @login_required(login_url="accounts:login")
@@ -579,46 +605,47 @@ def paymob_payment(request,course):
 
 @csrf_exempt    
 def check_paymob_course_payment(request):
-    # try:
-    id=request.GET["id"]
-    url_1 = "https://accept.paymob.com/api/auth/tokens"
-    data_1 = {"api_key": PAYMOB_API_KEY}
-    r_1 = requests.post(url_1, json=data_1)
-    token = r_1.json().get("token")
-    url_2=f"https://accept.paymob.com/api/acceptance/transactions/{id}"
-    header= {"Bearer":token}
-    r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
-    data=r_2.json() 
-    print(data) 
-    descrption=data["order"]["items"][0]["description"]
-    username=data["order"]["shipping_data"]["first_name"]
-    transaction_number=request.GET["id"]
-    name=data['order']["items"][0]["name"]
-    user=User.objects.get(username=username)
-    if descrption == "course":
-        print("course")
-        course=Course.objects.get(slug=name)
-        Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
-        next=("accounts:course_payment")
-    elif descrption =="consultant": 
-        teacher=Teacher_Time.objects.get(id=name)
-        consult=Consultant.objects.create(user=user,teacher=teacher,status="pending")
+    try:
+        id=request.GET["id"]
+        url_1 = "https://accept.paymob.com/api/auth/tokens"
+        data_1 = {"api_key": PAYMOB_API_KEY}
+        r_1 = requests.post(url_1, json=data_1)
+        token = r_1.json().get("token")
+        url_2=f"https://accept.paymob.com/api/acceptance/transactions/{id}"
+        header= {"Bearer":token}
+        r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
+        data=r_2.json() 
+        print(data) 
+        descrption=data["order"]["items"][0]["description"]
+        username=data["order"]["shipping_data"]["first_name"]
         transaction_number=request.GET["id"]
-        Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,consult=consult,user=user,status="pending")
-        next=("accounts:consultant_payment")
-    elif descrption == "blogs":
-        prices=Prices.objects.get(id=name)
-        now= date.today()
-        payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,user=user,created_at=now)
-        if prices.get_duration() == 'monthly':
-            payment.expired_at= now + datetime.timedelta(days=30*6)
-        else:
-            payment.expired_at= now + datetime.timedelta(days=365)
-        payment.save()
-        next=("accounts:blog_payment")
-        messages.success(request,"your request is being review by admin")
-    # except:
-    #     pass
+        name=data['order']["items"][0]["name"]
+        user=User.objects.get(username=username)
+        if descrption == "course":
+            print("course")
+            course=Course.objects.get(slug=name)
+            Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
+            next=("accounts:course_payment")
+        elif descrption =="consultant": 
+            teacher=Teacher_Time.objects.get(id=name)
+            consult=Consultant.objects.create(user=user,teacher=teacher,status="pending")
+            transaction_number=request.GET["id"]
+            Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,teacher=teacher,user=user,status="pending")
+            next=("accounts:consultant_payment")
+        elif descrption == "blogs":
+            prices=Prices.objects.get(id=name)
+            now= date.today()
+            payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,user=user,created_at=now)
+            if prices.get_duration() == 'monthly':
+                payment.expired_at= now + datetime.timedelta(days=30*6)
+            else:
+                payment.expired_at= now + datetime.timedelta(days=365)
+            payment.save()
+            next=("accounts:blog_payment")
+            messages.success(request,"your request is being review by admin")
+    except:
+        next=("home:home")
+        pass
     return redirect(reverse(next))
 #######################################
 #payment
@@ -634,7 +661,11 @@ def faqs(request):
     return render(request,"faqs.html")
 
 def terms(request):
-    return render(request,"terms.html")
+    terms=Terms.objects.last()
+    return render(request,"terms.html",{"terms":terms})
+def privacy(request):
+    privacy=Privacy.objects.last()
+    return render(request,"privacy.html",{"privacy":privacy})
 
 ################  errors
 

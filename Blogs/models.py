@@ -114,7 +114,15 @@ class Blog(models.Model):
     check_reject=CheckRejectManager()   
     objects=models.Manager()
     slug=models.SlugField(unique=True,blank=True,max_length=100)
-
+    def save(self, *args, **kwargs):
+        if self.slug == None:
+            self.slug = slugify(self.name)
+            if Blog.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+            else:
+                self.slug = slugify(self.name)          
+        super(Blog, self).save()
     def __str__(self):
         return self.name
 
@@ -167,17 +175,6 @@ def create_blog_viewers(sender, instance, created, **kwargs):
     if created:
         Blog_Views.objects.create(blog=instance)
 
-@receiver(pre_save, sender=Blog) 
-def pre_save_receiver(sender, instance, *args, **kwargs):       
-    if not instance.slug: 
-
-        instance.slug = slugify(instance.name)
-        if Blog.objects.filter(slug=instance.slug).exists():
-            slug=f"{instance.name}-{random_string_generator()}"
-            instance.slug = slugify(slug)
-        else:
-            slug=f"{instance.name}"
-            instance.slug = slugify(slug)
 def get_blog_data():
     teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
     cat=Category.objects.order_by("-id")[:6]

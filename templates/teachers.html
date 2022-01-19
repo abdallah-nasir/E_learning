@@ -9,11 +9,11 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="page-banner-cont">
-                        <h2>Teachers</h2>
+                        <h2>{% trans 'Teachers' %}</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:teachers' %}">Teachers</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:teachers' %}">{% trans 'Teachers' %}</a></li>
                             </ol>
                         </nav>
                     </div>  <!-- page banner cont -->
@@ -33,11 +33,11 @@
                <div class="col-lg-3 col-sm-6">
                    <div class="singel-teachers mt-30 text-center">
                         <div class="image">
-                            <img src="{{i.image.url}}" alt="Teachers">
+                            <img src="{{i.image}}" alt="Teachers">
                         </div>
                         <div class="cont">
                             <a href="{% url 'home:teacher' i.slug %}"><h6>{{i.get_full_name.title}}</h6></a>
-                            <span>{{i.title.title}}</span>
+                            <span>{{i.get_user_data.title.title}}</span>
                         </div>
                     </div> <!-- singel teachers -->
                </div>

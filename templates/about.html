@@ -32,15 +32,15 @@
                 <div class="col-lg-5">
                     <div class="section-title mt-50">
                         <h5>About us</h5>
-                        <h2>Welcome to Edubin </h2>
+                        <h2>Welcome to Agartha Academy </h2>
                     </div> <!-- section title -->
-                    <div class="about-cont">
-                        <p>Lorem ipsum gravida nibh vel velit auctor aliquetn sollicitudirem quibibendum auci elit cons equat ipsutis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a sit amet . Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt  mauris. <br> <br> auci elit cons equat ipsutis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a sit amet . Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt  mauris</p>
+                    <div class="about-cont" >
+                        <p>أكاديمية أغارثا للتدريب والاستشارات هي منصة متخصصة في العلوم الإنسانية والتنمية الذاتية. <br> <br> <strong>AGARTHA</strong> <br>تأسست عام 2019 في القاهرة لتكون الوجهة لجميع المتحدثين باللغة العربية لبيئة تعليمية احترافية. توفر أدوات تعليمية مباشرة عبر الإنترنت وفقًا للبرنامج. أصبح التعليم الافتراضي أولوية كبرى حتى يتمكن الجميع من الدراسة في أي وقت وفي أي مكان</p>
                     </div>
                 </div> <!-- about cont -->
                 <div class="col-lg-7">
                     <div class="about-image mt-50">
-                        <img src="{% static ''  %}images/about/about-2.jpg" alt="About">
+                        <img src="{% static 'images/about/about-2.jpg' %}" alt="About">
                     </div>  <!-- about imag -->
                 </div> 
             </div> <!-- row -->
@@ -50,27 +50,28 @@
                         <div class="about-singel-items mt-30">
                             <span>01</span>
                             <h4>Why Choose us</h4>
-                            <p>Lorem ipsum gravida nibh vel velit auctor aliquetn sollicitudirem quibibendum auci elit sollicitudirem quibibendum auci</p>
+                            <p>We have the origin of the information, we turn it into experience, where anyone can master new skills and achieve their goals.</p>
                         </div> <!-- about singel -->
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-10">
                         <div class="about-singel-items mt-30">
                             <span>02</span>
                             <h4>Our Mission</h4>
-                            <p>Lorem ipsum gravida nibh vel velit auctor aliquetn sollicitudirem quibibendum auci elit sollicitudirem quibibendum auci</p>
+                            <p>بناء فرد قادر على إدراك التسارع التقني والمعرفي مع تحويل التعليم إلى عملية ممتعة. </p>
                         </div> <!-- about singel -->
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-10">
                         <div class="about-singel-items mt-30">
                             <span>03</span>
                             <h4>Our vission</h4>
-                            <p>Lorem ipsum gravida nibh vel velit auctor aliquetn sollicitudirem quibibendum auci elit sollicitudirem quibibendum auci</p>
+                            <p>تجسيد علوم القدماء لإحداث نقلة نوعية في الوعي </p>
                         </div> <!-- about singel -->
                     </div>
                 </div> <!-- row -->
             </div> <!-- about items -->
         </div> <!-- container -->
     </section>
+    
     
     <!--====== ABOUT PART ENDS ======-->
 
@@ -122,94 +123,19 @@
                 </div>
             </div> <!-- row -->
             <div class="row">
+                {% for i in teachers %}
                 <div class="col-lg-3 col-sm-6">
                     <div class="singel-teachers mt-30 text-center">
                         <div class="image">
-                            <img src="{% static 'images/teachers/t-1.jpg'  %}" alt="Teachers">
+                            <img src="{{i.image}}" alt="Teachers">
                         </div>
                         <div class="cont">
-                            <a href="teachers-singel.html"><h6>Mark alen</h6></a>
-                            <span>Vice chencelor</span>
+                            <a href="{% url 'home:teacher' i.slug %}"><h6>{{i.get_full_name.title}}</h6></a>
+                            <span>{{i.get_user_data.title}}</span>
                         </div>
                     </div> <!-- singel teachers -->
                 </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="singel-teachers mt-30 text-center">
-                        <div class="image">
-                            <img src="{% static 'images/teachers/t-2.jpg'  %}" alt="Teachers">
-                        </div>
-                        <div class="cont">
-                            <a href="teachers-singel.html"><h6>Mark alen</h6></a>
-                            <span>Vice chencelor</span>
-                        </div>
-                    </div> <!-- singel teachers -->
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="singel-teachers mt-30 text-center">
-                        <div class="image">
-                            <img src="{% static 'images/teachers/t-3.jpg'  %}" alt="Teachers">
-                        </div>
-                        <div class="cont">
-                            <a href="teachers-singel.html"><h6>Mark alen</h6></a>
-                            <span>Vice chencelor</span>
-                        </div>
-                    </div> <!-- singel teachers -->
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="singel-teachers mt-30 text-center">
-                        <div class="image">
-                            <img src="{% static 'images/teachers/t-4.jpg'  %}" alt="Teachers">
-                        </div>
-                        <div class="cont">
-                            <a href="teachers-singel.html"><h6>Mark alen</h6></a>
-                            <span>Vice chencelor</span>
-                        </div>
-                    </div> <!-- singel teachers -->
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="singel-teachers mt-30 text-center">
-                        <div class="image">
-                            <img src="{% static 'images/teachers/t-5.jpg'  %}" alt="Teachers">
-                        </div>
-                        <div class="cont">
-                            <a href="teachers-singel.html"><h6>Mark alen</h6></a>
-                            <span>Vice chencelor</span>
-                        </div>
-                    </div> <!-- singel teachers -->
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="singel-teachers mt-30 text-center">
-                        <div class="image">
-                            <img src="{% static 'images/teachers/t-6.jpg'  %}" alt="Teachers">
-                        </div>
-                        <div class="cont">
-                            <a href="teachers-singel.html"><h6>Mark alen</h6></a>
-                            <span>Vice chencelor</span>
-                        </div>
-                    </div> <!-- singel teachers -->
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="singel-teachers mt-30 text-center">
-                        <div class="image">
-                            <img src="{% static 'images/teachers/t-7.jpg'  %}" alt="Teachers">
-                        </div>
-                        <div class="cont">
-                            <a href="teachers-singel.html"><h6>Mark alen</h6></a>
-                            <span>Vice chencelor</span>
-                        </div>
-                    </div> <!-- singel teachers -->
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="singel-teachers mt-30 text-center">
-                        <div class="image">
-                            <img src="{% static 'images/teachers/t-8.jpg'  %}" alt="Teachers">
-                        </div>
-                        <div class="cont">
-                            <a href="teachers-singel.html"><h6>Mark alen</h6></a>
-                            <span>Vice chencelor</span>
-                        </div>
-                    </div> <!-- singel teachers -->
-                </div>
+            {% endfor %}
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
@@ -218,16 +144,16 @@
    
     <!--====== TEASTIMONIAL PART START ======-->
     
-    <section id="testimonial" class="bg_cover pt-115 pb-120" data-overlay="8" style="background-image: url({% static 'images/bg-2.jpg' %})">
+ <!-- <section id="testimonial" class="bg_cover pt-115 pb-120" data-overlay="8" style="background-image: url({% static 'images/bg-2.jpg' %})">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="section-title pb-40">
                         <h5>Testimonial</h5>
                         <h2>What they say</h2>
-                    </div> <!-- section title -->
+                    </div> 
                 </div>
-            </div> <!-- row -->
+            </div> 
             <div class="row testimonial-slied mt-40">
                 <div class="col-lg-6">
                     <div class="singel-testimonial">
@@ -242,7 +168,7 @@
                             <h6>Rubina Helen</h6>
                             <span>Bsc, Engineering</span>
                         </div>
-                    </div> <!-- singel testimonial -->
+                    </div> 
                 </div>
                 <div class="col-lg-6">
                     <div class="singel-testimonial">
@@ -257,7 +183,7 @@
                             <h6>Rubina Helen</h6>
                             <span>Bsc, Engineering</span>
                         </div>
-                    </div> <!-- singel testimonial -->
+                    </div> 
                 </div>
                 <div class="col-lg-6">
                     <div class="singel-testimonial">
@@ -272,12 +198,12 @@
                             <h6>Rubina Helen</h6>
                             <span>Bsc, Engineering</span>
                         </div>
-                    </div> <!-- singel testimonial -->
+                    </div> 
                 </div>
-            </div> <!-- testimonial slied -->
-        </div> <!-- container -->
-    </section>
-    
+            </div>
+        </div> 
+    </section> -->
+     
     <!--====== TEASTIMONIAL PART ENDS ======-->
    
     <!--====== PATNAR LOGO PART START ======-->

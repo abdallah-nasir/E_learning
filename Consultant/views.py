@@ -1,9 +1,11 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from .models import *
+from home.forms import PaymentMethodForm
 from .forms import *
+
 import os
-from .decorators import check_user_is_has_consul,complete_user_data
+from .decorators import *
 from django.http import JsonResponse
 import json,requests,random,string
 from django.contrib import messages
@@ -12,6 +14,8 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 Storage_Api=os.environ["Storage_Api"]
@@ -23,58 +27,65 @@ PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
 PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
 PAYMOB_CONSULT_INT=os.environ['PAYMOB_CONSULT_INT']
 from django.db.models import F
+from datetime import date
+
+def teacher_table(request):
+    category=request.GET.get("name")
+    print(category)
+    teacher=Teacher_Time.objects.filter(category=category,available=True).order_by("start_time")
+    teacher_list=[]
+    if teacher:
+        for i in teacher:
+            teacher_list.append({"title":f"{i.user.first_name.title()}","start":f"{i.start_time}","end":f"{i.end_time}","url":f"{i.get_teacher_url_consultant()}"})
+        teachers=json.dumps(teacher_list)
+        data={"last":teacher.first().start_time,"teachers":teachers,"count":teacher.count()}
+    else:
+        data = {"teachers":None}
+    return data
+
 def home(request):
     category=Category.objects.all()
-    form=CosultantForm(request.POST or None,initial={'name':None})
-    context={"form":form,"category":category}
+    try:
+        name=request.GET["name"]
+        result=teacher_table(request)
+        if result["teachers"] == None:
+            time= date.today()
+            form=None
+            count=0
+            teachers=[]
+        else:
+            form=CosultantForm(request.GET or None)
+            time=result["last"]
+            teachers=result["teachers"]
+            count=result["count"]
+        context={"form":form,"category":category,"date":time,"teachers":teachers,"count":count,"name":1}
+    except:
+        form=CosultantForm(request.GET or None)
+        context={"name":None,"form":form,"count":0}
     return render(request,"consultant.html",context)
 
-def teacher_ajax(request):
-    form=CosultantForm(request.POST or None)
-    if request.is_ajax():
-        if form.is_valid():
-            category=form.cleaned_data.get("name")
-            teacher=Teacher_Time.objects.filter(category=category,available=True).values('user__username',"user__id").distinct()
-            return JsonResponse(list(teacher),safe=False)
-        else:
-            print("invalid")
-        return JsonResponse({"message":"asd"})
-    else:
-        return JsonResponse({"message":"not ajax request"})
-  
-
-def teacher_ajax_table(request):
-    form=CosultantForm(request.POST or None)
-    if request.is_ajax():
-        print("ajax")
-        teacher=request.POST.get("teacher")
-        teacher=Teacher_Time.objects.filter(user_id=teacher,available=True)
-        list=[]
-        host=request.META['HTTP_HOST']
-        for i in teacher:
-            url=f"/consultant/payment/{i.id}/"
-            list.append({"id":i.id,"username":i.user.username.title(),
-                "category":i.category.name,"date":i.date,"from":i.from_time.strftime("%I:%M %p"),"to":i.to_time.strftime("%I:%M %p"),
-            "url":url,"price":i.price})
-        print(list)
-    return JsonResponse(list,safe=False)
-
+@check_teacher_dates
+def get_consultant(request,slug):
+    # user=get_object_or_404(User,slug=slug)
+    time=request.GET.get("time")
+    teacher_time=get_object_or_404(Teacher_Time,user__slug=slug,id=time,available=True)
+    context={"teacher":teacher_time}
+    return render(request,"consultant_teacher.html",context)
 @login_required(login_url="accounts:login")
 @check_user_is_has_consul
+# @check_teacher_dates_teacher
 @complete_user_data
 def consultant_payment(request,teacher):
     teacher=get_object_or_404(Teacher_Time,id=teacher,available=True)
-    form=PaymentForm(request.POST or None ,request.FILES or None)
+    form=PaymentMethodForm(request.POST or None ,request.FILES or None)
+    url=f"{request.scheme}://{request.META['HTTP_HOST']}"
     if request.method == 'POST':
         if form.is_valid():
-            method=form.cleaned_data["payment_method"]
-            image=form.cleaned_data["image"]
-            number=form.cleaned_data["number"]
-            consult=Consultant.objects.create(user=request.user
-                ,teacher=teacher,status="pending")
-            payment=Cosultant_Payment.objects.create(method=method,transaction_number=number,
-                consult=consult,user=request.user,status="pending")
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{payment.user.slug}/{payment.consult.teacher.date}/{image}"
+            image=form.cleaned_data.get("image")
+            number=form.cleaned_data.get("number")
+            payment=Cosultant_Payment.objects.create(method="Western Union",transaction_number=number,
+                teacher=teacher,user=request.user,status="pending")
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{payment.user.slug}/{payment.teacher.id}/{image}"
             headers = {
                 "AccessKey": Storage_Api,
                 "Content-Type": "application/octet-stream",
@@ -84,7 +95,7 @@ def consultant_payment(request,teacher):
             print(data)
             try:
                 if data["HttpCode"] == 201:
-                    payment.payment_image = f"https://{agartha_cdn}/consultant-payment/{payment.user.slug}/{payment.consult.teacher.date}/{image}"
+                    payment.payment_image = f"https://{agartha_cdn}/consultant-payment/{payment.user.slug}/{payment.teacher.id}/{image}"
                     payment.save()
             except:
                 pass
@@ -92,10 +103,10 @@ def consultant_payment(request,teacher):
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
             messages.success(request,"We Have sent an Email,Please check your Inbox")
-            return redirect(reverse("home:home"))
+            return redirect(reverse("accounts:consultant_payment"))
         else:
             messages.error(request,"invalid form")
-    context={"form":form,"teacher":teacher}
+    context={"form":form,"teacher":teacher,"url":url}
     return render(request,"consultant_payment.html",context)
 
 
@@ -251,8 +262,8 @@ def paypal_create(request,teacher):
     else:
         return JsonResponse({'details': "invalid request"})         
 
-@login_required(login_url="accounts:login")
-def paypal_capture(request,order_id,teacher_id):       
+# @login_required(login_url="accounts:login")
+def paypal_capture(request,teacher_id,order_id,user):       
     if request.method=="POST": 
         capture_order = OrdersCaptureRequest(order_id)
         environment = SandboxEnvironment(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
@@ -262,18 +273,17 @@ def paypal_capture(request,order_id,teacher_id):
         print(data)
 
         teacher=get_object_or_404(Teacher_Time,id=teacher_id)
+        user=get_object_or_404(User,id=user)
         try:
             if data["status"] == "COMPLETED" :
                 for i in data["purchase_units"]:
                     for b in i['payments']["captures"]:
                         transaction=b["id"]
-                consult=Consultant.objects.create(user=request.user
-                    ,teacher=teacher,status="pending")
                 payment=Cosultant_Payment.objects.create(method="Paypal",transaction_number=transaction,
-                   consult=consult,user=request.user,status="pending")
+                    teacher=teacher,user=user,status="pending")
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
-                msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[consult.user.email])
+                msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[user.email])
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
                 return JsonResponse({"status":1})
@@ -281,3 +291,10 @@ def paypal_capture(request,order_id,teacher_id):
                 return JsonResponse({"status":0})
         except:
             return JsonResponse({"status":0})
+
+
+def test(request):
+    teachers=Teacher_Time.objects.all()  #title url start end
+    data=[{"title":"event 1","start":"2020-02-07","end":"2020-02-08"},{"title":"event 1","start":"2020-02-07","end":"2020-02-08"},{"title":"event 1","start":"2020-02-07","end":"2020-02-08"},{"title":"event 1","start":"2020-02-07","end":"2020-02-08"}]
+    context={"data":json.dumps(data)}
+    return render(request,"consultant_test.html",context)

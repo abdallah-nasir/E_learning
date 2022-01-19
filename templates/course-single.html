@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 {% load crispy_forms_tags %}
 {% load embed_video_tags %}
 {% block content %}
@@ -70,8 +71,8 @@ width:100% !important;
                         <h2>{{course.name.title}}</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
-                                <li class="breadcrumb-item"><a href="{% url 'home:courses'  %}">Courses</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'home:courses'  %}">{% trans 'Courses' %}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:branch' slug=course.branch.slug  %}">{{course.branch.name}}</a></li>
                             </ol>
                         </nav>
@@ -101,20 +102,20 @@ width:100% !important;
                                             <img src="{{course.Instructor.image}}" style="max-height: 4rem;" alt="Teacher">
                                         </div>
                                         <div class="name">
-                                            <span>Teacher</span>
+                                            <span>{% trans 'Teacher' %}</span>
                                             <h6>{{course.Instructor.username.title}}</h6>
                                         </div>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="course-category">
-                                        <span>Category</span>
+                                        <span>{% trans 'Category' %}</span>
                                         <h6>{{course.branch.category.name}} </h6>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="review">
-                                        <span>Review</span>
+                                        <span>{% trans 'Review' %}</span>
                                         <ul>
                                             {% with ''|center:course.total_rate as range %}
                                             {% for _ in range %}
@@ -122,7 +123,7 @@ width:100% !important;
                                                  {% endfor %}
                                         {% endwith %}
                                             
-                                            <li class="rating">({{course.reviews.count}} Reviws)</li>
+                                            <li class="rating">({{course.reviews.count}} {% trans 'Reviews' %})</li>
                                         </ul>
                                     </div>
                                 </li>
@@ -146,16 +147,16 @@ width:100% !important;
                         <div class="corses-tab mt-30">
                             <ul class="nav nav-justified" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="active" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Overview</a>
+                                    <a class="active" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">{% trans 'Overview' %}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="curriculam-tab" data-toggle="tab" href="#curriculam" role="tab" aria-controls="curriculam" aria-selected="false">Curriculam</a>
+                                    <a id="curriculam-tab" data-toggle="tab" href="#curriculam" role="tab" aria-controls="curriculam" aria-selected="false">{% trans 'Curriculum' %}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="instructor-tab" data-toggle="tab" href="#instructor" role="tab" aria-controls="instructor" aria-selected="false">Instructor</a>
+                                    <a id="instructor-tab" data-toggle="tab" href="#instructor" role="tab" aria-controls="instructor" aria-selected="false">{% trans 'Instructor' %}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Reviews</a>
+                                    <a id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">{% trans 'Reviews' %}</a>
                                 </li>
                             </ul>
                             
@@ -163,7 +164,7 @@ width:100% !important;
                                 <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
                                     <div class="overview-description">
                                         <div class="singel-description pt-40">
-                                            <h6>Course Summery</h6>
+                                            <h6>{% trans 'Course Summery' %}</h6>
                                             <p  style=" scrollbar-width: auto; height: 10rem; width: auto;overflow-y: scroll;">{{course.details}}</p>
                                         </div>
                                         <!-- <div class="singel-description pt-40">
@@ -184,7 +185,7 @@ width:100% !important;
                                                     <a href="#" data-toggle="collapse" data-target="#collapseOne-{{i.id}}" aria-expanded="true" aria-controls="collapseOne-{{i.id}}">
                                                         <ul>
                                                             <li><i class="fa fa-file-o"></i></li>
-                                                           <li><span class="lecture">Lecture {{forloop.counter}}</span></li>
+                                                           <li><span class="lecture">{% trans 'Lecture' %} {{forloop.counter}}</span></li>
                                                            <br>
                                                           <!-- <li><span class="head">{{i.name}}</span></li> -->
                                                             <li><span class="time d-none d-md-block"><i class="fa fa-clock-o"></i> <span>{{i.get_duration_model}}</span></span></li>
@@ -236,7 +237,7 @@ width:100% !important;
                                 <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                                     <div class="reviews-cont">
                                         <div class="title">
-                                            <h6>Student Reviews</h6>
+                                            <h6>{% trans 'Student Reviews' %}</h6>
                                         </div>
                                         <ul>
                                             {% for i in course.reviews.all %}
@@ -262,7 +263,7 @@ width:100% !important;
                                                                 {% endwith %}
                                                               
                                                             </ul>
-                                                            <span>/ {{i.rate}} Star</span>
+                                                            <span>/ {{i.rate}} {% trans 'Star' %}</span>
                                                         </div>
                                                     </div>
                                                 </div> <!-- singel reviews -->
@@ -270,7 +271,7 @@ width:100% !important;
                                            {% endfor %}
                                         </ul>
                                         <div class="title pt-15">
-                                            <h6>Leave A Comment</h6>
+                                            <h6>{% trans 'Leave A Comment' %}</h6>
                                         </div>
                                         <div class="reviews-form">
                                             <form id="comment-form" method="POST">
@@ -290,7 +291,7 @@ width:100% !important;
                                                     <div class="col-lg-12">
                                                         <div class="form-singel">
                                                             <div class="rate-wrapper">
-                                                                <div class="rate-label">Your Rating:</div>
+                                                                <div class="rate-label">{% trans 'Your Rating' %}:</div>
                                                                 <div class="rate">
                                                        
                                                             <div class="rate-item">  
@@ -326,7 +327,7 @@ width:100% !important;
                                                     </div>
                                                     <div class="col-lg-12">
                                                         <div class="form-singel">
-                                                            <textarea name="review" placeholder="Comment" Required></textarea>
+                                                            <textarea name="review" placeholder="{% trans 'Comment' %}" Required></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-12">
@@ -334,7 +335,7 @@ width:100% !important;
 
                                                         </div>
                                                         <div class="form-singel">
-                                                            <button type="submit" id='post_comment' class="main-btn">Post Comment</button>
+                                                            <button type="submit" id='post_comment' class="main-btn">{% trans 'Post Comment' %}</button>
                                                         </div>
                                                     </div>
                                                 </div> <!-- row -->
@@ -351,31 +352,31 @@ width:100% !important;
                     <div class="row">
                         <div class="col-lg-12 col-md-6">
                             <div class="course-features mt-30">
-                               <h4>Course Features </h4>
+                               <h4>{% trans 'Course Features' %} </h4>
                                 <ul>
-                                    <li><i class="fa fa-clock-o"></i>Duaration : <span>{{course.get_duration_model}}</span></li>
-                                    <li><i class="fa fa-clone"></i>Leactures : <span>{{course.videos.count}}</span></li>
-                                    <li><i class="fa fa-beer"></i>Quizzes :  <span>{{course.calculate_quiz}}</span></li>
+                                    <li><i class="fa fa-clock-o"></i>{% trans 'Duration' %} : <span>{{course.get_duration_model}}</span></li>
+                                    <li><i class="fa fa-clone"></i>{% trans 'Lectures' %} : <span>{{course.videos.count}}</span></li>
+                                    <li><i class="fa fa-beer"></i>{% trans 'Quizzes' %} :  <span>{{course.calculate_quiz}}</span></li>
                                     
-                                    <li><i class="fa fa-user-o"></i>Students :  <span>{% if not course.students.count %}0 {% else %} {{course.students.count}} {% endif %}</span></li>
+                                    <li><i class="fa fa-user-o"></i>{% trans 'Students' %} :  <span>{% if not course.students.count %}0 {% else %} {{course.students.count}} {% endif %}</span></li>
                                 </ul>
                                 <div class="price-button pt-10">
                                     
                                     {% if course.discount %}
                                     <span>Price : <b>${{course.discount|floatformat}}</b></span>
                                    
-                                    <span style="margin-top: 10px;  text-decoration: line-through; ">Price : <b>${{course.price|floatformat}}</b></span>
+                                    <span style="margin-top: 10px;  text-decoration: line-through; ">{% trans 'Price' %} : <b>${{course.price|floatformat}}</b></span>
 
                                     {% else %}
                                     <span>Price : <b>${{course.price|floatformat}}</b></span>
                                     {% endif %}
                                    
                                     {% if request.user in course.students.all %}
-                                <a  class="main-btn" id="paid"  href="{% url 'quiz:home' course.slug course.get_total_quiz  %}">Take Quiz</a>
+                                <a  class="main-btn" id="paid"  href="{% url 'quiz:home' course.slug course.get_total_quiz  %}">{% trans 'Take Quiz' %}</a>
                                     <!-- <a  class="main-btn disabled" id="paid" disabled>Paid</a> -->
                                     {% else %}
                             
-                                    <a href="{% url 'home:checkout' course.slug %}" class="main-btn">Enroll Now</a>
+                                    <a href="{% url 'home:checkout' course.slug %}" class="main-btn">{% trans 'Enroll Now' %}</a>
                                     {% endif %}
                                    
 
@@ -405,7 +406,7 @@ width:100% !important;
 
                         <div class="col-lg-12 col-md-6">
                             <div class="You-makelike mt-30">
-                                <h4>Recent Events</h4> 
+                                <h4>{% trans 'Recent Event' %}s</h4> 
                                 {% for event in course.related_events %}
                                 <div class="cont">
                                     <a href="{% url 'home:event' event.slug %}"><h4>{{event.name|truncatewords:10}}</h4></a>
@@ -427,7 +428,7 @@ width:100% !important;
                 <div class="col-lg-8">
                     <div class="releted-courses pt-95">
                         <div class="title">
-                            <h3>Releted Courses</h3>
+                            <h3>{% trans 'Related Courses' %}</h3>
                         </div>
                         <div class="row">
                             {% for i in course.same %}
@@ -456,7 +457,7 @@ width:100% !important;
                                             {% endif %}
                                          
                                         </ul>
-                                        <span>({{i.reviews.count}} Reviws)</span>
+                                        <span>({{i.reviews.count}} {% trans 'Reviews' %})</span>
                                         <br>
                                         <a href="{% url 'home:course' slug=i.slug %}"><h4>{{i.name.title}}</h4></a>
                                         <div id="collapse-{{i.id}}">

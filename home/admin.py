@@ -17,6 +17,7 @@ admin.site.register(Payment,PaymentAdmin)
 admin.site.register(News)
 admin.site.register(Subscribe)
 admin.site.register(Testimonials)
+admin.site.register(Support_Email)
 
 
 

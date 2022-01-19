@@ -82,6 +82,8 @@ INSTALLED_APPS = [
     'django_cleanup',
     'captcha',
     "admin_honeypot",
+    "modeltranslation",
+   
     # "storages",   
     # "debug_toolbar",
 ] 
@@ -193,6 +195,7 @@ LANGUAGES = (            # supported languages
     ('en', _('English')),
     ("ar",_("Arabic")),
 )
+MODELTRANSLATION_LANGUAGES = ['en',"ar"]
 TIME_ZONE = 'Africa/Cairo'
 # STATIC_URL = 'https://garthaacademy.b-cdn.net/static/'
 # STATIC_ROOT="https://garthaacademy.b-cdn.net"
@@ -200,7 +203,7 @@ TIME_ZONE = 'Africa/Cairo'
 #   "https://garthaacademy.b-cdn.net/static/"
 # ]  
     
-STATIC_URL = '/static/'
+STATIC_URL = '/static/'   
 STATIC_ROOT=BASE_DIR/"static"
 STATICFILES_DIRS=[
   BASE_DIR/"static_in_env"
@@ -235,6 +238,7 @@ EMAIL_HOST_PASSWORD =os.environ["EMAIL_HOST_PASSWORD"]
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL= True
 EMAIL_PORT = 465 
+
 #allauth   
 SITE_ID=1 
 LOGIN_REDIRECT_URL ="home:home"

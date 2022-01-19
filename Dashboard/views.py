@@ -3,13 +3,14 @@ import os
 from django.template.defaultfilters import urlencode
 from django.urls import reverse
 from Consultant.models import Cosultant_Payment,Consultant,Teacher_Time
-from home.models import Course,Payment,Events,Videos,News,Videos
+from home.models import Course,Payment,Events,Videos,News,Videos,Support_Email
 from Blogs.models import (Blog,Blog_Payment,Blog_Images,Prices)
 from Quiz.models import *
 from accounts.models import TeacherForms
+from Frontend.models import *
 from django.core.paginator import Paginator
 from .forms import *
-from django.core.mail import send_mail,send_mass_mail
+from django.core.mail import send_mail,send_mass_mail,get_connection
 from django.db.models import Q
 from django.conf import settings
 from accounts.forms import ChangeUserDataForm,ChangeTeacherDataForm
@@ -22,10 +23,19 @@ from taggit.models import Tag
 from .models import *
 from django.contrib.auth.decorators import user_passes_test
 import json,requests
-
 from django.contrib.auth import get_user_model
 User=get_user_model()
-urlencode
+DASHBOARD_EMAIL_HOST = os.environ['DASHBOARD_EMAIL_HOST']
+DASHBOARD_EMAIL_USERNAME = os.environ['DASHBOARD_EMAIL_USERNAME']
+DASHBOARD_EMAIL_PASSWORD = os.environ['DASHBOARD_EMAIL_PASSWORD']
+DASHBOARD_EMAIL_PORT = os.environ['DASHBOARD_EMAIL_PORT']
+DASHBOARD_MAIL_CONNECTION = get_connection(
+host= DASHBOARD_EMAIL_HOST, 
+port=DASHBOARD_EMAIL_PORT, 
+username=DASHBOARD_EMAIL_USERNAME, 
+password=DASHBOARD_EMAIL_PASSWORD, 
+use_tls=False
+) 
 # Create your views here.
 AccessKey=os.environ['AccessKey']
 Storage_Api=os.environ['Storage_Api']
@@ -1094,9 +1104,11 @@ def approve_content(request,id):
             elif qs == "consultant_payment":
                 query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
                 query.status="approved"
-                query.consult.status="approved"
+                Consultant.objects.create(user=query.user,teacher=query.teacher,status="pending")
+                consult.start_time=query.teacher.start_time
+                consult.end_time=query.teacher.end_time
+                consult.save()
                 query.save()
-                query.consult.save()
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "course":
                 query=get_object_or_404(Course,id=id,status="pending")
@@ -1176,7 +1188,8 @@ def reject(request,id):
             if request.method == "POST":
                 if form.is_valid():
                     instance=form.save(commit=False)
-                    print(form.cleaned_data.get("message"))
+                    query.status="declined"
+                    query.save()
                     instance.type=qs
                     instance.user=content_user
                     instance.content_id=id
@@ -1184,13 +1197,13 @@ def reject(request,id):
                     send_mail(
                         form.cleaned_data.get("subject"),
                         form.cleaned_data.get("message"),
-                        settings.EMAIL_HOST_USER,
+                        DASHBOARD_EMAIL_USERNAME,
                         [content_user.email],
                         fail_silently=False,
+                        connection=DASHBOARD_MAIL_CONNECTION
                         )
                  
-                    query.status="declined"
-                    query.save()
+
                     # if qs == "teacher":
                     #     print("teacher")
                         # query.delete()
@@ -1252,7 +1265,7 @@ def add_news(request):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def consultants(request):
-    if request.user.account_type == "teacher" and request.user.is_director == False and request.user.is_supersuser == False:
+    if request.user.account_type == "teacher" and request.user.is_director == False and request.user.is_superuser == False:
         consultants=Consultant.objects.filter(user=request.user,status="approved").order_by("-id")
     else:
         consultants=Consultant.objects.all().order_by("-id")
@@ -1277,12 +1290,72 @@ def consultants_sessions(request):
     return render(request,"dashboard_consultants_sessions.html",context)
 
 @login_required(login_url="accounts:login")
+def accept_consultant(request,id):
+    consultant=get_object_or_404(Consultant,id=id,status="pending",teacher__user=request.user)
+    form=SessionForm(request.POST or None,instance=consultant)
+    if request.method =="POST":
+        if form.is_valid():
+            instance=form.save(commit=False)
+            # instance.start_time.=form.cleaned_data.get("start_day")
+            # instance.end_time.date=form.cleaned_data.get("start_day")
+            # instance.start_time.time=form.cleaned_data.get("start_time")
+            # instance.start_time.time=form.cleaned_data.get("end_time")
+            # instance.end_time=form.cleaned_data.get("end_time")
+            instance.status="approved"
+            instance.save()
+            messages.success(request,"Session Activated")
+            return redirect(reverse("dashboard:consultants"))
+    context={"form":form}
+    return render(request,"dashboard_consultant_accept.html",context)
+
+@login_required(login_url="accounts:login")
+def edit_consultant(request,id):
+    consultant=get_object_or_404(Consultant,id=id,status="approved",teacher__user=request.user)
+    form=SessionForm(request.POST or None,instance=consultant)
+    if request.method =="POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Session Edited Activated")
+            return redirect(reverse("dashboard:consultants"))
+    context={"form":form}
+    return render(request,"dashboard_consultant_accept.html",context)
+
+@login_required(login_url="accounts:login")
+def start_consultant(request,id):
+    consultant=get_object_or_404(Consultant,id=id,status="approved",teacher__user=request.user)
+    start_time_day=consultant.start_time.strftime("%Y-%m-%d") 
+    start_time_hour=consultant.start_time.strftime("%H:%M:%S") 
+    end_time_day=consultant.end_time.strftime("%Y-%m-%d") 
+    end_time_hour=consultant.end_time.strftime("%H:%M:%S") 
+    body=f"your session will start on {start_time_day} at {start_time_hour} and will finish on {end_time_day} at {end_time_hour}"
+    send_mail(
+        "session details",
+        body,
+        settings.EMAIL_HOST_USER,
+        [consultant.user.email],
+        fail_silently=False,
+        )
+    consultant.status="started"
+    consultant.save()
+    messages.success(request,"consultant started")
+    return redirect(reverse("dashboard:consultants"))
+
+@login_required(login_url="accounts:login")
 def delete_session(request,id):
     session=get_object_or_404(Teacher_Time,user=request.user,id=id,available=True)
-    session.available=False
-    session.save()
-    messages.success(request,"Session Deactivated")
-    return redirect(reverse("dashboard:consultants_sessions"))
+    consult=Consultant.objects.filter(teacher=session).exclude(status="completed")
+    pending_payments=Cosultant_Payment.objects.filter(teacher=session).exclude(status="completed")
+    if pending_payments.exists():
+        messages.error(request,"contact the admin , you already have a pending payment")
+        return redirect(reverse("dashboard:consultants_sessions"))
+    elif consult.exists():
+        messages.error(request,"you should complete all pending sessions first")
+        return redirect(reverse("dashboard:consultants_sessions"))
+    else:
+        session.available=False
+        session.save()
+        messages.success(request,"Session Deactivated")
+        return redirect(reverse("dashboard:consultants_sessions"))
 
 @login_required(login_url="accounts:login")
 def active_session(request,id):
@@ -1294,7 +1367,7 @@ def active_session(request,id):
 
 @login_required(login_url="accounts:login")
 @check_user_validation
-@check_if_teacher_have_consultants
+# @check_if_teacher_have_consultants
 def add_consultant(request):
     form=CosultantAddForm(request.POST or None)
     if request.method == "POST":
@@ -1307,9 +1380,20 @@ def add_consultant(request):
     return render(request,"dashboard_add_consultant.html",context)
 
 @login_required(login_url="accounts:login")
+@admin_director_check
+def add_consultant_category(request):
+    form=ConsultantCategoryForm(request.POST or None)
+    if request.method == "POST":
+        form.save()
+        messages.success(request,"Consultant Category Added Successfully")
+        form=ConsultantCategoryForm()
+    context={"form":form}
+    return render(request,"dashboard_add_consultant_category.html",context)
+
+@login_required(login_url="accounts:login")
 @check_user_validation
 def complete_consultant(request,id):
-    consult=get_object_or_404(Consultant,id=id,status="approved")
+    consult=get_object_or_404(Consultant,id=id,status="started")
     if request.user == consult.teacher.user:
         consult.status="completed"
         consult.save()
@@ -1398,6 +1482,14 @@ def add_user_director(request):
 import requests
 from django.http import JsonResponse
 def test(request):
+    send_mail(
+    'Subject here',
+    'Here is the message.',
+    DASHBOARD_EMAIL_USERNAME,
+    ['abdallah.nasir@ymail.com'],
+    connection=DASHBOARD_MAIL_CONNECTION,
+    fail_silently=False,
+)
     # api=requests.get("http://api.currencylayer.com/live?access_key=bbd4b1fcbe13b2bf0b8a008bc1daa606&currencies=EGP&format = 1")
     # data=api.json()
     # try:
@@ -1437,3 +1529,69 @@ def add_blog_category(request):
             messages.success(request,"blog category added successfully")
     context={"form":form}
     return render(request,"dashboard_add_blog_category.html",context)
+
+@login_required(login_url="accounts:login")
+@admin_director_check   
+def terms(request):     #terms edit
+    terms=Terms.objects.last()
+    form=TermsForm(request.POST or None,instance=terms)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+    context={"terms":terms,"form":form}
+    return render(request,"dashboard_terms.html",context)
+
+@login_required(login_url="accounts:login")
+@admin_director_check   
+def terms_add_new(request):     #terms edit
+    form=TermsForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+    context={"terms":terms,"form":form}
+    return render(request,"dashboard_terms_add_new.html",context)
+
+@login_required(login_url="accounts:login")
+@admin_director_check   
+def privacy(request):     #terms edit
+    terms=Privacy.objects.last()
+    form=PrivacyForm(request.POST or None,instance=terms)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+    context={"privacy":privacy,"form":form}
+    return render(request,"dashboard_privacy.html",context)
+
+@login_required(login_url="accounts:login")
+@admin_director_check   
+def privacy_add_new(request):     #terms edit
+    form=PrivacyForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+    context={"privacy":privacy,"form":form}
+    return render(request,"dashboard_privacy_add_new.html",context)
+
+
+@login_required(login_url="accounts:login")
+@admin_director_check  
+def emails(request):
+    emails=Support_Email.objects.exclude(status="solved").order_by("status")
+    context={"emails":emails}
+    return render(request,"dashboard_emails.html",context)
+
+@login_required(login_url="accounts:login")
+@admin_director_check  
+def single_email(request,id):
+    email=get_object_or_404(Support_Email,id=id)
+    form = Support_Email_Form(request.POST or None,instance=email)
+    # if request.method == "POST":
+    #     if form.is_valid():
+    #         form.status="sol"
+
+    context={"email":email,"form":form}
+    return render(request,"dashboard_single_email.html",context)
+# @login_required(login_url="accounts:login")
+# @admin_director_check  
+# def add_consultant_category(request):
+#     form

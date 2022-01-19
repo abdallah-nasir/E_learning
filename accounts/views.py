@@ -20,7 +20,8 @@ from allauth.account.views import SignupView,LoginView
 # from allauth.account.forms import LoginForm,SignupForm
 Storage_Api=os.environ["Storage_Api"]
 storage_name=os.environ["storage_name"]
-  
+agartha_cdn=os.environ['agartha_cdn']
+
 # Create your views here.
 
 class CustomSignupView(SignupView):

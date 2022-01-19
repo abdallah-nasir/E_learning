@@ -128,11 +128,10 @@ def payment_pricing(request,id):
         if form.is_valid():
             if request.user.vip == False and not Blog_Payment.objects.filter(user=request.user,status="pending").exists():
                 now= datetime.date.today()
-                method=form.cleaned_data["payment_method"]
                 image=form.cleaned_data["image"]
                 number=form.cleaned_data["number"]
                 payment=Blog_Payment.objects.create(user=request.user,
-                method=method,payment_image=image, transaction_number=number,status="pending",created_at=now)
+                method="Western Union",payment_image=image, transaction_number=number,status="pending",created_at=now)
                 if price.get_duration() == 'monthly':
                     payment.created_at = now
                     payment.expired_at= now + datetime.timedelta(days=30*6)

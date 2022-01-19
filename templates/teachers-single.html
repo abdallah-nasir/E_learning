@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 {% block content %}
 
@@ -9,11 +10,11 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="page-banner-cont">
-                        <h2>Teachers</h2>
+                        <h2>{% trans 'Teachers' %}</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:teachers' %}">Teachers</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:teachers' %}">{% trans 'Teachers' %}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:teacher' teacher.slug %}">{{teacher.get_full_name.title}}</a></li>
 
                             </ol>
@@ -34,7 +35,7 @@
                 <div class="col-lg-4 col-md-8">
                     <div class="teachers-left mt-50">
                         <div class="hero">
-                            <img src="{{teacher.image.url}}" alt="Teachers">
+                            <img src="{{teacher.image}}" alt="Teachers">
                         </div>
                         <div class="name">
                             <h6>{{teacher.get_full_name.title}}</h6>
@@ -64,20 +65,20 @@
                     <div class="teachers-right mt-50">
                         <ul class="nav nav-justified" id="myTab" role="tablist">
                             <li class="nav-item">
-                                <a class="active" id="dashboard-tab" data-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true">Dashboard</a>
+                                <a class="active" id="dashboard-tab" data-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true">{% trans 'Dashboard' %}</a>
                             </li>
                             <li class="nav-item">
-                                <a id="courses-tab" data-toggle="tab" href="#courses" role="tab" aria-controls="courses" aria-selected="false">Courses</a>
+                                <a id="courses-tab" data-toggle="tab" href="#courses" role="tab" aria-controls="courses" aria-selected="false">{% trans 'Courses' %}</a>
                             </li>
                             <li class="nav-item">
-                                <a id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Reviews</a>
+                                <a id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">{% trans 'Reviews' %}</a>
                             </li>
                         </ul> <!-- nav -->
                         <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
                                 <div class="dashboard-cont">
                                     <div class="singel-dashboard pt-40">
-                                        <h5>About</h5>
+                                        <h5>{% trans 'About' %}</h5>
                                         <p>{{teacher.get_user_data.about_me}}</p>
                                     </div> <!-- singel dashboard -->
                                    
@@ -91,7 +92,7 @@
                                             <div class="singel-course mt-30">
                                                 <div class="thum">
                                                     <div class="image">
-                                                        <img src="{{i.image.url}}" alt="Course">
+                                                        <img src="{{i.image}}" alt="Course">
                                                     </div>
                                                     <div class="price">
                                                         <span>${{i.price|floatformat}}</span>
@@ -106,7 +107,7 @@
                                                             {% endfor %}
                                                         {% endwith %}
                                                     </ul>
-                                                    <span>({{i.reviews.count}} Reviws)</span>
+                                                    <span>({{i.reviews.count}} {% trans 'Reviews' %})</span>
                                                     <br>
                                                     <a href="{% url 'home:course' i.slug %}"><h4>{{i.name.title}}</h4></a>
                                                         <div id="collapse-{{i.id}}">
@@ -114,7 +115,7 @@
                                     </div>
                                                     <div class="course-teacher">
                                                         <div class="thum">
-                                                            <a href="{% url 'home:course' i.slug %}"><img src="{{i.image.url}}" alt="teacher"></a>
+                                                            <a href="{% url 'home:course' i.slug %}"><img src="{{i.image}}" alt="teacher"></a>
                                                         </div>
                                                         <div class="name">
                                                             <a href="{% url 'home:teacher' i.Instructor.slug %}"><h6>{{i.Instructor.first_name.title}}</h6></a>
@@ -143,7 +144,7 @@
                             <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                                 <div class="reviews-cont">
                                     <div class="title">
-                                        <h6>Student Reviews</h6>
+                                        <h6>{% trans 'Student Reviews' %}</h6>
                                     </div>
                                     <ul>
                                         {% for i in reviews %}
@@ -151,7 +152,7 @@
                                            <div class="singel-reviews">
                                                 <div class="reviews-author">
                                                     <div class="author-thum">
-                                                        <img src="{{i.user.image.url}}" style="max-height:5rem;" alt="Reviews">
+                                                        <img src="{{i.user.image}}" style="max-height:5rem;" alt="Reviews">
                                                     </div>
                                                     <div class="author-name">
                                                         <h6>{{i.user.get_full_name.title}}</h6>
@@ -169,7 +170,7 @@
                                                                 {% endfor %}
                                                             {% endwith %}
                                                         </ul>
-                                                        <span>/ {{i.rate}} Star</span>
+                                                        <span>/ {{i.rate}} {% trans 'Star' %}</span>
                                                     </div>
                                                 </div>
                                             </div> <!-- singel reviews -->
@@ -177,7 +178,7 @@
                                        {% endfor %}
                                     </ul>
                                     <div class="title pt-15">
-                                        <h6>Leave A Comment</h6>
+                                        <h6>{% trans 'Leave A Comment' %}</h6>
                                     </div>
                                     <div class="reviews-form">
                                         <form method="POST" action="{%  url 'home:teacher' teacher.slug %}">
@@ -196,7 +197,7 @@
                                                     <div class="col-lg-12">
                                                         <div class="form-singel">
                                                             <div class="rate-wrapper">
-                                                                <div class="rate-label">Your Rating:</div>
+                                                                <div class="rate-label">{% trans 'Your Rating' %}:</div>
                                                                 <div class="rate">
                                                                     <div class="rate-item">  
                                                                         <input type="checkbox" style="opacity:0; position:absolute;" value="1"  name="rate">
@@ -225,12 +226,12 @@
                                                     </div>
                                                     <div class="col-lg-12">
                                                         <div class="form-singel">
-                                                            <textarea name="review" placeholder="Comment" Required></textarea>
+                                                            <textarea name="review" placeholder="{% trans 'Comment' %}" Required></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-12">
                                                         <div class="form-singel">
-                                                            <button type="submit" class="main-btn">Post Comment</button>
+                                                            <button type="submit" class="main-btn">{% trans 'Post Comment' %}</button>
                                                         </div>
                                                     </div>
                                                 </div> <!-- row -->

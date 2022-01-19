@@ -4,7 +4,7 @@
 {% get_available_languages as LANGUAGES %}
 {% get_language_info_list for LANGUAGES as languages %}
 <!doctype html>
-<html {% if LANGUAGE_CODE == "en" %}lang="en"{% else %}lang="ar"{% endif %}>
+<html {% if LANGUAGE_CODE == "ar" %}lang="ar"dir="rtl"{% else %}lang="en"{% endif %}>
 
 <head>
    
@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
     <!--====== Title ======-->
-    <title>Agartha Academy {% block title  %}{% endblock %}</title>
+    <title>{% trans 'Agartha Academy' %}{% block title  %}{% endblock %}</title>
     
     <!--====== Favicon Icon ======-->
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
@@ -114,8 +114,7 @@ cursor:pointer;
                     <div class="col-lg-6">
                         <div class="header-contact text-lg-left text-center">
                             <ul>
-                                <li><img src="{% static 'images/all-icon/map.png' %}" alt="icon"><span>{% trans '127/5 Mark street, New york' %}</span></li>
-                                <li><img src="{% static 'images/all-icon/email.png' %}" alt="icon"><span><a style="color:#fff;" href="mailto:info@yourmail.com" >info@yourmail.com</a></span></li>
+                                <li><img src="{% static 'images/all-icon/email.png' %}" alt="icon"><span><a style="color:#fff;" href="mailto:info@agartha.academy" >info@agartha.academy</a></span></li>
                             </ul>
                         </div>
                     </div>
@@ -154,7 +153,7 @@ cursor:pointer;
                                 </div>
                                 <div class="cont">
                                     <p>{% trans 'Need Help? call us free' %}</p>
-                                    <span>321 325 5678</span>
+                                    <span>00201011609810</span>
                                 </div>
                             </div>
                             <div class="button float-left">
@@ -343,19 +342,22 @@ cursor:pointer;
                                 <h6>Sitemap</h6>
                             </div>
                             <ul>
-                                <li><a href="index-2.html"><i class="fa fa-angle-right"></i>Home</a></li>
-                                <li><a href="about.html"><i class="fa fa-angle-right"></i>About us</a></li>
-                                <li><a href="courses.html"><i class="fa fa-angle-right"></i>Courses</a></li>
-                                <li><a href="blog.html"><i class="fa fa-angle-right"></i>News</a></li>
-                                <li><a href="events.html"><i class="fa fa-angle-right"></i>Event</a></li>
+                                <li><a href="{% url 'home:home' %}"><i class="fa fa-angle-right"></i>Home</a></li>
+                                <li><a href="{% url 'home:about' %}"><i class="fa fa-angle-right"></i>About us</a></li>
+                                <li><a href="{% url 'home:courses' %}"><i class="fa fa-angle-right"></i>Courses</a></li>
+                                <li><a href="{% url 'blogs:blogs' %}"><i class="fa fa-angle-right"></i>News</a></li>
+                                <li><a href="{% url 'home:events' %}"><i class="fa fa-angle-right"></i>Event</a></li>
+                                <li><a href="{% url 'home:teachers' %}"><i class="fa fa-angle-right"></i>Teachers</a></li>
+                                <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>Support</a></li>
+                                <li><a href="{% url 'home:contact' %}"><i class="fa fa-angle-right"></i>Contact</a></li>
                             </ul>
-                            <ul>
-                                <li><a href="#"><i class="fa fa-angle-right"></i>Gallery</a></li>
-                                <li><a href="shop.html"><i class="fa fa-angle-right"></i>Shop</a></li>
-                                <li><a href="teachers.html"><i class="fa fa-angle-right"></i>Teachers</a></li>
-                                <li><a href="#"><i class="fa fa-angle-right"></i>Support</a></li>
-                                <li><a href="contact.html"><i class="fa fa-angle-right"></i>Contact</a></li>
-                            </ul>
+                            <!-- <ul>
+                                <li><a href="#"><i class="fa fa-angle-right"></i>Gallery</a></li> 
+                                <li><a href="shop.html"><i class="fa fa-angle-right"></i>Shop</a></li> 
+                                <li><a href="{% url 'home:teachers' %}"><i class="fa fa-angle-right"></i>Teachers</a></li>
+                                <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>Support</a></li>
+                                <li><a href="{% url 'home:contact' %}"><i class="fa fa-angle-right"></i>Contact</a></li>
+                            </ul> -->
                         </div> <!-- footer link -->
                     </div>
                     <div class="col-lg-2 col-md-6 col-sm-6">
@@ -364,11 +366,11 @@ cursor:pointer;
                                 <h6>Support</h6>
                             </div>
                             <ul>
-                                <li><a href="#"><i class="fa fa-angle-right"></i>FAQS</a></li>
-                                <li><a href="#"><i class="fa fa-angle-right"></i>Privacy</a></li>
-                                <li><a href="#"><i class="fa fa-angle-right"></i>Policy</a></li>
-                                <li><a href="#"><i class="fa fa-angle-right"></i>Support</a></li>
-                                <li><a href="#"><i class="fa fa-angle-right"></i>Documentation</a></li>
+                                <li><a href="{% url 'home:faqs' %}"><i class="fa fa-angle-right"></i>FAQS</a></li>
+                                <li><a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i>Privacy</a></li>
+                                <li><a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i>Policy</a></li>
+                                <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>Support</a></li>
+                                <!-- <li><a href="#"><i class="fa fa-angle-right"></i>Documentation</a></li> -->
                             </ul>
                         </div> <!-- support -->
                     </div>
@@ -378,7 +380,7 @@ cursor:pointer;
                                 <h6>Contact Us</h6>
                             </div>
                             <ul>
-                                <li>
+                                <!-- <li>
                                     <div class="icon">
                                         <i class="fa fa-home"></i>
                                     </div>
@@ -393,13 +395,13 @@ cursor:pointer;
                                     <div class="cont">
                                         <p>+3 123 456 789</p>
                                     </div>
-                                </li>
+                                </li> -->
                                 <li>
                                     <div class="icon">
                                         <i class="fa fa-envelope-o"></i>
                                     </div>
                                     <div class="cont">
-                                        <p>info@yourmail.com</p>
+                                        <p>info@agartha.academy</p>
                                     </div>
                                 </li>
                             </ul>
@@ -412,17 +414,11 @@ cursor:pointer;
         <div class="footer-copyright pt-10 pb-25">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-8">
-                        <div class="copyright text-md-left text-center pt-15">
-                            <p><a target="_blank" href="https://www.templateshub.net">Templates Hub</a> </p>
-                        </div>
+                    <div class="col offset-lg-3">
+                        <p> © 2022 Copyright : Agartha Academy | <a href="{% url 'home:terms' %}">Terms and Conditions</a> | <a href="{% url 'home:privacy' %}">Privacy Policy</a></p>
                     </div>
-                    <div class="col-md-4">
-                        <div class="copyright text-md-right text-center pt-15">
-                           
-                        </div>
-                    </div>
-                </div> <!-- row -->
+              
+                </div> 
             </div> <!-- container -->
         </div> <!-- footer copyright -->
     </footer>
@@ -478,92 +474,7 @@ cursor:pointer;
 
 </body>
 <script style="text/javascript">
-    $("#id_name").change(function () {
-        const category = $(this).val();  // get the selected subject ID from the HTML dropdown list 
-        $.ajax({                       // initialize an AJAX request
-            type: "POST",
-            url: '{% url "consultant:teacher_table" %}',
-            data: {
-              "name":category,
-                     // add the country id to the POST parameters
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            dataType:'json',
-            success: function (data) {   // `data` is from `get_topics_ajax` view function
-                let html=`
-                <select id="name" class="form-control form-control-lg">
-                   
-                    <option name="teacher" id="id_teacher" >----------</option>
-                  
-                    `
-            $("#id_teacher").html(html);   
-            data.forEach(function (data) {
-                html += `
-                <option name="teacher" id="id_teacher" value='${data.user__id}'>${data.user__username}</option>
-                `
-            });
-            $("#id_teacher").html(html);
-
-            let html2=`
-            <div class="section-title">
-            <h3 style="text-align:center;">Available Dates</h3>
-            </div>
-            <div class="table-responsive">
-            <table class="table table-dark">
-                <thead>
-                  <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">From</th>
-                    <th scope="col">To</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Reserve</th>
-                  </tr>
-                </thead>
-                <tbody id="teacher_ajax_table">
-
-                </tbody>
-              </table>
-            </div>
-                `
-                $("#teacher_table").html(html2);
-                          }
-        });
-    });
-
-$("#id_teacher").change(function () {
-        const teacher = $(this).val();  // get the selected subject ID from the HTML dropdown list 
-        $.ajax({                       // initialize an AJAX request
-            type: "POST",
-            url: '{% url "consultant:teacher_ajax_table" %}',
-            data: {
-              "teacher":teacher,
-                     // add the country id to the POST parameters
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            dataType:'json',
-            success: function (data) {   // `data` is from `get_topics_ajax` view function
-                let html_1=`
-        
-                    `
-            $("#teacher_ajax_table").html(html_1);   
-            data.forEach(function (data) {
-                html_1 += `
-                <tr>
-                <td>${data.date}</td>
-                <td>${data.from}</td>
-                <td>${data.to}</td>
-                <td>$${data.price}</td>
-                <td><a href="${data.url}" type="button" class="main-btn">Reserve</a></td>
-                </tr>
-                `
-            });
-            $("#teacher_ajax_table").html(html_1);
-
-          
-         
-                          }
-        });
-    });
+   
 
   
   

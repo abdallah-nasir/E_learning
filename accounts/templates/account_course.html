@@ -1,5 +1,5 @@
 {% extends 'account_base.html' %}
-
+{% load i18n %}
 
 
 {% block content %}
@@ -9,7 +9,7 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Courses</h1>
+                    <h1 class="h3 mb-2 text-gray-800">{% trans 'Courses' %}</h1>
                     <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
                         For more information about DataTables, please visit the <a target="_blank"
                             href="https://datatables.net">official DataTables documentation</a>.</p> -->
@@ -17,34 +17,24 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            <!-- <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> -->
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>                                       
-                                            <th>Name</th>
-                                            <th>Teacher</th>
-                                            <th>Category</th>
-                                            <th>Price</th>
-                                            <th>Videos</th>
+                                            <th>{% trans 'Name' %}</th>
+                                            <th>{% trans 'Teacher' %}</th>
+                                            <th>{% trans 'Category' %}</th>
+                                            <th>{% trans 'Price' %}</th>
+                                            <th>{% trans 'Videos' %}</th>
                                            
 
 
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>                                        
-                                            <th>Name</th>
-                                            <th>Teacher</th>
-                                            <th>Category</th>
-                                            <th>Price</th>
-                                            <th>Videos</th>
-                                           
-
-                                        </tr>
-                                    </tfoot>
+                                 
                                    <tbody>
                                        {% for i in courses %}
                                     <tr>
@@ -64,7 +54,7 @@
                                 <nav aria-label="Page navigation example">
                                     <ul class="pagination">
                                         {% if courses.has_previous  %}
-                                      <li class="page-item"><a class="page-link" href="?page={{ courses.previous_page_number }}">Previous</a></li>
+                                      <li class="page-item"><a class="page-link" href="?page={{ courses.previous_page_number }}">{% trans 'Previous' %}</a></li>
                                       {% endif %}
                                       {% for i in  courses.paginator.page_range %}
                                       {% if courses.number == i %}
@@ -76,7 +66,7 @@
                                       {% endif %}
                                       {% endfor %}
                                       {% if courses.has_next %}
-                                      <li class="page-item"><a class="page-link" href="?page={{ courses.next_page_number }}">Next</a></li>
+                                      <li class="page-item"><a class="page-link" href="?page={{ courses.next_page_number }}">{% trans 'Next' %}</a></li>
                                       {% endif %}
                                     </ul>
                                   </nav>

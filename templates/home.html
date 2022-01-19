@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 {% load crispy_forms_tags %}
 {% block content %}
 <title>{% block title %}| Home{% endblock %}</title>
@@ -66,7 +67,7 @@
                                 <div class="items-cont">
                                     <a href="#">
                                         <h5>{{i.name.title}}</h5>
-                                        <span>{{i.get_courses}} courses</span>
+                                        <span>{{i.get_courses}}{% trans 'courses' %}</span>
                                     </a>
                                 </div>
                             </div> <!-- singel items -->
@@ -119,8 +120,8 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="section-title pb-45">
-                    <h5>Our course</h5>
-                    <h2>Featured courses </h2>
+                    <h5>{% trans 'Our course' %}</h5>
+                    <h2>{% trans 'Featured courses' %} </h2>
                 </div> <!-- section title -->
             </div>
         </div> <!-- row -->
@@ -173,25 +174,25 @@
             <div class="col-lg-3 col-sm-6">
                 <div class="singel-counter text-center mt-40">
                     <span><span class="counter">30,000</span>+</span>
-                    <p>Students enrolled</p>
+                    <p>{% trans 'Students enrolled' %}</p>
                 </div> <!-- singel counter -->
             </div>
             <div class="col-lg-3 col-sm-6">
                 <div class="singel-counter text-center mt-40">
                     <span><span class="counter">41,000</span>+</span>
-                    <p>Courses Uploaded</p>
+                    <p>{% trans 'Courses Uploaded' %}</p>
                 </div> <!-- singel counter -->
             </div>
             <div class="col-lg-3 col-sm-6">
                 <div class="singel-counter text-center mt-40">
                     <span><span class="counter">11,000</span>+</span>
-                    <p>People certifie</p>
+                    <p>{% trans 'People certified' %}</p>
                 </div> <!-- singel counter -->
             </div>
             <div class="col-lg-3 col-sm-6">
                 <div class="singel-counter text-center mt-40">
                     <span><span class="counter">39,000</span>+</span>
-                    <p>Global Teachers</p>
+                    <p>{% trans 'Global Teachers' %}</p>
                 </div> <!-- singel counter -->
             </div>
         </div> <!-- row -->
@@ -207,8 +208,8 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="section-title mt-50 pb-25">
-                    <h5>Top Tutors</h5>
-                    <h2>Featured Teachers</h2>
+                    <h5>{% trans 'Top Tutors' %}</h5>
+                    <h2>{% trans 'Featured Teachers' %}</h2>
                 </div> <!-- section title -->
                 <div class="teachers-2">
                     <div class="row">
@@ -221,7 +222,7 @@
                                 <div class="cont">
                                     <a href="{% url 'home:teacher' i.slug %}"><h5>{{i.get_full_name.title}}</h5></a>
                                     <p>{{i.get_user_data.title|truncatewords:10}}</p>
-                                    <span><i class="fa fa-book"></i>{{i.get_user_courses}} Courses</span>
+                                    <span><i class="fa fa-book"></i>{{i.get_user_courses}} {% trans 'Courses' %}</span>
                                 </div>
                             </div> <!-- teachers 2 singel -->
                         </div>
@@ -232,7 +233,7 @@
             <div class="col-lg-6 ">
                 <div class="happy-student mt-55">
                     <div class="happy-title">
-                        <h3>Happy Students</h3>
+                        <h3>{% trans 'Happy Students' %}</h3>
                     </div>
                     <div class="student-slied">
                         {% for i in data.testimonials %}
@@ -265,7 +266,7 @@
                 <div class="col-lg-5 offset-lg-6 col-md-8 offset-md-2 col-sm-10 offset-sm-1">
                     <div class="event-2 pt-90 pb-70">
                         <div class="event-title">
-                            <h3>Upcoming events</h3>
+                            <h3>{% trans 'Upcoming events' %}</h3>
                         </div> <!-- event title -->
                         <ul>
                             {% for i in data.events %}
@@ -295,8 +296,8 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="section-title pb-50">
-                    <h5>Latest Blog</h5>
-                    <h2>From the Blogs</h2>
+                    <h5>{% trans 'Latest Blog' %}</h5>
+                    <h2>{% trans 'From the Blogs' %}</h2>
                 </div> <!-- section title -->
             </div>
         </div> <!-- row -->
@@ -309,8 +310,8 @@
                     </div>
                     <div class="news-cont">
                         <ul>
-                            <li><a href="{% url 'blogs:blog' i.slug %}"><i class="fa fa-calendar"></i>2 December 2018 </a></li>
-                            <li><a href="{% url 'home:teacher' i.slug %}"> <span>By </span> {{i.user.get_full_name.title }}</a></li>
+                            <li><a href="{% url 'blogs:blog' i.slug %}"><i class="fa fa-calendar"></i>{{i.created_at|date:"M d, Y"}} </a></li>
+                            <li><a href="{% url 'home:teacher' i.slug %}"> <span>{% trans 'By' %}</span> {{i.user.get_full_name.title }}</a></li>
                         </ul>
                         <a href="{% url 'blogs:blog' i.slug %}"><h3>{{i.name|truncatechars:20}}</h3></a>
                         <p>{{i.details|safe|truncatechars:100}}</p>
@@ -331,7 +332,7 @@
                             <div class="news-cont mt-30">
                                 <ul>
                                     <li><a href="{% url 'blogs:blog' i.slug %}"><i class="fa fa-calendar"></i>{{i.created_at|date:"M d, Y"}}</a></li>
-                                    <li><a href="{% url 'home:teacher' i.slug %}"> <span>By </span> {{i.user.get_full_name.title}}</a></li>
+                                    <li><a href="{% url 'home:teacher' i.slug %}"> <span>{% trans 'By' %}</span> {{i.user.get_full_name.title}}</a></li>
                                 </ul>
                                 <a href="{% url 'blogs:blog' i.slug %}"><h3>{{i.name|truncatewords:10}}</h3></a>
                                 <p>{{i.details|safe|truncatechars:100}}</p>

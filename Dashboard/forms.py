@@ -2,9 +2,12 @@ from django import forms
 from django.contrib.auth import get_user_model
 from Blogs.models import Blog,Blog_Payment,Prices
 from Blogs.models import Category as Blog_Category
-from home.models import Course,Branch,Videos,Events,Payment,News,Category
+from home.models import Course,Branch,Videos,Events,Payment,News,Category,Support_Email
 from .models import Rejects,AddStudentCourse
-from Consultant.models import Cosultant_Payment,Teacher_Time
+from Frontend.models import *
+from Consultant.models import Cosultant_Payment,Teacher_Time,Consultant
+from Consultant.models import Category as Consultant_Category
+
 from Quiz.models import Question ,Answers
 import os
 from django.db.models import Q
@@ -275,15 +278,29 @@ class NewsForm(forms.ModelForm):
         fields="__all__"
     
 
-class CosultantAddForm(forms.ModelForm):
-    date=forms.DateField(widget=DatePickerInput(format='%m/%d/%y'))
-    from_time=forms.TimeField(widget=TimePickerInput(format='%H:%M:%S'))
-    to_time=forms.TimeField(widget=TimePickerInput(format='%I:%M:%S'))
+class CosultantAddForm(forms.ModelForm): 
+    start_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePickerInput(format='%Y-%m-%d H:%M:%S'))
+    end_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S"],widget=DateTimePickerInput(format='%Y-%m-%d H:%M:%S'))
     class Meta:
         model=Teacher_Time 
         fields="__all__"
         exclude=["user"]
 
+class SessionForm(forms.ModelForm):
+    start_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePickerInput(format='%Y-%m-%d H:%M:%S'))
+    end_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePickerInput(format='%Y-%m-%d H:%M:%S'))
+    zoom=forms.CharField(required=True,widget=forms.TextInput())
+
+    class Meta:
+        model=Consultant 
+        fields="__all__"
+        exclude=["status","teacher","user"]
+
+class ConsultantCategoryForm(forms.ModelForm):
+    class Meta:
+        model=Consultant_Category 
+        fields="__all__"
+        
 class UploadVideoForm(forms.Form):
     # title=forms.CharField(max_length=50)
     video=forms.FileField()
@@ -364,3 +381,29 @@ class BlogForm(forms.ModelForm):
         model=Blog_Category
         fields="__all__"
         exclude=["slug"]
+
+class TermsForm(forms.ModelForm):
+    class Meta:
+        model=Terms
+        fields="__all__"
+        exclude=["text_en"]
+
+class PrivacyForm(forms.ModelForm):
+    class Meta:
+        model=Privacy
+        fields="__all__"
+        exclude=["text_en"]
+
+class Support_Email_Form(forms.ModelForm):
+    class Meta:
+        model=Support_Email
+        fields="__all__"
+        readonly_fields =["user"]
+        # extra_kwargs={"user":{"read_only":True}}
+    # def __init__(self, *args, **kwargs):
+    #     super(Support_Email_Form, self).__init__(*args, **kwargs)
+    #     instance = getattr(self, 'instance', None)
+    #     # if instance and instance.pk:
+    #     for i in self.fields.all():
+    #         print(i)
+            # self.fields['sku'].widget.attrs['readonly'] = True

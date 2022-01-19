@@ -45,6 +45,7 @@ class MyCustomSignupForm(SignupForm):
     phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
     # image=forms.ImageField(label="Profile Picture",required=False)
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
+    terms_privacy=forms.BooleanField(required=True)
 
     # about_me=forms.CharField(widget=forms.HiddenInput())
     # title=forms.CharField(widget=forms.HiddenInput())
@@ -95,7 +96,7 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
     phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
     # image=forms.ImageField(required=True)
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
-
+    terms_privacy=forms.BooleanField(required=True)
     def clean(self):
         image=self.cleaned_data.get("image")
         print(image)

@@ -145,21 +145,7 @@
                     </div>
                 </div>
             </li>
-           <!-- Nav Item - Pages Collapse Menu -->
-           <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsenews"
-                aria-expanded="true" aria-controls="collapsenews">
-                <i class="fas fa-fw fa-cog"></i>
-                <span>News</span>
-            </a>
-            <div id="collapsenews" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">All News:</h6>
-                    <a class="collapse-item" href="{% url 'dashboard:news' %}">News</a>
 
-                </div>
-            </div>
-        </li>
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapconsaltant"
                 aria-expanded="true" aria-controls="collapconsaltant">
@@ -176,6 +162,21 @@
             </div>
         </li>
         {% if request.user.is_superuser or request.user.is_director %}
+                   <!-- Nav Item - Pages Collapse Menu -->
+                   <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsenews"
+                        aria-expanded="true" aria-controls="collapsenews">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>News</span>
+                    </a>
+                    <div id="collapsenews" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">All News:</h6>
+                            <a class="collapse-item" href="{% url 'dashboard:news' %}">News</a>
+        
+                        </div>
+                    </div>
+                </li>
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapceprice"
                 aria-expanded="true" aria-controls="collapceprice">
@@ -186,6 +187,48 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">All Prices:</h6>
                     <a class="collapse-item" href="{% url 'dashboard:prices' %}">Prices</a>
+
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseterms"
+                aria-expanded="true" aria-controls="collapseterms">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Terms</span>
+            </a>
+            <div id="collapseterms" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">All Terms:</h6>
+                    <a class="collapse-item" href="{% url 'dashboard:terms' %}">Terms</a>
+
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseprivacy"
+                aria-expanded="true" aria-controls="collapseterms">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Privacy</span>
+            </a>
+            <div id="collapseprivacy" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">All Privacy:</h6>
+                    <a class="collapse-item" href="{% url 'dashboard:privacy' %}">Privacy</a>
+
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseemails"
+                aria-expanded="true" aria-controls="collapseemails">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Emails</span>
+            </a>
+            <div id="collapseemails" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">All Emails:</h6>
+                    <a class="collapse-item" href="{% url 'dashboard:emails' %}">Emails</a>
 
                 </div>
             </div>
@@ -300,6 +343,26 @@
                     </div>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseconsultantcategory"
+                    aria-expanded="true" aria-controls="collapsenewsadd">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Consultant Category</span>
+                </a>
+                <div id="collapseconsultantcategory" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Add Consultant Category:</h6>
+                        <a class="collapse-item" href="{% url 'dashboard:add_consultant_category' %}">Add Consultant Category</a>
+                        <!-- <a class="collapse-item" href="register.html"></a>
+                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Other Pages:</h6>
+                        <a class="collapse-item" href="404.html">404 Page</a>
+                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
+                    </div>
+                </div>
+            </li>
+            
             {% endif %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseaddconsultant"

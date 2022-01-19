@@ -68,6 +68,11 @@ path("news/delete/<str:id>/",views.delete_news,name="delete_news"),
 #consultants
 path("consultants/sessions/",views.consultants_sessions,name="consultants_sessions"),
 path("consultants/",views.consultants,name="consultants"),
+path("consultants/activate/<int:id>/",views.accept_consultant,name="accept_consultant"),
+path("consultants/start/<int:id>/",views.start_consultant,name="start_consultant"),
+path("consultants/edit/<int:id>/",views.edit_consultant,name="edit_consultant"),
+path("consultants/add/category/",views.add_consultant_category,name="add_consultant_category"),
+
 path("add/consultants/",views.add_consultant,name="add_consultant"),
 path("complete_consultant/consultants/<str:id>/",views.complete_consultant,name="complete_consultant"),
 path("delete_session/<str:id>/",views.delete_session,name="delete_session"),
@@ -78,6 +83,13 @@ path("active_session/<str:id>/",views.active_session,name="active_session"),
 path("prices/",views.prices,name="prices"),
 path("price/edit/<str:id>/",views.edit_price,name="edit_price"),
 ###
+
+### terms
+path("terms/",views.terms,name="terms"),
+path("terms/add/",views.terms_add_new,name="terms_add_new"),
+path("privacy/",views.privacy,name="privacy"),
+path("privacy/add/",views.privacy_add_new,name="privacy_add_new"),
+##
 # Add user to course
 path("user/course/add/",views.add_student_course,name="add_student_course"),
 ###
@@ -87,6 +99,10 @@ path("user/director/add/",views.add_user_director,name="add_user_director"),
 path("category/add/",views.add_category,name="add_category"),
 path("branch/add/",views.add_branch,name="add_branch"),
 path("blog-category/add/",views.add_blog_category,name="add_blog_category"),
+
+### emails
+path("emails/",views.emails,name="emails"),
+path("email/<int:id>/",views.single_email,name="single_email"),
 
 
 #############

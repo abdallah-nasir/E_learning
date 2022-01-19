@@ -1,5 +1,5 @@
 {% extends 'account_base.html' %}
-
+{% load i18n %}
 
 
 {% block content %}
@@ -9,7 +9,7 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Blogs</h1>
+                    <h1 class="h3 mb-2 text-gray-800">{% trans 'Blogs' %}</h1>
                     <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
                         For more information about DataTables, please visit the <a target="_blank"
                             href="https://datatables.net">official DataTables documentation</a>.</p> -->
@@ -17,7 +17,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            <!-- <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> -->
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -25,13 +25,13 @@
                                  
                                     <thead>
                                         <tr>
-                                            <th>User</th>
-                                            <th>Teacher</th>
-                                            <th>Date</th>
-                                            <th>From</th>
-                                            <th>To</th>
-                                            <th>Price</th>
-                                            <th>Status</th>
+                                            <th>{% trans 'User' %}</th>
+                                            <th>{% trans 'Teacher' %}</th>
+                                            <th>{% trans 'Date' %}</th>
+                                            <th>{% trans 'From' %}</th>
+                                            <th>{% trans 'To' %}</th>
+                                            <th>{% trans 'Price' %}</th>
+                                            <th>{% trans 'Status' %}</th>
                                         </tr>
                                     </thead>
                                    <tbody>
@@ -57,7 +57,7 @@
                                 <nav aria-label="Page navigation example">
                                     <ul class="pagination">
                                         {% if consult.has_previous  %}
-                                      <li class="page-item"><a class="page-link" href="?page={{ consult.previous_page_number }}">Previous</a></li>
+                                      <li class="page-item"><a class="page-link" href="?page={{ consult.previous_page_number }}">{% trans 'Previous' %}</a></li>
                                       {% endif %}
                                       {% for i in  consult.paginator.page_range %}
                                       {% if consult.number == i %}
@@ -69,7 +69,7 @@
                                       {% endif %}
                                       {% endfor %}
                                       {% if consult.has_next %}
-                                      <li class="page-item"><a class="page-link" href="?page={{ consult.next_page_number }}">Next</a></li>
+                                      <li class="page-item"><a class="page-link" href="?page={{ consult.next_page_number }}">{% trans 'Next' %}</a></li>
                                       {% endif %}
                                     </ul>
                                   </nav>

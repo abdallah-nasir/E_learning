@@ -1,4 +1,5 @@
 {% extends 'account_base.html' %}
+{% load i18n %}
 
 
 
@@ -9,7 +10,7 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Course Payments</h1>
+                    <h1 class="h3 mb-2 text-gray-800">{% trans 'Course Payments' %}</h1>
                     <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
                         For more information about DataTables, please visit the <a target="_blank"
                             href="https://datatables.net">official DataTables documentation</a>.</p> -->
@@ -17,7 +18,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            <!-- <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> -->
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -25,14 +26,13 @@
                                     <thead>
                                         <tr>
                                           
-                                            <th>User</th>
-                                            <th>Method</th>
-                                            <th>Transaction</th>
-                                            <th>Course</th>
-                                        <th>Payment Image</th>
-
-                                        <th>Status</th>
-                                        <th>Action</th>
+                                            <th>{% trans 'User' %}</th>
+                                            <th>{% trans 'Method' %}</th>
+                                            <th>{% trans 'Transaction' %}</th>
+                                            <th>{% trans 'Course' %}</th>
+                                        <th>{% trans 'Payment Image' %}</th>
+                                        <th>{% trans 'Status' %}</th>
+                                        <th>{% trans 'Action' %}</th>
 
                                         </tr>
                                     </thead>
@@ -46,13 +46,13 @@
                                         <td>{{i.transaction_number}}</td>
                                         <td>{{i.course.name|truncatewords:20}}</td>
                                         {% if i.payment_image %}
-                                        <td><a target="__blank" href="{{i.payment_image}}">Image Link</a></td>
+                                        <td><a target="__blank" href="{{i.payment_image}}">{% trans 'Image Link' %}</a></td>
                                             {% else %}
                                         <td>Null</td>
                                             {% endif %}
                                         <td>{{i.status}}</td>
                                         {% if i.status == "declined" %}
-                                        <td><a href="{% url 'accounts:edit_course_payment' i.id %}" class="btn btn-info">Edit</a></td>
+                                        <td><a href="{% url 'accounts:edit_course_payment' i.id %}" class="btn btn-info">{% trans 'Edit' %}</a></td>
                                         {% else %}
                                         <td></td>
                                         {% endif %}
@@ -64,7 +64,7 @@
                                 <nav aria-label="Page navigation example">
                                     <ul class="pagination">
                                         {% if payments.has_previous  %}
-                                      <li class="page-item"><a class="page-link" href="?page={{ payments.previous_page_number }}">Previous</a></li>
+                                      <li class="page-item"><a class="page-link" href="?page={{ payments.previous_page_number }}">{% trans 'Previous' %}</a></li>
                                       {% endif %}
                                       {% for i in  payments.paginator.page_range %}
                                       {% if payments.number == i %}
@@ -76,7 +76,7 @@
                                       {% endif %}
                                       {% endfor %}
                                       {% if payments.has_next %}
-                                      <li class="page-item"><a class="page-link" href="?page={{ payments.next_page_number }}">Next</a></li>
+                                      <li class="page-item"><a class="page-link" href="?page={{ payments.next_page_number }}">{% trans 'Next' %}</a></li>
                                       {% endif %}
                                     </ul>
                                   </nav>

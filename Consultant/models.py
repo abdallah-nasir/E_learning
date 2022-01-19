@@ -3,25 +3,35 @@ from django.contrib.auth import get_user_model
 from django.db.models.query_utils import Q
 from Dashboard.models import Rejects
 User=get_user_model()
+from calendar import HTMLCalendar
+from django.urls import reverse
 # Create your models here.
 
 class Category(models.Model):
     name=models.CharField(max_length=100)
 
     def __str__(self):
-        return self.name
+        return self.name 
 class Teacher_Time(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     category=models.ForeignKey(Category,on_delete=models.SET_NULL,null=True)
-    date=models.DateField(auto_now_add=False)
-    from_time=models.TimeField(auto_now_add=False)
-    to_time=models.TimeField(auto_now_add=False)
+    start_time=models.DateTimeField(auto_now_add=False)
+    end_time=models.DateTimeField(auto_now_add=False)
+    # from_time=models.TimeField(auto_now_add=False)
+    # to_time=models.TimeField(auto_now_add=False)
     price=models.FloatField(default=0)
     available=models.BooleanField(default=True)
     def __str__(self):
         return self.user.username
 
-        
+    def get_teacher_url_consultant(self):
+        url=reverse("consultant:get_consultant",kwargs={"slug":self.user.slug})
+        path=f"{url}?time={self.id}"
+        return path
+    
+    def for_paypal(self):
+        url=reverse("consultant:get_consultant",kwargs={"slug":self.user.slug})
+        return url
 PAYMENTS=(
     ("Paymob","Paymob"),
     ("Western Union","Western Union"),
@@ -31,12 +41,15 @@ PAYMENT_CHOICES=(
     ("pending","pending"),
     ("approved","approved"),
     ("declined","declined"),
+    ("started","started"),
     ("completed","completed"),
 
     )
 class Consultant(models.Model):
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.CASCADE)
+    start_time=models.DateTimeField(null=True,blank=False,auto_now_add=False)
+    end_time=models.DateTimeField(null=True,blank=False,auto_now_add=False)
     # completed=models.BooleanField(default=False)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     zoom=models.TextField(blank=True)
@@ -65,7 +78,7 @@ PAYMENT_CHOICES=(
 
 )    
 class Cosultant_Payment(models.Model):
-    consult=models.ForeignKey(Consultant,on_delete=models.SET_NULL,null=True)
+    teacher=models.ForeignKey(Teacher_Time,on_delete=models.SET_NULL,null=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     method=models.CharField(choices=PAYMENTS,max_length=50)
     payment_image=models.ImageField(upload_to=upload_consultant_payment,null=True)

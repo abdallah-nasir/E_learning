@@ -11,7 +11,11 @@ body {
     margin:0;
     padding:0;
     justify-content:center;
-        
+    background-image: url('../images/bg-01.jpg');
+    background-size: cover;
+    height:800px;
+    background-repeat:no-repeat;
+    background-position:center;
 }
 
 a {
@@ -53,10 +57,7 @@ h6 span {
     display: block;
 }
 .cover-section {
-    background-image: url('../images/bg-01.jpg');
-    background-size: cover;
-    height:100vh;
-    background-repeat:no-repeat;
+
 }
 
 /*.full-height {
@@ -170,6 +171,15 @@ h6 span {
     transform: translate3d(0, -50%, 35px) perspective(100px);
     z-index: 20;
     display: block
+}
+#center{
+    margin-top: 10%;
+    width: 100%;
+    padding: 0 35px;
+}
+#div_id_captcha{
+color:#d6c868;
+text-align:initial  !important;
 }
 
 .form-group {
