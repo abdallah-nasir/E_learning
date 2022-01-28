@@ -94,7 +94,7 @@ background-color:#ffc600;
         </div>
         <div id="course-left-sidebar" class="col-md-4 mt-5 mb-5">
             <div class="course-image-widget">
-            <img src="{{course.image.url}}" alt="" class="img-responsive">
+            <img src="{{course.image}}" alt="" class="img-responsive">
             </div>
             <div class="course-meta">
             <p class="course-category">Category : <a href="{% url 'home:course' course.slug %}">{{course.branch.category.name.title}}</a></p>
@@ -112,7 +112,7 @@ background-color:#ffc600;
             <hr>
             <p class="course-student">Students : {{course.students.count}} Members </p>
             <hr>
-            <p class="course-time">Perriod : {{course.total_duration}} </p>
+            <p class="course-time">Period : {{course.get_duration_model}} </p>
             <hr>
             <!-- <p class="course-prize">Prize : <i class="fa fa-trophy"></i> <i class="fa fa-certificate"></i> <i class="fa fa-shield"></i></p>
             <hr> -->

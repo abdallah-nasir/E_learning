@@ -10,3 +10,5 @@ admin.site.register(Category)
 admin.site.register(Teacher_Time)
 admin.site.register(Consultant,ConsultantAdmin)
 admin.site.register(Cosultant_Payment,ConsultantPaymentAdmin)
+admin.site.register(UserDataForm)
+

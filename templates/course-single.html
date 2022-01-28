@@ -363,16 +363,16 @@ width:100% !important;
                                 <div class="price-button pt-10">
                                     
                                     {% if course.discount %}
-                                    <span>Price : <b>${{course.discount|floatformat}}</b></span>
+                                    <span>{% trans 'Price' %} : <b>${{course.discount|floatformat}}</b></span>
                                    
                                     <span style="margin-top: 10px;  text-decoration: line-through; ">{% trans 'Price' %} : <b>${{course.price|floatformat}}</b></span>
 
                                     {% else %}
-                                    <span>Price : <b>${{course.price|floatformat}}</b></span>
+                                    <span>{% trans 'Price'%} : <b>${{course.price|floatformat}}</b></span>
                                     {% endif %}
                                    
                                     {% if request.user in course.students.all %}
-                                <a  class="main-btn" id="paid"  href="{% url 'quiz:home' course.slug course.get_total_quiz  %}">{% trans 'Take Quiz' %}</a>
+                                <a  class="main-btn" id="paid"  href="{{course.get_first_quiz}}">{% trans 'Take Quiz' %}</a>
                                     <!-- <a  class="main-btn disabled" id="paid" disabled>Paid</a> -->
                                     {% else %}
                             

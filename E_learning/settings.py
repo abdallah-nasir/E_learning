@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     # "allauth.socialaccount.providers.linkedin", 
     'allauth.socialaccount.providers.linkedin_oauth2',    
     'bootstrap_datepicker_plus',
+    "tempus_dominus",
     'django_cleanup',
     'captcha',
     "admin_honeypot",
@@ -197,11 +198,7 @@ LANGUAGES = (            # supported languages
 )
 MODELTRANSLATION_LANGUAGES = ['en',"ar"]
 TIME_ZONE = 'Africa/Cairo'
-# STATIC_URL = 'https://garthaacademy.b-cdn.net/static/'
-# STATIC_ROOT="https://garthaacademy.b-cdn.net"
-# STATICFILES_DIRS=[
-#   "https://garthaacademy.b-cdn.net/static/"
-# ]  
+TEMPUS_DOMINUS_LOCALIZE=True 
     
 STATIC_URL = '/static/'   
 STATIC_ROOT=BASE_DIR/"static"

@@ -41,14 +41,34 @@
                                         <td>{{i.user}}</td>
                                         <td>{{i.status}}</td>                                                                           
                                         <td>
-                                         
+                                         {% if i.status != "solved" %}
                                           <a href="{% url 'dashboard:single_email' i.id %}" class="btn btn-success">Check</a>
-                                                                           
+                                          <button class="btn btn-danger" data-toggle="modal" data-target="#close-{{i.id}}">End</button>
+
+                                            {% endif %}
                                       </td>
 
                                     </tr>
 
-                                    
+            <div class="modal fade" id="close-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Close Email</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        are you sure you want to close this email ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a href="{% url 'dashboard:close_email' i.id %}" type="button" class="btn btn-success">Submit</a>
+                    </div>
+                    </div>
+                </div>
+                </div>
 
                                     {% endfor %}
 

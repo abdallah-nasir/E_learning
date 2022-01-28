@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-19 15:26+0200\n"
+"POT-Creation-Date: 2022-01-20 10:28+0200\n"
 "PO-Revision-Date: 2022-01-18 22:04+0205\n"
 "Last-Translator: abdallah nasir <abdallah.nasir@ymail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,6 +20,240 @@ msgstr ""
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 "X-Translated-Using: django-rosetta 0.9.7\n"
 
+#: .\Blogs\templates\blog.html:48 .\Blogs\templates\blog.html:97
+#: .\Blogs\templates\blog.html:142 .\Blogs\templates\blog.html:187
+#: .\Blogs\templates\blog.html:228 .\Blogs\templates\blog.html:275
+#: .\Blogs\templates\blog_search.html:27 .\Blogs\templates\blog_search.html:66
+#: .\Blogs\templates\blog_search.html:112
+#: .\Blogs\templates\blog_search.html:156
+#: .\Blogs\templates\blog_search.html:185 .\Blogs\templates\blog_type.html:27
+#: .\Blogs\templates\blog_type.html:68 .\Blogs\templates\blog_type.html:114
+#: .\Blogs\templates\blog_type.html:158 .\Blogs\templates\blog_type.html:187
+#: .\Blogs\templates\blogs.html:155 .\Blogs\templates\blogs.html:195
+#: .\Blogs\templates\blogs.html:241 .\Blogs\templates\blogs.html:285
+#: .\Blogs\templates\blogs.html:314 .\Blogs\templates\blogs_2.html:156
+#: .\Blogs\templates\blogs_2.html:198 .\Blogs\templates\blogs_2.html:244
+#: .\Blogs\templates\blogs_2.html:288 .\Blogs\templates\blogs_2.html:317
+msgid "comments"
+msgstr ""
+
+#: .\Blogs\templates\blog.html:60 .\Blogs\templates\blog.html:109
+#: .\Blogs\templates\blog.html:154 .\Blogs\templates\blog.html:199
+#: .\Blogs\templates\blog.html:241 .\Blogs\templates\blog.html:294
+msgid "Tags"
+msgstr ""
+
+#: .\Blogs\templates\blog.html:66 .\Blogs\templates\blog.html:115
+#: .\Blogs\templates\blog.html:160 .\Blogs\templates\blog.html:205
+#: .\Blogs\templates\blog.html:247 .\Blogs\templates\blog.html:300
+msgid "Share"
+msgstr ""
+
+#: .\Blogs\templates\blog.html:310
+#, fuzzy
+#| msgid "Courses"
+msgid "Comments"
+msgstr "الكورسات"
+
+#: .\Blogs\templates\blog.html:319 .\Blogs\templates\blog.html:350
+msgid "says"
+msgstr ""
+
+#: .\Blogs\templates\blog.html:322 .\Blogs\templates\blog.html:353
+msgid "at"
+msgstr ""
+
+#: .\Blogs\templates\blog.html:329
+msgid "Reply"
+msgstr ""
+
+#: .\Blogs\templates\blog.html:334 .\Blogs\templates\blog.html:381
+#: .\templates\course-single.html:330 .\templates\teachers-single.html:229
+#: .\templates\video.html:259
+msgid "Comment"
+msgstr ""
+
+#: .\Blogs\templates\blog.html:373
+msgid "Leave a Comment"
+msgstr ""
+
+#: .\Blogs\templates\blog.html:403 .\Blogs\templates\blog_type.html:228
+#: .\Blogs\templates\blogs_2.html:358
+#, fuzzy
+#| msgid "Events"
+msgid "Recent Posts"
+msgstr "المؤتمؤات"
+
+#: .\Blogs\templates\blog.html:412 .\Blogs\templates\blog_type.html:237
+#: .\Blogs\templates\blogs_2.html:367
+msgid "Categories"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:9 .\accounts\templates\account_base.html:15
+#: .\templates\account\login.html:10 .\templates\account\signup.html:10
+#: .\templates\base.html:18
+msgid "Agartha Academy"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:55
+msgid "Welcome to Agartha Blogs"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:61
+#: .\accounts\templates\account_events.html:68
+msgid "Close"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:83
+msgid "Search something…"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:95
+#, fuzzy
+#| msgid "Courses"
+msgid "Back To Course"
+msgstr "الكورسات"
+
+#: .\Blogs\templates\blog_base.html:106 .\Blogs\templates\blog_base.html:109
+#, fuzzy
+#| msgid "Blog"
+msgid "Home Blogs"
+msgstr "المدونة"
+
+#: .\Blogs\templates\blog_base.html:114
+#, fuzzy
+#| msgid "Blog"
+msgid "Blogs Type"
+msgstr "المدونة"
+
+#: .\Blogs\templates\blog_base.html:117
+msgid "Standard post"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:118
+msgid "Gallery post"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:119
+msgid "Video post"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:120
+msgid "Audio post"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:121
+msgid "Quote post"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:122
+msgid "Link post"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:127
+msgid "Pricing"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:170 .\templates\teachers-single.html:81
+#, fuzzy
+#| msgid "About Us"
+msgid "About"
+msgstr "معلومات عنا"
+
+#: .\Blogs\templates\blog_base.html:171
+msgid ""
+"Deep within you, the light you are looking for. You have the capabilities "
+"that successful people possess. Just discover it..then invest it in "
+"yourself. Eternal... Discover your inner kingdom"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:188 .\Blogs\templates\blog_base.html:194
+msgid "Support"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:191 .\templates\base.html:225
+msgid "FAQS"
+msgstr "أسئلة وأجوبة"
+
+#: .\Blogs\templates\blog_base.html:192 .\Blogs\templates\blog_base.html:242
+msgid "Privacy"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:193
+msgid "Policy"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:202 .\templates\base.html:224
+#: .\templates\contact.html:52
+msgid "Contact Us"
+msgstr "تواصل معنا"
+
+#: .\Blogs\templates\blog_base.html:242
+msgid "Terms"
+msgstr ""
+
+#: .\Blogs\templates\blog_search.html:76 .\Blogs\templates\blog_search.html:134
+#: .\Blogs\templates\blog_type.html:78 .\Blogs\templates\blog_type.html:136
+#: .\Blogs\templates\blogs.html:205 .\Blogs\templates\blogs.html:263
+#: .\Blogs\templates\blogs_2.html:208 .\Blogs\templates\blogs_2.html:266
+msgid "Read More"
+msgstr ""
+
+#: .\Blogs\templates\blog_search.html:166 .\Blogs\templates\blog_type.html:168
+#: .\Blogs\templates\blogs.html:295 .\Blogs\templates\blogs_2.html:298
+msgid "Show More"
+msgstr ""
+
+#: .\Blogs\templates\blog_search.html:197
+msgid "Sorry,we didn\"t Find What You Want"
+msgstr ""
+
+#: .\Blogs\templates\blog_search.html:216 .\Blogs\templates\blog_type.html:215
+#: .\Blogs\templates\blogs.html:342 .\Blogs\templates\blogs_2.html:345
+#: .\accounts\templates\account_blog_payment.html:75
+#: .\accounts\templates\account_consult.html:72
+#: .\accounts\templates\account_consultant_payment.html:78
+#: .\accounts\templates\account_course.html:69
+#: .\accounts\templates\account_course_payment.html:79
+#: .\accounts\templates\account_events.html:94
+msgid "Next"
+msgstr ""
+
+#: .\Blogs\templates\blog_type.html:202 .\Blogs\templates\blogs.html:329
+#: .\Blogs\templates\blogs_2.html:332
+msgid "Prev"
+msgstr ""
+
+#: .\Blogs\templates\blog_type.html:262
+msgid "Sorry"
+msgstr ""
+
+#: .\Blogs\templates\blog_type.html:262
+msgid "Blog is Empty"
+msgstr ""
+
+#: .\Blogs\templates\blogs.html:358 .\Blogs\templates\blogs_2.html:406
+#, fuzzy
+#| msgid "Teachers"
+msgid "Our Teachers"
+msgstr "المدرسين"
+
+#: .\Blogs\templates\blogs_2.html:394
+msgid "Sorry,Blog is Empty"
+msgstr ""
+
+#: .\Blogs\templates\pricing.html:139
+msgid "Pricing Tables"
+msgstr ""
+
+#: .\Blogs\templates\pricing.html:155 .\templates\account\login.html:38
+#: .\templates\account\login.html:121 .\templates\account\signup.html:37
+#: .\templates\account\signup.html:68
+#, fuzzy
+#| msgid "Sign In"
+msgid "Sign Up"
+msgstr "تسجيل الدخول"
+
 #: .\Consultant\templates\consultant.html:61
 #: .\Consultant\templates\consultant.html:65
 #: .\Consultant\templates\consultant_teacher.html:22
@@ -28,11 +262,13 @@ msgid "Consultant"
 msgstr "أستشارة"
 
 #: .\Consultant\templates\consultant.html:64
-#: .\Consultant\templates\consultant_teacher.html:21 .\templates\base.html:187
-#: .\templates\contact.html:32 .\templates\course-single.html:74
-#: .\templates\courses.html:15 .\templates\event_single.html:17
-#: .\templates\events.html:14 .\templates\teachers-single.html:16
+#: .\Consultant\templates\consultant_teacher.html:21 .\templates\about.html:15
+#: .\templates\base.html:187 .\templates\contact.html:32
+#: .\templates\course-single.html:74 .\templates\courses.html:15
+#: .\templates\event_single.html:17 .\templates\events.html:14
+#: .\templates\global_search.html:15 .\templates\teachers-single.html:16
 #: .\templates\teachers.html:15 .\templates\video.html:16
+#: .\templates\wishlist.html:15
 msgid "Home"
 msgstr "الرئيسية"
 
@@ -109,10 +345,6 @@ msgstr "الانجليزية"
 msgid "Arabic"
 msgstr "العربية"
 
-#: .\accounts\templates\account_base.html:15 .\templates\base.html:18
-msgid "Agartha Academy"
-msgstr ""
-
 #: .\accounts\templates\account_base.html:49
 #, fuzzy
 #| msgid "Dashboard"
@@ -180,8 +412,8 @@ msgstr "الكورسات"
 #: .\accounts\templates\account_base.html:109
 #: .\accounts\templates\account_course.html:12 .\templates\base.html:196
 #: .\templates\course-single.html:75 .\templates\courses.html:16
-#: .\templates\home.html:225 .\templates\teachers-single.html:71
-#: .\templates\video.html:17
+#: .\templates\global_search.html:16 .\templates\home.html:225
+#: .\templates\teachers-single.html:71 .\templates\video.html:17
 msgid "Courses"
 msgstr "الكورسات"
 
@@ -292,15 +524,6 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: .\accounts\templates\account_blog_payment.html:75
-#: .\accounts\templates\account_consult.html:72
-#: .\accounts\templates\account_consultant_payment.html:78
-#: .\accounts\templates\account_course.html:69
-#: .\accounts\templates\account_course_payment.html:79
-#: .\accounts\templates\account_events.html:94
-msgid "Next"
-msgstr ""
-
 #: .\accounts\templates\account_consult.html:12
 #: .\accounts\templates\account_events.html:12
 #, fuzzy
@@ -368,15 +591,12 @@ msgstr "المؤتمؤات"
 msgid "Are you Sure ?"
 msgstr ""
 
-#: .\accounts\templates\account_events.html:68
-msgid "Close"
-msgstr ""
-
 #: .\accounts\templates\account_user_info.html:12
 msgid "Pleasure you are in Agartha"
 msgstr ""
 
 #: .\accounts\templates\account_user_info.html:22
+#: .\templates\account\login.html:183 .\templates\account\signup.html:168
 msgid "Submit"
 msgstr ""
 
@@ -389,6 +609,71 @@ msgstr "المدرسين"
 #: .\accounts\templates\account_user_info.html:25
 msgid "click here"
 msgstr ""
+
+#: .\templates\about.html:12 .\templates\about.html:16
+#: .\templates\base.html:226
+msgid "About Us"
+msgstr "معلومات عنا"
+
+#: .\templates\about.html:34
+#, fuzzy
+#| msgid "About Us"
+msgid "About us"
+msgstr "معلومات عنا"
+
+#: .\templates\about.html:35
+msgid "Welcome to Agartha Academy"
+msgstr ""
+
+#: .\templates\about.html:52
+msgid "Why Choose us"
+msgstr ""
+
+#: .\templates\about.html:53
+msgid ""
+"We have the origin of the information, we turn it into experience, where "
+"anyone can master new skills and achieve their goals"
+msgstr ""
+
+#: .\templates\about.html:59
+msgid "Our Mission"
+msgstr ""
+
+#: .\templates\about.html:66
+msgid "Our vision"
+msgstr ""
+
+#: .\templates\about.html:86 .\templates\home.html:177
+msgid "Students enrolled"
+msgstr "الطلاب الملتحقين"
+
+#: .\templates\about.html:92 .\templates\home.html:183
+#, fuzzy
+#| msgid "Courses"
+msgid "Courses Uploaded"
+msgstr "الكورسات"
+
+#: .\templates\about.html:98 .\templates\home.html:189
+msgid "People certified"
+msgstr "الشهادات"
+
+#: .\templates\about.html:104
+#, fuzzy
+#| msgid "Teachers"
+msgid "Global Teachers"
+msgstr "المدرسين"
+
+#: .\templates\about.html:120 .\templates\home.html:212
+#, fuzzy
+#| msgid "Teachers"
+msgid "Featured Teachers"
+msgstr "المدرسين"
+
+#: .\templates\about.html:121
+#, fuzzy
+#| msgid "Teachers"
+msgid "Meet Our teachers"
+msgstr "المدرسين"
 
 #: .\templates\account\account_inactive.html:5
 #: .\templates\account\account_inactive.html:11
@@ -535,6 +820,93 @@ msgid ""
 msgstr ""
 "انتهت صلاحية ارتباط تأكيد البريد الإلكتروني هذا أو أنه غير صالح. يرجى\n"
 " <a href=\"%(email_url)s\"> إصدار طلب تأكيد بريد إلكتروني جديد </a>."
+
+#: .\templates\account\login.html:10 .\templates\account\signup.html:10
+msgid "Login - Signup"
+msgstr ""
+
+#: .\templates\account\login.html:38 .\templates\account\signup.html:37
+msgid "Log In "
+msgstr ""
+
+#: .\templates\account\login.html:68 .\templates\account\signup.html:179
+msgid "Log In"
+msgstr ""
+
+#: .\templates\account\login.html:70 .\templates\account\signup.html:181
+msgid "Username / Email"
+msgstr ""
+
+#: .\templates\account\login.html:80 .\templates\account\signup.html:186
+#, fuzzy
+#| msgid "Forgot Password?"
+msgid "Your Password"
+msgstr "هل نسيت كلمة السر؟"
+
+#: .\templates\account\login.html:88 .\templates\account\signup.html:189
+msgid "submit"
+msgstr ""
+
+#: .\templates\account\login.html:89 .\templates\account\signup.html:190
+#, fuzzy
+#| msgid "Forgot Password?"
+msgid "Forgot your password?"
+msgstr "هل نسيت كلمة السر؟"
+
+#: .\templates\account\login.html:124 .\templates\account\signup.html:71
+msgid "Your Full Name"
+msgstr ""
+
+#: .\templates\account\login.html:130 .\templates\account\signup.html:82
+#: .\templates\contact.html:67
+#, fuzzy
+#| msgid "Add E-mail"
+msgid "Email"
+msgstr "أضف بريد إلكتروني"
+
+#: .\templates\account\login.html:135 .\templates\account\signup.html:92
+msgid "Mobile Number"
+msgstr ""
+
+#: .\templates\account\login.html:141 .\templates\account\signup.html:103
+#, fuzzy
+#| msgid "Set Password"
+msgid "Password"
+msgstr "ضبط كلمة السر"
+
+#: .\templates\account\login.html:144 .\templates\account\signup.html:112
+#, fuzzy
+#| msgid "Change Password"
+msgid "Confirm Password"
+msgstr "تغيير كلمة المرور"
+
+#: .\templates\account\login.html:149 .\templates\account\signup.html:123
+msgid "Gender"
+msgstr ""
+
+#: .\templates\account\login.html:154 .\templates\account\signup.html:129
+msgid "Female"
+msgstr ""
+
+#: .\templates\account\login.html:158 .\templates\account\signup.html:133
+msgid "Male"
+msgstr ""
+
+#: .\templates\account\login.html:171 .\templates\account\signup.html:151
+msgid "By signing up, you agree to our"
+msgstr ""
+
+#: .\templates\account\login.html:177 .\templates\account\signup.html:162
+msgid "Terms of use"
+msgstr ""
+
+#: .\templates\account\login.html:178 .\templates\account\signup.html:163
+msgid "and"
+msgstr ""
+
+#: .\templates\account\login.html:179 .\templates\account\signup.html:164
+msgid "Privacy Policy"
+msgstr ""
 
 #: .\templates\account\logout.html:5 .\templates\account\logout.html:8
 #: .\templates\account\logout.html:17
@@ -740,21 +1112,15 @@ msgstr "المدونة"
 msgid "Service"
 msgstr "الخدمات"
 
-#: .\templates\base.html:224 .\templates\contact.html:52
-msgid "Contact Us"
-msgstr "تواصل معنا"
-
-#: .\templates\base.html:225
-msgid "FAQS"
-msgstr "أسئلة وأجوبة"
-
-#: .\templates\base.html:226
-msgid "About Us"
-msgstr "معلومات عنا"
-
 #: .\templates\base.html:233
 msgid "Language"
 msgstr "اللغة"
+
+#: .\templates\base.html:295
+#, fuzzy
+#| msgid "Teachers"
+msgid "Search in Courses and Teachers"
+msgstr "المدرسين"
 
 #: .\templates\contact.html:29 .\templates\contact.html:33
 #, fuzzy
@@ -769,12 +1135,6 @@ msgstr ""
 #: .\templates\contact.html:61
 msgid "Your name"
 msgstr ""
-
-#: .\templates\contact.html:67
-#, fuzzy
-#| msgid "Add E-mail"
-msgid "Email"
-msgstr "أضف بريد إلكتروني"
 
 #: .\templates\contact.html:73
 msgid "Subject"
@@ -798,9 +1158,11 @@ msgstr ""
 
 #: .\templates\course-single.html:126 .\templates\course-single.html:159
 #: .\templates\course-single.html:460 .\templates\courses.html:78
-#: .\templates\courses.html:137 .\templates\teachers-single.html:74
+#: .\templates\courses.html:137 .\templates\global_search.html:76
+#: .\templates\global_search.html:141 .\templates\teachers-single.html:74
 #: .\templates\teachers-single.html:110 .\templates\video.html:68
 #: .\templates\video.html:92 .\templates\video.html:368
+#: .\templates\wishlist.html:77 .\templates\wishlist.html:129
 msgid "Reviews"
 msgstr ""
 
@@ -848,11 +1210,6 @@ msgstr ""
 msgid "Your Rating"
 msgstr ""
 
-#: .\templates\course-single.html:330 .\templates\teachers-single.html:229
-#: .\templates\video.html:259
-msgid "Comment"
-msgstr ""
-
 #: .\templates\course-single.html:338 .\templates\teachers-single.html:234
 #: .\templates\video.html:267
 msgid "Post Comment"
@@ -894,14 +1251,20 @@ msgstr ""
 msgid "Related Courses"
 msgstr "الكورسات الحالية"
 
-#: .\templates\courses.html:12
+#: .\templates\courses.html:12 .\templates\global_search.html:12
 #, fuzzy
 #| msgid "Our course"
 msgid "Our Courses"
 msgstr "كورساتنا"
 
-#: .\templates\courses.html:41
+#: .\templates\courses.html:41 .\templates\global_search.html:41
+#: .\templates\wishlist.html:41
 msgid "Showing"
+msgstr ""
+
+#: .\templates\courses.html:41 .\templates\global_search.html:41
+#: .\templates\wishlist.html:41
+msgid "0f"
 msgstr ""
 
 #: .\templates\courses.html:41
@@ -930,6 +1293,14 @@ msgstr ""
 msgid "Click The Link"
 msgstr ""
 
+#: .\templates\faqs.html:13
+msgid "Friendly Asked Questions"
+msgstr ""
+
+#: .\templates\global_search.html:110 .\templates\global_search.html:176
+msgid "Sorry we didn\"t find what you want"
+msgstr ""
+
 #: .\templates\home.html:70
 #, fuzzy
 #| msgid "Courses"
@@ -944,35 +1315,15 @@ msgstr "كورساتنا"
 msgid "Featured courses"
 msgstr "الكورسات الحالية"
 
-#: .\templates\home.html:177
-msgid "Students enrolled"
-msgstr "الطلاب الملتحقين"
-
-#: .\templates\home.html:183
-#, fuzzy
-#| msgid "Courses"
-msgid "Courses Uploaded"
-msgstr "الكورسات"
-
-#: .\templates\home.html:189
-msgid "People certified"
-msgstr "الشهادات"
-
 #: .\templates\home.html:195
 #, fuzzy
 #| msgid "Teachers"
-msgid "Global Teachers"
+msgid "Global Teacher"
 msgstr "المدرسين"
 
 #: .\templates\home.html:211
 msgid "Top Tutors"
 msgstr "افضل المعلمين"
-
-#: .\templates\home.html:212
-#, fuzzy
-#| msgid "Teachers"
-msgid "Featured Teachers"
-msgstr "المدرسين"
 
 #: .\templates\home.html:236
 msgid "Happy Students"
@@ -1062,12 +1413,6 @@ msgstr ""
 "أنت على وشك استخدام حساب %(provider_name)s الخاص بك لتسجيل الدخول إلى\n"
 "%(site_name)s .كخطوة أخيرة ، يرجى إكمال النموذج التالي:"
 
-#: .\templates\teachers-single.html:81
-#, fuzzy
-#| msgid "About Us"
-msgid "About"
-msgstr "معلومات عنا"
-
 #: .\templates\video.html:100
 msgid "Lecture Summery"
 msgstr ""
@@ -1092,8 +1437,13 @@ msgstr ""
 msgid "Recent Events"
 msgstr "المؤتمؤات"
 
-#~ msgid "Sign In"
-#~ msgstr "تسجيل الدخول"
+#: .\templates\wishlist.html:12
+msgid "MY WISHLIST"
+msgstr ""
+
+#: .\templates\wishlist.html:16
+msgid "Cart"
+msgstr ""
 
 #, python-format
 #~ msgid ""

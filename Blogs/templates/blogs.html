@@ -1,5 +1,5 @@
 {% extends 'blog_base.html' %}
-
+{% load i18n %}
 {% block content %}
 <style type="text/css">
 	
@@ -152,7 +152,7 @@
 											</span>
 											<span class="entry-meta-comments">
 												<i class="fa fa-comments"></i>
-												<a href="">{{i.get_comments}} comments</a>
+												<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 											
 
 											</span>
@@ -170,7 +170,7 @@
 					<div class="swiper-button-next"><i class="fa fa-chevron-right"></i></div>
 					<div class="swiper-pagination"></div>
 				</div>
-
+			
 				<div class="posts">
 					{% for i in data.blogs %}
 					{% if i.blog_type == "standard" %}
@@ -192,7 +192,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}}  comments</a>
+										<a href="">{{i.get_comments}}  {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -202,7 +202,7 @@
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|safe|truncatechars:100}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Read More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "quote" %}
@@ -238,7 +238,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}} comments</a>
+										<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -260,7 +260,7 @@
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|truncatewords:20}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Read More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "gallery" %}
@@ -282,7 +282,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}} comments</a>
+										<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -292,7 +292,7 @@
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|truncatewords:20}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Show More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Show More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "audio" %}
@@ -311,7 +311,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}}  comments</a>
+										<a href="">{{i.get_comments}}  {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -326,7 +326,7 @@
 				{% if blogs.has_other_pages  %}
 				<ul class="pagination">
 					{% if blogs.has_previous  %}
-					<li><a href="?page={{ blogs.previous_page_number }}"><i class="fa fa-angle-double-left"></i> Prev</a></li>
+					<li><a href="?page={{ blogs.previous_page_number }}"><i class="fa fa-angle-double-left"></i> {% trans 'Prev' %}</a></li>
 					{% else %}
 					<li></li>
 					{% endif %}
@@ -339,7 +339,7 @@
 					
 			{% endfor %}
 			{% if blogs.has_next %}
-					<li><a href="?page={{ blogs.next_page_number }}">Next <i class="fa fa-angle-double-right"></i></a></li>
+					<li><a href="?page={{ blogs.next_page_number }}">{% trans 'Next' %} <i class="fa fa-angle-double-right"></i></a></li>
 					{% else %}
 					<li></li>
 					{% endif %}
@@ -355,7 +355,7 @@
 						<li data-target="#myCarousel" data-slide-to="2"></li>
 					</ol> -->
 					 <!-- Wrapper for carousel items -->
-					 <h2>Our Teachers</h2>
+					 <h2>{% trans 'Our Teachers' %}</h2>
 					<div class="carousel-inner">
 						{% for i in data.recent_teachers %}
 						

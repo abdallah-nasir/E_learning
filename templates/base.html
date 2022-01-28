@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
     <!--====== Title ======-->
-    <title>{% trans 'Agartha Academy' %}{% block title  %}{% endblock %}</title>
+    <title>{% trans 'Agartha Academy' %} {% block title  %}{% endblock %}</title>
     
     <!--====== Favicon Icon ======-->
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
@@ -46,41 +46,65 @@
     
     <!--====== Style css ======-->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    
+
+    <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
+  rel="stylesheet"
+/>
     <!--====== Responsive css ======-->
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-
-<style type="text/css">
-
-.right-icon ul li{
-display: table-cell !important;
-
+    <style type="text/css">
+p{
+    margin-bottom:0 !important;
 }
-.nice-select{
-display: none !important;
-    }
-.fa-heart{
-cursor:pointer;
-    }
+.row > *{
+    
+}
+        .right-icon ul li {
+            display: table-cell !important;
+        }
 
-      
-      #news-bar:hover {
-        transition: 0.37s;
-      }
-      
-      #news-bar a {
-        padding:8px 2px;
-        font-size: 30px;
-        color: #fff;
-        text-decoration: none;
-      }
-      
-      #news-bar a:hover {
-        transition: 0.37s;
-        color: #ffc600;
-      }
-      
-</style >
+        .nice-select {
+            display: none !important;
+        }
+
+        .fa-heart {
+            cursor: pointer;
+        }
+
+
+        #news-bar:hover {
+            transition: 0.37s;
+        }
+.fa-search:hover{
+    color:#ffc600;
+}
+.fa-globe:hover{
+    color:#ffc600;
+}
+        #news-bar a {
+            padding: 8px 2px;
+            font-size: 16px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+            #news-bar a:hover {
+                transition: 0.37s;
+                color: #ffc600;
+            }
+
+        #info-img {
+            margin-left: 30px;
+        }
+        .navbar{
+            box-shadow: none !important;
+        }
+.badge-notification{
+    background-color: #ffc600 !important;
+    }
+    </style>
+
 
 </head>
 
@@ -111,23 +135,34 @@ cursor:pointer;
         <div class="header-top d-none d-lg-block">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-6">
-                        <div class="header-contact text-lg-left text-center">
-                            <ul>
-                                <li><img src="{% static 'images/all-icon/email.png' %}" alt="icon"><span><a style="color:#fff;" href="mailto:info@agartha.academy" >info@agartha.academy</a></span></li>
-                            </ul>
+                    <div class="col-lg-3">
+                        <div class="support float-right row justify-content-center align-items-center">
+                            <div class="icon col-sm-3">
+                                <img id="info-img" src="{% static 'images/all-icon/email.png' %}" alt="icon">
+                            </div>
+                            <div class="cont col-sm-9">
+                                <p >info@agartha.academy</p>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="slideUp" id="news-bar">
-                            <marquee direction="right" scrollamount="3" behavior="scroll" onmouseover="this.stop()" onmouseout="this.start()">
-                                {% for i in news %}
-                            <a href="{{i.link}}" class="hvr-pop">{{i.name}}</a><a> --- </a>
-                                {% endfor %}
+                            <marquee direction="left" scrollamount="3" behavior="scroll" onmouseover="this.stop()" onmouseout="this.start()">
+    
+                                <a href="{{i.link}}" class="hvr-pop">{{i.name}}</a><a>&nbsp;⏳&nbsp;</a>
+    
                             </marquee>
-                                </div>
-                
-                      
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="support float-left row justify-content-center align-items-center">
+                            <div class="icon col-sm-3">
+                                <img src="{% static 'images/all-icon/support.png' %}" alt="icon">
+                            </div>
+                            <div class="cont col-sm-9">
+                                <span style="color:#ffc600;"> <p >{% trans 'Need Help? call us' %}</p > 00201011609810</span>
+                            </div>
+                        </div>
                     </div>
                 </div> <!-- row -->
             </div> <!-- container -->
@@ -137,7 +172,7 @@ cursor:pointer;
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4 col-md-4">
-                        <div class="logo">
+                        <div class="logo d-none d-md-block">
                             <a href="{% url 'home:home' %}">
                                 <img src="{% static 'images/logo.png' %}" alt="Logo">
                             </a>
@@ -146,16 +181,8 @@ cursor:pointer;
                        
                     </div>
                     <div class="col-lg-8 col-md-8">
-                        <div class="support-button float-right d-none d-md-block">
-                            <div class="support float-left">
-                                <div class="icon">
-                                    <img src="{% static 'images/all-icon/support.png' %}" alt="icon">
-                                </div>
-                                <div class="cont">
-                                    <p>{% trans 'Need Help? call us free' %}</p>
-                                    <span>00201011609810</span>
-                                </div>
-                            </div>
+                        <div class="support-button float-right ">
+                         
                             <div class="button float-left">
                                 {% if request.user.is_authenticated %}
                                 <a href="{% url 'account_logout' %}" class="main-btn">{% trans 'Logout' %}</a>
@@ -171,109 +198,240 @@ cursor:pointer;
         </div> <!-- header logo support -->
         
         <div class="navigation">
-            <div class="container">
+            <div class="container" >
                 <div class="row">
-                    <div class="col-lg-10 col-md-10 col-sm-9 col-8">
-                        <nav class="navbar navbar-expand-lg">
-                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                      <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light" >
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+      <!-- Toggle button -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+  
+      <!-- Collapsible wrapper -->
+      <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="active" href="{% url 'home:home' %}">{% trans 'Home' %}</a>
+                 <ul class="sub-menu">
+                    <li><a class="active" href="{% url 'dashboard:home' %}">{% trans 'Dashboard' %}</a></li>
+                    <!-- <li><a href="index-3.html">Home 02</a></li>
+                    <li><a href="index-4.html">Home 03</a></li> -->
+                </ul>
+            </li>
+         
+            <li class="nav-item">
+                <a href="{% url 'home:courses'%}">{% trans 'Courses' %}</a>
+              
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'home:events' %}">{% trans 'Events' %}</a>
+                
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'home:teachers' %}">{% trans 'Teachers' %}</a>
+                
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'blogs:blogs' %}">{% trans 'Blog' %}</a>
 
-                            <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
-                                <ul class="navbar-nav mr-auto">
-                                    <li class="nav-item">
-                                        <a class="active" href="{% url 'home:home' %}">{% trans 'Home' %}</a>
-                                         <ul class="sub-menu">
-                                            <li><a class="active" href="{% url 'dashboard:home' %}">{% trans 'Dashboard' %}</a></li>
-                                            <!-- <li><a href="index-3.html">Home 02</a></li>
-                                            <li><a href="index-4.html">Home 03</a></li> -->
-                                        </ul>
-                                    </li>
-                                 
-                                    <li class="nav-item">
-                                        <a href="{% url 'home:courses'%}">{% trans 'Courses' %}</a>
-                                      
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'home:events' %}">{% trans 'Events' %}</a>
-                                        
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'home:teachers' %}">{% trans 'Teachers' %}</a>
-                                        
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'blogs:blogs' %}">{% trans 'Blog' %}</a>
+            </li>                            
+           
+             <li class="nav-item">
+                <a href="{% url 'consultant:home' %}">{% trans 'Consultant' %}</a>
+               
+            </li> 
+          
 
-                                    </li>                            
-                                   
-                                     <li class="nav-item">
-                                        <a href="{% url 'consultant:home' %}">{% trans 'Consultant' %}</a>
-                                       
-                                    </li> 
-                                    <li class="nav-item">
-                                        <a href="{% url 'accounts:account_info' %}">{% trans 'Profile' %}</a>
-                                         
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="#">{% trans 'Service' %}</a>
-                                        <ul class="sub-menu">
-                                        <li><a href="{% url 'home:contact' %}">{% trans 'Contact Us' %}</a></li> 
-                                        <li><a href="{% url 'home:faqs' %}">{% trans 'FAQS' %}</a></li>
-                                        <li><a href="{% url 'home:about' %}">{% trans 'About Us' %}</a></li>
-                                       
-                                    </ul> 
-                                    </li>
+            <li class="nav-item">
+                <a href="#">{% trans 'Service' %}</a>
+                <ul class="sub-menu">
+                <li><a href="{% url 'home:contact' %}">{% trans 'Contact Us' %}</a></li> 
+                <li><a href="{% url 'home:faqs' %}">{% trans 'FAQS' %}</a></li>
+                <li><a href="{% url 'home:about' %}">{% trans 'About Us' %}</a></li>
+               
+            </ul> 
+            </li>
 
 
-                                    <!-- <li class="nav-item">
-                                        <a href="#">{% trans 'Language' %}</a>
-                                        <ul class="sub-menu">
-   
-                                            {% for language in languages %}
-                                             <li> <a href="/{{language.code}}" class="u-c-brand">{{ language.name_local }} ({{ language.code }})</a> 
-                                             </li>
-                                        {%  endfor %}
-                                        </ul> 
-                                       
-                                    </li> -->
-                                   
-                                  
-                                </ul>
+            <!-- <li class="nav-item">
+                <a href="#">{% trans 'Language' %}</a>
+                <ul class="sub-menu">
+
+                    {% for language in languages %}
+                     <li> <a href="/{{language.code}}" class="u-c-brand">{{ language.name_local }} ({{ language.code }})</a> 
+                     </li>
+                {%  endfor %}
+                </ul> 
+               
+            </li> -->
+           
+          
+        </ul>
+    </div>
+      <!-- Collapsible wrapper -->
+  
+      <!-- Right elements -->
+      <div class="d-flex align-items-center">
+        <!-- Icon -->
+        <a class="text-reset me-3" style="cursor:pointer;"  id="search" >
+            <i class="fa fa-search"></i>
+        </a>
+        {% if request.user.is_authenticated %}
+        <a class="text-reset me-3"  href="{% url 'home:cart' request.user.slug %}">
+            <i class="fa fa-shopping-bag"></i>
+            <span class="badge rounded-pill badge-notification bg-success">{{my_wishlist.course.count}}</span>
+        </a>
+         {% else %}
+     <a class="text-reset me-3"  href="{% url 'account_login' %}">
+         <i class="fa fa-shopping-bag"></i>
+        <span class="badge rounded-pill badge-notification bg-success">0</span>
+        </a>
+
+     {% endif %}
+        <!-- Notifications -->
+        <div class="dropdown">
+          <a
+            class="text-reset me-3 dropdown-toggle hidden-arrow"
+            href="#"
+            id="navbarDropdownMenuLink"
+            role="button"
+            data-mdb-toggle="dropdown"
+            aria-expanded="false"
+          >
+          <i class="fa fa-globe"></i>
+          </a>
+         
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="navbarDropdownMenuLink"
+          >
+            <li>
+              <a class="dropdown-item" href="/ar/">{% trans 'Arabic' %}</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/en/">{% trans 'English' %}</a>
+            </li>
+          
+          </ul>
+        </div>
+        <!-- Avatar -->
+        <div class="dropdown">
+            {% if request.user.is_authenticated %}
+          <a
+            class="dropdown-toggle d-flex align-items-center hidden-arrow"
+            href="#"
+            id="navbarDropdownMenuAvatar"
+            role="button"
+            data-mdb-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <img
+              src="{{request.user.image}}"
+              class="rounded-circle"
+              height="30"
+              alt="{{request.user.username}}"
+              loading="lazy"
+            />
+          </a>
+         
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="navbarDropdownMenuAvatar"
+          >
+            <li>
+              <a class="dropdown-item" href="{% url 'accounts:account_info' %}">{% trans 'My profile' %}</a>
+            </li>
+            {% if request.user.is_authenticated %}
+            <li>
+              <a class="dropdown-item" href="{% url 'accounts:logout' %}">{% trans 'Logout' %}</a>
+            </li>
+            {% else %}
+            <li>
+              <a class="dropdown-item" href="{% url 'accounts:login' %}">{% trans 'Login' %}</a>
+            </li>
+            {% endif %}
+          </ul>
+          {% else %}
+          <div class="dropdown">
+            <a
+              class="text-reset me-3 dropdown-toggle hidden-arrow"
+              href="#"
+              id="navbarDropdownMenuLink"
+              role="button"
+              data-mdb-toggle="dropdown"
+              aria-expanded="false"
+            >
+            <i class="fa fa-user"></i>
+            </a>
+           
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="navbarDropdownMenuLink"
+            >
+              <li>
+                <a class="dropdown-item" href="{% url 'accounts:login' %}">{% trans 'Login' %}</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{% url 'accounts:signup' %}">{% trans 'Signup' %}</a>
+              </li>
+            
+            </ul>
+          </div>
+         
+
+          {% endif %}
+        </div>
+      </div>
+      <!-- Right elements -->
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+                    </div>
+                    <!-- <div class="col-lg-2 col-md-2 col-sm-3 col-3">
+
+                       
+                            <div class="container" >
+                                <div class="row">
+                                    <div class="col-lg-10 col-md-10 col-sm-9 col-8">
+                                        <nav class="navbar navbar-expand-lg navbar-expand-md">
+                                            
+                                            <div class="collapse navbar-collapse sub-menu-bar"  style=" display: contents;" >
+                                                <ul class="navbar-nav mr-auto">
+                                                <li  class="nav-item active"><a  style="cursor:pointer;" id="search"><i class="fa fa-search"></i></a></li>
+                                                    <li class="nav-item">
+                                                        <a style="cursor:pointer;"><i class="fa fa-globe"></i></a>
+                                                        <ul class="sub-menu">
+                                                            {% if LANGUAGE_CODE == "en" %}
+                                                            <li><a href="/ar/">Arabic</a></li>
+                                                               {% elif LANGUAGE_CODE == "ar" %}
+                                                            <li><a href="/en/">English</a></li>
+                                                            {% else %}
+                                                            <li><a href="/ar/">Arabic</a></li>
+                                                            {% endif %}
+                                                        </ul>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="{% url 'accounts:account_info' %}"><i class="fa fa-user"></i></a>
+                                                    
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </nav> 
+                                    </div>
+                
+                                    
+                                        </div>
                             </div>
-                        </nav> <!-- nav -->
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-3 col-3">
-                        <div class="right-icon text-right">
-                            <ul>
-                               
-                                <li><a  style="cursor:pointer;" id="search"><i class="fa fa-search"></i></a></li>
-                                {% if request.user.is_authenticated %}
-                                <li><a href="{% url 'home:cart' request.user.slug %}"><i class="fa fa-shopping-bag"></i><span id="shop-numbers">{{my_wishlist.course.count}}</span></a></li>
-                                {% else %}
-                                <li><a href="{% url 'account_login' %}"><i class="fa fa-shopping-bag"></i><span id="shop-numbers">{{my_wishlist.course.count}}</span></a></li>
+                     
 
-                                {% endif %}
-                                <li >
-                                   
-                                    {% if LANGUAGE_CODE == "en" %}
-                                    <a href="/ar/" title="arabic"><i class="fa fa-globe" aria-hidden="true"></i></a>
-                                    {% elif LANGUAGE_CODE == "ar" %}
-                                    <a href="/en/" title="english"><i class="fa fa-globe" aria-hidden="true"></i></a>
 
-                                    {% else %}
-                                <a href="/ar/" title="arabic"><i class="fa fa-globe" aria-hidden="true"></i></a>
-                                    {% endif %}
-                                </li>
-
-                             
-
-                            </ul>
-                        </div> <!-- right icon -->
-                    </div>
+                    </div> -->
                 </div> <!-- row -->
             </div> <!-- container -->
         </div>
@@ -292,7 +450,7 @@ cursor:pointer;
             </div>
             <form action="{% url 'home:global_search' %}" method='GET' >
 
-                <input type="text" name="qs" placeholder="Search in Courses and Teachers">
+                <input type="text" name="qs" placeholder="{% trans 'Search in Courses and Teachers' %}">
                 <button><i class="fa fa-search"></i></button>
             </form>
         </div> <!-- serach form -->
@@ -380,22 +538,7 @@ cursor:pointer;
                                 <h6>Contact Us</h6>
                             </div>
                             <ul>
-                                <!-- <li>
-                                    <div class="icon">
-                                        <i class="fa fa-home"></i>
-                                    </div>
-                                    <div class="cont">
-                                        <p>143 castle road 517 district, kiyev port south Canada</p>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="icon">
-                                        <i class="fa fa-phone"></i>
-                                    </div>
-                                    <div class="cont">
-                                        <p>+3 123 456 789</p>
-                                    </div>
-                                </li> -->
+                               
                                 <li>
                                     <div class="icon">
                                         <i class="fa fa-envelope-o"></i>
@@ -414,8 +557,8 @@ cursor:pointer;
         <div class="footer-copyright pt-10 pb-25">
             <div class="container">
                 <div class="row">
-                    <div class="col offset-lg-3">
-                        <p> © 2022 Copyright : Agartha Academy | <a href="{% url 'home:terms' %}">Terms and Conditions</a> | <a href="{% url 'home:privacy' %}">Privacy Policy</a></p>
+                    <div  class="col offset-lg-3">
+                        <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url 'home:terms' %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url 'home:privacy' %}">Privacy Policy</a></p>
                     </div>
               
                 </div> 
@@ -469,9 +612,11 @@ cursor:pointer;
     <script src="{% static 'js/main.js' %}"></script>
     
     <!--====== Map js ======-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDC3Ip9iVC0nIxC6V14CKLQ1HZNF_65qEQ"></script>
-    <script src="{% static 'js/map-script.js' %}"></script>
-
+<!-- MDB -->
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"
+></script>
 </body>
 <script style="text/javascript">
    

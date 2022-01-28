@@ -78,7 +78,7 @@
                         xhr.upload.addEventListener("progress", e=>{
                            if (e.lengthComputable){
                                const percent = e.loaded / e.total * 100
-                               console.log(percent)
+                             
                                progressBox.innerHTML= `<div class="progress">
                                 <div class="progress-bar" role="progressbar" style="width: ${percent}%;" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">${percent.toFixed(1)}%</div>
                               </div>`

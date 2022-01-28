@@ -1,5 +1,5 @@
 {% extends 'blog_base.html' %}
-
+{% load i18n %}
 {% block content %}
 <style type="text/css">
 	
@@ -128,7 +128,9 @@
 		border: none;
 		background: #888
 	}
-
+	iframe{
+		width:100% !important;
+			 }
 </style>
 		<!-- BEGIN CONTENT -->
 		<main class="site-content">
@@ -153,7 +155,7 @@
 											</span>
 											<span class="entry-meta-comments">
 												<i class="fa fa-comments"></i>
-												<a href="">{{i.get_comments}} comments</a>
+												<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 											</span>
 											<span class="entry-meta-comments">
 												<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -195,7 +197,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}}  comments</a>
+										<a href="">{{i.get_comments}}  {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -205,7 +207,7 @@
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|truncatewords:20}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Read More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "quote" %}
@@ -241,7 +243,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}} comments</a>
+										<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -263,7 +265,7 @@
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|truncatewords:20}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Read More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "gallery" %}
@@ -285,7 +287,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}} comments</a>
+										<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -295,7 +297,7 @@
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|truncatewords:20}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Show More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Show More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "audio" %}
@@ -314,7 +316,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}}  comments</a>
+										<a href="">{{i.get_comments}}  {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -329,7 +331,7 @@
                 {% if blogs.has_other_pages  %}
 				<ul style="justify-content: center;" class="pagination">
 					{% if blogs.has_previous  %}
-					<li><a href="?page={{ blogs.previous_page_number }}"><i class="fa fa-angle-double-left"></i> Prev</a></li>
+					<li><a href="?page={{ blogs.previous_page_number }}"><i class="fa fa-angle-double-left"></i> {% trans 'Prev' %}</a></li>
 					{% else %}
 					<li></li>
 					{% endif %}
@@ -342,7 +344,7 @@
 					
 			{% endfor %}
 			{% if blogs.has_next %}
-					<li><a href="?page={{ blogs.next_page_number }}">Next <i class="fa fa-angle-double-right"></i></a></li>
+					<li><a href="?page={{ blogs.next_page_number }}">{% trans 'Next' %} <i class="fa fa-angle-double-right"></i></a></li>
 					{% else %}
 					<li></li>
 					{% endif %}
@@ -355,7 +357,7 @@
     <div class="grid-30">
 <aside class="site-aside">
 	<div class="widget">
-		<h3 class="widget-title">Recent Posts</h3>
+		<h3 class="widget-title">{% trans 'Recent Posts' %}</h3>
 		<ul>
             {% for i in data.recent_blogs %}
 			<li><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a> <span>{{i.created_at|date:"M d, Y"}}</span></li>
@@ -364,7 +366,7 @@
 	</div>
 
 	<div class="widget">
-		<h3 class="widget-title">Categories</h3>
+		<h3 class="widget-title">{% trans 'Categories' %}</h3>
 		<ul>
             {% for i in data.recent_categories %}
 			<li><a href="">{{i.name.title|truncatewords:"10"}}</a></li>
@@ -391,7 +393,7 @@
 
 
     {% else %}
-    <h1 style="text-align:center;">Sorry,Blog is Empty</h1>
+    <h1 style="text-align:center;">{% trans 'Sorry,Blog is Empty' %}</h1>
 {% endif %}
 </div>
 
@@ -403,7 +405,7 @@
 		<li data-target="#myCarousel" data-slide-to="2"></li>
 	</ol> -->
 	 <!-- Wrapper for carousel items -->
-	 <h2>Our Teachers</h2>
+	 <h2>{% trans 'Our Teachers' %}</h2>
 	<div class="carousel-inner">
 		{% for i in data.recent_teachers %}
 		

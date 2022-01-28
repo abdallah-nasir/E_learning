@@ -13,26 +13,15 @@ import os
 from django.db.models import Q
 from crum import get_current_request   
 User=get_user_model()
+Audio_Extension=[".3gp",".aa",".aac",".aiff",".wav",".m4a",".amr",".mp3",".webm",".wmv",]
+Video_Extension=[".webm",".mkv",".flv",".avi",".wmv",".rmvb",".amv",".mp4",".m4p",".mpg",".mpeg",".m4v",".3gp"]
 
 class AddBlog(forms.ModelForm):
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        fields=["name","details","category","paid","tags","image"]
-    def clean_video(self):
-        request=get_current_request()
-        video=self.cleaned_data.get("video")      
-        blog_type=request.GET.get("blog_type")
-        video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
-        if blog_type == "video":
-            if not video:
-                raise forms.ValidationError("please insert a video / audio")
-            else:
-                video_type=os.path.splitext(video.name)[1]
-                if video_type not in  video_extentions:
-                    raise forms.ValidationError("invalid video / audio extension")
+        fields=["name","name_ar","details","category","paid","tags","image"]
 
-        return video
     def clean_image(self):
         request=get_current_request()
         type=request.GET.get("blog_type")
@@ -95,41 +84,43 @@ class BlogLinkForm(forms.ModelForm):
                 raise forms.ValidationError("invalid image extension")
         return image
 class BlogVideoForm(forms.ModelForm):
-    video=forms.FileField(label="Video / Audio")
-    image=forms.ImageField(required=True)
+    video=forms.FileField(label="Video")
     class Meta:
         model=Blog
-        fields=["name","details","category","paid","tags","video","image"]
-
-    def clean_image(self):
-        request=get_current_request()
-        type=request.GET.get("blog_type")
-        image=request.FILES.getlist("image")
-        image_extentions=[".png",".jpg",",jpeg"]
-        if type != "gallery":
-            if len(image) > 1:  
-                raise forms.ValidationError(f"Select only one image for {type} Blog")
-        for i in image:
-            image_extension=os.path.splitext(i.name)[1]
-            print(image_extension)
-            if image_extension.lower() not in image_extentions:
-                raise forms.ValidationError("invalid image extension")
-            
-        return image
+        fields=["video"]
     
     def clean_video(self):
-        video=self.cleaned_data.get("video")      
+        video=self.cleaned_data["video"]      
         request=get_current_request()
         blog_type=request.GET.get("blog_type")
-        video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
-        if blog_type == "video" or blog_type == "audio":
+        video_extentions=Video_Extension
+        if blog_type == "video":
             if video is False:
-                raise forms.ValidationError("please insert a video / audio")
+                raise forms.ValidationError("please insert a video")
             else:
                 video_type=os.path.splitext(video.name)[1]
                 if video_type not in  video_extentions:
-                    raise forms.ValidationError("invalid video / audio extension")
+                    raise forms.ValidationError("invalid video extension")
+        return video
 
+class BlogAudioForm(forms.ModelForm):
+    video=forms.FileField(label="Audio")
+    class Meta:
+        model=Blog
+        fields=["video"]
+    
+    def clean_video(self):
+        video=self.cleaned_data["video"]      
+        request=get_current_request()
+        blog_type=request.GET.get("blog_type")
+        audio_extentions=Audio_Extension
+        if  blog_type == "audio":
+            if video is False:
+                raise forms.ValidationError("please insert audio")
+            else:
+                video_type=os.path.splitext(video.name)[1]
+                if video_type not in  audio_extentions:
+                    raise forms.ValidationError("invalid audio extension")
         return video
 class BlogGalleryForm(forms.ModelForm):
     image=forms.FileField(required=True,widget=forms.ClearableFileInput(attrs={'multiple': True}))
@@ -225,17 +216,30 @@ class EditVideo(forms.ModelForm):
     #         raise forms.ValidationError("invalid video extension")
     #     return video
 
-from bootstrap_datepicker_plus import DatePickerInput,TimePickerInput,DateTimePickerInput
+# from bootstrap_datepicker_plus import DatePickerInput,TimePickerInput,DateTimePickerInput
+from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
+import datetime as compare_time
+from datetime import date,datetime,time
 class AddEvent(forms.ModelForm):
-    date=forms.DateField(widget=DatePickerInput(format='%m/%d/%y'))
-    start_time=forms.TimeField(widget=TimePickerInput(format='%H:%M:%S'))
-    end_time=forms.TimeField(widget=TimePickerInput(format='%I:%M:%S'))
+    date=forms.DateField(required=True,widget=DatePicker(options={'minDate': f"{date.today()}"}, attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            }))
+    start_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+                'append': 'fa fa-clock-o',
+                'icon_toggle': True,
+                "format":"H M S"
+                
+            }))
+    end_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+                'append': 'fa fa-clock-o',
+                'icon_toggle': True,
+            }))
     zoom_link=forms.CharField(max_length=300,required=False)
-    # about=forms.CharField(widget=forms.Textarea())
     class Meta:
         model=Events    
-        fields=['name',"category","image","details","date","start_time","end_time","place","zoom_link"]
-
+        # fields=['name',"category","image","details","date","start_time","end_time","place","zoom_link"]
+        fields=["date","start_time","end_time"]
     def clean_image(self):
         image=self.cleaned_data.get("image")
         image_extentions=[".png",".jpg",",jpeg"]
@@ -243,11 +247,40 @@ class AddEvent(forms.ModelForm):
         if image_extension.lower() not in image_extentions:
             raise forms.ValidationError("invalid image extension")
         return image
-
+    def clean_date(self):
+        date=self.cleaned_data.get("date")
+        if date:
+            today=date.today()
+            if date < today:
+                raise forms.ValidationError("time is already passed")
+        return date
+    def clean(self):
+        request=get_current_request()
+        date=self.cleaned_data.get("date")
+        start=request.POST.get("start_time")
+        end=request.POST.get("end_time")
+        start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
+        end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
+        category=self.cleaned_data.get("category")
+        calculate=datetime.strptime(f"{end}","%I:%M:%S %p")-datetime.strptime(f"{start}","%I:%M:%S %p")
+        print(start_time,end_time)
+        if start_time < end_time:
+            time_betwen = calculate.seconds/60
+            if time_betwen < 15:
+                raise forms.ValidationError("time must be more than 15 minute")
+        else:
+            raise forms.ValidationError("invalid end time")
+        if start_time and end_time:
+            first=start_time.strftime("%H:%M:%S")
+            second=end_time.strftime("%H:%M:%S")
+            print(first,second)
+            if Events.objects.filter(Q(date=date,start_time__range=(first,second)) | Q(date=date,end_time__range=(first,second))).exists():
+                print("here")
+                raise forms.ValidationError("start time is unavailable now")
 class Edit_event(forms.ModelForm):
-    date=forms.DateField(widget=DatePickerInput(format='%m/%d/%y'))
-    start_time=forms.TimeField(widget=TimePickerInput(format='%H:%M:%S'))
-    end_time=forms.TimeField(widget=TimePickerInput(format='%I:%M:%S'))
+    date=forms.DateField(widget=DatePicker(format='%m/%d/%y'))
+    start_time=forms.TimeField(widget=TimePicker(format='%H:%M:%S'))
+    end_time=forms.TimeField(widget=TimePicker(format='%H:%M:%S'))
     zoom_link=forms.CharField(max_length=300,required=False)
     image=forms.ImageField(required=False)
     # about=forms.CharField(widget=forms.Textarea())
@@ -263,6 +296,23 @@ class Edit_event(forms.ModelForm):
             if image_extension.lower() not in image_extentions:
                 raise forms.ValidationError("invalid image extension")
         return image
+    def clean_date(self):
+        date=self.cleaned_data.get("date")
+        if date:
+            today=date.today()
+            if date < today:
+                raise forms.ValidationError("time is already passed")
+        return date
+    def clean(self):
+        date=self.cleaned_data.get("date")
+        start_time=self.cleaned_data.get("start_time")
+        end_time=self.cleaned_data.get("end_time")
+        category=self.cleaned_data.get("category")
+        if start_time and end_time:
+            first=start_time.strftime("%H") 
+            second=end_time.strftime("%H")
+            if Events.objects.filter(date=date,category__name=category,start_time__hour__range=(first,second)).exists():
+                raise forms.ValidationError("start time is unavailable now")
 class AddQuestion(forms.ModelForm):
     class Meta:
         model=Question
@@ -279,16 +329,26 @@ class NewsForm(forms.ModelForm):
     
 
 class CosultantAddForm(forms.ModelForm): 
-    start_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePickerInput(format='%Y-%m-%d H:%M:%S'))
-    end_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S"],widget=DateTimePickerInput(format='%Y-%m-%d H:%M:%S'))
+    start_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+                'append': 'fa fa-clock-o',
+                'icon_toggle': True,
+                "format":"i M S"
+                
+            }))
+    end_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+                'append': 'fa fa-clock-o',
+                'icon_toggle': True,
+                "format":"i M S"
+                
+            }))
     class Meta:
         model=Teacher_Time 
         fields="__all__"
         exclude=["user"]
 
 class SessionForm(forms.ModelForm):
-    start_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePickerInput(format='%Y-%m-%d H:%M:%S'))
-    end_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePickerInput(format='%Y-%m-%d H:%M:%S'))
+    start_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePicker(format='%Y-%m-%d H:%M:%S'))
+    end_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePicker(format='%Y-%m-%d H:%M:%S'))
     zoom=forms.CharField(required=True,widget=forms.TextInput())
 
     class Meta:
@@ -300,7 +360,6 @@ class ConsultantCategoryForm(forms.ModelForm):
     class Meta:
         model=Consultant_Category 
         fields="__all__"
-        
 class UploadVideoForm(forms.Form):
     # title=forms.CharField(max_length=50)
     video=forms.FileField()
@@ -370,6 +429,7 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model=Category
         fields="__all__"
+        extra_kwargs={"image":{"required":True}}
         exclude=["slug"]
 class BranchForm(forms.ModelForm):
     class Meta:
@@ -397,13 +457,5 @@ class PrivacyForm(forms.ModelForm):
 class Support_Email_Form(forms.ModelForm):
     class Meta:
         model=Support_Email
-        fields="__all__"
-        readonly_fields =["user"]
-        # extra_kwargs={"user":{"read_only":True}}
-    # def __init__(self, *args, **kwargs):
-    #     super(Support_Email_Form, self).__init__(*args, **kwargs)
-    #     instance = getattr(self, 'instance', None)
-    #     # if instance and instance.pk:
-    #     for i in self.fields.all():
-    #         print(i)
-            # self.fields['sku'].widget.attrs['readonly'] = True
+        fields=["subject","message"]
+  

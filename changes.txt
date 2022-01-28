@@ -1,5 +1,4 @@
-consultant app
-payment method fr all 
-payment method form
-
-terms and privacy
+consultant app 
+date time picker 
+check payment at home 
+consultant dashbaord forms,views and templates

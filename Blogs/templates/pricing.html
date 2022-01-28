@@ -1,5 +1,5 @@
 {% extends 'blog_base.html' %}
-
+{% load i18n %}
 {% block content %}
 
 <style type="text/css">
@@ -136,7 +136,7 @@
 </style>
 <div class="container">
     <div>
-        <h3 class="headline">Pricing Tables</h3><span class="line margin-bottom-45"></span>
+        <h3 class="headline">{% trans 'Pricing Tables' %}</h3><span class="line margin-bottom-45"></span>
         <div class="clearfix"></div> <br> <br>
     </div>
     <div class="row">
@@ -152,7 +152,7 @@
                         <li>{{i.get_details}}</li>
                        
                     </ul> 
-                    <a class="button" href="{% url 'blogs:payment' i.id %}">Sign Up</a>
+                    <a class="button" href="{% url 'blogs:payment' i.id %}">{% trans 'Sign Up' %}</a>
                 </div>
             </div>
         </div>

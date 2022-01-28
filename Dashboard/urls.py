@@ -17,7 +17,11 @@ path("edit/blogs/<str:slug>/",views.edit_blog,name="edit_blog"),
 path("delete/blogs/<str:slug>/",views.delete_blog,name="delete_blog"),
 path("delete/image/blogs/<str:id>/",views.delete_blog_image,name="delete_blog_image"),
 path("delete/videos/blogs/<str:id>/",views.delete_blog_video,name="delete_blog_video"),
-
+path("complete/blog/videos/<str:slug>/",views.add_video_blog,name="add_video_blog"),
+path("complete/blog/audio/<str:slug>/",views.add_audio_blog,name="add_audio_blog"),
+path("check/blog/audios/<str:slug>/",views.check_audio_blog,name="check_audio_blog"),
+ 
+path("check/blog/videos/<str:slug>/",views.check_blog_video,name="check_blog_video"),
 
 #### course
 path("courses/",views.courses,name="courses"),
@@ -36,6 +40,8 @@ path("get/video-length/<str:id>/",views.get_video_length,name="get_video_length"
 
 #events
 path("events/",views.events,name="events"),
+path("demo/event/<int:id>/",views.demo_event,name="demo_event"),
+
 path("add/events/",views.add_event,name="add_event"),
 path("edit/events/<str:id>/",views.edit_event,name="edit_event"),
 path("delete/events/<str:id>/",views.delete_event,name="delete_event"),
@@ -103,6 +109,8 @@ path("blog-category/add/",views.add_blog_category,name="add_blog_category"),
 ### emails
 path("emails/",views.emails,name="emails"),
 path("email/<int:id>/",views.single_email,name="single_email"),
+path("close/email/<int:id>/",views.close_email,name="close_email"),
+
 
 
 #############

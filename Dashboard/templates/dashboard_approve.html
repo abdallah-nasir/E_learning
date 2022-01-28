@@ -365,6 +365,8 @@
 
                                         <td>
                                 <button class="btn btn-success" data-toggle="modal" data-target="#event-{{i.id}}">Approve</button>
+                                <a href="{% url 'dashboard:demo_event' i.id %}" target="__" class="btn btn-info">Demo</a>
+
                                 <a href="{% url 'dashboard:reject' i.id %}?reject=events" class="btn btn-danger">Reject</a>
                             </td>
                                      

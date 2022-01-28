@@ -1,5 +1,5 @@
 {% extends 'dashboard_base.html' %}
-{% load il8n %}
+{% load i18n %}
 {% load crispy_forms_tags %}
 
 
@@ -18,9 +18,9 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">{% trans 'DataTables Example' %}</h6>
                         </div>
                         <div class="card-body">
+                            {% if get_email %}
                             <form method="POST" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 
@@ -29,8 +29,36 @@
                                     {{form|crispy }}
                                 </div>
                                 
-                                <button onclick="this.disabled=true,this.form.submit();" class="btn btn-primary" type="submit">Submit</button>
+                                <button onclick="this.disabled=true,this.form.submit();" class="btn btn-success" type="submit">send</button>
                             </form>
+                            {% else %}
+
+                            <form>
+                                <div class="form-group">
+                                  <label for="exampleFormControlInput1">From Email</label>
+                                  <input type="email" class="form-control" id="exampleFormControlInput1" value="{{email.email}}" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleFormControlInput1">Name</label>
+                                    <input type="email" class="form-control" id="exampleFormControlInput1" value="{{email.name}}" disabled>
+                                  </div>
+                                <div class="form-group">
+                                  <label for="exampleFormControlSelect1">Subject</label>
+                                  <input type="text" class="form-control"  value="{{email.subject}}" disabled>
+
+                                </div>
+                                <div class="form-group">
+                                  <label for="exampleFormControlTextarea1">Message</label>
+                                  <textarea class="form-control" id="exampleFormControlTextarea1"   value="{{email.message}}" disabled>{{email.message}}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Phone</label>
+                                    <input type="text" class="form-control"  value="{{email.phone}}" disabled>
+  
+                                  </div>
+                                <a href="{% url 'dashboard:single_email' email.id %}?email={{email.id}}" class="btn btn-success">respond</a>
+                              </form>
+                            {% endif %}
                         </div>
                     </div>
 

@@ -173,13 +173,13 @@
         <div class="row">
             <div class="col-lg-3 col-sm-6">
                 <div class="singel-counter text-center mt-40">
-                    <span><span class="counter">30,000</span>+</span>
+                    <span><span class="counter">2,000</span>+</span>
                     <p>{% trans 'Students enrolled' %}</p>
                 </div> <!-- singel counter -->
             </div>
             <div class="col-lg-3 col-sm-6">
                 <div class="singel-counter text-center mt-40">
-                    <span><span class="counter">41,000</span>+</span>
+                    <span><span class="counter">1,000</span>+</span>
                     <p>{% trans 'Courses Uploaded' %}</p>
                 </div> <!-- singel counter -->
             </div>
@@ -191,8 +191,8 @@
             </div>
             <div class="col-lg-3 col-sm-6">
                 <div class="singel-counter text-center mt-40">
-                    <span><span class="counter">39,000</span>+</span>
-                    <p>{% trans 'Global Teachers' %}</p>
+                    <span><span class="counter">500</span>+</span>
+                    <p>{% trans 'Global Teacher' %}</p>
                 </div> <!-- singel counter -->
             </div>
         </div> <!-- row -->
@@ -221,7 +221,7 @@
                                 </div>
                                 <div class="cont">
                                     <a href="{% url 'home:teacher' i.slug %}"><h5>{{i.get_full_name.title}}</h5></a>
-                                    <p>{{i.get_user_data.title|truncatewords:10}}</p>
+                                    <p>{{i.get_user_data.title|truncatechars:10}}</p>
                                     <span><i class="fa fa-book"></i>{{i.get_user_courses}} {% trans 'Courses' %}</span>
                                 </div>
                             </div> <!-- teachers 2 singel -->
@@ -240,7 +240,7 @@
                         <div class="singel-student">
                             <img src="{% static 'images/teachers/teacher-2/quote.png' %}" alt="Quote">
                             <p>{{i.review}}</p>
-                            <h6>{{i.user.first_name|truncatewords:5}}</h6>
+                            <h6>{{i.user.first_name|truncatechars:5}}</h6>
                             <!-- <span>Bsc, Engineering</span> -->
                         </div> <!-- singel student -->
                         {% endfor %}
@@ -273,7 +273,7 @@
                             <li>
                                 <div class="singel-event">
                                     <span><i class="fa fa-calendar"></i>{{i.date|date:'Y/m/d'}}</span>
-                                    <a href="{% url 'home:event' i.slug %}"><h4>{{i.name|truncatewords:10}}</h4></a>
+                                    <a href="{% url 'home:event' i.slug %}"><h4>{{i.name|truncatechars:10}}</h4></a>
                                     <span><i class="fa fa-clock-o"></i>{{i.start_time|date:"h a"}} - {{i.end_time|date:"h a"}}</span>
                                     <span><i class="fa fa-map-marker"></i>{{i.place}}</span>
                                 </div>

@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 # from Home_Models import Course
 User=get_user_model()
-
+ 
 # Create your models here.
 TYPE=(
     ("course","course"),

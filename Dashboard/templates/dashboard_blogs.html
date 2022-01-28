@@ -30,6 +30,7 @@
                                             <th>Comments</th>
                                             <th>Paid</th>
                                             <th>status</th>
+                                            
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -47,6 +48,10 @@
                                           {% if i.status != "pending" %}
                                         <a href="{% url 'dashboard:edit_blog' i.slug %}" class="btn btn-success">Edit</a>
                                         {% endif %}
+                                        {% if i.blog_type == "video" and i.get_blog_video_status == None %}
+                                        <a href="{% url 'dashboard:check_blog_video' i.slug %}" class="btn btn-info">Check Video</a>
+                                        {% endif %}
+                 
                                         <button class="btn btn-danger" data-toggle="modal" data-target="#blog-{{i.id}}">Delete</button></td>
                                     </tr>
 

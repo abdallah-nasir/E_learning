@@ -305,30 +305,7 @@ $(document).ready(function () {
   });
 });
 
-$(document).on('click',"#card-data",function(){
-  var _vm=$(this);
-
-  // Ajax
-  $.ajax({
-    type:"GET",
-    url:"{% url 'consultant:paymob_payment' teacher.id %}",
-      success:function(res){
-
-          $("#card-data").remove();
-        let html=` <iframe style=" display: block  !important;      
-                          border: none  !important;         
-                        height: 100vh  !important;        
-                       
-                       
-                        text-align:center  !important;
-                        align-items:center  !important;" width=100% src="https://accept.paymob.com/api/acceptance/iframes/${res.frame}?payment_token=${res.token}" ></iframe>`
-        $("#card").html(html);
-          
-                  },
   
-                  });
-                  // End
-              });      
   </script>
 </body>
 </html>

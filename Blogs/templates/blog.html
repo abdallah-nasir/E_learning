@@ -1,5 +1,5 @@
 {% extends 'blog_base.html' %}
-
+{% load i18n %}
 {% block content %}
 <style type="text/css">
  /* Style the button that is used to open and close the collapsible content */
@@ -45,7 +45,7 @@
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
-							{{blog.get_comments}} comments
+							{{blog.get_comments}} {% trans 'comments' %}
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
@@ -57,13 +57,13 @@
 				{{blog.details|safe}}
 			</div>
 			<footer class="entry-footer">
-				<h3>Tags</h3>
+				<h3>{%  trans 'Tags' %}</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
 					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
-				<h3>Share</h3>
+				<h3>{% trans 'Share' %}</h3>
 				<div class="social-likes social-likes_notext">
 					<div class="facebook" title="Share link on Facebook"></div>
 					<div class="twitter" title="Share link on Twitter"></div>
@@ -74,11 +74,8 @@
 		{% elif blog.blog_type == "video" %}
 		<article class="post format-video margin-bottom">
 			<div class="entry-media">
-				<video style="width:100%; max-height:500px;" controls>
-					<source src="{{blog.video.url}}" type="video/mp4">
-			   
-				  Your browser does not support the video tag.
-				  </video>
+				<iframe src="{{blog.video}}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" style="height:500px;" allowfullscreen="true"></iframe>                          
+
 			</div>
 			<header class="entry-header">
 				<div class="icon-b">
@@ -94,7 +91,7 @@
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
-							{{blog.get_comments}}  comments
+							{{blog.get_comments}}  {% trans 'comments' %}
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
@@ -106,13 +103,13 @@
 				{{blog.details|safe}}
 			</div>
 			<footer class="entry-footer">
-				<h3>Tags</h3>
+				<h3>{% trans 'Tags' %}</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
 					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
-				<h3>Share</h3>
+				<h3>{% trans 'Share' %}</h3>
 				<div class="social-likes social-likes_notext">
 					<div class="facebook" title="Share link on Facebook"></div>
 					<div class="twitter" title="Share link on Twitter"></div>
@@ -123,7 +120,7 @@
 		{% elif blog.blog_type == "audio" %}
 		<article class="post format-audio margin-bottom">
 			<div class="entry-media">
-				<iframe width="900" height="450" src="{{blog.get_audio}}"></iframe>
+				<iframe src="{{blog.video}}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" style="height:500px;" allowfullscreen="true"></iframe>                          
 			</div>
 			<header class="entry-header">
 				<div class="icon-b">
@@ -139,7 +136,7 @@
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
-							{{blog.get_comments}} comments
+							{{blog.get_comments}} {% trans 'comments' %}
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
@@ -151,13 +148,13 @@
 				{{blog.details|safe}}
 			</div>
 			<footer class="entry-footer">
-				<h3>Tags</h3>
+				<h3>{% trans 'Tags' %}</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
 					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
-				<h3>Share</h3>
+				<h3>{% trans 'Share' %}</h3>
 				<div class="social-likes social-likes_notext">
 					<div class="facebook" title="Share link on Facebook"></div>
 					<div class="twitter" title="Share link on Twitter"></div>
@@ -184,7 +181,7 @@
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
-							{{blog.get_comments}} comments
+							{{blog.get_comments}} {% trans 'comments' %}
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
@@ -196,13 +193,13 @@
 			{{blog.details|safe}}
 			</div>
 			<footer class="entry-footer">
-				<h3>Tags</h3>
+				<h3>{% trans 'Tags' %}</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
 					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
-				<h3>Share</h3>
+				<h3>{% trans 'Share' %}</h3>
 				<div class="social-likes social-likes_notext">
 					<div class="facebook" title="Share link on Facebook"></div>
 					<div class="twitter" title="Share link on Twitter"></div>
@@ -225,7 +222,7 @@
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
-							{{blog.get_comments}} comments
+							{{blog.get_comments}} {% trans 'comments' %}
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
@@ -238,13 +235,13 @@
 				{{blog.details|safe}}
 			</div>
 			<footer class="entry-footer">
-				<h3>Tags</h3>
+				<h3>{% trans 'Tags' %}</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
 					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
-				<h3>Share</h3>
+				<h3>{% trans 'Share' %}</h3>
 				<div class="social-likes social-likes_notext">
 					<div class="facebook" title="Share link on Facebook"></div>
 					<div class="twitter" title="Share link on Twitter"></div>
@@ -272,7 +269,7 @@
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
-							{{blog.get_comments}} comments
+							{{blog.get_comments}} {% trans 'comments' %}
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
@@ -291,13 +288,13 @@
 				{{blog.details|safe}}
 			</div>
 			<footer class="entry-footer">
-				<h3>Tags</h3>
+				<h3>{% trans 'Tags' %}</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
 					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
-				<h3>Share</h3>
+				<h3>{% trans 'Share' %}</h3>
 				<div class="social-likes social-likes_notext">
 					<div class="facebook" title="Share link on Facebook"></div>
 					<div class="twitter" title="Share link on Twitter"></div>
@@ -307,7 +304,7 @@
 		</article>
 		{% endif %}
 
-<h3><i class="fa fa-comments"></i> {{blog.get_comments}} Comments</h3>
+<h3><i class="fa fa-comments"></i> {{blog.get_comments}} {% trans 'Comments' %}</h3>
 <ol class="comments-list">
 	{% for i in blog.comments.all %}
 	<li class="comment">
@@ -316,22 +313,22 @@
 				<div class="comment-author vcard">
 					<img class="avatar photo" src="{{i.user.image.url}}" alt="">
 					<span class="fn">{{i.user.first_name.title}}</span>
-					<span class="says"> says:</span>
+					<span class="says"> {% trans 'says' %}:</span>
 				</div>
 				<div class="comment-metadata">
-					<a href="">{{i.created_at|date:"M d, Y"}} at {{i.created_at|time:"g:i a"}}</a>
+					<a href="">{{i.created_at|date:"M d, Y"}} {% trans 'at' %} {{i.created_at|time:"g:i a"}}</a>
 				</div>
 			</header>
 			<div class="comment-content">
 				<p>{{i.comment}}</p>
 			</div>
 			<div class="reply">
-				<a class="comment-reply-link btn-inline collapsible" ><span>Reply</span></a>
+				<a class="comment-reply-link btn-inline collapsible" ><span>{% trans 'Reply' %}</span></a>
 				<div class="content">
 					<form method="post" action="{% url 'blogs:add_blog_comment_reply' blog.id i.id %}">
 						{% csrf_token %}
 						<p>
-							<label>Comment:</label>
+							<label>{% trans 'Comment' %}:</label>
 							<textarea cols="90" rows="8" name="reply" required></textarea>
 						</p>
 						<input type="submit" class="btn" value="Submit a comment">
@@ -347,10 +344,10 @@
 						<div class="comment-author vcard">
 							<img class="avatar photo" src="{{b.user.image.url}}" alt="">
 							<span class="fn">{{b.user.first_name.title}}</span>
-							<span class="says"> says:</span>
+							<span class="says"> {% trans 'says' %}:</span>
 						</div>
 						<div class="comment-metadata">
-							<a href="">{{b.created_at|date:"M d, Y"}} at {{b.created_at|time:"g:i a"}}</a>
+							<a href="">{{b.created_at|date:"M d, Y"}} {% trans 'at' %} {{b.created_at|time:"g:i a"}}</a>
 						</div>
 					</header>
 					<div class="comment-content">
@@ -370,15 +367,15 @@
 
 <hr>
 
-<h3><i class="fa fa-commenting"></i> Leave a Comment</h3>
+<h3><i class="fa fa-commenting"></i> {% trans 'Leave a Comment' %}</h3>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odio fugit sequi, perferendis quisquam totam natus repellendus ipsum dignissimos possimus, praesentium molestiae corporis iure sed sapiente, ab eveniet ratione, nemo provident officia minima modi eligendi adipisci. Et repellat suscipit quisquam ullam nostrum sint voluptate, nobis eligendi explicabo nesciunt ipsa dignissimos, eaque!</p>
+<!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odio fugit sequi, perferendis quisquam totam natus repellendus ipsum dignissimos possimus, praesentium molestiae corporis iure sed sapiente, ab eveniet ratione, nemo provident officia minima modi eligendi adipisci. Et repellat suscipit quisquam ullam nostrum sint voluptate, nobis eligendi explicabo nesciunt ipsa dignissimos, eaque!</p> -->
 
 <div class="comment-respond">
 	<form method="post" action="{% url 'blogs:add_blog_comment' blog.id %}">
 		{% csrf_token %}
 		<p>
-			<label>Comment:</label>
+			<label>{% trans 'Comment' %}:</label>
 			<textarea cols="90" rows="8" name="comment" required></textarea>
 		</p>
 		<input type="submit" class="btn" value="Submit a comment">
@@ -400,7 +397,7 @@
 
 
 	<div class="widget">
-		<h3 class="widget-title">Recent Posts</h3>
+		<h3 class="widget-title">{% trans 'Recent Posts' %}</h3>
 		<ul>
 			{% for i in blog.same_category %}
 			<li><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:'10'}}</a> <span>{{i.created_at|date:"M d, Y"}}</span></li>
@@ -409,7 +406,7 @@
 	</div>
 
 	<div class="widget">
-		<h3 class="widget-title">Categories</h3>
+		<h3 class="widget-title">{% trans 'Categories' %}</h3>
 		<ul>
 			{% for i in categories %}
 			<li><a href="">{{i.name}}</a></li>

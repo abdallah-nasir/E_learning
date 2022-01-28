@@ -8,11 +8,15 @@ from Blogs import models as blog_model
 import string, random
 from django.utils import translation
 import Quiz.models   
+from django.contrib import messages
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from embed_video.fields import EmbedVideoField
+from crum import get_current_request   
+from django.core.validators import MinValueValidator
 from PIL import Image
 import os  
+from django.urls import reverse
 import time
 import datetime
 import json
@@ -22,6 +26,14 @@ User=get_user_model()
 Quiz= Quiz.models.Quiz()
 from django.template.loader import render_to_string
 # Create your models here.
+def slugify(str):
+    str = str.replace(" ", "-")
+    str = str.replace(",", "-")
+    str = str.replace("(", "-")
+    str = str.replace(")", "")
+    str = str.replace("؟", "")
+    return str
+
 def get_home_data():
     events=Events.objects.filter(status="approved").order_by("-date")[:5]
     courses=Course.objects.filter(status="approved").order_by("-id")[0:5]
@@ -34,6 +46,7 @@ def get_home_data():
 class Category(models.Model):
     name=models.CharField(max_length=100)
     slug=models.SlugField(unique=True,blank=True,null=True)
+    image=models.ImageField(null=True)
     def __str__(self):
         return self.name  
     def save(self, *args, **kwargs):
@@ -230,6 +243,18 @@ class Course(models.Model):
             quiz=None
 
         return quiz
+    def get_first_quiz(self):
+        if self.quiz:
+            request=get_current_request()   
+            try:
+                first=self.quiz.questions.first().slug
+                return reverse("quiz:home",kwargs={"slug":self.slug,"question":first})
+            except:
+                messages.error(request,"Quiz is not ready yet")
+                return reverse("home:course",kwargs={"slug":self.slug})
+        else:
+            messages.error(request,"Quiz is not ready yet")
+            return reverse("home:course",kwargs={"slug":self.slug})
 
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -265,7 +290,7 @@ class Events(models.Model):
     category=models.ForeignKey(Branch,on_delete=models.SET_NULL,null=True)
     details=models.TextField()
     image=models.ImageField(upload_to=upload_events_images)
-    date=models.DateField()
+    date=models.DateField(validators=[MinValueValidator(datetime.date.today)])
     status=models.CharField(choices=EVENT_STATUS,max_length=20,default="pending")
     start_time=models.TimeField(auto_now_add=False)
     end_time=models.TimeField(auto_now_add=False)
@@ -275,7 +300,7 @@ class Events(models.Model):
     def __str__(self):
         return self.name
     def save(self, *args, **kwargs):
-        if self.slug == None:
+        if not self.slug:
             self.slug = slugify(self.name)
             if Events.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)

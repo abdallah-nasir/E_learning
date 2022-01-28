@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load i18n %}
 {% block content %}
     <!--====== PAGE BANNER PART START ======-->
     
@@ -9,11 +9,11 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="page-banner-cont">
-                        <h2>About Us</h2>
+                        <h2>{% trans 'About Us' %}</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">About Us</li>
+                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">{% trans 'About Us' %}</li>
                             </ol>
                         </nav>
                     </div>  <!-- page banner cont -->
@@ -31,8 +31,8 @@
             <div class="row">
                 <div class="col-lg-5">
                     <div class="section-title mt-50">
-                        <h5>About us</h5>
-                        <h2>Welcome to Agartha Academy </h2>
+                        <h5>{% trans 'About us' %}</h5>
+                        <h2>{% trans 'Welcome to Agartha Academy' %} </h2>
                     </div> <!-- section title -->
                     <div class="about-cont" >
                         <p>أكاديمية أغارثا للتدريب والاستشارات هي منصة متخصصة في العلوم الإنسانية والتنمية الذاتية. <br> <br> <strong>AGARTHA</strong> <br>تأسست عام 2019 في القاهرة لتكون الوجهة لجميع المتحدثين باللغة العربية لبيئة تعليمية احترافية. توفر أدوات تعليمية مباشرة عبر الإنترنت وفقًا للبرنامج. أصبح التعليم الافتراضي أولوية كبرى حتى يتمكن الجميع من الدراسة في أي وقت وفي أي مكان</p>
@@ -49,21 +49,21 @@
                     <div class="col-lg-4 col-md-6 col-sm-10">
                         <div class="about-singel-items mt-30">
                             <span>01</span>
-                            <h4>Why Choose us</h4>
-                            <p>We have the origin of the information, we turn it into experience, where anyone can master new skills and achieve their goals.</p>
+                            <h4>{% trans 'Why Choose us' %}</h4>
+                            <p>{% trans 'We have the origin of the information, we turn it into experience, where anyone can master new skills and achieve their goals' %}.</p>
                         </div> <!-- about singel -->
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-10">
                         <div class="about-singel-items mt-30">
                             <span>02</span>
-                            <h4>Our Mission</h4>
+                            <h4>{% trans 'Our Mission' %}</h4>
                             <p>بناء فرد قادر على إدراك التسارع التقني والمعرفي مع تحويل التعليم إلى عملية ممتعة. </p>
                         </div> <!-- about singel -->
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-10">
                         <div class="about-singel-items mt-30">
                             <span>03</span>
-                            <h4>Our vission</h4>
+                            <h4>{% trans 'Our vision' %}</h4>
                             <p>تجسيد علوم القدماء لإحداث نقلة نوعية في الوعي </p>
                         </div> <!-- about singel -->
                     </div>
@@ -82,26 +82,26 @@
             <div class="row">
                 <div class="col-lg-3 col-sm-6">
                     <div class="singel-counter text-center mt-40">
-                        <span><span class="counter">30,000</span>+</span>
-                        <p>Students enrolled</p>
+                        <span><span class="counter">2,000</span>+</span>
+                        <p>{% trans 'Students enrolled' %}</p>
                     </div> <!-- singel counter -->
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <div class="singel-counter text-center mt-40">
-                        <span><span class="counter">41,000</span>+</span>
-                        <p>Courses Uploaded</p>
+                        <span><span class="counter">1,000</span>+</span>
+                        <p>{% trans 'Courses Uploaded' %}</p>
                     </div> <!-- singel counter -->
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <div class="singel-counter text-center mt-40">
                         <span><span class="counter">11,000</span>+</span>
-                        <p>People certifie</p>
+                        <p>{% trans 'People certified' %}</p>
                     </div> <!-- singel counter -->
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <div class="singel-counter text-center mt-40">
-                        <span><span class="counter">39,000</span>+</span>
-                        <p>Global Teachers</p>
+                        <span><span class="counter">5,00</span>+</span>
+                        <p>{% trans 'Global Teachers' %}</p>
                     </div> <!-- singel counter -->
                 </div>
             </div> <!-- row -->
@@ -117,8 +117,8 @@
             <div class="row">
                 <div class="col-lg-5">
                     <div class="section-title mt-50 pb-35">
-                        <h5>Featured Teachers</h5>
-                        <h2>Meet Our teachers</h2>
+                        <h5>{% trans 'Featured Teachers' %}</h5>
+                        <h2>{% trans 'Meet Our teachers' %}</h2>
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->

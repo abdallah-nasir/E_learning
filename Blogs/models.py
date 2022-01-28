@@ -14,7 +14,7 @@ from ckeditor.fields import RichTextField
 # from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 from django.contrib.auth import get_user_model
-import requests
+import requests 
 User=get_user_model()
 
 import string,random
@@ -69,7 +69,7 @@ BLOG_TYPE=(
     ("audio","audio"),
     ("quote","quote"),
     ("link","link"),
-            
+                
 )  
 class Blog_Images(models.Model):
     blog=models.ForeignKey("Blog",on_delete=models.CASCADE,)
@@ -102,7 +102,7 @@ class Blog(models.Model):
     details=RichTextField()
     data=models.TextField(blank=True)
     image=models.ManyToManyField(Blog_Images,related_name="blog_comment",blank=True)
-    video=models.FileField(blank=True,null=True,upload_to=upload_blog_videos)
+    video=models.FileField(blank=True,null=True,upload_to=upload_blog_videos,max_length=400)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
@@ -115,7 +115,7 @@ class Blog(models.Model):
     objects=models.Manager()
     slug=models.SlugField(unique=True,blank=True,max_length=100)
     def save(self, *args, **kwargs):
-        if self.slug == None:
+        if not self.slug:
             self.slug = slugify(self.name)
             if Blog.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
@@ -168,8 +168,22 @@ class Blog(models.Model):
         replies=self.blog_comment_reply.count()
         count=comments + replies
         return count
-    # def 
-
+    def get_blog_video_status(self):
+        if self.blog_type =="video" :
+            try:
+                blog_data=json.loads(self.data)
+                length=blog_data["video_length"]
+            except:
+                length=None
+        else:
+            length=None
+        return length
+    def get_blog_audio_status(self):
+        if self.blog_type =="audio" and self.video == None :
+            audio=True
+        else:
+            audio =False
+        return audio
 @receiver(post_save, sender=Blog)
 def create_blog_viewers(sender, instance, created, **kwargs):
     if created:

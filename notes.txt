@@ -9,12 +9,12 @@ remove terms from footer
 adjust static 
 review must be required after finish 
 add certification to dashboard
-email to info
-add suport 
-add both support and infro to db (with status for each email)
+email to info       --done
+add suport      --done
+add both support and infro to db (with status for each email)       --done
 videos (extensions)
 اضافه استبيان لكل مدرس لاضافه معلوماته (link on teacher form)
-adjust quiz 
+adjust quiz         --done
 
 ----------------
     profile for students only (redirect teacher to dashboard )
@@ -27,7 +27,7 @@ adjust quiz
     end session aafter 20 minutes
     color footer one
     replace submit with 
-    add translation to news
+    add translation to news         --done
     add category image field
     add translation to faqs
 ---------------
@@ -35,3 +35,19 @@ adjust quiz
 1000 course
 11000 students
 500 teacher
+
+-----
+all categories in one section  [Dashbaord]
+blog translation [name , tags ]
+show demo event for admin and director
+add time validation for event
+adjust video blogs
+----
+blog audio on Bunny Storage 
+blog video on stream
+----
+validation to event
+add teahcer to demo event
+event end time minumum 15 minutes
+
+add fields to certification [id,...]

@@ -10,7 +10,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Agartha Dashboard</title>
+    <title>Agartha Academy | Dashboard</title>
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
 
     <!-- Custom fonts for this template-->
     <link href="{% static 'dashboard/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -21,7 +22,12 @@
 
     <!-- Custom styles for this template-->
     <link href="{% static 'dashboard/css/sb-admin-2.min.css' %}" rel="stylesheet">
-
+    <style type="text/css">
+        #accordionSidebar{
+        background-color: #07294d;
+        background-image: none;
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -63,7 +69,7 @@
                 Pages
             </div>
 
-            <!-- Nav Item - Pages Collapse Menu -->0
+            <!-- Nav Item - Pages Collapse Menu -->
             {% if request.user.is_director or request.user.is_superuser %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseteacher"
@@ -108,6 +114,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">All Blogs:</h6>
                         <a class="collapse-item" href="{% url 'dashboard:blogs' %}">Blogs</a>
+                        <a class="collapse-item" href="{% url 'dashboard:add_blog' %}">Add Blog</a>
+
                         <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
                         <a class="collapse-item" href="cards.html">Course Payments</a> -->
                     </div>
@@ -124,6 +132,8 @@
                         <h6 class="collapse-header">All Courses:</h6>
                         <a class="collapse-item" href="{% url 'dashboard:courses' %}">Courses</a>
                         <a class="collapse-item" href="{% url 'dashboard:videos' %}">Videos</a>
+                        <a class="collapse-item" href="{% url 'dashboard:add_course' %}">Add Course</a>
+                        <a class="collapse-item" href="{% url 'dashboard:courses' %}">Add Video</a>
 
                         <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
                         <a class="collapse-item" href="cards.html">Course Payments</a> -->
@@ -140,6 +150,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">All Events:</h6>
                         <a class="collapse-item" href="{% url 'dashboard:events' %}">Events</a>
+                        <a class="collapse-item" href="{% url 'dashboard:add_event' %}">Add Event</a>
+
                         <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
                         <a class="collapse-item" href="cards.html">Course Payments</a> -->
                     </div>
@@ -157,13 +169,100 @@
                     <h6 class="collapse-header">All Consultants:</h6>
                     <a class="collapse-item" href="{% url 'dashboard:consultants' %}">Consultants</a>
                     <a class="collapse-item" href="{% url 'dashboard:consultants_sessions' %}">Sessions</a>
+                    <a class="collapse-item" href="{% url 'dashboard:add_consultant' %}">Add Session</a>
+
 
                 </div>
             </div>
         </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsestudentcourse"
+                aria-expanded="true" aria-controls="collapsestudentcourse">
+                <i class="fas fa-fw fa-folder"></i>
+                <span>Add User To Course</span>
+            </a>
+            <div id="collapsestudentcourse" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Add User:</h6>
+                    <a class="collapse-item" href="{% url 'dashboard:add_student_course' %}">Add User</a>
+                    <!-- <a class="collapse-item" href="register.html"></a>
+                    <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                    <div class="collapse-divider"></div>
+                    <h6 class="collapse-header">Other Pages:</h6>
+                    <a class="collapse-item" href="404.html">404 Page</a>
+                    <a class="collapse-item" href="blank.html">Blank Page</a> -->
+                </div>
+            </div>
+        </li>
+        {% if request.user.is_superuser  %}
+        <li class="nav-item">
+         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseuserdirector"
+             aria-expanded="true" aria-controls="collapseuserdirector">
+             <i class="fas fa-fw fa-folder"></i>
+             <span>Add User To Directors</span>
+         </a>
+         <div id="collapseuserdirector" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+             <div class="bg-white py-2 collapse-inner rounded">
+                 <h6 class="collapse-header">Add User:</h6>
+                 <a class="collapse-item" href="{% url 'dashboard:add_user_director' %}">Add User</a>
+                 <!-- <a class="collapse-item" href="register.html"></a>
+                 <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                 <div class="collapse-divider"></div>
+                 <h6 class="collapse-header">Other Pages:</h6>
+                 <a class="collapse-item" href="404.html">404 Page</a>
+                 <a class="collapse-item" href="blank.html">Blank Page</a> -->
+             </div>
+         </div>
+
+     </li>
+{% endif %}  
         {% if request.user.is_superuser or request.user.is_director %}
                    <!-- Nav Item - Pages Collapse Menu -->
-                   <li class="nav-item">
+        <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsecategory"
+                        aria-expanded="true" aria-controls="collapsecategory">
+                        <i class="fas fa-fw fa-folder"></i>
+                        <span>Category</span>
+                    </a>
+                    
+                    <div id="collapsecategory" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Add Category:</h6>
+                            <a class="collapse-item" href="{% url 'dashboard:add_category' %}">Add Course Category</a>
+                            <a class="collapse-item" href="{% url 'dashboard:add_blog_category' %}">Add Blog Category</a>
+                            <a class="collapse-item" href="{% url 'dashboard:add_consultant_category' %}">Add Consultant Category</a>
+
+                            <!-- <a class="collapse-item" href="register.html"></a>
+                            <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                            <div class="collapse-divider"></div>
+                            <h6 class="collapse-header">Other Pages:</h6>
+                            <a class="collapse-item" href="404.html">404 Page</a>
+                            <a class="collapse-item" href="blank.html">Blank Page</a> -->
+                        </div>
+                    </div>
+                
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsebranch"
+                    aria-expanded="true" aria-controls="collapsebranch">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Add Branch</span>
+                </a>
+                <div id="collapsebranch" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Add Branch:</h6>
+                        <a class="collapse-item" href="{% url 'dashboard:add_branch' %}">Add Branch</a>
+                        <!-- <a class="collapse-item" href="register.html"></a>
+                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Other Pages:</h6>
+                        <a class="collapse-item" href="404.html">404 Page</a>
+                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
+                    </div>
+                </div>
+           
+            </li>
+        <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsenews"
                         aria-expanded="true" aria-controls="collapsenews">
                         <i class="fas fa-fw fa-cog"></i>
@@ -173,10 +272,12 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">All News:</h6>
                             <a class="collapse-item" href="{% url 'dashboard:news' %}">News</a>
-        
+                            <a class="collapse-item" href="{% url 'dashboard:add_news' %}">Add News</a>
+
                         </div>
                     </div>
-                </li>
+            </li>
+         
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapceprice"
                 aria-expanded="true" aria-controls="collapceprice">
@@ -205,6 +306,7 @@
                 </div>
             </div>
         </li>
+      
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseprivacy"
                 aria-expanded="true" aria-controls="collapseterms">
@@ -235,262 +337,13 @@
         </li>
         {% endif %}
             <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                ADD
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Blogs</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Blog:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_blog' %}">Add Blog</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-            
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsecourse"
-                    aria-expanded="true" aria-controls="collapsecourse">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Courses</span>
-                </a>
-                <div id="collapsecourse" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Blog:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_course' %}">Add Course</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseevent"
-                    aria-expanded="true" aria-controls="collapseevent">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Events</span>
-                </a>
-                <div id="collapseevent" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Event:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_event' %}">Add Event</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsevideo"
-                    aria-expanded="true" aria-controls="collapsevideo">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Videos</span>
-                </a>
-                <div id="collapsevideo" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Video:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:courses' %}">Add Video</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-            {% if request.user.is_superuser or request.user.is_director %}
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsenewsadd"
-                    aria-expanded="true" aria-controls="collapsenewsadd">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>News</span>
-                </a>
-                <div id="collapsenewsadd" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add News:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_news' %}">Add News</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseconsultantcategory"
-                    aria-expanded="true" aria-controls="collapsenewsadd">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Consultant Category</span>
-                </a>
-                <div id="collapseconsultantcategory" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Consultant Category:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_consultant_category' %}">Add Consultant Category</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-            
-            {% endif %}
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseaddconsultant"
-                    aria-expanded="true" aria-controls="collapseaddconsultant">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Consultants </span>
-                </a>
-                <div id="collapseaddconsultant" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Consultants:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_consultant' %}">Add Consultants</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsestudentcourse"
-                    aria-expanded="true" aria-controls="collapsestudentcourse">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Add User To Course</span>
-                </a>
-                <div id="collapsestudentcourse" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add User:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_student_course' %}">Add User</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-            {% if request.user.is_superuser  %}
-               <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseuserdirector"
-                    aria-expanded="true" aria-controls="collapseuserdirector">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Add User To Directors</span>
-                </a>
-                <div id="collapseuserdirector" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add User:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_user_director' %}">Add User</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-
-            </li>
-{% endif %}
-{% if request.user.is_superuser or request.user.is_director %}
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsecategory"
-                    aria-expanded="true" aria-controls="collapsecategory">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Add Category</span>
-                </a>
-                
-                <div id="collapsecategory" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Category:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_category' %}">Add Category</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            
-            </li>
-            {% endif %}
-            {% if request.user.is_superuser or request.user.is_director %}
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsebranch"
-                    aria-expanded="true" aria-controls="collapsebranch">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Add Branch</span>
-                </a>
-                <div id="collapsebranch" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Branch:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_branch' %}">Add Branch</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
+                        
            
-            </li>
-            {% endif %}
-            {% if request.user.is_superuser or request.user.is_director %}
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseblog_category"
-                    aria-expanded="true" aria-controls="collapseblog_category">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Add Blog Category</span>
-                </a>
-                <div id="collapseblog_category" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Blog Category:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_blog_category' %}">Add Blog Category</a>
-                        <!-- <a class="collapse-item" href="register.html"></a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a> -->
-                    </div>
-                </div>
-            </li>
-            {% endif %}
+    
+
+      
+      
+        
             <!-- Divider -->
             {% if request.user.is_superuser %}
             <hr class="sidebar-divider d-none d-md-block">
@@ -647,7 +500,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        © 2022 Copyright : Agartha Academy | <a href="{% url 'home:terms' %}">Terms and Condition</a><a href="{% url 'home:privacy' %}"> | privacy</a>
                     </div>
                 </div>
             </footer>
@@ -701,10 +554,8 @@
     <script src="{% static 'dashboard/js/demo/chart-area-demo.js' %}"></script>
     <script src="{% static 'dashboard/js/demo/chart-pie-demo.js' %}"></script>
     
-<script type="text/javascript">
 
 
-</script>
 </body>
 
 </html>

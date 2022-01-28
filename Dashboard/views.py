@@ -24,6 +24,7 @@ from .models import *
 from django.contrib.auth.decorators import user_passes_test
 import json,requests
 from django.contrib.auth import get_user_model
+from datetime import datetime
 User=get_user_model()
 DASHBOARD_EMAIL_HOST = os.environ['DASHBOARD_EMAIL_HOST']
 DASHBOARD_EMAIL_USERNAME = os.environ['DASHBOARD_EMAIL_USERNAME']
@@ -36,12 +37,24 @@ username=DASHBOARD_EMAIL_USERNAME,
 password=DASHBOARD_EMAIL_PASSWORD, 
 use_tls=False
 ) 
+SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
+SUPPORT_EMAIL_USERNAME = os.environ['SUPPORT_EMAIL_USERNAME']
+SUPPORT_EMAIL_PASSWORD = os.environ['SUPPORT_EMAIL_PASSWORD']
+SUPPORT_EMAIL_PORT = os.environ['SUPPORT_EMAIL_PORT']
+SUPPORT_MAIL_CONNECTION = get_connection(
+host= SUPPORT_EMAIL_HOST, 
+port=SUPPORT_EMAIL_PORT, 
+username=SUPPORT_EMAIL_USERNAME, 
+password=SUPPORT_EMAIL_PASSWORD, 
+use_tls=False
+) 
 # Create your views here.
 AccessKey=os.environ['AccessKey']
 Storage_Api=os.environ['Storage_Api']
 library_id=os.environ['library_id']
 storage_name=os.environ['storage_name']
 agartha_cdn=os.environ['agartha_cdn']
+BLOGS_FOLDER_COLLECTIONID="41e8c113-0c1f-4af4-bc24-b70beed3e13f"
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -160,7 +173,7 @@ def add_blog(request):
         elif type == "quote":
             form=BlogQuoteForm(request.POST or None,request.FILES or None)
         elif type == "video" or type == "audio":
-            form=BlogVideoForm(request.POST or None,request.FILES or None)
+            form=AddBlog(request.POST or None,request.FILES or None)
         elif type == 'gallery':
             form=BlogGalleryForm(request.POST or None,request.FILES or None)
         else:
@@ -174,19 +187,34 @@ def add_blog(request):
         if form_number == 1:
             if form.is_valid():
                 instance=form.save(commit=False)
+                instance.user=request.user
+                instance.blog_type = type
+                instance.save()
                 if type == "link":
                     link=request.POST.get("link")
                     data={"link":link}
                     instance.data=json.dumps(data)
-                if type == "quote":
+                elif type == "quote":
                     quote=request.POST.get("quote")
                     data={"quote":quote}
                     instance.data=json.dumps(data)
-                instance.user=request.user
-                instance.blog_type = type
-                instance.save()
+                elif type == "video":
+                    blog_data={"collection":BLOGS_FOLDER_COLLECTIONID}
+                    instance.data=json.dumps(blog_data)
+                    url = f"http://video.bunnycdn.com/library/{library_id}/videos"    
+                    data = {"title":instance.slug,"collectionId":BLOGS_FOLDER_COLLECTIONID}
+                    headers = {
+                        "Accept": "application/json",
+                        "Content-Type": "application/*+json",
+                        "AccessKey": AccessKey
+                    }
+                    response = requests.post( url, json=data, headers=headers)
+                    print(response)
+                    data=response.json()
+                    my_blog_data=json.loads(instance.data)
+                    my_blog_data["video_guid"]=data["guid"]
+                    instance.data=json.dumps(my_blog_data)
                 tag=request.POST.get("tags")
-                print(tag)
                 if tag:
                     for i in tag.split(","):
                         tags,created=Tag.objects.get_or_create(name=i)
@@ -211,13 +239,99 @@ def add_blog(request):
                             instance.save()
                     except:
                         pass
-
+                if type =="video":
+                    return redirect(reverse("dashboard:add_video_blog",kwargs={"slug":instance.slug}))
+                elif type == "audio":
+                    return redirect(reverse("dashboard:add_audio_blog",kwargs={"slug":instance.slug}))
                 messages.success(request,"Your Blog is Waiting for Admin Approve")
                 return redirect(reverse("dashboard:blogs"))
-
-        return redirect(reverse("dashboard:blogs"))
+        else:
+            return redirect(reverse("dashboard:blogs"))
     context={"form":form,"form_number":form_number}
     return render(request,"dashboard_add_blog.html",context)
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+@check_blog_video
+def add_video_blog(request,slug):
+    blog=get_object_or_404(Blog,slug=slug)
+    form=BlogVideoForm(request.POST or None,request.FILES or None)
+    if request.is_ajax():
+        if form.is_valid():
+            my_blog_data=json.loads(blog.data)
+            file=form.cleaned_data.get("video")
+            if blog.blog_type == "video":
+                video_guid=my_blog_data["video_guid"]
+
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video_guid}"
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/*+json",
+                    "AccessKey": AccessKey
+                }
+                response = requests.put( url, data=file, headers=headers)
+                blog.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{video_guid}?autoplay=false"
+                response = requests.get( url, headers=headers)
+                data=response.json()
+                my_blog_data["video_length"]=data["length"]  
+                blog.data=json.dumps(my_blog_data)
+                blog.save()
+                messages.success(request,"Video added successfully")
+            return JsonResponse({"message":"1","url":"/dashoard/blogs/"})
+
+    context={"form":form,"blog":blog}
+    return render(request,"dashboard_add_video_blog.html",context)
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+@check_blog_audio
+def add_audio_blog(request,slug):
+    blog=get_object_or_404(Blog,slug=slug)
+    form=BlogAudioForm(request.POST or None,request.FILES or None)
+    if request.is_ajax():
+        if form.is_valid():
+            file=form.cleaned_data.get("video")
+            url=f"https://storage.bunnycdn.com/{storage_name}/blogs-audio/{blog.slug}/{file}"
+            headers = {
+                    "Content-Type": "application/octet-stream",
+                    "AccessKey": Storage_Api
+                }
+            response = requests.put(url,data=file,headers=headers)
+            data=response.json()
+            try: 
+                if data["HttpCode"] == 201:
+                    blog.video = f"https://{agartha_cdn}/blogs-audio/{blog.slug}/{file}"
+                    blog.save()
+            except:
+                pass
+            messages.success(request,"Audio added successfully")
+            return JsonResponse({"message":"1","url":"/dashoard/blogs/"})
+
+    context={"form":form,"blog":blog}
+    return render(request,"dashboard_add_audio_blog.html",context)
+
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+# @check_blog_audio
+def check_audio_blog(request,slug):
+    blog=get_object_or_404(Blog,slug=slug)
+    url=f"https://storage.bunnycdn.com/{storage_name}/blogs-audio/{blog.slug}/"
+    headers = {
+        "Accept": "*/*", 
+        "AccessKey":Storage_Api}
+    response = requests.get(url, headers=headers) 
+    # try:
+    data=response.json()
+    audio_guid=data[-1]["Guid"]
+    name=data[-1]["ObjectName"]
+    blog.data=json.dumps({"audio_guid":audio_guid})
+    blog.video = f"https://{agartha_cdn}/blogs-audio/{blog.slug}/{name}"
+    blog.save()
+    messages.success(request,"audio uploaded successfully")
+    return redirect(reverse("dashboard:blogs"))
+    # except:
+    #     return redirect(reverse("dashboard:add_audio_blog",kwargs={"slug":slug}))
 
 
 @login_required(login_url="accounts:login")
@@ -237,7 +351,7 @@ def edit_blog(request,slug):
                 form=BlogQuoteForm(request.POST or None,request.FILES or None,instance=blog)
                 form.initial["quote"]=blog.get_quote()
             elif type == "video" or type == "audio":
-                form=BlogVideoForm(request.POST or None,request.FILES or None,instance=blog)
+                form=AddBlog(request.POST or None,request.FILES or None,instance=blog)
             elif type == 'gallery':
                 form=BlogGalleryForm(request.POST or None,request.FILES or None,instance=blog)
             else:
@@ -367,6 +481,65 @@ def delete_blog_image(request,id):
     return redirect(reverse("dashboard:edit_blog",kwargs={"slug":image.blog.slug}))
 
 @login_required(login_url="accounts:login")
+@check_blog_video
+@check_blog_video_progress
+def check_blog_video(request,slug):
+    blog=get_object_or_404(Blog,slug=slug)
+    form=BlogVideoForm(request.POST or None,request.FILES or None)
+    blog_data=json.loads(blog.data)
+    video_uid=blog_data["video_guid"]
+    url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video_uid}"
+    headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/*+json",
+                "AccessKey": AccessKey
+            }
+    my_response = requests.get( url,headers=headers)
+    data=my_response.json() 
+    if data["encodeProgress"] ==100 or type(data["status"]) == int():
+        blog_data["video_length"] =data["length"]
+        blog.data=json.dumps(blog_data)
+        blog.save()
+        messages.success(request,"Video Updated Successfully")
+        return redirect(reverse("dashboard:blogs"))
+    if request.method == "POST":
+        if form.is_valid():
+            if data["encodeProgress"] !=100:
+                headers = {
+                "Accept": "application/json",
+                    "AccessKey": AccessKey
+                            }
+                response = requests.delete( url,headers=headers)
+
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos"
+                headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/*+json",
+                "AccessKey": AccessKey
+            }
+                json_url={"title":blog.slug,"collectionId":BLOGS_FOLDER_COLLECTIONID}
+                response = requests.post( url,json=json_url,headers=headers)
+                data=response.json()
+                blog_data["video_guid"]=data["guid"]
+                blog.video="https://iframe.mediadelivery.net/embed/{library_id}/{data['guid']}?autoplay=false"
+                file=form.cleaned_data.get("video")
+                url = f"http://video.bunnycdn.com/library/{library_id}/videos/{data['guid']}"
+                headers = {
+                "Accept": "application/json",
+                "AccessKey": AccessKey}
+                response = requests.put( url,data=file,headers=headers)
+                data=my_response.json()
+                blog_data["video_length"] = data["length"]
+                blog.save()
+                messages.success(request,"video uploaded successfully")
+                return JsonResponse({"message":"1","url":"/dashoard/blogs/"})
+               
+            else:
+                return FailedJsonResponse({"message":"1","url":"/dashoard/blogs/"})
+        else:
+            return FailedJsonResponse({"message":"1","url":"/dashoard/blogs/"})
+
+@login_required(login_url="accounts:login")
 @check_user_validation
 def delete_blog_video(request,id):
     blog=get_object_or_404(Blog,id=id)
@@ -379,11 +552,20 @@ def delete_blog_video(request,id):
 def delete_blog(request,slug):
     blog=get_object_or_404(Blog,slug=slug)
     if request.user == blog.user:
+        blog_data=json.loads(blog.data)
+        video_uid=blog_data["video_guid"]
+        url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video_uid}"
         blog.delete()
+        headers = {
+        "Accept": "application/json",
+        "AccessKey": AccessKey
+                    }
+        response = requests.delete( url,headers=headers)
     else:
         messages.error(request,"You Don't Have Permisssion")
         return redirect(reverse("dashboard:blogs"))
     return redirect(reverse("dashboard:blogs"))
+
 @login_required(login_url="accounts:login")
 @check_user_validation
 def courses(request):
@@ -617,7 +799,6 @@ def complete_add_video(request,slug):
     else:
         if request.is_ajax():
             if form.is_valid():
-                print("valid")
                 url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
                 file=form.cleaned_data.get("video")
                 headers = {
@@ -629,7 +810,6 @@ def complete_add_video(request,slug):
                 video.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{video.video_uid}?autoplay=false"
                 response = requests.get( url, headers=headers)
                 data=response.json()
-                print(data)
                 video.duration=data["length"]  
                 video.save()
                 video.total_duration()
@@ -741,33 +921,37 @@ def add_event(request):
     form=AddEvent(request.POST or None,request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
-            instance=form.save(commit=False)
-            instance.user=request.user
-            instance.image=None
-            image=request.FILES["image"]
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
-            headers = {
-                    "AccessKey": Storage_Api,
-                    "Content-Type": "application/octet-stream",
-                    }
+            instance=form.save(commit=False)  
+            print("valid")
+            # start=request.POST.get("start_time")
+            # end=request.POST.get("end_time")
+            # instance.start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
+            # instance.end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
+            # instance.user=request.user
+            # instance.image=None
+            # image=request.FILES["image"]
+            # image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
+            # headers = {
+            #         "AccessKey": Storage_Api,
+            #         "Content-Type": "application/octet-stream",
+            #         }
 
-            response = requests.put(image_url,data=image,headers=headers)
-            data=response.json()
-            try:
-                if data["HttpCode"] == 201:
-                    instance.image = f"https://{agartha_cdn}/events/{instance.user.username}/{image}"
-            except:
-                pass
-            zoom=form.cleaned_data.get("zoom_link")
-            details=form.cleaned_data.get("details")
-            data={'zoom':zoom,"details":details}
-            instance.details=json.dumps(data)  
-            instance.save() 
-            messages.success(request,"Event added successfully")
-            return redirect("dashboard:events")
+            # response = requests.put(image_url,data=image,headers=headers)
+            # data=response.json()
+            # try:
+            #     if data["HttpCode"] == 201:
+            #         instance.image = f"https://{agartha_cdn}/events/{instance.user.username}/{image}"
+            # except:
+            #     pass
+            # zoom=form.cleaned_data.get("zoom_link")
+            # details=form.cleaned_data.get("details")
+            # data={'zoom':zoom,"details":details}
+            # instance.details=json.dumps(data)  
+            # instance.save() 
+            # messages.success(request,"Event added successfully")
+            # return redirect("dashboard:events")
         else:
-            print(request.POST.get("start_time"))
-            print('invalid')
+            print(form.errors)
     context={"form":form}
     return render(request,"dashboard_add_events.html",context)
 
@@ -823,6 +1007,13 @@ def delete_event(request,id):
         messages.error(request,"You Don't Have Permission")
         return redirect("dashboard:events")
     return redirect(reverse("dashboard:events"))
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+def demo_event(request,id):
+    event=get_object_or_404(Events,id=id,status="pending")
+    context={"event":event}
+    return render(request,"dashboard_demo_event.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_validation
@@ -1104,7 +1295,7 @@ def approve_content(request,id):
             elif qs == "consultant_payment":
                 query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
                 query.status="approved"
-                Consultant.objects.create(user=query.user,teacher=query.teacher,status="pending")
+                consult=Consultant.objects.create(user=query.user,teacher=query.teacher,status="pending")
                 consult.start_time=query.teacher.start_time
                 consult.end_time=query.teacher.end_time
                 consult.save()
@@ -1278,7 +1469,7 @@ def consultants(request):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def consultants_sessions(request):
-    if request.user.account_type == "teacher" and request.user.is_director == False and request.user.is_supersuser == False:
+    if request.user.account_type == "teacher" and request.user.is_director == False and request.user.is_superuser == False:
         sessions=Teacher_Time.objects.filter(user=request.user,available=True).order_by("-id")
     else:
         sessions=Teacher_Time.objects.all().order_by("-id")
@@ -1364,7 +1555,7 @@ def active_session(request,id):
     session.save()
     messages.success(request,"Session Activated")
     return redirect(reverse("dashboard:consultants_sessions"))
-
+   
 @login_required(login_url="accounts:login")
 @check_user_validation
 # @check_if_teacher_have_consultants
@@ -1372,6 +1563,13 @@ def add_consultant(request):
     form=CosultantAddForm(request.POST or None)
     if request.method == "POST":
         instance=form.save(commit=False)
+        start=request.POST.get("start_time")
+        end=request.POST.get("end_time")
+        start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
+        end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
+        print(start_time,end_time)
+        instance.start_time=start_time
+        instance.end_time=end_time
         instance.user=request.user
         instance.save()
         messages.success(request,"Consultant Added Successfully")
@@ -1502,13 +1700,28 @@ def test(request):
 @login_required(login_url="accounts:login")
 @admin_director_check
 def add_category(request):
-    form=CategoryForm(request.POST or None)
+    form=CategoryForm(request.POST or None,request.FILES  or None)
     if request.method == "POST":
         if form.is_valid():
+            instance=form.save()
+            file=form.cleaned_data.get("image")
+            headers = {
+                        "Accept": "*/*", 
+                        "AccessKey":Storage_Api}
+            url=f"https://storage.bunnycdn.com/{storage_name}/course_category/{instance.slug}/{file}"
+            response = requests.put(url,data=file,headers=headers)
+            data=response.json()
+            try:
+                if data["HttpCode"] == 201:
+                    instance.image = f"https://{agartha_cdn}/course_category/{instance.slug}/{file}"
+                    instance.save()
+            except:
+                pass
             form.save()
             messages.success(request,"category added successfully")
     context={"form":form}
     return render(request,"dashboard_add_category.html",context)
+
 @login_required(login_url="accounts:login")
 @admin_director_check
 def add_branch(request):
@@ -1576,22 +1789,59 @@ def privacy_add_new(request):     #terms edit
 @login_required(login_url="accounts:login")
 @admin_director_check  
 def emails(request):
-    emails=Support_Email.objects.exclude(status="solved").order_by("status")
-    context={"emails":emails}
+    emails=Support_Email.objects.all().order_by("status")
+    paginator = Paginator(emails, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"emails":page_obj}
     return render(request,"dashboard_emails.html",context)
 
 @login_required(login_url="accounts:login")
 @admin_director_check  
 def single_email(request,id):
     email=get_object_or_404(Support_Email,id=id)
-    form = Support_Email_Form(request.POST or None,instance=email)
-    # if request.method == "POST":
-    #     if form.is_valid():
-    #         form.status="sol"
-
-    context={"email":email,"form":form}
+    if email.status == "solved":
+        messages.error(request,"email stauts has been closed")
+        return redirect(reverse("dashboard:emails"))
+    # try:
+    get_email = request.GET["email"]
+    form = Support_Email_Form(request.POST or None)
+    if email.user:
+        user_email=email.user.email
+    else:
+        user_email=email.email
+    if request.method == "POST":
+        if form.is_valid():
+            send_mail(
+                form.cleaned_data.get("subject"),
+                form.cleaned_data.get("message"),
+                SUPPORT_EMAIL_USERNAME,
+                [user_email],
+                fail_silently=False,
+                connection=SUPPORT_MAIL_CONNECTION
+                )
+            email.status='on process'
+            email.save()
+            messages.success(request,"mail sent successfully")
+            return redirect(reverse("dashboard:emails"))
+    context={"email":email,"form":form,"get_email":get_email}
     return render(request,"dashboard_single_email.html",context)
+
+
+@login_required(login_url="accounts:login")
+@admin_director_check  
+def close_email(request,id):
+    email=get_object_or_404(Support_Email,id=id)
+    if email.status != "solved":
+        email.status ="solved"
+        email.save()
+        messages.success(request,'ُEmail status updated')
+    else:
+        messages.error(request,"email stauts has been closed")
+        return redirect(reverse("dashboard:emails"))
+    return redirect(reverse("dashboard:emails"))
+
+
 # @login_required(login_url="accounts:login")
 # @admin_director_check  
-# def add_consultant_category(request):
-#     form
+# def certifications(request)

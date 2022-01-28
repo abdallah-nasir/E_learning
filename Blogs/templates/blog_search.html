@@ -1,5 +1,5 @@
 {% extends 'blog_base.html' %}
-
+{% load i18n %}
 {% block content %}
 
 		<!-- BEGIN CONTENT -->
@@ -13,7 +13,7 @@
 							<article class="post">
 								<header class="entry-header">
 									<figure class="entry-thumb">
-										<img src="{{i.image.first.image.url}}" width="1200" height="500" alt="">
+										<img src="{{i.image.first.image}}" width="1200" height="500" alt="">
 									</figure>
 									<div class="entry-header-title">
 										<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
@@ -24,7 +24,7 @@
 											</span>
 											<span class="entry-meta-comments">
 												<i class="fa fa-comments"></i>
-												<a href="">{{i.get_comments}} comments</a>
+												<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 											</span>
 											<span class="entry-meta-comments">
 												<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -48,7 +48,7 @@
 					<article class="post format-standard">
 						<header class="entry-header">
 							<figure class="entry-thumb">
-								<img src="{{i.image.first.image.url}}" width="1000" height="667" alt="">
+								<img src="{{i.image.first.image}}" width="1000" height="667" alt="">
 							</figure>
 							<div class="icon-b">
 								<i class="fa fa-newspaper-o"></i>
@@ -63,7 +63,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}}  comments</a>
+										<a href="">{{i.get_comments}}  {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -73,7 +73,7 @@
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|truncatewords:20}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Read More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "quote" %}
@@ -109,7 +109,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}} comments</a>
+										<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -120,25 +120,25 @@
 					</article>
 					{% elif i.blog_type == "link" %}
 					<article class="post format-link">
-						<header class="entry-header" style="background-image: url({{i.image.first.image.url}});">
+						<header class="entry-header" style="background-image: url({{i.image.first.image}});">
 							<div class="icon-b">
 								<i class="fa fa-link"></i>
 							</div>
 							<div class="entry-header-title">
-								<h2><a href="{{i.image.first.image.url}}">{{i.category.name.title|truncatewords:10}}</a></h2>
+								<h2><a href="{{i.image.first.image}}">{{i.category.name.title|truncatewords:10}}</a></h2>
 								<a class="entry-link btn" href="{[i.get_link]}"><i class="fa fa-external-link"></i> {{i.get_link}}</a>
 							</div>
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|truncatewords:20}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Read More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Read More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "gallery" %}
 					<article class="post format-gallery">
 						<header class="entry-header">
 							<figure class="entry-thumb">
-								<img src="{{i.image.first.image.url}}" width="1000" height="667" alt="">
+								<img src="{{i.image.first.image}}" width="1000" height="667" alt="">
 							</figure>
 							<div class="icon-b">
 								<i class="fa fa-image"></i>
@@ -153,7 +153,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}} comments</a>
+										<a href="">{{i.get_comments}} {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -163,7 +163,7 @@
 						</header>
 						<div class="entry-content">
 							<p>{{i.details|truncatewords:20}}</p>
-							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">Show More</a>
+							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Show More' %}</a>
 						</div>
 					</article>
 					{% elif i.blog_type == "audio" %}
@@ -182,7 +182,7 @@
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-comments"></i>
-										<a href="">{{i.get_comments}}  comments</a>
+										<a href="">{{i.get_comments}}  {% trans 'comments' %}</a>
 									</span>
 									<span class="entry-meta-comments">
 										<i class="fa fa-eye" aria-hidden="true"> {{i.get_views}}</i>
@@ -194,7 +194,7 @@
 					{% endif %}
 					{% endfor %}
             {% else %}
-<h1 style="margin:auto;">Sorry,we didn't Find What You Want</h1>
+<h1 style="margin:auto;">{% trans 'Sorry,we didn"t Find What You Want' %}</h1>
                     {% endif %}
 				</div>
 				{% if blogs.has_other_pages  %}
@@ -213,7 +213,7 @@
 					
 			{% endfor %}
 			{% if blogs.has_next %}
-					<li><a href="?search={{qs}}&page={{ blogs.next_page_number }}">Next <i class="fa fa-angle-double-right"></i></a></li>
+					<li><a href="?search={{qs}}&page={{ blogs.next_page_number }}">{% trans 'Next' %} <i class="fa fa-angle-double-right"></i></a></li>
 					{% else %}
 					<li></li>
 					{% endif %}

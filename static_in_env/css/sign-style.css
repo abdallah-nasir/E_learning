@@ -11,7 +11,7 @@ body {
     font-size: 15px;
     line-height: 1.7;
     color: #c4c3ca;
-    background-color: #1f2029;
+  /*  background-color: #1f2029;*/
     overflow-x: hidden;
     margin: 0;
     padding: 0;
@@ -47,7 +47,7 @@ h4 {
 }
 
 h6 span {
-    padding: 0 20px;
+    padding: 0 52px;
     text-transform: uppercase;
     font-weight: 700
 }
@@ -57,14 +57,16 @@ h6 span {
     width: 100%;
     display: block;
     width: 100%;
-    margin: -28px auto;
+    margin: 0px auto;
     padding: 7px;
+    justify-content: center;
 }
 
 .cover-section {
     background-image: url('../images/bg-01.jpg');
     background-size: cover;
     height: 100vh;
+    
     background-repeat: no-repeat;
 }
 
@@ -86,7 +88,7 @@ h6 span {
     height: 16px;
     border-radius: 8px;
     padding: 0;
-    margin: 10px auto;
+    margin: -16px auto;
     cursor: pointer;
     background-color: #ffeba7
 }
@@ -123,7 +125,7 @@ h6 span {
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     perspective: 800px;
-    margin-top: 60px
+    margin-top: 45px;
 }
 
 .card-3d-wrapper {
@@ -191,10 +193,10 @@ h6 span {
     padding: 13px 20px;
     padding-left: 18px;
     height: 35px;
-    width: 100%;
+    width: 96%;
     font-weight: 500;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 22px;
     letter-spacing: 0.5px;
     outline: none;
@@ -418,8 +420,7 @@ h6 span {
     font-size: 13px;
 }
 
-.terms .text-center .lab-terms a:hover {
-}
+
 
 .mb-4 {
     margin-bottom: 0.5rem !important;
@@ -430,6 +431,8 @@ h6 span {
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 100vh;
+
     }
 
     .form-style {
@@ -450,6 +453,7 @@ h6 span {
 
     .card-front, .card-back {
         width: 105%;
+        height: 75vh;
     }
 
     .a-tarm {
@@ -466,4 +470,32 @@ h6 span {
     .pb-5 {
         padding-bottom: 1rem !important;
     }
+}
+.invalid-feedback {
+    text-align: left;
+    font-size: 70%;
+}
+.h-gender {
+    padding: 13px 20px;
+    padding-left: 18px;
+    font-weight: 500;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 22px;
+    color: #c4c3ca;
+}
+.form-check {
+    margin-top: 12px;
+}
+.h-sign {
+    color:royalblue;
+}
+.lab-sign {
+    border: 10px solid;
+    width: 50%;
+    border-color: red;
+    margin-left: 263px;
+}
+.beg-contant {
+    margin-top: 70px;
 }

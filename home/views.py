@@ -14,11 +14,10 @@ from django.db.models import Q
 from itertools import chain
 from django.conf import settings
 from accounts.models import User
-from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment
+from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment,UserDataForm
 from Blogs.models import Blog_Payment,Prices
 from django.core.mail import send_mail,EmailMessage,get_connection
 from django.contrib.auth.decorators import login_required
-from django.core.cache import cache
 from datetime import date
 import datetime
 from django.forms import ValidationError
@@ -121,9 +120,7 @@ def branch(request,slug):
 
 def single_course(request,slug):
     course=get_object_or_404(Course,slug=slug,status="approved")
-    payment_form=PaymentMethodForm()
     form=ReviewForm(request.POST or None)
-    print(request.user.username)
     if request.method == "POST":
         if request.user.is_authenticated:
             instance=form.save(commit=False)
@@ -141,7 +138,7 @@ def single_course(request,slug):
         else:
             messages.error(request, 'login first')
 
-    context={"course":course,"form":form,"payment_form":payment_form,"frame":library_id} 
+    context={"course":course,} 
     return render(request,"course-single.html",context)
  
 def videos(request,course,slug):
@@ -626,12 +623,16 @@ def check_paymob_course_payment(request):
             course=Course.objects.get(slug=name)
             Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
             next=("accounts:course_payment")
+            messages.success(request,"your request is being review by admin")
         elif descrption =="consultant": 
             teacher=Teacher_Time.objects.get(id=name)
-            consult=Consultant.objects.create(user=user,teacher=teacher,status="pending")
             transaction_number=request.GET["id"]
-            Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,teacher=teacher,user=user,status="pending")
+            user_form=UserDataForm.objects.get(user=user,teacher=teacher,accomplished=False)
+            user_form.accomplished=True
+            user_form.save()
+            Cosultant_Payment.objects.create(method="Paymob",user_data=user_form.data,transaction_number=transaction_number,teacher=teacher,user=user,status="pending")
             next=("accounts:consultant_payment")
+            messages.success(request,"your request is being review by admin")
         elif descrption == "blogs":
             prices=Prices.objects.get(id=name)
             now= date.today()

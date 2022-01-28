@@ -22,19 +22,25 @@ class Question(models.Model):
     title=models.CharField(max_length=200)
     details=models.TextField(null=True,blank=True)
     answer=models.ManyToManyField(Answers,related_name="question_answer",blank=True)
-    slug=models.SlugField(unique=True,blank=True,null=True)
+    slug=models.SlugField(unique=True)
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        print(self.slug)
+
+        if not self.slug:
+            self.slug = slugify(self.title)
+            if Question.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.title)
+                self.slug =f"{slug}-{random_string_generator()}"
+            else:
+                self.slug = slugify(self.title)    
+                print("ehre")
+
+        super(Question, self).save()
 
 
-
-@receiver(pre_save, sender=Question)
-def pre_save_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug: 
-        instance.slug = slugify(instance.title)
-        if Question.objects.filter(slug=instance.slug).exists():
-            slug=f"{instance.title}-{random_string_generator()}"
-            instance.slug = slugify(slug)
    
 
 class Quiz(models.Model):
@@ -51,14 +57,25 @@ class Quiz(models.Model):
         else:
             answer=False 
         if self.get_student_answers_percent(student=student)["result"] == True:
-            print("there")
             result=True
         else:
             
             result=False
         context={"result":result,"answer":answer}
         return context
-
+   
+    def change_result_status(self,student):
+        try:
+            result=Quiz_Result.objects.get(user=student,quiz=self)
+            if result.status == 'completed':
+                result.status ="in-completed"
+                result.save()
+                completed = False
+            else:
+                completed = True
+        except:
+            completed=True 
+        return completed
     def get_student_answers_percent(self,student):
         student_answer= Student_Quiz.objects.filter(student=student,quiz=self).count()
         questions=self.questions.all().count()
@@ -67,13 +84,15 @@ class Quiz(models.Model):
             completed = True
         else:
             completed=False
+            change_result=self.change_result_status(student)
         if student_answer == self.questions.count():
            result=True
         else:
             result=False
         context={"percent":percent,"completed":completed,"result":result}
         return context
-    
+ 
+
     def next_quiz(self,question):
         my_quiz=self
         quiz_question=my_quiz.questions.get(id=int(question))
@@ -153,12 +172,30 @@ class Student_Quiz(models.Model):
             result=False
         context={"percent":my_percent,"completed":completed,"result":result}
         return context
+QUIZ_STATUS=(
+    ("completed","completed"),
+    ("in-completed","in-completed"),
+)
 
+CERTI_STATUS=(
+    ("received","received"),
+    ("pending","pending"),
+)
 class Quiz_Result(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     quiz=models.ForeignKey(Quiz,null=True,on_delete=models.SET_NULL)
     degree=models.FloatField(default=0)
-    status=models.BooleanField(default=False)
-    delivered=models.BooleanField(default=False)
+    status=models.CharField(choices=QUIZ_STATUS,max_length=50,default="in-completed")
+    certification=models.CharField(choices=CERTI_STATUS,max_length=50,default="pending")
     def __str__(self):
         return str(self.id)
+
+class Certification(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    result=models.ForeignKey(Quiz_Result,related_name="quiz_certification",on_delete=models.SET_NULL,null=True)
+    image=models.ImageField(null=True)
+    status=models.CharField(max_length=50,choices=CERTI_STATUS,default="pending")
+    date_created=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.username

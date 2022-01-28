@@ -440,7 +440,9 @@ p {
     border-bottom: 1px solid #cecece;
 }
 
-.support-button{}
+.support-button{
+    margin-top: 7px;
+}
 .support-button .support {
 	display: -moz-flex;
 	display: -ms-flex;
@@ -470,9 +472,9 @@ p {
     font-weight: 700;
 }
 
-.support-button .button{
-    margin-left: 60px;
-}
+.support-button .button {
+        margin-left: 3px;
+    }
 
 /*===== Header Menu =====*/
 
@@ -514,9 +516,6 @@ p {
     }
 }
 
-.navigation .navbar{
-    padding: 0;
-}
 
 .navigation .navbar .navbar-nav{}
 .navigation .navbar .navbar-nav li{
@@ -1723,7 +1722,7 @@ p {
 .footer-about ul li a{
     width: 35px;
     line-height: 35px;
-    font-size: 15px;
+    font-size: 20px;
     color: #fff;
     border-radius: 50%;
     text-align: center;
@@ -3845,4 +3844,165 @@ p.form-message.error {
 #whatsapp-img {
     margin-top: -8px;
     width: 117%;
+}
+.header-top p{
+    color:white;
+}
+.header-top span{
+    color:#e3c871e8;
+}
+.logo img{
+    width:75%;
+}
+.footer-copyright a{
+color:#505050;
+text-decoration: underline;
+}
+.footer-copyright a:hover{
+    color:#e3c871e8;
+    }
+.fa-user, .fa-globe, .fa-search {
+    font-size: 20px;
+}
+.fa-youtube {
+    font-size:18px;
+    color: red;
+}
+.fa-facebook-f {
+    font-size: 18px;
+    color: blue;
+}
+.fa-twitter {
+    font-size: 18px;
+    color: deepskyblue;
+}
+.fa-instagram {
+    font-size: 21px;
+    color: brown;
+}
+.section-features {
+    background-color: #fff;
+    padding: 80px 0;
+}
+.section-search, .section-doctor, .section-features {
+    padding: 50px 0;
+}
+@media only screen and (max-width:479px) {
+    .section-features, .section-features, .section-specialities {
+        background-color: #fff;
+        padding: 30px 0;
+    }
+    .col-sm-6 {
+        -webkit-box-flex: 0;
+        flex: 0 0 50%;
+        max-width: 33%;
+        padding-left: 4px;
+        padding-right: 0;
+    }
+    .footer-title h6 {
+        font-size: 12px;
+    }
+    .footer-link ul li a {
+        font-size: 8px;
+    }
+    p {
+        font-size:10px;
+    }
+    .mt-20 {
+        text-align: center;
+    }
+    .nav-icon {
+        -webkit-box-orient: horizontal;
+        -ms-flex-pack: start;
+        -webkit-box-pack: start;
+        justify-content: flex-start;
+        -webkit-box-direction: normal;
+        -ms-flex-flow: row nowrap;
+        flex-flow: row nowrap;
+    }
+        .nav-icon .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row
+        }
+        .nav-icon .navbar .navbar-nav li {
+            margin-right: 30px;
+        }
+    .navigation .navbar .navbar-nav li .sub-menu li a {
+        padding: 6px 8px;
+    }
+    .footer-top .container {
+        margin-left: 20px;
+    }
+
+}
+
+
+.container-fluid {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+@media only screen and (max-width: 1199px) {
+    .container-fluid {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .nav-icon .navbar .navbar-nav li {
+        margin-right: 30px;
+        color:red
+    }
+}
+@media only screen and (max-width: 767.98px) {
+    .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .features-slider .slick-dots, .features-img img {
+        text-align: center;
+        margin: 0 auto;
+    }
+    .nav-icon .navbar-nav {
+        -ms-flex-direction: row;
+        flex-direction: row;
+        top: 14px;
+    }
+    .nav-icon .navbar .navbar-nav li {
+        margin-right: 30px;
+    }
+    .navigation .container .row .col-8 {
+        margin-left: -25px;
+    }
+
+}
+
+.nav-icon {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    flex-flow: row nowrap;
+    -ms-flex-pack: start;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    -webkit-box-direction: normal;
+
+}
+    .nav-icon .navbar-nav {
+        -ms-flex-direction: row;
+        flex-direction: row
+    }
+    .nav-icon .fa-chevron-down {
+       /* opacity: 0;*/
+    }
+@media only screen and (max-width: 575.98px) {
+    .navigation .navbar .navbar-nav li {
+        margin-right: 26px;
+    }
+
+        .navigation .navbar .navbar-nav li a .sub-nav-toggler {
+            top: 21px;
+            padding-right: 0px;
+            right: -22px;
+        }
+    .navigation .navbar .navbar-nav li a {
+        font-size: 9px;
+    }
+
 }
