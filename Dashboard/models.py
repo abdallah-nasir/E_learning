@@ -37,5 +37,16 @@ class AddStudentCourse(models.Model):
     def  __str__(self):
         return self.teacher.username
   
-class Test(models.Model):
-    video=models.FileField()
+REFUND_TYPE=(
+    ("course_payment","course_payment"),
+    ("blog_payment","blog_payment"),
+    ("consultant_payment","consultant_payment"),
+)
+class Refunds(models.Model):
+    type=models.CharField(choices=REFUND_TYPE,max_length=50)
+    content_id=models.PositiveIntegerField(default=0)
+    transaction_number = models.CharField(max_length=200)
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    status=models.CharField(max_length=50,choices=status,default="pending")
+    def __str__(self):
+        return self.type

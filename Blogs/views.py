@@ -2,7 +2,8 @@ from django.shortcuts import render
 import os
 # Create your views here.
 from django.db.models.query_utils import Q
-from django.shortcuts import render,redirect,reverse
+from django.shortcuts import render,redirect
+from django.urls import reverse
 from .models import *
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator

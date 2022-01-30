@@ -111,6 +111,15 @@ path("emails/",views.emails,name="emails"),
 path("email/<int:id>/",views.single_email,name="single_email"),
 path("close/email/<int:id>/",views.close_email,name="close_email"),
 
+### certifications
+path("certifications/",views.certifications,name="certifications"),
+path("certification/approve/<int:id>/",views.edit_certifications,name="edit_certifications"),
+
+### refunds
+path("refunds/",views.refunds,name="refunds"),
+path("refunds/add/",views.add_refunds,name="add_refund"),
+path("refunds/edit/<int:id>/",views.edit_refund,name="edit_refund"),
+
 
 
 #############

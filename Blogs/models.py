@@ -7,7 +7,7 @@ from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
 import json
-from Dashboard.models import Rejects
+
 from django.shortcuts import render
 from django.conf import settings
 from ckeditor.fields import RichTextField
@@ -78,15 +78,7 @@ class Blog_Images(models.Model):
     def __str__(self):
         return self.blog.name
 
-class CheckRejectManager(models.Manager):
-    def get_query_set(self):
-        rejects=Rejects.objects.filter(type="blogs")
-        list=[]
-        for i in rejects:
-            # i.content_id
-            list.append(i.content_id)
-        blogs=Blog.objects.filter(approved=False).exclude(id__in=list)
-        return blogs
+
         
 def upload_blog_videos(instance,filename):
     return (f"blogs/videos/{instance.slug}/{filename}")
@@ -111,8 +103,6 @@ class Blog(models.Model):
     blog_type=models.CharField(choices=BLOG_TYPE,max_length=20)
     status=models.CharField(choices=BLOG_STATUS,max_length=50,default="pending")
     tags=TaggableManager()
-    check_reject=CheckRejectManager()   
-    objects=models.Manager()
     slug=models.SlugField(unique=True,blank=True,max_length=100)
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -227,20 +217,13 @@ PAYMENTS=(
 def upload_blog_payment(instance,filename):
     return (f"payment/blogs/{instance.user.username}/{filename}")
 
-class CheckRejectBlogPaymentManager(models.Manager):
-    def get_query_set(self):
-        rejects=Rejects.objects.filter(type="blog_payment")
-        list=[]
-        for i in rejects:
-            # i.content_id
-            list.append(i.content_id)
-        payments=Blog_Payment.objects.filter(status="pending").exclude(id__in=list)
-        return payments
+
 
 PAYMENT_CHOICES=(
     ("pending","pending"),
     ("approved","approved"),
     ("declined","declined"),
+    ("refund","refund"),
 
     )
 class Blog_Payment(models.Model):
@@ -257,9 +240,7 @@ class Blog_Payment(models.Model):
     def __str__(self):
         return self.method
 
-    def check_if_rejected(self):
-        rejects=Rejects.objects.filter(type="blog_payment",content_id=self.id,user=self.user).delete()
-        return rejects
+
 class Prices(models.Model):
     name=models.CharField(max_length=50)
     price=models.FloatField(default=0)

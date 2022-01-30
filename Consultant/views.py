@@ -33,11 +33,12 @@ from datetime import date
 def home(request):
     # teacher_cache=cache.get("teacher_time")
     # if teacher_cache == None:
-    teachers=Teacher_Time.objects.filter(available=True)
+    teachers=Teacher_Time.objects.filter(available=True).order_by("-id")
     teacher_list={}
     for i in teachers:
         if i.user not in teacher_list.keys(): 
-            teacher_list[i.user]=teachers[i.id]
+            teacher_list[i.user]=i
+    print(teacher_list)
     # cache.set("teacher_time",teachers,60*15)
     # else:
     #     teachers=teacher_cache.order_by("?")
@@ -87,8 +88,8 @@ def post_payment_data(request):
     return context
 
 @login_required(login_url="accounts:login")
-@check_user_is_has_consul
-@validate_checkout
+@check_user_is_has_consul_checkout
+@validate_checkout 
 def checkout(request,slug):
     id=request.GET["consultant"]
     date=request.GET["date"]

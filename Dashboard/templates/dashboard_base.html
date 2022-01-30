@@ -381,6 +381,42 @@
                     </div>
                 </div>
             </li>
+                  
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapserefund"
+                    aria-expanded="true" aria-controls="collapserefund">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Refunds</span>
+                </a>
+                <div id="collapserefund" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <!-- <h6 class="collapse-header">BLog Approve:</h6> -->
+                        <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=blog">Blog Refund</a>
+                        <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=course">Course Refund</a>
+                        <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=consultant">Consultant Refund</a>
+                        <a class="collapse-item" href="{% url 'dashboard:add_refund' %}">Add Refund</a>
+
+                      
+                    </div>
+                </div>
+            </li>
+            {% endif %}
+            {% if request.user.is_superuser or request.user.is_director %}
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapscerti"
+                    aria-expanded="true" aria-controls="collapseapproveblog">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Certifications</span>
+                </a>
+                <div id="collapscerti" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <!-- <h6 class="collapse-header">BLog Approve:</h6> -->
+                        <a class="collapse-item" href="{% url 'dashboard:certifications' %}">Certifications</a>
+                     
+                    </div>
+                </div>
+            </li>
             {% endif %}
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">

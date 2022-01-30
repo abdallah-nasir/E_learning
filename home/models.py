@@ -20,7 +20,6 @@ from django.urls import reverse
 import time
 import datetime
 import json
-from Dashboard.models import Rejects
 from django.contrib.auth import get_user_model
 User=get_user_model()
 Quiz= Quiz.models.Quiz()
@@ -147,15 +146,7 @@ class Reviews(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.user.username    
-class CheckRejectCourse(models.Manager):
-    def get_query_set(self):
-        rejects=Rejects.objects.filter(type="course")
-        list=[]
-        for i in rejects:
-            # i.content_id
-            list.append(i.content_id)
-        course=Course.objects.filter(status="approved").exclude(id__in=list)
-        return course
+
 COURSE_STATUS=(
     ("pending","pending"),
     ("approved","approved"),
@@ -266,15 +257,6 @@ def upload_events_images(instance,filename):
     place=f"events/{instance.user.username}/{instance.name}/{filename}"
     return place
 
-class CheckRejectEvent(models.Manager):
-    def get_query_set(self):
-        rejects=Rejects.objects.filter(type="events")
-        list=[]
-        for i in rejects:
-            # i.content_id
-            list.append(i.content_id)
-        events=Events.objects.filter(approved=False).exclude(id__in=list)
-        return events
 
 EVENT_STATUS=(
     ("approved","approved"),
@@ -336,9 +318,7 @@ class Events(models.Model):
         details=data["details"]
         context={"zoom":zoom,"details":details}
         return context
-    def get_similar_event(self):
-        rejects=Rejects.objects.filter(user=self.user,type="events",content_id=self.id).delete()
-        return rejects
+
 
 
 class Wishlist(models.Model):
@@ -358,20 +338,13 @@ PAYMENTS=(
     ("Paypal","Paypal")
 )
 
-class CheckRejectPayment(models.Manager):
-    def get_query_set(self):
-        rejects=Rejects.objects.filter(type="payment")
-        list=[]
-        for i in rejects:
-            # i.content_id
-            list.append(i.content_id)
-        payment=Payment.objects.filter(status="pending").exclude(id__in=list)
-        return payment
+
 
 PAYMENT_CHOICES=(
     ("pending","pending"),
     ("approved","approved"),
     ("declined","declined"),
+    ("refund","refund"),
 
 )
 class Payment(models.Model):
@@ -384,9 +357,7 @@ class Payment(models.Model):
     def __str__(self):
         return self.method
 
-    def check_if_rejected(self):
-        rejects=Rejects.objects.filter(type="payment",content_id=self.id,user=self.user).delete()
-        return rejects
+
 
 class News(models.Model):
     name=models.CharField(max_length=200)

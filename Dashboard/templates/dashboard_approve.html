@@ -201,6 +201,7 @@
                                             <th>User</th>
                                             <th>Teacher</th>
                                             <th>Date</th>
+                                            <th>Method</th>
                                             <th>Transaction Number</th>
                                              <th>Image</th>
                                             <th>Action</th>
@@ -212,8 +213,9 @@
                                        {% for i in query %}
                                     <tr>
                                         <td>{{i.user.username}}</td>
-                                        <td>{{i.consult.teacher.user.username}}</td>
-                                        <td>{{i.consult.teacher.date}}</td>
+                                        <td>{{i.teacher.user.username}}</td>
+                                        <td>{{i.get_consultant_date}}</td>
+                                        <td>{{i.method}}</td>
                                         <td>{{i.transaction_number}}</td>
                                             <td>
                                         <a href="{{i.payment_image}}">image link</a>

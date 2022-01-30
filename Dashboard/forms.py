@@ -3,12 +3,12 @@ from django.contrib.auth import get_user_model
 from Blogs.models import Blog,Blog_Payment,Prices
 from Blogs.models import Category as Blog_Category
 from home.models import Course,Branch,Videos,Events,Payment,News,Category,Support_Email
-from .models import Rejects,AddStudentCourse
+from .models import Rejects,Refunds
 from Frontend.models import *
 from Consultant.models import Cosultant_Payment,Teacher_Time,Consultant
 from Consultant.models import Category as Consultant_Category
 
-from Quiz.models import Question ,Answers
+from Quiz.models import Question ,Answers,Certification
 import os
 from django.db.models import Q
 from crum import get_current_request   
@@ -238,8 +238,8 @@ class AddEvent(forms.ModelForm):
     zoom_link=forms.CharField(max_length=300,required=False)
     class Meta:
         model=Events    
-        # fields=['name',"category","image","details","date","start_time","end_time","place","zoom_link"]
-        fields=["date","start_time","end_time"]
+        fields=['name',"category","image","details","date","start_time","end_time","place","zoom_link"]
+        # fields=["date","start_time","end_time"]
     def clean_image(self):
         image=self.cleaned_data.get("image")
         image_extentions=[".png",".jpg",",jpeg"]
@@ -278,9 +278,20 @@ class AddEvent(forms.ModelForm):
                 print("here")
                 raise forms.ValidationError("start time is unavailable now")
 class Edit_event(forms.ModelForm):
-    date=forms.DateField(widget=DatePicker(format='%m/%d/%y'))
-    start_time=forms.TimeField(widget=TimePicker(format='%H:%M:%S'))
-    end_time=forms.TimeField(widget=TimePicker(format='%H:%M:%S'))
+    date=forms.DateField(required=True,widget=DatePicker(options={'minDate': f"{date.today()}"}, attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            }))
+    start_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+                'append': 'fa fa-clock-o',
+                'icon_toggle': True,
+                "format":"H M S"
+                
+            }))
+    end_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+                'append': 'fa fa-clock-o',
+                'icon_toggle': True,
+            }))
     zoom_link=forms.CharField(max_length=300,required=False)
     image=forms.ImageField(required=False)
     # about=forms.CharField(widget=forms.Textarea())
@@ -304,15 +315,29 @@ class Edit_event(forms.ModelForm):
                 raise forms.ValidationError("time is already passed")
         return date
     def clean(self):
+        request=get_current_request()
         date=self.cleaned_data.get("date")
-        start_time=self.cleaned_data.get("start_time")
-        end_time=self.cleaned_data.get("end_time")
+        start=request.POST.get("start_time")
+        end=request.POST.get("end_time")
+        start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
+        end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
         category=self.cleaned_data.get("category")
+        calculate=datetime.strptime(f"{end}","%I:%M:%S %p")-datetime.strptime(f"{start}","%I:%M:%S %p")
+        print(start_time,end_time)
+        if start_time < end_time:
+            time_betwen = calculate.seconds/60
+            if time_betwen < 15:
+                raise forms.ValidationError("time must be more than 15 minute")
+        else:
+            raise forms.ValidationError("invalid end time")
         if start_time and end_time:
-            first=start_time.strftime("%H") 
-            second=end_time.strftime("%H")
-            if Events.objects.filter(date=date,category__name=category,start_time__hour__range=(first,second)).exists():
+            first=start_time.strftime("%H:%M:%S")
+            second=end_time.strftime("%H:%M:%S")
+            print(first,second)
+            if Events.objects.filter(Q(date=date,start_time__range=(first,second)) | Q(date=date,end_time__range=(first,second))).exists():
+                print("here")
                 raise forms.ValidationError("start time is unavailable now")
+
 class AddQuestion(forms.ModelForm):
     class Meta:
         model=Question
@@ -332,13 +357,13 @@ class CosultantAddForm(forms.ModelForm):
     start_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
                 'append': 'fa fa-clock-o',
                 'icon_toggle': True,
-                "format":"i M S"
+                "format":"H M S"
                 
             }))
     end_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
                 'append': 'fa fa-clock-o',
                 'icon_toggle': True,
-                "format":"i M S"
+                "format":"H M S"
                 
             }))
     class Meta:
@@ -347,14 +372,24 @@ class CosultantAddForm(forms.ModelForm):
         exclude=["user"]
 
 class SessionForm(forms.ModelForm):
-    start_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePicker(format='%Y-%m-%d H:%M:%S'))
-    end_time=forms.DateTimeField(required=True,input_formats=["%Y-%m-%d H:%M:%S",],widget=DateTimePicker(format='%Y-%m-%d H:%M:%S'))
+    start_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+                'append': 'fa fa-clock-o',
+                'icon_toggle': True,
+                "format":"H M S"
+                
+            }))   
+    end_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+                'append': 'fa fa-clock-o',
+                'icon_toggle': True,
+                "format":"H M S"
+                
+            }))
     zoom=forms.CharField(required=True,widget=forms.TextInput())
 
     class Meta:
         model=Consultant 
         fields="__all__"
-        exclude=["status","teacher","user"]
+        exclude=["status","date","user_data","teacher","user"]
 
 class ConsultantCategoryForm(forms.ModelForm):
     class Meta:
@@ -459,3 +494,18 @@ class Support_Email_Form(forms.ModelForm):
         model=Support_Email
         fields=["subject","message"]
   
+
+class Update_Certification(forms.ModelForm):
+    class Meta:
+        model=Certification
+        fields=["image"]
+        extra_kwargs={"image":{"required":True}}
+  
+
+class Refunds_Form(forms.ModelForm):
+    class Meta:
+        model=Refunds
+        exclude=["user","content_id","status"]
+        # extra_kwargs={"image":{"required":True}}
+
+

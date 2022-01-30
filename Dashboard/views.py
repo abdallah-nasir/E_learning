@@ -922,34 +922,33 @@ def add_event(request):
     if request.method == "POST":
         if form.is_valid():
             instance=form.save(commit=False)  
-            print("valid")
-            # start=request.POST.get("start_time")
-            # end=request.POST.get("end_time")
-            # instance.start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
-            # instance.end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
-            # instance.user=request.user
-            # instance.image=None
-            # image=request.FILES["image"]
-            # image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
-            # headers = {
-            #         "AccessKey": Storage_Api,
-            #         "Content-Type": "application/octet-stream",
-            #         }
+            start=request.POST.get("start_time")
+            end=request.POST.get("end_time")
+            instance.start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
+            instance.end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
+            instance.user=request.user
+            instance.image=None
+            image=request.FILES["image"]
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
+            headers = {
+                    "AccessKey": Storage_Api,
+                    "Content-Type": "application/octet-stream",
+                    }
 
-            # response = requests.put(image_url,data=image,headers=headers)
-            # data=response.json()
-            # try:
-            #     if data["HttpCode"] == 201:
-            #         instance.image = f"https://{agartha_cdn}/events/{instance.user.username}/{image}"
-            # except:
-            #     pass
-            # zoom=form.cleaned_data.get("zoom_link")
-            # details=form.cleaned_data.get("details")
-            # data={'zoom':zoom,"details":details}
-            # instance.details=json.dumps(data)  
-            # instance.save() 
-            # messages.success(request,"Event added successfully")
-            # return redirect("dashboard:events")
+            response = requests.put(image_url,data=image,headers=headers)
+            data=response.json()
+            try:
+                if data["HttpCode"] == 201:
+                    instance.image = f"https://{agartha_cdn}/events/{instance.user.username}/{image}"
+            except:
+                pass
+            zoom=form.cleaned_data.get("zoom_link")
+            details=form.cleaned_data.get("details")
+            data={'zoom':zoom,"details":details}
+            instance.details=json.dumps(data)  
+            instance.save() 
+            messages.success(request,"Event added successfully")
+            return redirect("dashboard:events")
         else:
             print(form.errors)
     context={"form":form}
@@ -967,6 +966,10 @@ def edit_event(request,id):
         if request.method == "POST":
             if form.is_valid():
                 instance=form.save(commit=False)
+                start=request.POST.get("start_time")
+                end=request.POST.get("end_time")
+                instance.start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
+                instance.end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
                 zoom=form.cleaned_data.get("zoom_link")
                 details=form.cleaned_data.get("details")
                 data={'zoom':zoom,"details":details}
@@ -1277,66 +1280,70 @@ def show_demo_blog(request,slug):
 @for_admin_only
 def approve_content(request,id):
     if request.user.is_superuser:
-        try:
-            qs=request.GET["approve"]
+        # try:
+        qs=request.GET["approve"]
 
-            if qs == "blogs":
-                query=get_object_or_404(Blog,id=id,status="pending")
-                query.status="approved"
-                query.save()
-                messages.success(request,"Blog Approved Successfully")
-            elif qs == "blog_payment":
-                query=get_object_or_404(Blog_Payment,id=id,status="pending")
-                query.status="approved"
-                query.save()
-                query.user.vip = True
-                query.user.save()
-                messages.success(request,"Payment Approved Successfully")
-            elif qs == "consultant_payment":
-                query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
-                query.status="approved"
-                consult=Consultant.objects.create(user=query.user,teacher=query.teacher,status="pending")
-                consult.start_time=query.teacher.start_time
-                consult.end_time=query.teacher.end_time
-                consult.save()
-                query.save()
-                messages.success(request,"Payment Approved Successfully")
-            elif qs == "course":
-                query=get_object_or_404(Course,id=id,status="pending")
-                query.status="approved"
-                query.save()
-                messages.success(request,"Course Approved Successfully")
-            elif qs == "events":
-                query=get_object_or_404(Events,id=id,status="pending")
-                query.status="approved"
-                query.save()
-                messages.success(request,"Event Approved Successfully")
-            elif qs == "payment":
-                query=get_object_or_404(Payment,id=id,status="pending")
-                query.status="approved"
-                query.course.students.add(query.user)
-                query.course.save()
-                query.save()
-                messages.success(request,"Payment Approved Successfully")
-            elif qs == "teacher":
-                query=get_object_or_404(TeacherForms,id=id,status="pending")
-                query.status="approved"
-                query.teacher.is_active=True
-                query.teacher.account_type="teacher"
-                query.teacher.my_data=query.data
-                query.teacher.save()
-                query.save()
-                messages.success(request,"Teacher Approved Successfully")
-            elif qs == "add_user":
-                query = get_object_or_404(AddStudentCourse,id=id,status="pending")
-                query.status="approved"
-                query.course.students.add(query.student)
-                query.course.save()
-                query.save()
-                messages.success(request,"User Added Successfully")
+        if qs == "blogs":
+            query=get_object_or_404(Blog,id=id,status="pending")
+            query.status="approved"
+            query.save()
+            messages.success(request,"Blog Approved Successfully")
+        elif qs == "blog_payment":
+            query=get_object_or_404(Blog_Payment,id=id,status="pending")
+            query.status="approved"
+            query.save()
+            query.user.vip = True
+            query.user.save()
+            messages.success(request,"Payment Approved Successfully")
+        elif qs == "consultant_payment":
+            query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
+            query.status="approved"
+            consult=Consultant.objects.create(user=query.user,teacher=query.teacher,status="pending")
+            data=json.loads(query.user_data)
+            data_date=data["date"]
+            date=datetime.strptime(data_date,'%m/%d/%Y')
+            consult.date=date
+            consult.start_time=query.teacher.start_time
+            consult.end_time=query.teacher.end_time
+            consult.save()
+            query.save()
+            messages.success(request,"Payment Approved Successfully")
+        elif qs == "course":
+            query=get_object_or_404(Course,id=id,status="pending")
+            query.status="approved"
+            query.save()
+            messages.success(request,"Course Approved Successfully")
+        elif qs == "events":
+            query=get_object_or_404(Events,id=id,status="pending")
+            query.status="approved"
+            query.save()
+            messages.success(request,"Event Approved Successfully")
+        elif qs == "payment":
+            query=get_object_or_404(Payment,id=id,status="pending")
+            query.status="approved"
+            query.course.students.add(query.user)
+            query.course.save()
+            query.save()
+            messages.success(request,"Payment Approved Successfully")
+        elif qs == "teacher":
+            query=get_object_or_404(TeacherForms,id=id,status="pending")
+            query.status="approved"
+            query.teacher.is_active=True
+            query.teacher.account_type="teacher"
+            query.teacher.my_data=query.data
+            query.teacher.save()
+            query.save()
+            messages.success(request,"Teacher Approved Successfully")
+        elif qs == "add_user":
+            query = get_object_or_404(AddStudentCourse,id=id,status="pending")
+            query.status="approved"
+            query.course.students.add(query.student)
+            query.course.save()
+            query.save()
+            messages.success(request,"User Added Successfully")
 
-        except:
-            return redirect(reverse("dashboard:home"))
+        # except:
+        #     return redirect(reverse("dashboard:home"))
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("home:home"))
@@ -1487,11 +1494,12 @@ def accept_consultant(request,id):
     if request.method =="POST":
         if form.is_valid():
             instance=form.save(commit=False)
-            # instance.start_time.=form.cleaned_data.get("start_day")
-            # instance.end_time.date=form.cleaned_data.get("start_day")
-            # instance.start_time.time=form.cleaned_data.get("start_time")
-            # instance.start_time.time=form.cleaned_data.get("end_time")
-            # instance.end_time=form.cleaned_data.get("end_time")
+            start=request.POST.get("start_time")
+            end=request.POST.get("end_time")
+            start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
+            end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
+            instance.start_time=start_time
+            instance.end_time=end_time
             instance.status="approved"
             instance.save()
             messages.success(request,"Session Activated")
@@ -1505,7 +1513,14 @@ def edit_consultant(request,id):
     form=SessionForm(request.POST or None,instance=consultant)
     if request.method =="POST":
         if form.is_valid():
-            form.save()
+            instance=form.save(commit=False)
+            start=request.POST.get("start_time")
+            end=request.POST.get("end_time")
+            start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
+            end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
+            instance.start_time=start_time
+            instance.end_time=end_time
+            instance.save()
             messages.success(request,"Session Edited Activated")
             return redirect(reverse("dashboard:consultants"))
     context={"form":form}
@@ -1514,11 +1529,10 @@ def edit_consultant(request,id):
 @login_required(login_url="accounts:login")
 def start_consultant(request,id):
     consultant=get_object_or_404(Consultant,id=id,status="approved",teacher__user=request.user)
-    start_time_day=consultant.start_time.strftime("%Y-%m-%d") 
-    start_time_hour=consultant.start_time.strftime("%H:%M:%S") 
-    end_time_day=consultant.end_time.strftime("%Y-%m-%d") 
-    end_time_hour=consultant.end_time.strftime("%H:%M:%S") 
-    body=f"your session will start on {start_time_day} at {start_time_hour} and will finish on {end_time_day} at {end_time_hour}"
+    start_time_day=consultant.date
+    start_time=consultant.start_time.strftime("%I:%M:%S %p") 
+    end_time=consultant.end_time.strftime("%I:%M:%S %p") 
+    body=f"your session will start on {start_time_day} from {start_time} to {end_time}"
     send_mail(
         "session details",
         body,
@@ -1567,7 +1581,6 @@ def add_consultant(request):
         end=request.POST.get("end_time")
         start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
         end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
-        print(start_time,end_time)
         instance.start_time=start_time
         instance.end_time=end_time
         instance.user=request.user
@@ -1842,6 +1855,123 @@ def close_email(request,id):
     return redirect(reverse("dashboard:emails"))
 
 
-# @login_required(login_url="accounts:login")
-# @admin_director_check  
-# def certifications(request)
+@login_required(login_url="accounts:login")
+@admin_director_check  
+def certifications(request):
+    certifications=Certification.objects.filter(status='pending').order_by('-id')
+    paginator = Paginator(certifications, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={'certifications':page_obj}
+    return render(request,"dashboard_certifications.html",context)
+
+
+@login_required(login_url="accounts:login")
+@admin_director_check  
+def edit_certifications(request,id):
+    certification=get_object_or_404(Certification,id=id,status="pending")
+    form=Update_Certification(request.POST or None,request.FILES or None,instance=certification)
+    if request.method =="POST":
+        if form.is_valid():
+            instance=form.save(commit=False)
+            file=form.cleaned_data.get("image")
+            headers = {
+                    "Accept": "*/*", 
+                "AccessKey":Storage_Api}
+            url=f"https://storage.bunnycdn.com/{storage_name}/certifications/{certification.user.username}/{file}"
+            response = requests.put(url,data=file,headers=headers)
+            data=response.json()
+            try:
+                if data["HttpCode"] == 201:
+                    instance.image = f"https://{agartha_cdn}/certifications/{certification.user.username}/{file}"
+                    instance.status="received"
+                    instance.save()
+                    send_mail(
+                        "Course Certification",
+                        f"your certification image {certification.image}",
+                        DASHBOARD_EMAIL_USERNAME,
+                        [certification.user.email],
+                        fail_silently=False,
+                        connection=DASHBOARD_MAIL_CONNECTION
+                        )
+                 
+                    messages.success(request,"Certification Sent Successfully")
+                    return redirect(reverse("dashboard:certifications"))
+            except:
+                messages.error(request,"issue with sending certification")
+                pass
+    context={'certification':certification,"form":form}
+    return render(request,"dashboard_edit_certification.html",context)
+
+@login_required(login_url="accounts:login")
+@for_admin_only  
+def refunds(request):
+    try:
+        type = request.GET["type"]
+        if type == "blog":
+            refunds=Refunds.objects.filter(type="blog_payment").order_by("-id")
+        elif type == "course":
+            refunds=Refunds.objects.filter(type="course_payment").order_by("-id")
+        elif type == "consultant":
+            refunds=Refunds.objects.filter(type="consultant_payment").order_by("-id")
+        else:
+            return redirect(reverse("dashboard:home"))
+    except:
+        return redirect(reverse("dashboard:home"))
+    paginator = Paginator(refunds, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"refunds":page_obj}
+    return render(request,"dashboard_refunds.html",context)
+
+@login_required(login_url="accounts:login")
+@for_admin_only  
+def add_refunds(request):
+    form=Refunds_Form(request.POST or None)
+    payment=None
+    context={"form":form,"payment":payment}
+    if request.method =="POST":
+        if form.is_valid():
+            instance=form.save(commit=False)
+            type=form.cleaned_data.get("type")
+            transaction=form.cleaned_data.get("transaction_number")
+            if type =="course_payment":
+                payment=Payment.objects.filter(transaction_number=transaction).exclude(status="refund")
+                context['payment'] = payment
+                if payment.exists():
+                    messages.success(request,"Course Payment")
+                else:
+                    messages.error(request,"invalid Course Payment")
+            elif type == "blog_payment":
+                payment=Blog_Payment.objects.filter(transaction_number=transaction).exclude(status="refund")
+                context['payment'] = payment
+                if payment.exists():
+                    messages.success(request,"Blog Payment")
+                else:
+                    messages.error(request,"invalid Blog Payment")
+            elif type == "consultant_payment":
+                payment=Cosultant_Payment.objects.filter(transaction_number=transaction).exclude(status="refund")
+                context['payment'] = payment
+                if payment.exists():
+                    messages.success(request,"Consultant Payment")
+                else:
+                    messages.error(request,"invalid Consultant Payment")
+    return render(request,"dashboard_add_refund.html",context)
+
+
+@login_required(login_url="accounts:login")
+@for_admin_only  
+def edit_refund(request,id):
+    refund=get_object_or_404(Refunds,id=id)
+    if request.method =="POST":
+        try:
+            submit=request.POST["submit"]
+            refund.status="approved"
+            refund.save()
+            messages.success(request,"refund approved successfully")
+            return redirect(reverse("dashboard:refunds"))
+        except:
+            messages.error(request,"invalid refund data")
+            return redirect(reverse("dashboard:refunds"))
+    context={"refund":refund}
+    return render(request,"dashboard_add_refund.html",context)

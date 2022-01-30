@@ -1,4 +1,4 @@
-consultant app 
-date time picker 
-check payment at home 
-consultant dashbaord forms,views and templates
+change blog models 
+delete all reject import in all apps
+change blogs views (reverse)
+update dertification kwargs

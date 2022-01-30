@@ -1,12 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.query_utils import Q
-from Dashboard.models import Rejects
 User=get_user_model()
 from django.utils.translation import ugettext as _
 from django.urls import reverse
 from django.shortcuts import redirect
-import datetime
+import datetime,json
 from django.core.cache import cache
 
 # Create your models here.
@@ -185,7 +184,9 @@ PAYMENT_CHOICES=(
 class Consultant(models.Model):
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.CASCADE)
-    date=models.DateTimeField(null=True,blank=False,auto_now_add=False)
+    start_time=models.TimeField(auto_now_add=True)
+    end_time=models.TimeField(auto_now_add=True)
+    date=models.DateField(null=True,blank=False,auto_now_add=False)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     zoom=models.TextField(blank=True)
     user_data=models.TextField()
@@ -198,20 +199,11 @@ class Consultant(models.Model):
 def upload_consultant_payment(instance,filename):
     return (f"payment/consultant/{instance.user.username}/{filename}")
 
-class CheckRejectConsultant(models.Manager):
-    def get_query_set(self):
-        rejects=Rejects.objects.filter(type="consultant_payment")
-        list=[]
-        for i in rejects:
-            # i.content_id
-            list.append(i.content_id)
-        consult=Cosultant_Payment.objects.filter(status="pending").exclude(id__in=list)
-        return consult
 PAYMENT_CHOICES=(
 ("pending","pending"),
 ("approved","approved"),   
 ("declined","declined"),
-
+("refund","refund"),
 )    
 class Cosultant_Payment(models.Model):
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.SET_NULL,null=True)
@@ -227,9 +219,11 @@ class Cosultant_Payment(models.Model):
     def __str__(self):
         return self.method
   
-    def check_if_rejected(self):
-        rejects=Rejects.objects.filter(type="consultant_payment",content_id=self.id,user=self.user).delete()
-        return rejects
+    def get_consultant_date(self):
+        cons_date=json.loads(self.user_data)
+        date=cons_date["date"]
+        return date
+
 
 class UserDataForm(models.Model):
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.CASCADE)

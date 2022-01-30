@@ -6,6 +6,7 @@ import string,random
 from django.conf import settings
 from django.shortcuts import render,redirect
 from django.urls import reverse
+from home import models as home_models
 User=settings.AUTH_USER_MODEL
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -199,3 +200,13 @@ class Certification(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+    def get_certification_course(self):
+        try:
+            course_id=self.result.quiz.course_id
+            quiz_course=home_models.Course.objects.get(id=course_id)
+            course=quiz_course.name
+        except:
+            course=None
+        return course

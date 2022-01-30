@@ -23,6 +23,25 @@ def check_user_is_has_consul(function):
     wrap.__name__ = function.__name__
     return wrap
 
+def check_user_is_has_consul_checkout(function):
+    def wrap(request, *args, **kwargs):
+        try:
+            id=request.GET['consultant']
+            teacher=get_object_or_404(Teacher_Time,id=id,available=True)
+            payment = Cosultant_Payment.objects.filter(user=request.user,teacher=teacher).exclude(status="approved")
+            print(payment)
+            consultant=Consultant.objects.filter(user=request.user,teacher=teacher).exclude(status="completed")
+            if payment.exists() or consultant.exists():
+                messages.error(request,f"You Already Have Pending Consultant")
+                return redirect(reverse("accounts:consultant_payment"))
+            else:
+                return function(request, *args, **kwargs)
+        except:
+            return redirect(reverse("consultant:home"))
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
 def validate_checkout(function):
     def wrap(request, *args, **kwargs):
         try:

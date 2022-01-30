@@ -10,7 +10,6 @@ from .manager import *
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
-from Dashboard import models as dashboard_models
 from django.conf import settings
 from home import models as home_models
 import json,os 
@@ -96,17 +95,7 @@ def create_user_session(sender, instance, created, **kwargs):
 
 
 auth_user=settings.AUTH_USER_MODEL
-
-class CheckTeachersManager(models.Manager):
-    def get_query_set(self):
-        rejects=dashboard_models.Rejects.objects.filter(type="teacher")
-        list=[]
-        for i in rejects:
-            # i.content_id
-            list.append(i.content_id)
-        teachers=TeacherForms.objects.filter(approved=False).exclude(id__in=list)
-    
-        return teachers    
+  
 
 USER_STATUS=(
     ("pending","pending"),
