@@ -1,53 +1,9 @@
-change facebook developers phone number
+director 
+       approve  > reject
+       payment > reject
 
-privacy and terms   --done
-adjust all payment paymob failure iframe
-privacy and terms ckeditor  --done
-privacy and terms add not delete or update  --done
-messages
-remove terms from footer 
-adjust static 
-review must be required after finish 
-add certification to dashboard
-email to info       --done
-add suport      --done
-add both support and infro to db (with status for each email)       --done
-videos (extensions)
-اضافه استبيان لكل مدرس لاضافه معلوماته (link on teacher form)
-adjust quiz         --done
 
-----------------
-    profile for students only (redirect teacher to dashboard )
-    add logo on title 
-    add footer important
-    add social urls 
----------------
-    remove add from dashboard
-    remove dots from news
-    end session aafter 20 minutes
-    color footer one
-    replace submit with 
-    add translation to news         --done
-    add category image field
-    add translation to faqs
----------------
-2000 students
-1000 course
-11000 students
-500 teacher
+subscribe
+    add subscribe db 
 
------
-all categories in one section  [Dashbaord]
-blog translation [name , tags ]
-show demo event for admin and director
-add time validation for event
-adjust video blogs
-----
-blog audio on Bunny Storage 
-blog video on stream
-----
-validation to event
-add teahcer to demo event
-event end time minumum 15 minutes
-
-add fields to certification [id,...]
+add  validation to user comments

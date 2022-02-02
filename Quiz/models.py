@@ -7,11 +7,18 @@ from django.conf import settings
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from home import models as home_models
+
 User=settings.AUTH_USER_MODEL
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 # Create your models here.
-
+def slugify(str):
+    str = str.replace(" ", "-")
+    str = str.replace(",", "-")
+    str = str.replace("(", "-")
+    str = str.replace(")", "")
+    str = str.replace("؟", "")
+    return str
 class Answers(models.Model):
     answer=models.TextField()
     question=models.ForeignKey("Question",related_name="question_answer",on_delete=models.CASCADE)
@@ -200,7 +207,6 @@ class Certification(models.Model):
 
     def __str__(self):
         return self.user.username
-
 
     def get_certification_course(self):
         try:

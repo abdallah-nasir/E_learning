@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.query_utils import Q
+from Dashboard.models import Rejects
 User=get_user_model()
 from django.utils.translation import ugettext as _
 from django.urls import reverse
@@ -176,7 +177,7 @@ PAYMENT_CHOICES=(
     ("declined","declined"),
     ("started","started"),
     ("completed","completed"),
-
+("refund","refund"),
     )
 
 
@@ -199,6 +200,15 @@ class Consultant(models.Model):
 def upload_consultant_payment(instance,filename):
     return (f"payment/consultant/{instance.user.username}/{filename}")
 
+class CheckRejectConsultant(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="consultant_payment")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        consult=Cosultant_Payment.objects.filter(status="pending").exclude(id__in=list)
+        return consult
 PAYMENT_CHOICES=(
 ("pending","pending"),
 ("approved","approved"),   
@@ -207,6 +217,7 @@ PAYMENT_CHOICES=(
 )    
 class Cosultant_Payment(models.Model):
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.SET_NULL,null=True)
+    consultant=models.ForeignKey(Consultant,null=True,on_delete=models.SET_NULL)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     method=models.CharField(choices=PAYMENTS,max_length=50)
     payment_image=models.ImageField(upload_to=upload_consultant_payment,null=True)
@@ -224,6 +235,9 @@ class Cosultant_Payment(models.Model):
         date=cons_date["date"]
         return date
 
+    def check_if_rejected(self):
+        rejects=Rejects.objects.filter(type="consultant_payment",content_id=self.id,user=self.user).delete()
+        return rejects
 
 class UserDataForm(models.Model):
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.CASCADE)

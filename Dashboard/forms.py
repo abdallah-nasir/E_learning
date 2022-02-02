@@ -2,9 +2,9 @@ from django import forms
 from django.contrib.auth import get_user_model
 from Blogs.models import Blog,Blog_Payment,Prices
 from Blogs.models import Category as Blog_Category
-from home.models import Course,Branch,Videos,Events,Payment,News,Category,Support_Email
-from .models import Rejects,Refunds
 from Frontend.models import *
+from home.models import Course,Branch,Videos,Events,Payment,News,Category,Support_Email
+from .models import Rejects,AddStudentCourse,Refunds
 from Consultant.models import Cosultant_Payment,Teacher_Time,Consultant
 from Consultant.models import Category as Consultant_Category
 
@@ -12,16 +12,33 @@ from Quiz.models import Question ,Answers,Certification
 import os
 from django.db.models import Q
 from crum import get_current_request   
+from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
+import datetime as compare_time
+from datetime import date,datetime,time
 User=get_user_model()
 Audio_Extension=[".3gp",".aa",".aac",".aiff",".wav",".m4a",".amr",".mp3",".webm",".wmv",]
 Video_Extension=[".webm",".mkv",".flv",".avi",".wmv",".rmvb",".amv",".mp4",".m4p",".mpg",".mpeg",".m4v",".3gp"]
 
 class AddBlog(forms.ModelForm):
+    
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
         fields=["name","name_ar","details","category","paid","tags","image"]
+    def clean_video(self):
+        request=get_current_request()
+        video=self.cleaned_data.get("video")      
+        blog_type=request.GET.get("blog_type")
+        video_extentions=[".3gp",".aa",".aac",".aiff",".webm",".wav",".m4a",".amr",".mp4",".mp3",".avchd",".mkv",".webm",".wmv",".mov"]
+        if blog_type == "video":
+            if not video:
+                raise forms.ValidationError("please insert a video / audio")
+            else:
+                video_type=os.path.splitext(video.name)[1]
+                if video_type not in  video_extentions:
+                    raise forms.ValidationError("invalid video / audio extension")
 
+        return video
     def clean_image(self):
         request=get_current_request()
         type=request.GET.get("blog_type")
@@ -47,7 +64,7 @@ class BlogQuoteForm(forms.ModelForm):
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        fields=["name","quote","details","category","paid","tags","image"]
+        fields=["name","name_ar","quote","details","category","paid","tags","image"]
     def clean_image(self):
         request=get_current_request()
         type=request.GET.get("blog_type")
@@ -67,7 +84,7 @@ class BlogLinkForm(forms.ModelForm):
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        fields=["name","link","details","category","paid","tags","image"]
+        fields=["name","name_ar","link","details","category","paid","tags","image"]
 
     def clean_image(self):
         request=get_current_request()
@@ -83,6 +100,7 @@ class BlogLinkForm(forms.ModelForm):
             if image_extension.lower() not in image_extentions:
                 raise forms.ValidationError("invalid image extension")
         return image
+    
 class BlogVideoForm(forms.ModelForm):
     video=forms.FileField(label="Video")
     class Meta:
@@ -126,7 +144,7 @@ class BlogGalleryForm(forms.ModelForm):
     image=forms.FileField(required=True,widget=forms.ClearableFileInput(attrs={'multiple': True}))
     class Meta:
         model=Blog
-        fields=["name","details","category","paid","tags","image"]
+        fields=["name","name_ar","details","category","paid","tags","image"]
 
     def clean_image(self):
         request=get_current_request()
@@ -216,10 +234,6 @@ class EditVideo(forms.ModelForm):
     #         raise forms.ValidationError("invalid video extension")
     #     return video
 
-# from bootstrap_datepicker_plus import DatePickerInput,TimePickerInput,DateTimePickerInput
-from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
-import datetime as compare_time
-from datetime import date,datetime,time
 class AddEvent(forms.ModelForm):
     date=forms.DateField(required=True,widget=DatePicker(options={'minDate': f"{date.today()}"}, attrs={
                 'append': 'fa fa-calendar',
@@ -350,7 +364,7 @@ class AddAnswer(forms.ModelForm):
 class NewsForm(forms.ModelForm):
     class Meta:
         model=News
-        fields="__all__"
+        fields=["name","name_ar","link"]
     
 
 class CosultantAddForm(forms.ModelForm): 
@@ -390,11 +404,11 @@ class SessionForm(forms.ModelForm):
         model=Consultant 
         fields="__all__"
         exclude=["status","date","user_data","teacher","user"]
-
 class ConsultantCategoryForm(forms.ModelForm):
     class Meta:
         model=Consultant_Category 
         fields="__all__"
+        
 class UploadVideoForm(forms.Form):
     # title=forms.CharField(max_length=50)
     video=forms.FileField()
@@ -466,6 +480,7 @@ class CategoryForm(forms.ModelForm):
         fields="__all__"
         extra_kwargs={"image":{"required":True}}
         exclude=["slug"]
+        
 class BranchForm(forms.ModelForm):
     class Meta:
         model=Branch
@@ -476,6 +491,7 @@ class BlogForm(forms.ModelForm):
         model=Blog_Category
         fields="__all__"
         exclude=["slug"]
+
 
 class TermsForm(forms.ModelForm):
     class Meta:
@@ -500,7 +516,6 @@ class Update_Certification(forms.ModelForm):
         model=Certification
         fields=["image"]
         extra_kwargs={"image":{"required":True}}
-  
 
 class Refunds_Form(forms.ModelForm):
     class Meta:
@@ -508,4 +523,24 @@ class Refunds_Form(forms.ModelForm):
         exclude=["user","content_id","status"]
         # extra_kwargs={"image":{"required":True}}
 
+
+
+class BlogPaymentFom(forms.ModelForm):
+    payment_image=forms.ImageField(required=False)
+    class Meta:
+        model=Blog_Payment
+        fields=["payment_image","transaction_number"]
+
+
+class CoursePaymentFom(forms.ModelForm):
+    payment_image=forms.ImageField(required=False)
+    class Meta:
+        model=Payment
+        fields=["payment_image","transaction_number"]
+
+class ConsultantPaymentFom(forms.ModelForm):
+    payment_image=forms.ImageField(required=False)
+    class Meta:
+        model=Cosultant_Payment
+        fields=["payment_image","transaction_number"]
 

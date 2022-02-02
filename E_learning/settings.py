@@ -20,7 +20,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -28,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG =True   
 if DEBUG == False:
     TEMPLATE_DEBUG = DEBUG
     SESSION_COOKIE_HTTPONLY = True
@@ -55,7 +54,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'social_django',  
     #y apps
     "home", 
     "Quiz",
@@ -76,17 +74,15 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',    
-    # "allauth.socialaccount.providers.linkedin", 
     'allauth.socialaccount.providers.linkedin_oauth2',    
     'bootstrap_datepicker_plus',
     "tempus_dominus",
+
     'django_cleanup',
     'captcha',
     "admin_honeypot",
     "modeltranslation",
-   
-    # "storages",   
-    # "debug_toolbar",
+
 ] 
 
 MIDDLEWARE = [
@@ -122,7 +118,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 "home.processors.global_wishlist",
                 "home.processors.global_news",
-        
+
                 
 
             ],
@@ -136,12 +132,14 @@ WSGI_APPLICATION = 'E_learning.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
+
+DATABASES = {    
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
     }
-}
+}    
+  
 # import pymysql
 # pymysql.install_as_MySQLdb()
 # import MySQLdb
@@ -196,18 +194,18 @@ LANGUAGES = (            # supported languages
     ('en', _('English')),
     ("ar",_("Arabic")),
 )
-MODELTRANSLATION_LANGUAGES = ['en',"ar"]
 TIME_ZONE = 'Africa/Cairo'
-TEMPUS_DOMINUS_LOCALIZE = True
-STATIC_URL = '/static/'   
-STATIC_ROOT=BASE_DIR/"static"
-STATICFILES_DIRS=[
-  BASE_DIR/"static_in_env"
-]   
-  
-agartha_cdn=os.environ["agartha_cdn"]
-Storage_api=os.environ["Storage_Api"]
-storage_name=os.environ["storage_name"]
+TEMPUS_DOMINUS_LOCALIZE=True 
+
+MODELTRANSLATION_LANGUAGES = ['en',"ar"]
+
+STATIC_URL = os.environ["static_url"]
+
+STATIC_ROOT= os.environ["static_root"]
+# STATICFILES_DIRS=[
+#   "https://agarthaacademy.b-cdn.net"
+# ]  
+     
 # for translation
 LOCALE_PATHS=(   
     os.path.join(BASE_DIR,"locale/"),
@@ -234,7 +232,6 @@ EMAIL_HOST_PASSWORD =os.environ["EMAIL_HOST_PASSWORD"]
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL= True
 EMAIL_PORT = 465 
-
 #allauth   
 SITE_ID=1 
 LOGIN_REDIRECT_URL ="home:home"
@@ -263,10 +260,10 @@ ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE =True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET =True
 ACCOUNT_LOGOUT_REDIRECT_URL ="home:home"
 ACCOUNT_PASSWORD_INPUT_RENDER_VALUE =True
-ACCOUNT_PRESERVE_USERNAME_CASING =True 
+ACCOUNT_PRESERVE_USERNAME_CASING =True
 ACCOUNT_SESSION_REMEMBER =False
 SESSION_EXPIRE_AT_BROWSER_CLOSE=True
-SESSION_COOKIE_AGE = 60 * 20
+SESSION_COOKIE_AGE =  20 * 60
 SESSION_SAVE_EVERY_REQUEST = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE =True
 ACCOUNT_SIGNUP_REDIRECT_URL =LOGIN_REDIRECT_URL
@@ -274,14 +271,15 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # ACCOUNT_USERNAME_BLACKLIST (=[])
 ACCOUNT_UNIQUE_EMAIL =True
 ACCOUNT_USERNAME_MIN_LENGTH =3
-ACCOUNT_USERNAME_REQUIRED =True
+ACCOUNT_USERNAME_REQUIRED =True 
 SOCIALACCOUNT_AUTO_SIGNUP =True
 SOCIALACCOUNT_EMAIL_VERIFICATION =True
 SOCIALACCOUNT_EMAIL_REQUIRED =True
 SOCIALACCOUNT_QUERY_EMAIL =True
 SOCIALACCOUNT_STORE_TOKENS =True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL='https'
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {   
+    'google': {
         'APP': {
         'client_id':os.environ["google_client_id"],
         'secret':os.environ["google_secret"],
@@ -299,7 +297,16 @@ SOCIALACCOUNT_PROVIDERS = {
         'client_id':os.environ["facebook_client_id"],
         'secret':os.environ["facebook_secret"],
         'key': '',
-       
+        'SCOPE': ['email', 'public_profile'],
+           'FIELDS': [
+            'id',
+            'first_name',
+            'last_name',
+            'middle_name',
+          "email"
+        ],   
+         'VERIFIED_EMAIL': True,
+        'VERSION': 'v7.0',
     }
     }, 
     'linkedin_oauth2': {    
@@ -338,7 +345,7 @@ SOCIALACCOUNT_FORMS = {
 # python social auth
 AUTHENTICATION_BACKENDS = [
 
-    # ............
+#
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
 

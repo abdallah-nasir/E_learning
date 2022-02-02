@@ -7,7 +7,7 @@ from Blogs.models import Blog
 from Consultant.models import  Consultant
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
-import datetime,json,requests
+import datetime,json
 
 def check_user_validation(function):
     def wrap(request, *args, **kwargs):
@@ -101,7 +101,6 @@ def check_if_teacher_have_pending_video_upload(function):
     wrap.__name__ = function.__name__
     return wrap
 
-
 def check_blog_video(function):
     def wrap(request, *args, **kwargs):
         blog=get_object_or_404(Blog,slug=kwargs["slug"])
@@ -121,6 +120,23 @@ def check_blog_video(function):
     wrap.__name__ = function.__name__
     return wrap  
 
+
+
+def check_blog_video_progress(function):
+    def wrap(request, *args, **kwargs):
+        blog=get_object_or_404(Blog,slug=kwargs["slug"])
+        try:
+            blog_data=json.loads(blog.data)
+            length=blog_data["video_guid"]
+            return function(request, *args, **kwargs)
+        except:
+            blog.delete()
+            messages.error(request,"we found some error please re-create your blog")
+            return  redirect(reverse("dashboard:blogs"))
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap  
+
 def check_blog_audio(function):
     def wrap(request, *args, **kwargs):
         blog=get_object_or_404(Blog,slug=kwargs["slug"])
@@ -136,22 +152,6 @@ def check_blog_audio(function):
             return redirect(reverse("dashboard:blogs"))
         else:
             return function(request, *args, **kwargs)
-    wrap.__doc__ = function.__doc__
-    wrap.__name__ = function.__name__
-    return wrap  
-
-
-def check_blog_video_progress(function):
-    def wrap(request, *args, **kwargs):
-        blog=get_object_or_404(Blog,slug=kwargs["slug"])
-        try:
-            blog_data=json.loads(blog.data)
-            length=blog_data["video_guid"]
-            return function(request, *args, **kwargs)
-        except:
-            blog.delete()
-            messages.error(request,"we found some error please re-create your blog")
-            return  redirect(reverse("dashboard:blogs"))
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap  

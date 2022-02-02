@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib import messages
 from .models import Course,Payment
+from Dashboard.models import Rejects
 from django.shortcuts import get_object_or_404
 def check_if_user_in_course(function):
     def wrap(request, *args, **kwargs):

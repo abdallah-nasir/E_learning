@@ -14,10 +14,11 @@ from django.db.models import Q
 from itertools import chain
 from django.conf import settings
 from accounts.models import User
-from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment,UserDataForm
+from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment
 from Blogs.models import Blog_Payment,Prices
 from django.core.mail import send_mail,EmailMessage,get_connection
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from datetime import date
 import datetime
 from django.forms import ValidationError
@@ -80,11 +81,10 @@ def home(request):
     if data ==None:
         data=get_home_data()
         cache.set("data",data,60*15)
-        print("here")
     else:
         data=cache.get("data")
-        print("there")
-        print(data)
+    # data=get_home_data()
+    # cache.set("data",data,60*15)
     context={"data":data}
     return render(request,"home.html",context)
 
@@ -154,7 +154,6 @@ def videos(request,course,slug):
                     return redirect(reverse("home:video",kwargs={"course":course,"slug":video.slug}))
                 rate=request.POST.get("rate")
                 review=request.POST.get("review")
-                print(rate,review)
                 if rate and review:
                     if 5 >= int(rate) >= 1:
                         my_review=Reviews.objects.create(user=request.user,review=review,
@@ -206,7 +205,6 @@ def teacher_single(request,slug):
             if not Teacher_review.objects.filter(user=request.user,teacher=teacher).exists():
                     rate=request.POST.get("rate")
                     review=request.POST.get("review")
-                    print(rate,review)
                     if rate and review:
                         if 5 >= int(rate) >= 1:
                             my_review=Teacher_review.objects.create(user=request.user,review=review,
@@ -228,7 +226,6 @@ def teacher_single(request,slug):
 
 def about(request):
     teachers=cache.get("about_teachers")
-    print(teachers)
     if teachers == None:
         teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:8]
         cache.set("about_teachers",teachers,60*15)
@@ -302,7 +299,6 @@ def wishlist(request,slug):
 
 def wishlist_remove(request):
     if request.user.is_authenticated:
-        print("ajax")
         id=request.GET["id"]
         my_course=get_object_or_404(Course,id=id)
         try:
@@ -315,7 +311,6 @@ def wishlist_remove(request):
         except: 
             return FailedJsonResponse({"message":"invalid id"})
     else:
-        print("here")
         return FailedJsonResponse({"message":"error message"})
 
 # @login_required(login_url="accounts:login")
@@ -325,12 +320,10 @@ def wishlist_add(request):
         my_course=get_object_or_404(Course,id=id)
         try:
             wishlist,created=Wishlist.objects.get_or_create(user=request.user)
-            print("ajax")
             if not my_course in wishlist.course.all():
                 wishlist.course.add(my_course)
                 my_course.likes +=1
                 my_course.save()
-                print("added")
             return JsonResponse({"color":"yellow","id":my_course.id,"shop":wishlist.course.count(),"count":my_course.likes})
             # else:
             #     wishlist.course.remove(my_course)
@@ -360,36 +353,32 @@ def checkout(request,course):
     if request.method == "POST":
         methods=["Bank Transaction","Western Union","Vodafone Cash"]
         if form.is_valid():
-            try:
-                method= request.POST["payment"]
-            
-                if method in methods:
-                    image=request.FILES["payment_image"]
-                    number=form.cleaned_data["number"]
-                    image_url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{my_course.slug}/{image}"
-                    headers = {
-                        "AccessKey": Storage_Api,
-                        "Content-Type": "application/octet-stream",
-                        }
-                    response = requests.put(image_url,data=image,headers=headers)
-                    data=response.json()
-                    print(data)
+            try:            
+                image=request.FILES["payment_image"]
+                number=form.cleaned_data["number"]
+                image_url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{my_course.slug}/{image}"
+                headers = {
+                    "AccessKey": Storage_Api,
+                    "Content-Type": "application/octet-stream",
+                    }
+                response = requests.put(image_url,data=image,headers=headers)
+                data=response.json()
+                print(data)
 
-                    payment=Payment.objects.create(user=request.user,method=method,transaction_number=number,course=my_course,       
-                        status="pending")
-                    try:
-                        if data["HttpCode"] == 201:
-                            payment.payment_image = f"https://{agartha_cdn}/course-payment/{my_course.slug}/{image}"
-                            payment.save()
-                    except:
-                        pass
-                    msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[request.user.email])
-                    msg.content_subtype = "html"  # Main content is now text/html
-                    msg.send()
-                    messages.success(request,"We Have sent an Email, Please check your Inbox")
-                    return redirect(reverse("home:course",kwargs={"slug":my_course.slug}))
-                else:
-                    return redirect(reverse("home:home"))
+                payment=Payment.objects.create(user=request.user,method="Western Union",transaction_number=number,course=my_course,       
+                    status="pending")
+                try:
+                    if data["HttpCode"] == 201:
+                        payment.payment_image = f"https://{agartha_cdn}/course-payment/{my_course.slug}/{image}"
+                        payment.save()
+                except:
+                    pass
+                msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[request.user.email])
+                msg.content_subtype = "html"  # Main content is now text/html
+                msg.send()
+                messages.success(request,"We Have sent an Email, Please check your Inbox")
+                return redirect(reverse("home:course",kwargs={"slug":my_course.slug}))
+            
             except:
                 return redirect(reverse("home:home"))
 
@@ -599,7 +588,6 @@ def paymob_payment(request,course):
         return JsonResponse({"frame":PAYMOB_FRAME,"token":payment_token})
 
 
-
 @csrf_exempt    
 def check_paymob_course_payment(request):
     try:
@@ -619,20 +607,14 @@ def check_paymob_course_payment(request):
         name=data['order']["items"][0]["name"]
         user=User.objects.get(username=username)
         if descrption == "course":
-            print("course")
             course=Course.objects.get(slug=name)
             Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
             next=("accounts:course_payment")
-            messages.success(request,"your request is being review by admin")
         elif descrption =="consultant": 
             teacher=Teacher_Time.objects.get(id=name)
             transaction_number=request.GET["id"]
-            user_form=UserDataForm.objects.get(user=user,teacher=teacher,accomplished=False)
-            user_form.accomplished=True
-            user_form.save()
-            Cosultant_Payment.objects.create(method="Paymob",user_data=user_form.data,transaction_number=transaction_number,teacher=teacher,user=user,status="pending")
+            Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,teacher=teacher,user=user,status="pending")
             next=("accounts:consultant_payment")
-            messages.success(request,"your request is being review by admin")
         elif descrption == "blogs":
             prices=Prices.objects.get(id=name)
             now= date.today()
@@ -643,7 +625,7 @@ def check_paymob_course_payment(request):
                 payment.expired_at= now + datetime.timedelta(days=365)
             payment.save()
             next=("accounts:blog_payment")
-            messages.success(request,"your request is being review by admin")
+        messages.success(request,"your request is being review by admin")
     except:
         next=("home:home")
         pass
@@ -660,14 +642,15 @@ def failed(request):
 
 def faqs(request):
     return render(request,"faqs.html")
-
+def test(request):
+   return render(request,"google.html") 
+    
 def terms(request):
     terms=Terms.objects.last()
     return render(request,"terms.html",{"terms":terms})
 def privacy(request):
     privacy=Privacy.objects.last()
     return render(request,"privacy.html",{"privacy":privacy})
-
 ################  errors
 
 def my_custom_page_not_found_view(request, exception, template_name="404.html"):

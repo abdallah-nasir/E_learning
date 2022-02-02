@@ -28,9 +28,9 @@ def check_user_is_has_consul_checkout(function):
         try:
             id=request.GET['consultant']
             teacher=get_object_or_404(Teacher_Time,id=id,available=True)
-            payment = Cosultant_Payment.objects.filter(user=request.user,teacher=teacher).exclude(status="approved")
+            payment = Cosultant_Payment.objects.filter(user=request.user,teacher=teacher).exclude(Q(status="approved") | Q(status="refund"))
             print(payment)
-            consultant=Consultant.objects.filter(user=request.user,teacher=teacher).exclude(status="completed")
+            consultant=Consultant.objects.filter(user=request.user,teacher=teacher).exclude(Q(status="completed") |Q(status="refund"))
             if payment.exists() or consultant.exists():
                 messages.error(request,f"You Already Have Pending Consultant")
                 return redirect(reverse("accounts:consultant_payment"))
@@ -63,7 +63,7 @@ def validate_post_checkout(function):
     def wrap(request, *args, **kwargs):
         try:
             id=request.GET["consultant"]
-            if Cosultant_Payment.objects.filter(user=request.user,teacher_id=id).exclude(status="approved").exists():
+            if Cosultant_Payment.objects.filter(user=request.user,teacher_id=id).exclude(Q(status="approved") | Q(status="refund")).exists():
                 messages.error(request,"you already have a pending consultant")
                 return redirect(reverse("accounts:consultant_payment"))
             date=request.GET["date"]

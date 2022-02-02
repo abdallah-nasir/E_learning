@@ -1,5 +1,5 @@
 /*
-  Theme Name: Agartha Academy
+  Theme Name: Edubin - LMS Education HTML Template
   Author: ZeTheme
   Author URL: https://themeforest.net/user/pixelcurve
   Support: zetheme24@gmail.com
@@ -60,7 +60,7 @@
 }
 
 img {
-    max-width: 100%;
+	max-width: 100%;
 }
 
 a:focus,
@@ -1080,7 +1080,6 @@ p {
 
 .about-cont p{
     padding-top: 30px;
-    text-align:right;
 }
 
 .about-event{
@@ -3785,64 +3784,10 @@ p.form-message.error {
 	padding-bottom: 15px;
 }
 
-.logoImg {
-   
-    margin: -11px;
-    margin-top: -49px;
-    margin-bottom: -31px;
-}
 
-#Co_TermsAndCondition {
-   margin-top: -69px; margin-bottom: -69px;
-}
 
-.bi-youtube {
-    font-size: 41px;
-    color: #FF0000;
-    margin-top: -30px;
-}
-.bi-facebook {
-    font-size: 41px;
-    color: #0778E9;
-    margin-top: -30px;
-}
-.bi-twitter {
-    font-size: 42px;
-    color: #1D9BF0;
-    margin-top: -30px;
-}
-.bi-instagram {
-    font-size: 43px;
-    color: darkred;
-    margin-top: -30px;
-}
-.bi-linkedin {
-    font-size: 37px;
-    color: Highlight;
-    margin-top: -30px;
-}
-.bi-pinterest {
-    font-size: 41px;
-    color: crimson;
-    margin-top: -15px;
-    margin-left: -2px;
-}
-.bi-telegram {
-    font-size: 37px;
-    color: #29A1DD;
-    margin-top: -30px;
-    margin-left: 3px;
-}
 
-#insta-img {
 
-    margin-top: -26px;
-}
-#tiktok-img {
 
-    margin-top: -8px;
-}
-#whatsapp-img {
-    margin-top: -8px;
-    width: 117%;
-}
+
+

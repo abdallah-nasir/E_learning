@@ -4,7 +4,7 @@
 {% get_available_languages as LANGUAGES %}
 {% get_language_info_list for LANGUAGES as languages %}
 <!doctype html>
-<html {% if LANGUAGE_CODE == "ar" %}lang="ar"dir="rtl"{% else %}lang="en"{% endif %}>
+<html {% if LANGUAGE_CODE == "ar" %}lang="ar"{% else %}lang="en"{% endif %}>
 
 <head>
    
@@ -53,57 +53,62 @@
 />
     <!--====== Responsive css ======-->
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'css/bootstrab-rtl.css' %}"> -->
+
     <style type="text/css">
-p{
-    margin-bottom:0 !important;
-}
-.row > *{
-    
-}
-        .right-icon ul li {
-            display: table-cell !important;
+        p{
+            margin-bottom:0 !important;
         }
-
-        .nice-select {
-            display: none !important;
+        .row > *{
+            
         }
-
-        .fa-heart {
-            cursor: pointer;
+                .right-icon ul li {
+                    display: table-cell !important;
+                }
+        
+                .nice-select {
+                    display: none !important;
+                }
+        
+                .fa-heart {
+                    cursor: pointer;
+                }
+        
+        
+                #news-bar:hover {
+                    transition: 0.37s;
+                }
+        .fa-search:hover{
+            color:#ffc600;
         }
-
-
-        #news-bar:hover {
-            transition: 0.37s;
+        .fa-globe:hover{
+            color:#ffc600;
         }
-.fa-search:hover{
-    color:#ffc600;
-}
-.fa-globe:hover{
-    color:#ffc600;
-}
-        #news-bar a {
-            padding: 8px 2px;
-            font-size: 16px;
-            color: #fff;
-            text-decoration: none;
-        }
-
-            #news-bar a:hover {
-                transition: 0.37s;
-                color: #ffc600;
+                #news-bar a {
+                    padding: 8px 2px;
+                    font-size: 16px;
+                    color: #fff;
+                    text-decoration: none;
+                }
+        
+                    #news-bar a:hover {
+                        transition: 0.37s;
+                        color: #ffc600;
+                    }
+        
+                #info-img {
+                    margin-left: 30px;
+                }
+                .navbar{
+                    box-shadow: none !important;
+                }
+        .badge-notification{
+            background-color: #ffc600 !important;
             }
-
-        #info-img {
-            margin-left: 30px;
-        }
-        .navbar{
-            box-shadow: none !important;
-        }
-.badge-notification{
-    background-color: #ffc600 !important;
+.bg-light {
+    --mdb-bg-opacity: 0 !important;
     }
-    </style>
+            </style>
 
 
 </head>
@@ -148,9 +153,9 @@ p{
                     <div class="col-lg-6">
                         <div class="slideUp" id="news-bar">
                             <marquee direction="left" scrollamount="3" behavior="scroll" onmouseover="this.stop()" onmouseout="this.start()">
-    
+                                    {% for i in news %}
                                 <a href="{{i.link}}" class="hvr-pop">{{i.name}}</a><a>&nbsp;⏳&nbsp;</a>
-    
+                                    {% endfor %}
                             </marquee>
                         </div>
                     </div>
@@ -172,7 +177,7 @@ p{
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4 col-md-4">
-                        <div class="logo d-none d-md-block">
+                        <div class="logo">
                             <a href="{% url 'home:home' %}">
                                 <img src="{% static 'images/logo.png' %}" alt="Logo">
                             </a>
@@ -181,15 +186,12 @@ p{
                        
                     </div>
                     <div class="col-lg-8 col-md-8">
-                        <div class="support-button float-right ">
+                        <div class="support-button float-right d-none d-md-block ">
                          
                             <div class="button float-left">
-                                {% if request.user.is_authenticated %}
-                                <a href="{% url 'account_logout' %}" class="main-btn">{% trans 'Logout' %}</a>
-                                {% else %}
-                                <a href="{% url 'accounts:login' %}" class="main-btn">{% trans 'Login' %}</a>
-
-                                {% endif %}
+                                
+                                <a href="{% url 'blogs:pricing' %}" class="main-btn">{% trans 'Join Us' %}</a>
+                               
                             </div>
                         </div>
                     </div>
@@ -217,11 +219,7 @@ p{
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="active" href="{% url 'home:home' %}">{% trans 'Home' %}</a>
-                 <ul class="sub-menu">
-                    <li><a class="active" href="{% url 'dashboard:home' %}">{% trans 'Dashboard' %}</a></li>
-                    <!-- <li><a href="index-3.html">Home 02</a></li>
-                    <li><a href="index-4.html">Home 03</a></li> -->
-                </ul>
+                
             </li>
          
             <li class="nav-item">
@@ -242,7 +240,7 @@ p{
             </li>                            
            
              <li class="nav-item">
-                <a href="{% url 'consultant:home' %}">{% trans 'Consultant' %}</a>
+                <a href="{% url 'consultant:home' %}">{% trans 'Consultations' %}</a>
                
             </li> 
           
@@ -382,7 +380,6 @@ p{
             
             </ul>
           </div>
-         
 
           {% endif %}
         </div>
@@ -500,7 +497,8 @@ p{
                                 <h6>Sitemap</h6>
                             </div>
                             <ul>
-                                <li><a href="{% url 'home:home' %}"><i class="fa fa-angle-right"></i>Home</a></li>
+                                <li><a href="{% url 'home:home' %}">  <i class="fa fa-angle-right"></i>Home</a>
+                                </li>
                                 <li><a href="{% url 'home:about' %}"><i class="fa fa-angle-right"></i>About us</a></li>
                                 <li><a href="{% url 'home:courses' %}"><i class="fa fa-angle-right"></i>Courses</a></li>
                                 <li><a href="{% url 'blogs:blogs' %}"><i class="fa fa-angle-right"></i>News</a></li>
@@ -612,6 +610,8 @@ p{
     <script src="{% static 'js/main.js' %}"></script>
     
     <!--====== Map js ======-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDC3Ip9iVC0nIxC6V14CKLQ1HZNF_65qEQ"></script>
+    <script src="{% static 'js/map-script.js' %}"></script>
 <!-- MDB -->
 <script
   type="text/javascript"

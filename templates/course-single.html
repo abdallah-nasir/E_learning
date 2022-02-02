@@ -363,12 +363,12 @@ width:100% !important;
                                 <div class="price-button pt-10">
                                     
                                     {% if course.discount %}
-                                    <span>{% trans 'Price' %} : <b>${{course.discount|floatformat}}</b></span>
+                                    <span>Price : <b>${{course.discount|floatformat}}</b></span>
                                    
                                     <span style="margin-top: 10px;  text-decoration: line-through; ">{% trans 'Price' %} : <b>${{course.price|floatformat}}</b></span>
 
                                     {% else %}
-                                    <span>{% trans 'Price'%} : <b>${{course.price|floatformat}}</b></span>
+                                    <span>Price : <b>${{course.price|floatformat}}</b></span>
                                     {% endif %}
                                    
                                     {% if request.user in course.students.all %}

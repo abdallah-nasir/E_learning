@@ -1,11 +1,12 @@
-from django.shortcuts import render,redirect,reverse
+from django.shortcuts import render,redirect
 import os
 from django.contrib.auth import logout 
 from django.contrib import messages
+from django.urls import reverse
 from .forms import *
 from .models import TeacherForms
 from .models import User
-from .decorators import check_user_is_student
+from .decorators import *
 from home.models import *
 from Blogs.models import *
 from Consultant.models import Consultant, Cosultant_Payment
@@ -17,6 +18,7 @@ import json,requests
 from .utils import *
 from .forms import MyCustomLoginForm,MyCustomSignupForm
 from allauth.account.views import SignupView,LoginView
+from Dashboard import models as dahboard_models
 # from allauth.account.forms import LoginForm,SignupForm
 Storage_Api=os.environ["Storage_Api"]
 storage_name=os.environ["storage_name"]
@@ -113,6 +115,7 @@ def check_teacher_form(request):
     return render(request,"check_teacher.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_teacher
 def account_info(request):
     form=ChangeUserDataForm(request.POST or None,request.FILES or None,instance=request.user)
     form.initial["account_image"]=None
@@ -152,6 +155,7 @@ def account_info(request):
     return render(request,"account_user_info.html",context)
 
 @login_required(login_url="accounts:login")
+@redirect_teacher_blog_payment
 def blog_payment(request):
     payments=Blog_Payment.objects.filter(user=request.user).order_by("-id")
     paginator = Paginator(payments, 10) # Show 25 contacts per page.
@@ -161,6 +165,7 @@ def blog_payment(request):
     return render(request,"account_blog_payment.html",context)
 
 @login_required(login_url="accounts:login")
+@redirect_teacher_course_payment
 def course_payment(request):
     courses=Payment.objects.filter(user=request.user).order_by("-id")
     paginator = Paginator(courses, 10) # Show 25 contacts per page.
@@ -171,6 +176,7 @@ def course_payment(request):
 
 
 @login_required(login_url="accounts:login")
+@redirect_teacher_consultant_payment
 def consultant_payment(request):
     consultant=Cosultant_Payment.objects.filter(user=request.user).order_by("-id")
     paginator = Paginator(consultant, 10) # Show 25 contacts per page.
@@ -189,6 +195,7 @@ def consultant_payment(request):
 #     return render(request,"account_blogs.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_teacher
 def courses(request):
     courses=Course.objects.filter(students=request.user).order_by("-id")
     paginator = Paginator(courses, 10) # Show 25 contacts per page.
@@ -198,6 +205,7 @@ def courses(request):
     return render(request,"account_course.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_teacher
 def events(request):
     events=Events.objects.filter(students=request.user).order_by("-id")
     paginator = Paginator(events, 10) # Show 25 contacts per page.
@@ -207,6 +215,7 @@ def events(request):
     return render(request,"account_events.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_teacher
 def consultants(request):
     consult=Consultant.objects.filter(Q(user=request.user,status="approved") | Q(user=request.user,status="completed")).order_by("-id")
     paginator = Paginator(consult, 10) # Show 25 contacts per page.
@@ -216,11 +225,12 @@ def consultants(request):
     return render(request,"account_consult.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_teacher
 def edit_blog_payment(request,id):
     payment=get_object_or_404(Blog_Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method == "Paypal":
-            messages.error(request,"You Can't Edit Paypal Payment")
+        if payment.method != "Western Union":
+            messages.error(request,"You Can't Edit This Payment Method")
             return redirect(reverse("accounts:blog_payment"))
         form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
         form.initial["payment_image"]=None
@@ -228,20 +238,21 @@ def edit_blog_payment(request,id):
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.status="pending"
-                image=request.FILES["payment_image"]
-                url=f"https://storage.bunnycdn.com/{storage_name}/blog-payment/{instance.user.slug}/{image}"
-                headers = {
-                    "Content-Type": "application/octet-stream",
-                    "AccessKey": Storage_Api
-                }
-                response = requests.put(url,data=image,headers=headers)
-                data=response.json()
-                try: 
-                    if data["HttpCode"] == 201:
-                        instance.payment_image = f"https://{agartha_cdn}/blog-payment/{instance.user.slug}/{image}"
-                        instance.save()
-                except:
-                    pass                 
+                image=request.FILES.get("payment_image")
+                if image:
+                    url=f"https://storage.bunnycdn.com/{storage_name}/blog-payment/{instance.user.slug}/{image}"
+                    headers = {
+                        "Content-Type": "application/octet-stream",
+                        "AccessKey": Storage_Api
+                    }
+                    response = requests.put(url,data=image,headers=headers)
+                    data=response.json()
+                    try: 
+                        if data["HttpCode"] == 201:
+                            instance.payment_image = f"https://{agartha_cdn}/blog-payment/{instance.user.slug}/{image}"
+                            instance.save()
+                    except:
+                        pass                 
                 instance.save()
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:blog_payment"))
@@ -252,11 +263,12 @@ def edit_blog_payment(request,id):
     return render(request,"edit_blog_payment.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_teacher
 def edit_course_payment(request,id):
     payment=get_object_or_404(Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method == "Paypal":
-            messages.error(request,"You Can't Edit Paypal Payment")
+        if payment.method != "Western Union":
+            messages.error(request,"You Can't Edit This Payment Method")
             return redirect(reverse("accounts:course_payment"))
         form=CoursePaymentFom(request.POST or None,request.FILES or None,instance=payment)
         form.initial["payment_image"]=None
@@ -264,20 +276,21 @@ def edit_course_payment(request,id):
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.status="pending"
-                image=request.FILES["payment_image"]
-                url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{instance.course.slug}/{image}"
-                headers = {
-                    "Content-Type": "application/octet-stream",
-                    "AccessKey": Storage_Api
-                }
-                response = requests.put(url,data=image,headers=headers)
-                data=response.json()
-                try: 
-                    if data["HttpCode"] == 201:
-                        instance.payment_image = f"https://{agartha_cdn}/course-payment/{instance.course.slug}/{image}"
-                        instance.save()
-                except:
-                    pass                 
+                image=request.FILES.get("payment_image")
+                if image:
+                    url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{instance.course.slug}/{image}"
+                    headers = {
+                        "Content-Type": "application/octet-stream",
+                        "AccessKey": Storage_Api
+                    }
+                    response = requests.put(url,data=image,headers=headers)
+                    data=response.json()
+                    try: 
+                        if data["HttpCode"] == 201:
+                            instance.payment_image = f"https://{agartha_cdn}/course-payment/{instance.course.slug}/{image}"
+                            instance.save()
+                    except:
+                        pass                 
                 instance.save()
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:course_payment"))
@@ -288,11 +301,12 @@ def edit_course_payment(request,id):
     return render(request,"edit_course_payment.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_teacher
 def edit_consultant_payment(request,id):
     payment=get_object_or_404(Cosultant_Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method == "Paypal":
-            messages.error(request,"You Can't Edit Paypal Payment")
+        if payment.method != "Western Union":
+            messages.error(request,"You Can't Edit This Payment Method")
             return redirect(reverse("accounts:consultant_payment"))
         form=ConsultantPaymentFom(request.POST or None,request.FILES or None,instance=payment)
         form.initial["payment_image"]=None
@@ -300,20 +314,21 @@ def edit_consultant_payment(request,id):
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.status="pending"
-                image=request.FILES["payment_image"]
-                url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
-                headers = {
-                    "Content-Type": "application/octet-stream",
-                    "AccessKey": Storage_Api
-                }
-                response = requests.put(url,data=image,headers=headers)
-                data=response.json()
-                try: 
-                    if data["HttpCode"] == 201:
-                        instance.payment_image = f"https://{agartha_cdn}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
-                        instance.save()
-                except:
-                    pass                 
+                image=request.FILES.get("payment_image")
+                if image:
+                    url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
+                    headers = {
+                        "Content-Type": "application/octet-stream",
+                        "AccessKey": Storage_Api
+                    }
+                    response = requests.put(url,data=image,headers=headers)
+                    data=response.json()
+                    try: 
+                        if data["HttpCode"] == 201:
+                            instance.payment_image = f"https://{agartha_cdn}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
+                            instance.save()
+                    except:
+                        pass                 
                 instance.save()
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:consultant_payment"))
@@ -323,26 +338,35 @@ def edit_consultant_payment(request,id):
     context={"form":form}
     return render(request,"edit_consultant_payment.html",context)
 
- 
-def code_reset(request):
-    form=CodeForm(request.POST or None)
-    if request.method =="POST":
-        if form.is_valid():
-            email=form.cleaned_data.get("email")
-            user=User.objects.filter(email=email)
-            if user:
-                this_user=user.last()
-                if this_user.is_active == True:
-                    messages.error(request,"your account is active")
-                else:
-                    this_user.code=random_string_generator()
-                    this_user.save()
-                    msg = EmailMessage(subject="Account Created", body=f"code:{this_user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[this_user.email])
-                    msg.content_subtype = "html"  # Main content is now text/html
-                    msg.send()
-                    messages.success(request,"code has been sent to your email")
-            else:
-                messages.error(request,"invalid user")
-        form=CodeForm()
-    context={"form":form}
-    return render(request,"account_code.html",context)
+# @login_required(login_url="accounts:login")
+# def add_refund(request):
+#     form=RefundForm(request.POST or None)
+#     if request.method == "POST":
+#         if form.is_valid():
+#             type=form.cleaned_data.get("consultant")
+#             if type == "Course Payment":
+#                 d
+
+# def code_reset(request):
+#     form=CodeForm(request.POST or None)
+#     if request.method =="POST":
+#         if form.is_valid():
+#             email=form.cleaned_data.get("email")
+#             user=User.objects.filter(email=email)
+#             if user:
+#                 this_user=user.last()
+#                 if this_user.is_active == True:
+#                     messages.error(request,"your account is active")
+#                 else:
+#                     this_user.code=random_string_generator()
+#                     this_user.save()
+#                     msg = EmailMessage(subject="Account Created", body=f"code:{this_user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[this_user.email])
+#                     msg.content_subtype = "html"  # Main content is now text/html
+#                     msg.send()
+#                     messages.success(request,"code has been sent to your email")
+#             else:
+#                 messages.error(request,"invalid user")
+#         form=CodeForm()
+#     context={"form":form}
+#     return render(request,"account_code.html",context)
+

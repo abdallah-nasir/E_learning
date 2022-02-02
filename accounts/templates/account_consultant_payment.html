@@ -50,7 +50,7 @@
                                         <td>Null</td>
                                             {% endif %}
                                         <td>{{i.status}}</td>
-                                        {% if i.status == "declined" %}
+                                        {% if i.status == "declined" and i.method == "Western Union" %}
                                         <td><a href="{% url 'accounts:edit_consultant_payment' i.id %}" class="btn btn-info">{% trans 'Edit' %}</a></td>
                                             {% else %}
                                         <td></td>

@@ -17,7 +17,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            <!-- <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> -->
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -29,7 +29,7 @@
                                             <th>Transaction</th>
                                             <th>Course</th>
                                             <th>Status</th>
-
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                   
@@ -41,7 +41,11 @@
                                         <td>{{i.transaction_number}}</td>
                                         <td>{{i.course.name}}</td>
                                         <td>{{i.status}}</td>
-
+                                        {% if i.status == "declined" and i.method == "Western Union" %}
+                                        <td><a href="{% url 'dashboard:edit_consultant_payment' i.id %}" class="btn btn-info">Edit</a></td>
+                                        {% else %}
+                                        <td></td>
+                                        {% endif %}
                                     </tr>
                                     {% endfor %}
                                    </tbody>

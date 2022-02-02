@@ -12,8 +12,6 @@ from .models import TeacherForms,User
 from django.contrib import messages
 from django.conf import settings
 import random,string,requests
-
-
 from crum import get_current_request   
 from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
@@ -73,7 +71,6 @@ class MyCustomSignupForm(SignupForm):
             user.account_image=f"https://{agartha_cdn}/default_image/male.jpg"
         elif gender == "female":
             user.account_image=f"https://{agartha_cdn}/default_image/female.jpg"
-
         user.first_name=user.username
         # if self.cleaned_data["account_type"] == "teacher":
         #     user.about_me=self.cleaned_data["about_me"]
@@ -97,6 +94,7 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
     # image=forms.ImageField(required=True)
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
     terms_privacy=forms.BooleanField(required=True)
+
     def clean(self):
         image=self.cleaned_data.get("image")
         print(image)
@@ -145,9 +143,11 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
 class Teacher_Form(forms.ModelForm):
     title=forms.CharField(max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your Job Title"}))
     about_me=forms.CharField(widget=forms.Textarea(attrs={"placeholder":"Tell us more about you"}))
+    # password=forms.CharField(widget=forms.PasswordInput(attrs={"placeholder":"Your Password"}))
     facebook=forms.CharField(required=False,max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your facebook link"}))
     linkedin=forms.CharField(required=False,max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your linkedin link"}))
     twitter=forms.CharField(required=False,max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your twitter link"}))
+    # google_plus=forms.CharField(max_length=100,widget=forms.TextInput(attrs={"placeholder":"Your google plus link"}))
     class Meta:
         model=TeacherForms
         fields=["title","about_me","facebook","linkedin","twitter"]
@@ -161,6 +161,7 @@ class Teacher_Form(forms.ModelForm):
         else:
             raise forms.ValidationError("invalid user")
         return username
+
 
 
     def clean_facebook(self): 
@@ -200,9 +201,9 @@ class ChangeUserDataForm(forms.ModelForm):
 
 class ChangeTeacherDataForm(forms.ModelForm):
     account_image=forms.ImageField(required=False)
-    facebook=forms.CharField(max_length=120)
-    twitter=forms.CharField(max_length=120)
-    linkedin=forms.CharField(max_length=120)
+    facebook=forms.CharField(required=False,max_length=120,widget=forms.TextInput(attrs={"placeholder":"Your facebook link"}))
+    linkedin=forms.CharField(required=False,max_length=120,widget=forms.TextInput(attrs={"placeholder":"Your linkedin link"}))
+    twitter=forms.CharField(required=False,max_length=120,widget=forms.TextInput(attrs={"placeholder":"Your twitter link"}))
     about_me=forms.CharField(widget=forms.Textarea())
     title=forms.CharField(max_length=120)
     class Meta:

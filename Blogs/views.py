@@ -61,7 +61,6 @@ def single_blog(request,slug):
 def blog_search(request):
     qs=request.GET.get("search")
     blog=Blog.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(category__name__icontains=qs,status="approved") |Q(tags__name__icontains=qs,status="approved")).distinct() 
-    print(blog)
     if len(blog) == 0:
         qs=None
         page_obj=[]
@@ -199,7 +198,6 @@ def paypal_create(request,id):
     
             response = client.execute(create_order)
             data = response.result.__dict__['_dict']      
-            # print(data)
             return JsonResponse(data)
         except:
             data={}
@@ -215,7 +213,6 @@ def paypal_capture(request,order_id,price_id):
         client = PayPalHttpClient(environment)
         response = client.execute(capture_order)
         data = response.result.__dict__['_dict']
-        print(data)
 
         price=get_object_or_404(Prices,id=price_id)
         try:
@@ -267,7 +264,6 @@ def paymob_payment(request,id):
         data_1 = {"api_key": PAYMOB_API_KEY}
         r_1 = requests.post(url_1, json=data_1)
         token = r_1.json().get("token")
-        print(token)
         data_2 = {
             "auth_token": token,
             "delivery_needed": "false",
@@ -314,7 +310,6 @@ def paymob_payment(request,id):
         r_2 = requests.post(url_2, json=data_2)
         my_id = r_2.json().get("id")
         if my_id == None:
-            print("none")
             r_2 = requests.get(url_2, json=data_2)
             my_id = r_2.json().get("results")[0]["id"]
 
@@ -345,6 +340,5 @@ def paymob_payment(request,id):
         url_3 = "https://accept.paymob.com/api/acceptance/payment_keys"
         r_3 = requests.post(url_3, json=data_3)
         payment_token = (r_3.json().get("token"))
-        print(payment_token)
         return JsonResponse({"frame":PAYMOB_FRAME,"token":payment_token})
 

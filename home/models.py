@@ -5,21 +5,22 @@ from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail,send_mass_mail
 from Blogs import models as blog_model
+from django.urls import reverse
 import string, random
 from django.utils import translation
-import Quiz.models   
 from django.contrib import messages
+from crum import get_current_request   
+import Quiz.models   
+from django.core.validators import MinValueValidator
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from embed_video.fields import EmbedVideoField
-from crum import get_current_request   
-from django.core.validators import MinValueValidator
 from PIL import Image
 import os  
-from django.urls import reverse
 import time
 import datetime
 import json
+from Dashboard.models import Rejects
 from django.contrib.auth import get_user_model
 User=get_user_model()
 Quiz= Quiz.models.Quiz()
@@ -32,7 +33,6 @@ def slugify(str):
     str = str.replace(")", "")
     str = str.replace("؟", "")
     return str
-
 def get_home_data():
     events=Events.objects.filter(status="approved").order_by("-date")[:5]
     courses=Course.objects.filter(status="approved").order_by("-id")[0:5]
@@ -46,10 +46,11 @@ class Category(models.Model):
     name=models.CharField(max_length=100)
     slug=models.SlugField(unique=True,blank=True,null=True)
     image=models.ImageField(null=True)
+
     def __str__(self):
         return self.name  
     def save(self, *args, **kwargs):
-        if self.slug == None:
+        if not self.slug:
             self.slug = slugify(self.name)
             if Category.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
@@ -69,7 +70,7 @@ class Branch(models.Model):
     def __str__(self):
         return self.name
     def save(self, *args, **kwargs):
-        if self.slug == None:
+        if not self.slug:
             self.slug = slugify(self.name)
             if Branch.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
@@ -78,7 +79,7 @@ class Branch(models.Model):
                 self.slug = slugify(self.name)          
         super(Branch, self).save()
         
-
+ 
 CHOICES=(   
     ("on process","on process"),
     ("complete","complete"),
@@ -100,7 +101,7 @@ class Videos(models.Model):
     def __str__(self):
         return self.name
     def save(self, *args, **kwargs):
-        if self.slug == None:
+        if not self.slug:
             self.slug = slugify(self.name)
             if Videos.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
@@ -146,7 +147,15 @@ class Reviews(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.user.username    
-
+class CheckRejectCourse(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="course")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        course=Course.objects.filter(status="approved").exclude(id__in=list)
+        return course
 COURSE_STATUS=(
     ("pending","pending"),
     ("approved","approved"),
@@ -174,7 +183,7 @@ class Course(models.Model):
     def __str__(self):  
         return self.name
     def save(self, *args, **kwargs):
-        if self.slug == None:
+        if not self.slug:
             self.slug = slugify(self.name)
             if Course.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
@@ -257,6 +266,15 @@ def upload_events_images(instance,filename):
     place=f"events/{instance.user.username}/{instance.name}/{filename}"
     return place
 
+class CheckRejectEvent(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="events")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        events=Events.objects.filter(approved=False).exclude(id__in=list)
+        return events
 
 EVENT_STATUS=(
     ("approved","approved"),
@@ -318,7 +336,9 @@ class Events(models.Model):
         details=data["details"]
         context={"zoom":zoom,"details":details}
         return context
-
+    def get_similar_event(self):
+        rejects=Rejects.objects.filter(user=self.user,type="events",content_id=self.id).delete()
+        return rejects
 
 
 class Wishlist(models.Model):
@@ -338,7 +358,15 @@ PAYMENTS=(
     ("Paypal","Paypal")
 )
 
-
+class CheckRejectPayment(models.Manager):
+    def get_query_set(self):
+        rejects=Rejects.objects.filter(type="payment")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        payment=Payment.objects.filter(status="pending").exclude(id__in=list)
+        return payment
 
 PAYMENT_CHOICES=(
     ("pending","pending"),
@@ -357,7 +385,9 @@ class Payment(models.Model):
     def __str__(self):
         return self.method
 
-
+    def check_if_rejected(self):
+        rejects=Rejects.objects.filter(type="payment",content_id=self.id,user=self.user).delete()
+        return rejects
 
 class News(models.Model):
     name=models.CharField(max_length=200)
@@ -390,7 +420,6 @@ EMAIL_STATUS = (
     ("on process","on process"),
 )
 class Support_Email(models.Model):
-    
     name = models.CharField(max_length=20)
     email = models.EmailField(max_length=100)
     subject = models.CharField(max_length=80)

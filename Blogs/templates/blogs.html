@@ -170,7 +170,7 @@
 					<div class="swiper-button-next"><i class="fa fa-chevron-right"></i></div>
 					<div class="swiper-pagination"></div>
 				</div>
-			
+
 				<div class="posts">
 					{% for i in data.blogs %}
 					{% if i.blog_type == "standard" %}
@@ -297,7 +297,7 @@
 					</article>
 					{% elif i.blog_type == "audio" %}
 					<article class="post format-audio">
-						<header class="entry-header" style="background-image: url(images/photo-11.jpg);">
+						<header class="entry-header" style="background-image: url({{i.image.first.image}});">
 							<div class="icon-b">
 								<i class="fa fa-music"></i>
 							</div>

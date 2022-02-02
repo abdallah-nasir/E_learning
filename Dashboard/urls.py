@@ -8,6 +8,12 @@ path("",views.home,name="home"),
 path("blog/payment/",views.blog_payment,name="blog_payment"),
 path("course/payment/",views.course_payment,name="course_payment"),
 path("consultant/payment/",views.consultant_payment,name="consultant_payment"),
+
+# edits
+path("blog/payment/edit/<int:id>/",views.edit_blog_payment,name="edit_blog_payment"),
+path("course/payment/edit/<int:id>/",views.edit_course_payment,name="edit_course_payment"),
+path("consultant/payment/edit/<int:id>/",views.edit_consultant_payment,name="edit_consultant_payment"),
+
 ### blogs
 path("blogs/",views.blogs,name="blogs"),
 path("demo/blog/<str:slug>/",views.show_demo_blog,name="show_demo_blog"),
@@ -17,11 +23,12 @@ path("edit/blogs/<str:slug>/",views.edit_blog,name="edit_blog"),
 path("delete/blogs/<str:slug>/",views.delete_blog,name="delete_blog"),
 path("delete/image/blogs/<str:id>/",views.delete_blog_image,name="delete_blog_image"),
 path("delete/videos/blogs/<str:id>/",views.delete_blog_video,name="delete_blog_video"),
+path("get/video-length/<str:id>/",views.get_video_length,name="get_video_length"),
 path("complete/blog/videos/<str:slug>/",views.add_video_blog,name="add_video_blog"),
+path("check/blog/videos/<str:slug>/",views.check_blog_video,name="check_blog_video"),
 path("complete/blog/audio/<str:slug>/",views.add_audio_blog,name="add_audio_blog"),
 path("check/blog/audios/<str:slug>/",views.check_audio_blog,name="check_audio_blog"),
- 
-path("check/blog/videos/<str:slug>/",views.check_blog_video,name="check_blog_video"),
+
 
 #### course
 path("courses/",views.courses,name="courses"),
@@ -36,12 +43,10 @@ path("upload/video/<str:slug>/",views.complete_add_video,name="complete_add_vide
 path("edit/courses/<str:slug>/",views.edit_course,name="edit_course"),
 path("edit/video/<str:slug>/",views.edit_videos,name="edit_videos"),
 path("delete/course_image/<str:id>/",views.edit_course_image,name="edit_course_image"),
-path("get/video-length/<str:id>/",views.get_video_length,name="get_video_length"),
 
 #events
 path("events/",views.events,name="events"),
 path("demo/event/<int:id>/",views.demo_event,name="demo_event"),
-
 path("add/events/",views.add_event,name="add_event"),
 path("edit/events/<str:id>/",views.edit_event,name="edit_event"),
 path("delete/events/<str:id>/",views.delete_event,name="delete_event"),
@@ -73,23 +78,23 @@ path("news/delete/<str:id>/",views.delete_news,name="delete_news"),
 
 #consultants
 path("consultants/sessions/",views.consultants_sessions,name="consultants_sessions"),
-path("consultants/",views.consultants,name="consultants"),
 path("consultants/activate/<int:id>/",views.accept_consultant,name="accept_consultant"),
 path("consultants/start/<int:id>/",views.start_consultant,name="start_consultant"),
 path("consultants/edit/<int:id>/",views.edit_consultant,name="edit_consultant"),
+path("consultants/",views.consultants,name="consultants"),
 path("consultants/add/category/",views.add_consultant_category,name="add_consultant_category"),
 
-path("add/consultants/",views.add_consultant,name="add_consultant"),
-path("complete_consultant/consultants/<str:id>/",views.complete_consultant,name="complete_consultant"),
-path("delete_session/<str:id>/",views.delete_session,name="delete_session"),
-path("active_session/<str:id>/",views.active_session,name="active_session"),
-
+path("consultants/add/",views.add_consultant,name="add_consultant"),
+path("consultants/complete/<str:id>/",views.complete_consultant,name="complete_consultant"),
+path("consultants/delete/<str:id>/",views.delete_session,name="delete_session"),
+path("consultants/sessions/activate/<str:id>/",views.active_session,name="active_session"),
 ####
 ###prices
 path("prices/",views.prices,name="prices"),
 path("price/edit/<str:id>/",views.edit_price,name="edit_price"),
-###
+path("price/add/",views.add_price,name="add_price"),
 
+###
 ### terms
 path("terms/",views.terms,name="terms"),
 path("terms/add/",views.terms_add_new,name="terms_add_new"),
@@ -117,10 +122,9 @@ path("certification/approve/<int:id>/",views.edit_certifications,name="edit_cert
 
 ### refunds
 path("refunds/",views.refunds,name="refunds"),
-path("refunds/add/",views.add_refunds,name="add_refund"),
+path("refunds/search/",views.search_refunds,name="search_refunds"),
 path("refunds/edit/<int:id>/",views.edit_refund,name="edit_refund"),
-
-
+path("refunds/add/<int:id>/",views.add_refund,name="add_refund"),
 
 #############
 path("test/",views.test,name="test"),

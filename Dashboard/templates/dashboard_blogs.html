@@ -48,10 +48,13 @@
                                           {% if i.status != "pending" %}
                                         <a href="{% url 'dashboard:edit_blog' i.slug %}" class="btn btn-success">Edit</a>
                                         {% endif %}
-                                        {% if i.blog_type == "video" and i.get_blog_video_status == None %}
+                                        {% if i.blog_type == "video" and i.get_blog_video_status == True %}
                                         <a href="{% url 'dashboard:check_blog_video' i.slug %}" class="btn btn-info">Check Video</a>
                                         {% endif %}
-                 
+                                        {% if i.blog_type == "audio" and i.get_blog_audio_status == True %}
+                                        <a href="{% url 'dashboard:check_audio_blog' i.slug %}" class="btn btn-info">Check Audio</a>
+                                        {% endif %}
+
                                         <button class="btn btn-danger" data-toggle="modal" data-target="#blog-{{i.id}}">Delete</button></td>
                                     </tr>
 

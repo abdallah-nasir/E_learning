@@ -9,15 +9,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 10:28+0200\n"
-"PO-Revision-Date: 2022-01-18 22:04+0205\n"
-"Last-Translator: abdallah nasir <abdallah.nasir@ymail.com>\n"
+"PO-Revision-Date: 2022-01-31 16:23+0205\n"
+"Last-Translator: Batoul  <B.abdulmalek@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 "X-Translated-Using: django-rosetta 0.9.7\n"
 
 #: .\Blogs\templates\blog.html:48 .\Blogs\templates\blog.html:97
@@ -35,29 +34,28 @@ msgstr ""
 #: .\Blogs\templates\blogs_2.html:198 .\Blogs\templates\blogs_2.html:244
 #: .\Blogs\templates\blogs_2.html:288 .\Blogs\templates\blogs_2.html:317
 msgid "comments"
-msgstr ""
+msgstr "التعليقات"
 
 #: .\Blogs\templates\blog.html:60 .\Blogs\templates\blog.html:109
 #: .\Blogs\templates\blog.html:154 .\Blogs\templates\blog.html:199
 #: .\Blogs\templates\blog.html:241 .\Blogs\templates\blog.html:294
 msgid "Tags"
-msgstr ""
+msgstr "الوسوم"
 
 #: .\Blogs\templates\blog.html:66 .\Blogs\templates\blog.html:115
 #: .\Blogs\templates\blog.html:160 .\Blogs\templates\blog.html:205
 #: .\Blogs\templates\blog.html:247 .\Blogs\templates\blog.html:300
 msgid "Share"
-msgstr ""
+msgstr "شارك"
 
 #: .\Blogs\templates\blog.html:310
-#, fuzzy
 #| msgid "Courses"
 msgid "Comments"
-msgstr "الكورسات"
+msgstr "التعليقات"
 
 #: .\Blogs\templates\blog.html:319 .\Blogs\templates\blog.html:350
 msgid "says"
-msgstr ""
+msgstr "يقول"
 
 #: .\Blogs\templates\blog.html:322 .\Blogs\templates\blog.html:353
 msgid "at"
@@ -65,100 +63,95 @@ msgstr ""
 
 #: .\Blogs\templates\blog.html:329
 msgid "Reply"
-msgstr ""
+msgstr "الرد"
 
 #: .\Blogs\templates\blog.html:334 .\Blogs\templates\blog.html:381
 #: .\templates\course-single.html:330 .\templates\teachers-single.html:229
 #: .\templates\video.html:259
 msgid "Comment"
-msgstr ""
+msgstr "التعليق"
 
 #: .\Blogs\templates\blog.html:373
 msgid "Leave a Comment"
-msgstr ""
+msgstr "شاركنا رأيك"
 
 #: .\Blogs\templates\blog.html:403 .\Blogs\templates\blog_type.html:228
 #: .\Blogs\templates\blogs_2.html:358
-#, fuzzy
 #| msgid "Events"
 msgid "Recent Posts"
-msgstr "المؤتمؤات"
+msgstr "المشاركات الأخيرة"
 
 #: .\Blogs\templates\blog.html:412 .\Blogs\templates\blog_type.html:237
 #: .\Blogs\templates\blogs_2.html:367
 msgid "Categories"
-msgstr ""
+msgstr "الفئات"
 
-#: .\Blogs\templates\blog_base.html:9 .\accounts\templates\account_base.html:15
-#: .\templates\account\login.html:10 .\templates\account\signup.html:10
-#: .\templates\base.html:18
+#: .\Blogs\templates\blog_base.html:9
+#: .\accounts\templates\account_base.html:15 .\templates\account\login.html:10
+#: .\templates\account\signup.html:10 .\templates\base.html:18
 msgid "Agartha Academy"
-msgstr ""
+msgstr "أكاديمية أݘارثا"
 
 #: .\Blogs\templates\blog_base.html:55
 msgid "Welcome to Agartha Blogs"
-msgstr ""
+msgstr "أهلاً بك في أچارثا"
 
 #: .\Blogs\templates\blog_base.html:61
 #: .\accounts\templates\account_events.html:68
 msgid "Close"
-msgstr ""
+msgstr "إغلاق"
 
 #: .\Blogs\templates\blog_base.html:83
 msgid "Search something…"
-msgstr ""
+msgstr "ابحث"
 
 #: .\Blogs\templates\blog_base.html:95
-#, fuzzy
 #| msgid "Courses"
 msgid "Back To Course"
-msgstr "الكورسات"
+msgstr "العودة إلى الصفحة الرئيسية"
 
 #: .\Blogs\templates\blog_base.html:106 .\Blogs\templates\blog_base.html:109
-#, fuzzy
 #| msgid "Blog"
 msgid "Home Blogs"
-msgstr "المدونة"
+msgstr "المقالات"
 
 #: .\Blogs\templates\blog_base.html:114
-#, fuzzy
 #| msgid "Blog"
 msgid "Blogs Type"
-msgstr "المدونة"
+msgstr "نوع المقال"
 
 #: .\Blogs\templates\blog_base.html:117
 msgid "Standard post"
-msgstr ""
+msgstr "المقالات النصية"
 
 #: .\Blogs\templates\blog_base.html:118
 msgid "Gallery post"
-msgstr ""
+msgstr "منشورات الصور"
 
 #: .\Blogs\templates\blog_base.html:119
 msgid "Video post"
-msgstr ""
+msgstr "أفلام الوثائقية"
 
 #: .\Blogs\templates\blog_base.html:120
 msgid "Audio post"
-msgstr ""
+msgstr "منشورات صوتية"
 
 #: .\Blogs\templates\blog_base.html:121
 msgid "Quote post"
-msgstr ""
+msgstr "اقتباسات هامة"
 
 #: .\Blogs\templates\blog_base.html:122
 msgid "Link post"
-msgstr ""
+msgstr "الروابط الهامة"
 
 #: .\Blogs\templates\blog_base.html:127
 msgid "Pricing"
-msgstr ""
+msgstr "السعر"
 
 #: .\Blogs\templates\blog_base.html:170 .\templates\teachers-single.html:81
-#, fuzzy
 #| msgid "About Us"
 msgid "About"
-msgstr "معلومات عنا"
+msgstr "عن أݘارثا"
 
 #: .\Blogs\templates\blog_base.html:171
 msgid ""
@@ -166,47 +159,54 @@ msgid ""
 "that successful people possess. Just discover it..then invest it in "
 "yourself. Eternal... Discover your inner kingdom"
 msgstr ""
+"في أعماقك،\n"
+"يوجد النور الذي تبحث عنه.\n"
+" لديك القدرات التي يمتلكها الأشخاص الناجحون.\n"
+" اكتشفها فقط .. ثم استثمرها في نفسك.\n"
+"أيها  أبدي ...\n"
+" اكتشف مملكتك الداخلية."
 
 #: .\Blogs\templates\blog_base.html:188 .\Blogs\templates\blog_base.html:194
 msgid "Support"
-msgstr ""
+msgstr "فريق الدعم"
 
 #: .\Blogs\templates\blog_base.html:191 .\templates\base.html:225
 msgid "FAQS"
-msgstr "أسئلة وأجوبة"
+msgstr "الأسئلة المتكررة"
 
 #: .\Blogs\templates\blog_base.html:192 .\Blogs\templates\blog_base.html:242
 msgid "Privacy"
-msgstr ""
+msgstr "الخصوصية"
 
 #: .\Blogs\templates\blog_base.html:193
 msgid "Policy"
-msgstr ""
+msgstr "سياسة الاستخدام"
 
 #: .\Blogs\templates\blog_base.html:202 .\templates\base.html:224
 #: .\templates\contact.html:52
 msgid "Contact Us"
-msgstr "تواصل معنا"
+msgstr "اتصل بنا"
 
 #: .\Blogs\templates\blog_base.html:242
 msgid "Terms"
-msgstr ""
+msgstr "الشروط والأحكام"
 
-#: .\Blogs\templates\blog_search.html:76 .\Blogs\templates\blog_search.html:134
-#: .\Blogs\templates\blog_type.html:78 .\Blogs\templates\blog_type.html:136
-#: .\Blogs\templates\blogs.html:205 .\Blogs\templates\blogs.html:263
-#: .\Blogs\templates\blogs_2.html:208 .\Blogs\templates\blogs_2.html:266
+#: .\Blogs\templates\blog_search.html:76
+#: .\Blogs\templates\blog_search.html:134 .\Blogs\templates\blog_type.html:78
+#: .\Blogs\templates\blog_type.html:136 .\Blogs\templates\blogs.html:205
+#: .\Blogs\templates\blogs.html:263 .\Blogs\templates\blogs_2.html:208
+#: .\Blogs\templates\blogs_2.html:266
 msgid "Read More"
-msgstr ""
+msgstr "اقرأ المزيد.."
 
 #: .\Blogs\templates\blog_search.html:166 .\Blogs\templates\blog_type.html:168
 #: .\Blogs\templates\blogs.html:295 .\Blogs\templates\blogs_2.html:298
 msgid "Show More"
-msgstr ""
+msgstr "أظهر المزيد.."
 
 #: .\Blogs\templates\blog_search.html:197
 msgid "Sorry,we didn\"t Find What You Want"
-msgstr ""
+msgstr "عذراً - لم نعثر على ما تبحث عنه ☹"
 
 #: .\Blogs\templates\blog_search.html:216 .\Blogs\templates\blog_type.html:215
 #: .\Blogs\templates\blogs.html:342 .\Blogs\templates\blogs_2.html:345
@@ -217,49 +217,47 @@ msgstr ""
 #: .\accounts\templates\account_course_payment.html:79
 #: .\accounts\templates\account_events.html:94
 msgid "Next"
-msgstr ""
+msgstr "التالي "
 
 #: .\Blogs\templates\blog_type.html:202 .\Blogs\templates\blogs.html:329
 #: .\Blogs\templates\blogs_2.html:332
 msgid "Prev"
-msgstr ""
+msgstr "السابق"
 
 #: .\Blogs\templates\blog_type.html:262
 msgid "Sorry"
-msgstr ""
+msgstr "عذراً"
 
 #: .\Blogs\templates\blog_type.html:262
 msgid "Blog is Empty"
-msgstr ""
+msgstr "الصفحة  فارغة حالياً ☹"
 
 #: .\Blogs\templates\blogs.html:358 .\Blogs\templates\blogs_2.html:406
-#, fuzzy
 #| msgid "Teachers"
 msgid "Our Teachers"
-msgstr "المدرسين"
+msgstr "المدربين"
 
 #: .\Blogs\templates\blogs_2.html:394
 msgid "Sorry,Blog is Empty"
-msgstr ""
+msgstr "عذراً, الصفحة فارغة حالياً ☹"
 
 #: .\Blogs\templates\pricing.html:139
 msgid "Pricing Tables"
-msgstr ""
+msgstr "جدول التسعير"
 
 #: .\Blogs\templates\pricing.html:155 .\templates\account\login.html:38
 #: .\templates\account\login.html:121 .\templates\account\signup.html:37
 #: .\templates\account\signup.html:68
-#, fuzzy
 #| msgid "Sign In"
 msgid "Sign Up"
-msgstr "تسجيل الدخول"
+msgstr "تسجيل"
 
 #: .\Consultant\templates\consultant.html:61
 #: .\Consultant\templates\consultant.html:65
 #: .\Consultant\templates\consultant_teacher.html:22
 #: .\Consultant\templates\consultant_teacher.html:72 .\templates\base.html:213
 msgid "Consultant"
-msgstr "أستشارة"
+msgstr "استشارة"
 
 #: .\Consultant\templates\consultant.html:64
 #: .\Consultant\templates\consultant_teacher.html:21 .\templates\about.html:15
@@ -273,29 +271,26 @@ msgid "Home"
 msgstr "الرئيسية"
 
 #: .\Consultant\templates\consultant.html:82
-#, fuzzy
 #| msgid "Teachers"
 msgid "Teachers found"
-msgstr "المدرسين"
+msgstr "المدربين"
 
 #: .\Consultant\templates\consultant.html:94
 #: .\accounts\templates\account_base.html:134
 #: .\accounts\templates\account_base.html:139
-#, fuzzy
 #| msgid "Consultant"
 msgid "Consultants"
-msgstr "أستشارة"
+msgstr "الاستشاريين"
 
 #: .\Consultant\templates\consultant.html:95
 msgid "Take an Appointment"
-msgstr ""
+msgstr "احجز موعد"
 
 #: .\Consultant\templates\consultant.html:105
 msgid "search"
-msgstr ""
+msgstr "بحث"
 
 #: .\Consultant\templates\consultant_teacher.html:85
-#, fuzzy
 #| msgid "Consultant"
 msgid "About Consultant"
 msgstr "أستشارة"
@@ -304,34 +299,34 @@ msgstr "أستشارة"
 #: .\accounts\templates\account_course.html:29
 #: .\templates\course-single.html:112 .\templates\video.html:54
 msgid "Category"
-msgstr ""
+msgstr "الفئة"
 
 #: .\Consultant\templates\consultant_teacher.html:90
 msgid "Days From"
-msgstr ""
+msgstr "من"
 
 #: .\Consultant\templates\consultant_teacher.html:91
 msgid "Available From"
-msgstr ""
+msgstr "من"
 
 #: .\Consultant\templates\consultant_teacher.html:95
 #: .\accounts\templates\account_consult.html:33
 #: .\accounts\templates\account_course.html:30
 #: .\templates\course-single.html:368
 msgid "Price"
-msgstr ""
+msgstr "السعر"
 
 #: .\Consultant\templates\consultant_teacher.html:96
 msgid "Days To"
-msgstr ""
+msgstr "إلى"
 
 #: .\Consultant\templates\consultant_teacher.html:98
 msgid "Available To"
-msgstr ""
+msgstr "إلى"
 
 #: .\Consultant\templates\consultant_teacher.html:105
 msgid "Payment"
-msgstr ""
+msgstr "الدفع"
 
 #: .\Dashboard\templates\dashboard_single_email.html:21
 msgid "DataTables Example"
@@ -346,65 +341,59 @@ msgid "Arabic"
 msgstr "العربية"
 
 #: .\accounts\templates\account_base.html:49
-#, fuzzy
 #| msgid "Dashboard"
 msgid "User Dashboard"
 msgstr "لوحه التحكم"
 
 #: .\accounts\templates\account_base.html:59 .\templates\base.html:217
 msgid "Profile"
-msgstr "البروفايل"
+msgstr "الملف الشخصي"
 
 #: .\accounts\templates\account_base.html:64
 msgid "Back To Home"
-msgstr ""
+msgstr "العودة إلى الصفحة الرئيسية"
 
 #: .\accounts\templates\account_base.html:70
-#, fuzzy
 #| msgid "Dashboard"
 msgid "Teacher Dashboard"
-msgstr "لوحه التحكم"
+msgstr "لوحة تحكم الأدمن"
 
 #: .\accounts\templates\account_base.html:78
 msgid "Pages"
-msgstr ""
+msgstr "الصفحات"
 
 #: .\accounts\templates\account_base.html:86
 #: .\accounts\templates\account_consultant_payment.html:6
 msgid "Payments"
-msgstr ""
+msgstr "عمليات الدفع"
 
 #: .\accounts\templates\account_base.html:90
 msgid "All Payment"
-msgstr ""
+msgstr "قائمة عمليات الدفع"
 
 #: .\accounts\templates\account_base.html:91
 msgid "log Payments"
-msgstr ""
+msgstr "سجل المدفوعات"
 
 #: .\accounts\templates\account_base.html:92
 #: .\accounts\templates\account_consultant_payment.html:13
-#, fuzzy
 #| msgid "Consultant"
 msgid "Consultant Payments"
-msgstr "أستشارة"
+msgstr "الدفعات الخاصة في الاستشارات"
 
 #: .\accounts\templates\account_base.html:93
 #: .\accounts\templates\account_course_payment.html:13
-#, fuzzy
 #| msgid "Courses"
 msgid "Course Payments"
-msgstr "الكورسات"
+msgstr "الدفعات الخاصة في الكورسات"
 
 #: .\accounts\templates\account_base.html:104
 #: .\accounts\templates\account_course_payment.html:32
-#, fuzzy
 #| msgid "Courses"
 msgid "Course"
-msgstr "الكورسات"
+msgstr "الكورس"
 
 #: .\accounts\templates\account_base.html:108
-#, fuzzy
 #| msgid "Courses"
 msgid "ll Courses"
 msgstr "الكورسات"
@@ -422,19 +411,17 @@ msgstr "الكورسات"
 #: .\templates\event_single.html:18 .\templates\events.html:11
 #: .\templates\events.html:15
 msgid "Events"
-msgstr "المؤتمؤات"
+msgstr "المناسبات"
 
 #: .\accounts\templates\account_base.html:123
-#, fuzzy
 #| msgid "Events"
 msgid "All Events"
-msgstr "المؤتمؤات"
+msgstr "قائمة المناسبات"
 
 #: .\accounts\templates\account_base.html:138
-#, fuzzy
 #| msgid "Consultant"
 msgid "All Consultants"
-msgstr "أستشارة"
+msgstr "قائمة الاستشارات"
 
 #: .\accounts\templates\account_base.html:264
 #: .\accounts\templates\account_base.html:329 .\templates\base.html:161
@@ -443,15 +430,15 @@ msgstr "تسجيل الخروج"
 
 #: .\accounts\templates\account_base.html:321
 msgid "Ready to Leave ?"
-msgstr ""
+msgstr "هل تريد الخروج حقاً ؟"
 
 #: .\accounts\templates\account_base.html:326
 msgid "Select \"Logout\" below if you are ready to end your current session"
-msgstr ""
+msgstr "حدد \"تسجيل الخروج\" أدناه إذا كنت مستعداً لإنهاء الجلسة الحالية."
 
 #: .\accounts\templates\account_base.html:328
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: .\accounts\templates\account_blog_payment.html:28
 #: .\accounts\templates\account_consult.html:28
@@ -459,41 +446,41 @@ msgstr ""
 #: .\accounts\templates\account_course_payment.html:29
 #: .\accounts\templates\account_events.html:27
 msgid "User"
-msgstr ""
+msgstr "مستخدم"
 
 #: .\accounts\templates\account_blog_payment.html:29
 #: .\accounts\templates\account_consultant_payment.html:30
 #: .\accounts\templates\account_course_payment.html:30
 msgid "Method"
-msgstr ""
+msgstr "طرق"
 
 #: .\accounts\templates\account_blog_payment.html:30
 #: .\accounts\templates\account_consultant_payment.html:31
 #: .\accounts\templates\account_course_payment.html:31
 msgid "Transaction"
-msgstr ""
+msgstr "التحويل"
 
 #: .\accounts\templates\account_blog_payment.html:31
 #: .\accounts\templates\account_consultant_payment.html:32
 #: .\accounts\templates\account_course_payment.html:33
 msgid "Payment Image"
-msgstr ""
+msgstr "صورة وصل الدفع"
 
 #: .\accounts\templates\account_blog_payment.html:32
 #: .\accounts\templates\account_consult.html:34
 #: .\accounts\templates\account_consultant_payment.html:34
 #: .\accounts\templates\account_course_payment.html:34
 msgid "Status"
-msgstr ""
+msgstr "الحالة"
 
 #: .\accounts\templates\account_blog_payment.html:33
 #: .\accounts\templates\account_events.html:33
 msgid "Expired"
-msgstr ""
+msgstr "انتهاء الصلاحية"
 
 #: .\accounts\templates\account_blog_payment.html:34
 msgid "Expire Date"
-msgstr ""
+msgstr "تاريخ انتهاء الصلاحية"
 
 #: .\accounts\templates\account_blog_payment.html:35
 #: .\accounts\templates\account_consultant_payment.html:35
@@ -506,14 +493,14 @@ msgstr ""
 #: .\accounts\templates\account_consultant_payment.html:48
 #: .\accounts\templates\account_course_payment.html:49
 msgid "Image Link"
-msgstr ""
+msgstr "رابط الصورة"
 
 #: .\accounts\templates\account_blog_payment.html:51
 #: .\accounts\templates\account_consultant_payment.html:54
 #: .\accounts\templates\account_course_payment.html:55
 #: .\accounts\templates\account_events.html:49
 msgid "Edit"
-msgstr ""
+msgstr "تعديل"
 
 #: .\accounts\templates\account_blog_payment.html:63
 #: .\accounts\templates\account_consult.html:60
@@ -522,112 +509,107 @@ msgstr ""
 #: .\accounts\templates\account_course_payment.html:67
 #: .\accounts\templates\account_events.html:82
 msgid "Previous"
-msgstr ""
+msgstr "السابق"
 
 #: .\accounts\templates\account_consult.html:12
 #: .\accounts\templates\account_events.html:12
-#, fuzzy
 #| msgid "Blog"
 msgid "Blogs"
-msgstr "المدونة"
+msgstr "المدونات"
 
 #: .\accounts\templates\account_consult.html:29
 #: .\accounts\templates\account_course.html:28
 #: .\templates\course-single.html:105 .\templates\video.html:47
-#, fuzzy
 #| msgid "Teachers"
 msgid "Teacher"
-msgstr "المدرسين"
+msgstr "المدربين"
 
 #: .\accounts\templates\account_consult.html:30
 #: .\accounts\templates\account_events.html:30
 msgid "Date"
-msgstr ""
+msgstr "تاريخ"
 
 #: .\accounts\templates\account_consult.html:31
 msgid "From"
-msgstr ""
+msgstr "من"
 
 #: .\accounts\templates\account_consult.html:32
 msgid "To"
-msgstr ""
+msgstr "إلى"
 
 #: .\accounts\templates\account_course.html:27
 #: .\accounts\templates\account_events.html:28
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #: .\accounts\templates\account_course.html:31
 msgid "Videos"
-msgstr ""
+msgstr "فيديوهات"
 
 #: .\accounts\templates\account_events.html:29
 #: .\templates\course-single.html:361 .\templates\video.html:290
-#, fuzzy
 #| msgid "Happy Students"
 msgid "Students"
 msgstr "طلابنا"
 
-#: .\accounts\templates\account_events.html:31 .\templates\event_single.html:62
+#: .\accounts\templates\account_events.html:31
+#: .\templates\event_single.html:62
 msgid "Start Time"
-msgstr ""
+msgstr "وقت البدء"
 
 #: .\accounts\templates\account_events.html:32
 msgid "End Time"
-msgstr ""
+msgstr "وقت الانتهاء"
 
 #: .\accounts\templates\account_events.html:50
 #: .\accounts\templates\account_events.html:69
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: .\accounts\templates\account_events.html:59
-#, fuzzy
 #| msgid "Events"
 msgid "Delete Event"
-msgstr "المؤتمؤات"
+msgstr "حذف المناسبات"
 
 #: .\accounts\templates\account_events.html:65
 msgid "Are you Sure ?"
-msgstr ""
+msgstr "هل أنت متأكد؟"
 
 #: .\accounts\templates\account_user_info.html:12
 msgid "Pleasure you are in Agartha"
-msgstr ""
+msgstr "مرحباً بك في أجارثا"
 
 #: .\accounts\templates\account_user_info.html:22
 #: .\templates\account\login.html:183 .\templates\account\signup.html:168
 msgid "Submit"
-msgstr ""
+msgstr "ارسال"
 
 #: .\accounts\templates\account_user_info.html:25
-#, fuzzy
 #| msgid "Teachers"
 msgid "Join our Teachers ?"
-msgstr "المدرسين"
+msgstr "انضم إلى قائمة مدربي أچـارثا"
 
 #: .\accounts\templates\account_user_info.html:25
 msgid "click here"
-msgstr ""
+msgstr "اضغط هنا"
 
 #: .\templates\about.html:12 .\templates\about.html:16
 #: .\templates\base.html:226
 msgid "About Us"
-msgstr "معلومات عنا"
+msgstr "من نحن"
 
 #: .\templates\about.html:34
-#, fuzzy
 #| msgid "About Us"
 msgid "About us"
-msgstr "معلومات عنا"
+msgstr "من نحن"
 
 #: .\templates\about.html:35
 msgid "Welcome to Agartha Academy"
-msgstr ""
+msgstr "أهلاً بك في أكاديمية أچـارثا"
 
 #: .\templates\about.html:52
 msgid "Why Choose us"
-msgstr ""
+msgstr "لماذا تختار أچـارثا"
 
 #: .\templates\about.html:53
 msgid ""
@@ -637,43 +619,39 @@ msgstr ""
 
 #: .\templates\about.html:59
 msgid "Our Mission"
-msgstr ""
+msgstr "هدفنا"
 
 #: .\templates\about.html:66
 msgid "Our vision"
-msgstr ""
+msgstr "رؤيتنا"
 
 #: .\templates\about.html:86 .\templates\home.html:177
 msgid "Students enrolled"
 msgstr "الطلاب الملتحقين"
 
 #: .\templates\about.html:92 .\templates\home.html:183
-#, fuzzy
 #| msgid "Courses"
 msgid "Courses Uploaded"
-msgstr "الكورسات"
+msgstr "الكورسات المتوفرة"
 
 #: .\templates\about.html:98 .\templates\home.html:189
 msgid "People certified"
-msgstr "الشهادات"
+msgstr "آراء عملاءنا"
 
 #: .\templates\about.html:104
-#, fuzzy
 #| msgid "Teachers"
 msgid "Global Teachers"
-msgstr "المدرسين"
+msgstr "المدربين المميزين"
 
 #: .\templates\about.html:120 .\templates\home.html:212
-#, fuzzy
 #| msgid "Teachers"
 msgid "Featured Teachers"
-msgstr "المدرسين"
+msgstr "المدربين المميزين"
 
 #: .\templates\about.html:121
-#, fuzzy
 #| msgid "Teachers"
 msgid "Meet Our teachers"
-msgstr "المدرسين"
+msgstr "تواصل مع مدربيننا"
 
 #: .\templates\account\account_inactive.html:5
 #: .\templates\account\account_inactive.html:11
@@ -702,11 +680,11 @@ msgstr "لم يتم التحقق منه"
 
 #: .\templates\account\email.html:28
 msgid "Primary"
-msgstr "اساسي"
+msgstr "أساسي"
 
 #: .\templates\account\email.html:34
 msgid "Make Primary"
-msgstr "الاساسي"
+msgstr "الأساسي"
 
 #: .\templates\account\email.html:35
 msgid "Re-send Verification"
@@ -724,11 +702,12 @@ msgstr "تحذير:"
 #: .\templates\account\email.html:43
 msgid ""
 "You currently do not have any e-mail address set up. You should really add "
-"an e-mail address so you can receive notifications, reset your password, etc."
+"an e-mail address so you can receive notifications, reset your password, "
+"etc."
 msgstr ""
-"ليس لديك حاليًا أي عنوان بريد إلكتروني تم إعداده. يجب عليك بالفعل إضافة عنوان "
-"بريد إلكتروني حتى تتمكن من تلقي الإشعارات وإعادة تعيين كلمة المرور الخاصة "
-"بك ، وما إلى ذلك."
+"ليس لديك حاليًا أي عنوان بريد إلكتروني تم إعداده. يجب عليك بالفعل إضافة "
+"عنوان بريد إلكتروني حتى تتمكن من تلقي الإشعارات وإعادة تعيين كلمة المرور "
+"الخاصة بك ، وما إلى ذلك."
 
 #: .\templates\account\email.html:48
 msgid "Add E-mail Address"
@@ -759,13 +738,11 @@ msgstr ""
 #: .\templates\account\email\email_confirmation_message.txt:5
 #, python-format
 msgid ""
-"You're receiving this e-mail because user %(user_display)s has given your e-"
-"mail address to register an account on %(site_domain)s.\n"
+"You're receiving this e-mail because user %(user_display)s has given your e-mail address to register an account on %(site_domain)s.\n"
 "\n"
 "To confirm this is correct, go to %(activate_url)s"
 msgstr ""
-"أنت تتلقى هذا البريد الإلكتروني لأن المستخدم% (user_display) s قد أعطى عنوان "
-"بريدك الإلكتروني لتسجيل حساب على٪ (site_domain) s.\n"
+"أنت تتلقى هذا البريد الإلكتروني لأن المستخدم% (user_display) s قد أعطى عنوان بريدك الإلكتروني لتسجيل حساب على٪ (site_domain) s.\n"
 "\n"
 "للتأكد من صحة ذلك ، انتقل إلى%(activate_url)s"
 
@@ -775,15 +752,11 @@ msgstr "يرجى تأكيد عنوان البريد الإلكتروني الخ�
 
 #: .\templates\account\email\password_reset_key_message.txt:4
 msgid ""
-"You're receiving this e-mail because you or someone else has requested a "
-"password for your user account.\n"
-"It can be safely ignored if you did not request a password reset. Click the "
-"link below to reset your password."
+"You're receiving this e-mail because you or someone else has requested a password for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
 msgstr ""
-"لقد تلقيت هذا البريد الإلكتروني لأنك أو طلب شخص آخر كلمة مرور لحساب المستخدم "
-"الخاص بك.\n"
-"يمكن تجاهله بأمان إذا لم تطلب إعادة تعيين كلمة المرور. انقر فوق الارتباط "
-"أدناه لإعادة تعيين كلمة المرور الخاصة بك."
+"لقد تلقيت هذا البريد الإلكتروني لأنك أو طلب شخص آخر كلمة مرور لحساب المستخدم الخاص بك.\n"
+"يمكن تجاهله بأمان إذا لم تطلب إعادة تعيين كلمة المرور. انقر فوق الارتباط أدناه لإعادة تعيين كلمة المرور الخاصة بك."
 
 #: .\templates\account\email\password_reset_key_message.txt:9
 #, python-format
@@ -815,98 +788,93 @@ msgstr "تأكيد"
 #: .\templates\account\email_confirm.html:30
 #, python-format
 msgid ""
-"This e-mail confirmation link expired or is invalid. Please <a href="
-"\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+"This e-mail confirmation link expired or is invalid. Please <a "
+"href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
 msgstr ""
 "انتهت صلاحية ارتباط تأكيد البريد الإلكتروني هذا أو أنه غير صالح. يرجى\n"
 " <a href=\"%(email_url)s\"> إصدار طلب تأكيد بريد إلكتروني جديد </a>."
 
 #: .\templates\account\login.html:10 .\templates\account\signup.html:10
 msgid "Login - Signup"
-msgstr ""
+msgstr "تسجيل / تسجيل دخول"
 
 #: .\templates\account\login.html:38 .\templates\account\signup.html:37
 msgid "Log In "
-msgstr ""
+msgstr "تسجيل دخول"
 
 #: .\templates\account\login.html:68 .\templates\account\signup.html:179
 msgid "Log In"
-msgstr ""
+msgstr "تسجيل دخول"
 
 #: .\templates\account\login.html:70 .\templates\account\signup.html:181
 msgid "Username / Email"
-msgstr ""
+msgstr "اسم المستخدم/الايميل"
 
 #: .\templates\account\login.html:80 .\templates\account\signup.html:186
-#, fuzzy
 #| msgid "Forgot Password?"
 msgid "Your Password"
-msgstr "هل نسيت كلمة السر؟"
+msgstr "كلمة المرور"
 
 #: .\templates\account\login.html:88 .\templates\account\signup.html:189
 msgid "submit"
-msgstr ""
+msgstr "ارسال"
 
 #: .\templates\account\login.html:89 .\templates\account\signup.html:190
-#, fuzzy
 #| msgid "Forgot Password?"
 msgid "Forgot your password?"
 msgstr "هل نسيت كلمة السر؟"
 
 #: .\templates\account\login.html:124 .\templates\account\signup.html:71
 msgid "Your Full Name"
-msgstr ""
+msgstr "الاسم الكامل"
 
 #: .\templates\account\login.html:130 .\templates\account\signup.html:82
 #: .\templates\contact.html:67
-#, fuzzy
 #| msgid "Add E-mail"
 msgid "Email"
-msgstr "أضف بريد إلكتروني"
+msgstr "البريد إلكتروني"
 
 #: .\templates\account\login.html:135 .\templates\account\signup.html:92
 msgid "Mobile Number"
-msgstr ""
+msgstr "رقم الموبايل"
 
 #: .\templates\account\login.html:141 .\templates\account\signup.html:103
-#, fuzzy
 #| msgid "Set Password"
 msgid "Password"
-msgstr "ضبط كلمة السر"
+msgstr " كلمة السر"
 
 #: .\templates\account\login.html:144 .\templates\account\signup.html:112
-#, fuzzy
 #| msgid "Change Password"
 msgid "Confirm Password"
-msgstr "تغيير كلمة المرور"
+msgstr "تأكيد كلمة المرور"
 
 #: .\templates\account\login.html:149 .\templates\account\signup.html:123
 msgid "Gender"
-msgstr ""
+msgstr "الجنس"
 
 #: .\templates\account\login.html:154 .\templates\account\signup.html:129
 msgid "Female"
-msgstr ""
+msgstr "أنثى"
 
 #: .\templates\account\login.html:158 .\templates\account\signup.html:133
 msgid "Male"
-msgstr ""
+msgstr "ذكر"
 
 #: .\templates\account\login.html:171 .\templates\account\signup.html:151
 msgid "By signing up, you agree to our"
-msgstr ""
+msgstr "بالضغط على \"تسجيل\"، فإنك توافق على"
 
 #: .\templates\account\login.html:177 .\templates\account\signup.html:162
 msgid "Terms of use"
-msgstr ""
+msgstr "شروط الاستخدام"
 
 #: .\templates\account\login.html:178 .\templates\account\signup.html:163
 msgid "and"
-msgstr ""
+msgstr "و"
 
 #: .\templates\account\login.html:179 .\templates\account\signup.html:164
 msgid "Privacy Policy"
-msgstr ""
+msgstr "سياسة الخصوصية"
 
 #: .\templates\account\logout.html:5 .\templates\account\logout.html:8
 #: .\templates\account\logout.html:17
@@ -948,7 +916,7 @@ msgstr "لقد قمت بتسجيل الخروج."
 
 #: .\templates\account\messages\password_changed.txt:2
 msgid "Password successfully changed."
-msgstr "الرقم السري تغير بنجاح."
+msgstr "تم تغيير كلمة المرور بنجاح."
 
 #: .\templates\account\messages\password_set.txt:2
 msgid "Password successfully set."
@@ -984,8 +952,8 @@ msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
 msgstr ""
-"لقد أرسلنا لك بريدًا إلكترونيًا. يرجى الاتصال بنا إذا لم تستلمها في غضون بضع "
-"دقائق."
+"لقد أرسلنا لك بريدًا إلكترونيًا. يرجى الاتصال بنا إذا لم تستلمها في غضون بضع"
+" دقائق."
 
 #: .\templates\account\password_reset_from_key.html:101
 msgid "Bad Token"
@@ -995,11 +963,10 @@ msgstr "Bad Token"
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
-"a>."
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
 msgstr ""
-"رابط إعادة تعيين كلمة المرور غير صالح ، ربما لأنه تم استخدامه بالفعل. الرجاء "
-"طلب\n"
+"رابط إعادة تعيين كلمة المرور غير صالح ، ربما لأنه تم استخدامه بالفعل. الرجاء طلب\n"
 "<a href=\"%(passwd_reset_url)s\">كلمه مرور جديديه </a>."
 
 #: .\templates\account\password_reset_from_key.html:140
@@ -1011,7 +978,7 @@ msgstr "تم تغيير كلمة مرورك الآن."
 #: .\templates\account\password_set.html:8
 #: .\templates\account\password_set.html:13
 msgid "Set Password"
-msgstr "ضبط كلمة السر"
+msgstr "ضبط كلمة المرور"
 
 #: .\templates\account\signup_closed.html:5
 #: .\templates\account\signup_closed.html:11
@@ -1024,7 +991,7 @@ msgstr "نحن آسفون ، ولكن التسجيل مغلق حاليا."
 
 #: .\templates\account\snippets\already_logged_in.html:5
 msgid "Note"
-msgstr "ملحوظة"
+msgstr "ملاحظة"
 
 #: .\templates\account\snippets\already_logged_in.html:5
 #, python-format
@@ -1035,8 +1002,7 @@ msgstr "لقد قمت بتسجيل الدخول بالفعل باعتبار%(use
 #, python-format
 msgid ""
 "You  are about to use your %(provider_name)s account to login to\n"
-"              %(site_name)s. As a final step, please complete the following "
-"form:"
+"              %(site_name)s. As a final step, please complete the following form:"
 msgstr ""
 "أنت على وشك استخدام حساب%(provider_name)sالخاص بك لتسجيل الدخول إلى\n"
 "%(site_name)s كخطوة أخيرة ، يرجى إكمال النموذج التالي:"
@@ -1080,11 +1046,11 @@ msgstr ""
 #: .\templates\account\verified_email_required.html:20
 #, python-format
 msgid ""
-"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
-"mail address</a>."
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
+"e-mail address</a>."
 msgstr ""
-"<strong> ملاحظة: </ strong> لا يزال بإمكانك  <a href=\"%(email_url)s\">تغيير "
-"البريد الالكتروني</a>."
+"<strong> ملاحظة: </ strong> لا يزال بإمكانك  <a href=\"%(email_url)s\">تغيير"
+" البريد الالكتروني</a>."
 
 #: .\templates\base.html:155
 msgid "Need Help? call us free"
@@ -1102,7 +1068,7 @@ msgstr "لوحه التحكم"
 #: .\templates\teachers-single.html:17 .\templates\teachers.html:12
 #: .\templates\teachers.html:16
 msgid "Teachers"
-msgstr "المدرسين"
+msgstr "المدربين"
 
 #: .\templates\base.html:208
 msgid "Blog"
@@ -1117,44 +1083,42 @@ msgid "Language"
 msgstr "اللغة"
 
 #: .\templates\base.html:295
-#, fuzzy
 #| msgid "Teachers"
 msgid "Search in Courses and Teachers"
-msgstr "المدرسين"
+msgstr "البحث في الدورات والمدربين"
 
 #: .\templates\contact.html:29 .\templates\contact.html:33
-#, fuzzy
 #| msgid "Contact Us"
 msgid "Contact"
 msgstr "تواصل معنا"
 
 #: .\templates\contact.html:53
 msgid "Keep in touch"
-msgstr ""
+msgstr "ابق على اتصال"
 
 #: .\templates\contact.html:61
 msgid "Your name"
-msgstr ""
+msgstr "اسمك"
 
 #: .\templates\contact.html:73
 msgid "Subject"
-msgstr ""
+msgstr "الموضوع"
 
 #: .\templates\contact.html:79
 msgid "Phone"
-msgstr ""
+msgstr "رقم الموبايل"
 
 #: .\templates\contact.html:85
 msgid "Message"
-msgstr ""
+msgstr "رسالة"
 
 #: .\templates\contact.html:92
 msgid "Send"
-msgstr ""
+msgstr "إرسال"
 
 #: .\templates\course-single.html:118 .\templates\video.html:60
 msgid "Review"
-msgstr ""
+msgstr "تقييم"
 
 #: .\templates\course-single.html:126 .\templates\course-single.html:159
 #: .\templates\course-single.html:460 .\templates\courses.html:78
@@ -1164,21 +1128,20 @@ msgstr ""
 #: .\templates\video.html:92 .\templates\video.html:368
 #: .\templates\wishlist.html:77 .\templates\wishlist.html:129
 msgid "Reviews"
-msgstr ""
+msgstr "التقييمات"
 
 #: .\templates\course-single.html:150 .\templates\video.html:83
-#, fuzzy
 #| msgid "Service"
 msgid "Overview"
-msgstr "الخدمات"
+msgstr "ملخص"
 
 #: .\templates\course-single.html:153 .\templates\video.html:86
 msgid "Curriculum"
-msgstr ""
+msgstr "المحاور"
 
 #: .\templates\course-single.html:156 .\templates\video.html:89
 msgid "Instructor"
-msgstr ""
+msgstr "المدرب"
 
 #: .\templates\course-single.html:167
 msgid "Course Summery"
@@ -1190,10 +1153,9 @@ msgstr ""
 
 #: .\templates\course-single.html:240 .\templates\teachers-single.html:147
 #: .\templates\video.html:169
-#, fuzzy
 #| msgid "Students enrolled"
 msgid "Student Reviews"
-msgstr "الطلاب الملتحقين"
+msgstr "تقييم طلابنا"
 
 #: .\templates\course-single.html:266 .\templates\teachers-single.html:173
 #: .\templates\video.html:195
@@ -1203,12 +1165,12 @@ msgstr ""
 #: .\templates\course-single.html:274 .\templates\teachers-single.html:181
 #: .\templates\video.html:203
 msgid "Leave A Comment"
-msgstr ""
+msgstr "شارك تعليقك"
 
 #: .\templates\course-single.html:294 .\templates\teachers-single.html:200
 #: .\templates\video.html:223
 msgid "Your Rating"
-msgstr ""
+msgstr "تقييمك"
 
 #: .\templates\course-single.html:338 .\templates\teachers-single.html:234
 #: .\templates\video.html:267
@@ -1216,43 +1178,40 @@ msgid "Post Comment"
 msgstr ""
 
 #: .\templates\course-single.html:355
-#, fuzzy
 #| msgid "Courses"
 msgid "Course Features"
-msgstr "الكورسات"
+msgstr "ميزات الكورس"
 
 #: .\templates\course-single.html:357 .\templates\video.html:286
 msgid "Duration"
-msgstr ""
+msgstr "المدة"
 
 #: .\templates\course-single.html:358
 msgid "Lectures"
-msgstr ""
+msgstr "محاضرات"
 
 #: .\templates\course-single.html:359
 msgid "Quizzes"
-msgstr ""
+msgstr "الإختبارات"
 
 #: .\templates\course-single.html:375
 msgid "Take Quiz"
-msgstr ""
+msgstr "قدم اختبار"
 
 #: .\templates\course-single.html:379
 msgid "Enroll Now"
-msgstr ""
+msgstr "تسجيل الآن"
 
 #: .\templates\course-single.html:409
 msgid "Recent Event"
-msgstr ""
+msgstr "المناسبات الحديثة"
 
 #: .\templates\course-single.html:431 .\templates\video.html:339
-#, fuzzy
 #| msgid "Featured courses"
 msgid "Related Courses"
-msgstr "الكورسات الحالية"
+msgstr "الكورسات المشابهة"
 
 #: .\templates\courses.html:12 .\templates\global_search.html:12
-#, fuzzy
 #| msgid "Our course"
 msgid "Our Courses"
 msgstr "كورساتنا"
@@ -1260,7 +1219,7 @@ msgstr "كورساتنا"
 #: .\templates\courses.html:41 .\templates\global_search.html:41
 #: .\templates\wishlist.html:41
 msgid "Showing"
-msgstr ""
+msgstr "عرض"
 
 #: .\templates\courses.html:41 .\templates\global_search.html:41
 #: .\templates\wishlist.html:41
@@ -1269,40 +1228,38 @@ msgstr ""
 
 #: .\templates\courses.html:41
 msgid "Results"
-msgstr ""
+msgstr "النتائج"
 
 #: .\templates\event_single.html:51
 msgid "Book Your Seat"
-msgstr ""
+msgstr "احجز مقعدك"
 
 #: .\templates\event_single.html:73
 msgid "Finish Time"
-msgstr ""
+msgstr "وقت الانتهاء"
 
 #: .\templates\event_single.html:84
-#, fuzzy
 #| msgid "E-mail Addresses"
 msgid "Address"
-msgstr "عناوين البريد الإلكتروني"
+msgstr "عنوان اللقاء"
 
 #: .\templates\event_single.html:97
 msgid "Zoom Link"
-msgstr ""
+msgstr "رابط الزووم"
 
 #: .\templates\event_single.html:98
 msgid "Click The Link"
-msgstr ""
+msgstr "اضغط على الرابط"
 
 #: .\templates\faqs.html:13
 msgid "Friendly Asked Questions"
-msgstr ""
+msgstr "مجموعة الأسئلة المتداولة"
 
 #: .\templates\global_search.html:110 .\templates\global_search.html:176
 msgid "Sorry we didn\"t find what you want"
-msgstr ""
+msgstr "عذراًو لم نجد ما تبحث عنه"
 
 #: .\templates\home.html:70
-#, fuzzy
 #| msgid "Courses"
 msgid "courses"
 msgstr "الكورسات"
@@ -1316,10 +1273,9 @@ msgid "Featured courses"
 msgstr "الكورسات الحالية"
 
 #: .\templates\home.html:195
-#, fuzzy
 #| msgid "Teachers"
 msgid "Global Teacher"
-msgstr "المدرسين"
+msgstr "المدربين المميزين"
 
 #: .\templates\home.html:211
 msgid "Top Tutors"
@@ -1331,19 +1287,19 @@ msgstr "طلابنا"
 
 #: .\templates\home.html:269
 msgid "Upcoming events"
-msgstr ""
+msgstr "المناسبات القادمة"
 
 #: .\templates\home.html:299
 msgid "Latest Blog"
-msgstr ""
+msgstr "أحدث مدونة"
 
 #: .\templates\home.html:300
 msgid "From the Blogs"
-msgstr ""
+msgstr "من المدونات"
 
 #: .\templates\home.html:314 .\templates\home.html:335
 msgid "By"
-msgstr ""
+msgstr "بواسطة"
 
 #: .\templates\socialaccount\authentication_error.html:5
 #: .\templates\socialaccount\authentication_error.html:11
@@ -1353,7 +1309,8 @@ msgstr "فشل تسجيل الدخول إلى الشبكة الاجتماعية"
 #: .\templates\socialaccount\authentication_error.html:13
 msgid ""
 "An error occurred while attempting to login via your social network account."
-msgstr "حدث خطأ أثناء محاولة تسجيل الدخول عبر حساب الشبكة الاجتماعية الخاص بك."
+msgstr ""
+"حدث خطأ أثناء محاولة تسجيل الدخول عبر حساب الشبكة الاجتماعية الخاص بك."
 
 #: .\templates\socialaccount\connections.html:5
 #: .\templates\socialaccount\connections.html:8
@@ -1385,11 +1342,11 @@ msgstr "تم إلغاء تسجيل الدخول"
 #, python-format
 msgid ""
 "You decided to cancel logging in to our site using one of your existing "
-"accounts. If this was a mistake, please proceed to <a href=\"%(login_url)s"
-"\">sign in</a>."
+"accounts. If this was a mistake, please proceed to <a "
+"href=\"%(login_url)s\">sign in</a>."
 msgstr ""
-"لقد قررت إلغاء تسجيل الدخول إلى موقعنا باستخدام أحد حساباتك الحالية. إذا كان "
-"هذا خطأ ، فيرجى المتابعة إلى <a href=%(login_url)s\"> تسجيل الدخول </a>."
+"لقد قررت إلغاء تسجيل الدخول إلى موقعنا باستخدام أحد حساباتك الحالية. إذا كان"
+" هذا خطأ ، فيرجى المتابعة إلى <a href=%(login_url)s\"> تسجيل الدخول </a>."
 
 #: .\templates\socialaccount\messages\account_connected.txt:2
 msgid "The social account has been connected."
@@ -1407,54 +1364,49 @@ msgstr "تم قطع الحساب الاجتماعي."
 #, python-format
 msgid ""
 "You  are about to use your %(provider_name)s account to login to\n"
-"                %(site_name)s. As a final step, please complete the "
-"following form:"
+"                %(site_name)s. As a final step, please complete the following form:"
 msgstr ""
 "أنت على وشك استخدام حساب %(provider_name)s الخاص بك لتسجيل الدخول إلى\n"
 "%(site_name)s .كخطوة أخيرة ، يرجى إكمال النموذج التالي:"
 
 #: .\templates\video.html:100
 msgid "Lecture Summery"
-msgstr ""
+msgstr "ملخص المحاضرة"
 
 #: .\templates\video.html:134
 msgid "Preview Lecture"
-msgstr ""
+msgstr "معاينة المحاضرة"
 
 #: .\templates\video.html:284
-#, fuzzy
 #| msgid "Featured courses"
 msgid "Lecture Features"
-msgstr "الكورسات الحالية"
+msgstr "ميزات الدورة"
 
 #: .\templates\video.html:300
 msgid "You make like"
-msgstr ""
+msgstr "بلغنا عن إعجابك"
 
 #: .\templates\video.html:319
-#, fuzzy
 #| msgid "Events"
 msgid "Recent Events"
-msgstr "المؤتمؤات"
+msgstr "المناسبات الأخيرة"
 
 #: .\templates\wishlist.html:12
 msgid "MY WISHLIST"
-msgstr ""
+msgstr "قائمة أمنياتي"
 
 #: .\templates\wishlist.html:16
 msgid "Cart"
-msgstr ""
+msgstr "سلة اختياراتي"
 
 #, python-format
 #~ msgid ""
 #~ "Please sign in with one\n"
-#~ "of your existing third party accounts. Or, <a href=\"%(signup_url)s"
-#~ "\">sign up</a>\n"
+#~ "of your existing third party accounts. Or, <a href=\"%(signup_url)s\">sign up</a>\n"
 #~ "for a %(site_name)s account and sign in below:"
 #~ msgstr ""
 #~ "الرجاء تسجيل الدخول بواحد\n"
-#~ "من حسابات الطرف الثالث الحالية الخاصة بك. أو<a href=\"%(signup_url)s"
-#~ "\">sign up</a> اشترك </a>\n"
+#~ "من حسابات الطرف الثالث الحالية الخاصة بك. أو<a href=\"%(signup_url)s\">sign up</a> اشترك </a>\n"
 #~ "لحساب%(site_name)s وقم بتسجيل الدخول أدناه:"
 
 #~ msgid "or"

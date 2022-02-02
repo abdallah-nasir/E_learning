@@ -7,32 +7,24 @@ from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
 import json
-
+from Dashboard.models import Rejects
 from django.shortcuts import render
 from django.conf import settings
 from ckeditor.fields import RichTextField
 # from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 from django.contrib.auth import get_user_model
-import requests 
 User=get_user_model()
-
+def slugify(str):
+    str = str.replace(" ", "-")
+    str = str.replace(",", "-")
+    str = str.replace("(", "-")
+    str = str.replace(")", "")
+    str = str.replace("؟", "")
+    return str
 import string,random
 
-def converter(self):   
-    try:
-            api=requests.get("http://api.currencylayer.com/live?access_key=bbd4b1fcbe13b2bf0b8a008bc1daa606&currencies=EGP&format = 1")
-            price=api.json()
-            for i in price["quotes"]: 
-                pass 
-            money=price["quotes"][i] * self.price
-            total=round(money)
-            self.egy_currency=total
-            self.save()
-            
-    except:
-        total=None
-    return total   
+
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 class Category(models.Model):
@@ -69,7 +61,7 @@ BLOG_TYPE=(
     ("audio","audio"),
     ("quote","quote"),
     ("link","link"),
-                
+            
 )  
 class Blog_Images(models.Model):
     blog=models.ForeignKey("Blog",on_delete=models.CASCADE,)
@@ -102,8 +94,11 @@ class Blog(models.Model):
     comments=models.ManyToManyField(Blog_Comment,related_name="blog_comments",blank=True)
     blog_type=models.CharField(choices=BLOG_TYPE,max_length=20)
     status=models.CharField(choices=BLOG_STATUS,max_length=50,default="pending")
-    tags=TaggableManager()
+    tags=TaggableManager() 
     slug=models.SlugField(unique=True,blank=True,max_length=100)
+
+    def __str__(self):
+        return self.name
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
@@ -113,9 +108,7 @@ class Blog(models.Model):
             else:
                 self.slug = slugify(self.name)          
         super(Blog, self).save()
-    def __str__(self):
-        return self.name
-
+        
     def get_views(self):
         try:
             views=self.blog_viewers.viewers.count()
@@ -159,7 +152,7 @@ class Blog(models.Model):
         count=comments + replies
         return count
     def get_blog_video_status(self):
-        if self.blog_type =="video" :
+        if self.blog_type =="video" or self.blog_type =="audio":
             try:
                 blog_data=json.loads(self.data)
                 length=blog_data["video_length"]
@@ -169,11 +162,14 @@ class Blog(models.Model):
             length=None
         return length
     def get_blog_audio_status(self):
-        if self.blog_type =="audio" and self.video == None :
-            audio=True
+        if self.blog_type =="audio" :
+            if not self.video:
+                show=True
+            else:
+                show=False
         else:
-            audio =False
-        return audio
+            show=False
+        return show
 @receiver(post_save, sender=Blog)
 def create_blog_viewers(sender, instance, created, **kwargs):
     if created:
@@ -187,7 +183,6 @@ def get_blog_data():
     blogs=Blog.objects.filter(status="approved").order_by("-id")
     context={"recent_teachers":teacher,"recent_categories":cat,"slider":slider_blogs,"recent_blogs":recent_blog,"blogs":blogs}
     return context
-
 def recent_teachers():
     teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
     return teacher 
@@ -240,11 +235,10 @@ class Blog_Payment(models.Model):
     def __str__(self):
         return self.method
 
-
 class Prices(models.Model):
     name=models.CharField(max_length=50)
     price=models.FloatField(default=0)
-    data=models.TextField()
+    data=RichTextField()
     def __str__(self):
         return self.name
     

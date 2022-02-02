@@ -1,4 +1,2 @@
-change blog models 
-delete all reject import in all apps
-change blogs views (reverse)
-update dertification kwargs
+change dashbaord form 
+change image view in dashbod edit payment

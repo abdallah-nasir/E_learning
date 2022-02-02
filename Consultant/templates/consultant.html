@@ -96,9 +96,7 @@
                 <div class="col-lg-8">
                     <div class="doctor-slider slider">
                         {% for i in teachers %}
-                      
                         <div class="profile-widget">
-                            
                             <div class="doc-img">
                                 <a href="{% url 'consultant:get_consultant' i.user.slug %}?consultant={{i.id}}">
                                     <img class="img-fluid" alt="{{i.user.username}}" src="{{i.user.image}}">

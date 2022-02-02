@@ -26,7 +26,7 @@ import os
 # import debug_toolbar
 # from allauth.urls
 
-   
+
 urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
 ]

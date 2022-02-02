@@ -128,9 +128,7 @@
 		border: none;
 		background: #888
 	}
-	iframe{
-		width:100% !important;
-			 }
+
 </style>
 		<!-- BEGIN CONTENT -->
 		<main class="site-content">
@@ -229,7 +227,7 @@
 					</article>
 					{% elif i.blog_type == "video" %}
 					<article class="post format-video">
-						<header class="entry-header" style="background-image: url(images/photo-6.jpg);">
+						<header class="entry-header" style="background-image: url({{i.image.first.image}});">
 							<div class="icon-b">
 								<i class="fa fa-film"></i>
 							</div>
@@ -302,7 +300,7 @@
 					</article>
 					{% elif i.blog_type == "audio" %}
 					<article class="post format-audio">
-						<header class="entry-header" style="background-image: url(images/photo-11.jpg);">
+						<header class="entry-header" style="background-image: url({{i.image.first.image}});">
 							<div class="icon-b">
 								<i class="fa fa-music"></i>
 							</div>

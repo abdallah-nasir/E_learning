@@ -10,11 +10,19 @@ from .manager import *
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
+from Dashboard import models as dashboard_models
 from django.conf import settings
 from home import models as home_models
-import json,os 
-default_image=os.environ["default_image"]
+import json,os
 agartha_cdn=os.environ["agartha_cdn"]
+default_image=os.environ["default_image"]
+def slugify(str):
+    str = str.replace(" ", "-")
+    str = str.replace(",", "-")
+    str = str.replace("(", "-")
+    str = str.replace(")", "")
+    str = str.replace("؟", "")
+    return str
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -26,34 +34,26 @@ ACCOUNT_TYPE=(
     ("student","student"),
     ("teacher","teacher") 
 )
+  
 GENDER=(
     ("male","male"),
     ("female","female")  
 )   
-
 class User(AbstractUser):
     account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20,default="student")
-    phone=models.CharField(max_length=12)
+    phone=models.CharField(max_length=14)
     account_image=models.ImageField(blank=True,null=True,default=f"{default_image}")
-    gender=models.CharField(max_length=20,choices=GENDER,default="male")
     my_data=models.TextField(blank=True,null=True)
+    gender=models.CharField(max_length=20,choices=GENDER,default="male")
     code=models.CharField(max_length=50,blank=True,null=True)
     slug=models.SlugField(unique=True,blank=True,null=True)
     vip =models.BooleanField(default=False)
     is_director=models.BooleanField(default=False)
     terms_privacy=models.BooleanField(default=True,blank=False)
+
     def __str__(self):
         return self.username
-    def save(self, *args, **kwargs):
-        if self.slug == None:
-            self.slug = slugify(self.username)
-            if User.objects.filter(slug=self.slug).exists():
-                slug=slugify(self.username)
-                self.slug =f"{slug}-{random_string_generator()}"
-            else:
-                self.slug = slugify(self.username)          
-        super(User, self).save()
-        
+
     def image(self):
         return self.account_image
     def get_user_data(self):
@@ -92,10 +92,28 @@ def create_user_session(sender, instance, created, **kwargs):
     if created:
         LoggedInUser.objects.create(user=instance)
 
-
+@receiver(pre_save, sender=User)
+def pre_save_receiver_video(sender, instance, *args, **kwargs):
+    instance.slug=slugify(instance.username) 
+    # if User.objects.filter(slug=instance.slug).exists():
+    #     slug=f"{instance.username}-{instance.id}"
+    #     instance.slug = slugify(slug) 
+    # else:      
+    #     slug=f"{instance.username}" 
+    #     instance.slug = slugify(slug) 
 
 auth_user=settings.AUTH_USER_MODEL
-  
+
+class CheckTeachersManager(models.Manager):
+    def get_query_set(self):
+        rejects=dashboard_models.Rejects.objects.filter(type="teacher")
+        list=[]
+        for i in rejects:
+            # i.content_id
+            list.append(i.content_id)
+        teachers=TeacherForms.objects.filter(approved=False).exclude(id__in=list)
+    
+        return teachers    
 
 USER_STATUS=(
     ("pending","pending"),
@@ -105,9 +123,8 @@ USER_STATUS=(
 class TeacherForms(models.Model):
     teacher=models.ForeignKey(auth_user,on_delete=models.CASCADE)
     status=models.CharField(choices=USER_STATUS,default="pending",max_length=50)
-    # code=models.CharField(max_length=50)
     data=models.TextField()    
-    def __str__(self):      
+    def __str__(self):
         return self.teacher.username
 
     def get_user_data(self):

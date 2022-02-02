@@ -3,7 +3,13 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 # from Home_Models import Course
 User=get_user_model()
- 
+def slugify(str):
+    str = str.replace(" ", "-")
+    str = str.replace(",", "-")
+    str = str.replace("(", "-")
+    str = str.replace(")", "")
+    str = str.replace("؟", "")
+    return str
 # Create your models here.
 TYPE=(
     ("course","course"),

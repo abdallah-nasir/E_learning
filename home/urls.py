@@ -17,6 +17,7 @@ path("about-us/",views.about,name="about"),
 path("blogs/category/<str:slug>/",views.category,name="category"),
 path("terms/",views.terms,name="terms"),
 path("privacy/",views.privacy,name="privacy"),
+path("google697fc55b8370db52.html/",views.test,name="test"),
 
 path("faqs/",views.faqs,name="faqs"),
 # path("shop/",views.shop,name="shop"),

@@ -34,21 +34,22 @@
                                     </thead>
                                 
                                    <tbody>
-                                       {% for i in transactions %}
+                                       {% for i in refunds %}
                                     <tr>
                                         <td>{{i.user.username}}</td>
                                         <td>{{i.transaction_number}}</td>
                                         {% if i.type == "course_payment" %}
                                         <td>Course</td>
-                                        {% elif type == "blog_payment" %}
+                                        {% elif i.type == "blog_payment" %}
                                         <td>Blog</td>
-                                        {% elif type == "consultant_payment" %}
+                                        {% elif i.type == "consultant_payment" %}
                                         <td>Consultant</td>
                                         {% endif %}
                                         <td>{{i.status}}</td>                                  
                                         <td>
+                                            {% if i.status != "approved" %}
                                           <a href="{% url 'dashboard:edit_refund' i.id %}"  class="btn btn-info">Edit</a>
-                                       
+                                            {% endif %}
                                       </td>
 
                                     </tr>

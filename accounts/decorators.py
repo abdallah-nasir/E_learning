@@ -32,3 +32,46 @@ def check_user_is_student(function):
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
+
+
+def check_user_is_teacher(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.account_type == "teacher":
+            return redirect(reverse("dashboard:home"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+def redirect_teacher_course_payment(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.account_type == "teacher":
+            return redirect(reverse("dashboard:course_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+
+def redirect_teacher_blog_payment(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.account_type == "teacher":
+            return redirect(reverse("dashboard:blog_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+
+def redirect_teacher_consultant_payment(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.account_type == "teacher":
+            return redirect(reverse("dashboard:consultant_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap

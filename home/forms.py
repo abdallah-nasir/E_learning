@@ -24,6 +24,7 @@ PAYMENTS=(
 class PaymentMethodForm(forms.Form):
     image=forms.ImageField(label="Transaction Screenshot")
     number=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Your Transaction Number ID"}),label="Transaction Number")
+
     def clean(self):
         # try:
         image=self.cleaned_data.get("image")
@@ -38,7 +39,6 @@ class PaymentMethodForm(forms.Form):
                 raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
         else:
             raise forms.ValidationError("invalid image")
-
 class CashForm(forms.Form):
     payment_image=forms.ImageField(label="IMAGE RECEIPT")    
     number=forms.CharField(max_length=100)

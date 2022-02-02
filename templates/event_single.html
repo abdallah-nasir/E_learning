@@ -39,7 +39,7 @@
                             <a href="#"><span><i class="fa fa-calendar"></i> {{event.date|date:"d M Y"}}</span></a>
                             <a href="#"><span><i class="fa fa-clock-o"></i>{{event.start_time|date:"h a"}} - {{event.end_time|date:"h a"}}</span></a>
                             <a href="#"><span><i class="fa fa-map-marker"></i> {{event.place}}</span></a>
-                            <img src="{{event.image}}" alt="Event">
+                            <img src="{{event.image}}" width="100%" alt="Event">
                             <p>{{event.get_details.details}}</p>
                         </div> <!-- events left -->
                     </div>
@@ -50,7 +50,8 @@
                                 <div class="events-coundwon-btn pt-30">
                                     <a href="#" class="main-btn">{% trans 'Book Your Seat' %}</a>
                                 </div>
-                            </div> <!-- events coundwon -->
+                            </div>
+                             <!-- events countdown -->
                             <div class="events-address mt-30">
                                 <ul>
                                     <li>
