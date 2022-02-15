@@ -10,7 +10,7 @@ from django.http import JsonResponse
 import json,requests,random,string
 from django.contrib import messages
 from datetime import  datetime as dt
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage,get_connection
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -27,23 +27,36 @@ agartha_cdn=os.environ['agartha_cdn']
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
 PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
 PAYMOB_CONSULT_INT=os.environ['PAYMOB_CONSULT_INT']
+PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
+PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
+PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
+SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
+
+PAYMENT_MAIL_CONNECTION = get_connection(
+host= SUPPORT_EMAIL_HOST, 
+port=PAYMENT_EMAIL_PORT, 
+username=PAYMENT_EMAIL_USERNAME, 
+password=PAYMENT_EMAIL_PASSWORD, 
+use_tls=False
+)
 from django.db.models import F
 from datetime import date
 
 def home(request):
-    # teacher_cache=cache.get("teacher_time")
-    # if teacher_cache == None:
-    teachers=Teacher_Time.objects.filter(available=True).order_by("-id")
-    teacher_list={}
-    for i in teachers:
-        if i.user not in teacher_list.keys(): 
-            teacher_list[i.user]=i
-    print(teacher_list)
-    # cache.set("teacher_time",teachers,60*15)
-    # else:
-    #     teachers=teacher_cache.order_by("?")
-    #     print("there")
-    context={"teachers":list(teacher_list.values())}
+    teachers=cache.get("teacher_time")
+    if teachers == None:
+        teachers=Teacher_Time.objects.filter(available=True).order_by("-id")
+        teacher_list={}
+        for i in teachers:
+            if i.user not in teacher_list.keys(): 
+                teacher_list[i.user]=i
+        teachers=list(teacher_list.values())
+        cache.set("teacher_time",teachers,60*30)
+    profiles=cache.get("profiles_teacher")
+    if profiles == None:
+        profiles=User.objects.filter(account_type="teacher")[:10]
+        cache.set("profiles_teacher",profiles,60*60*24)
+    context={"teachers":teachers,"profiles":profiles}
     return render(request,"consultant.html",context)
 
 def get_consultant(request,slug):
@@ -123,7 +136,7 @@ def western_payment(request,teacher):
             user_form=UserDataForm.objects.get(user=request.user,teacher=teacher,accomplished=False)
             user_form.accomplished=True
             user_form.save()
-            payment=Cosultant_Payment.objects.create(method="Western Union",user_data=user_form.data,transaction_number=number,
+            payment=Cosultant_Payment.objects.create(method="Western Union",amount=teacher.price,user_data=user_form.data,transaction_number=number,
                 teacher=teacher,user=request.user,status="pending")
             image_url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{payment.user.slug}/{payment.teacher.id}/{image}"
             headers = {
@@ -139,7 +152,12 @@ def western_payment(request,teacher):
                     payment.save()
             except:
                 pass
-            msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[payment.user.email])
+            msg = EmailMessage(subject="Payment completed",
+                body="thank you for your payment",
+                from_email=PAYMENT_EMAIL_USERNAME,
+                to=[payment.user.email],
+                connection=PAYMENT_MAIL_CONNECTION
+                )
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
             messages.success(request,"We Have sent an Email,Please check your Inbox")
@@ -329,11 +347,17 @@ def paypal_capture(request,teacher_id,order_id,user,user_data_form):
                 user_form=UserDataForm.objects.get(id=user_data_form)
                 user_form.accomplished=True
                 user_form.save()
-                payment=Cosultant_Payment.objects.create(method="Paypal",transaction_number=transaction,
+                payment=Cosultant_Payment.objects.create(method="Paypal",amount=teacher.price,transaction_number=transaction,
                     teacher=teacher,user_data=user_form.data,user=user,status="pending")
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
-                msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[user.email])
+                msg = EmailMessage(
+                    subject="Payment completed",
+                    body="thank you for your payment", 
+                    from_email=PAYMENT_EMAIL_USERNAME,
+                    to=[user.email],
+                    connection=PAYMENT_MAIL_CONNECTION
+                    )
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
                 return JsonResponse({"status":1})

@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
+from home import models as Home_Models
 import json
 from Dashboard.models import Rejects
 from django.shortcuts import render
@@ -80,6 +81,7 @@ BLOG_STATUS=(
     ("approved","approved"),
     ("declined","declined")
 )
+ 
 class Blog(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -92,9 +94,10 @@ class Blog(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
     paid=models.BooleanField(default=False)
     comments=models.ManyToManyField(Blog_Comment,related_name="blog_comments",blank=True)
+    viewers=models.ManyToManyField(User,related_name="blog_viewers",blank=True)
     blog_type=models.CharField(choices=BLOG_TYPE,max_length=20)
     status=models.CharField(choices=BLOG_STATUS,max_length=50,default="pending")
-    tags=TaggableManager() 
+    tags=TaggableManager()
     slug=models.SlugField(unique=True,blank=True,max_length=100)
 
     def __str__(self):
@@ -110,21 +113,14 @@ class Blog(models.Model):
         super(Blog, self).save()
         
     def get_views(self):
-        try:
-            views=self.blog_viewers.viewers.count()
-        except:
-            views=0
+        views=self.viewers.count()
         return views
     def check_blog_viwers(self,user):
-        try:
-            if self.blog_viewers.viewers.get(id=user):
-                count=self.blog_viewers.viewers.count()
-            else:
-                self.blog_viewers.viewers.add(id=user)
-                self.blog_viewers.viewers.save()
-                count=self.blog_viewers.viewers.count()
-        except:
-            count=0
+        current_user=self.viewers.filter(username=user)
+        if not current_user.exists():
+            self.viewers.add(user)
+            self.save()
+        count=self.viewers.count()
         return count
 
     def get_quote(self):
@@ -170,10 +166,10 @@ class Blog(models.Model):
         else:
             show=False
         return show
-@receiver(post_save, sender=Blog)
-def create_blog_viewers(sender, instance, created, **kwargs):
-    if created:
-        Blog_Views.objects.create(blog=instance)
+# @receiver(post_save, sender=Blog)
+# def create_blog_viewers(sender, instance, created, **kwargs):
+#     if created:
+#         Blog_Views.objects.create(blog=instance)
 
 def get_blog_data():
     teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
@@ -192,17 +188,17 @@ def recent_categories():
 def blog_slider():
     blogs=Blog.objects.filter(status="approved").order_by("-created_at")[:5]
     return blogs
-
+   
 def recent_blogs():
     blog=Blog.objects.filter(status="approved").order_by("-created_at")[:6]
     return blog
 
-class Blog_Views(models.Model):
-    blog=models.OneToOneField(Blog,on_delete=models.CASCADE,related_name="blog_viewers")
-    viewers=models.ManyToManyField(User,blank=True)
+# class Blog_Views(models.Model):
+#     blog=models.OneToOneField(Blog,on_delete=models.CASCADE,related_name="blog_viewers")
+#     viewers=models.ManyToManyField(User,blank=True)
 
-    def __str__(self):
-        return self.blog.name
+#     def __str__(self):
+#         return self.blog.name
 
 PAYMENTS=(
     ("Paymob","Paymob"),
@@ -226,15 +222,22 @@ class Blog_Payment(models.Model):
     payment_image=models.ImageField(upload_to=upload_blog_payment,blank=True,null=True)
     # phone=models.CharField(null=True,max_length=20)
     transaction_number=models.CharField(max_length=50,null=True)
+    amount=models.PositiveIntegerField(default=0)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     created_at=models.DateField()
     expired_at=models.DateField(blank=True,null=True)
     expired=models.BooleanField(default=False)
 
-    def __str__(self):
+    def __str__(self):  
         return self.method
 
+    def add_time_expired_to_related_course(self):
+        payments=Home_Models.Payment.objects.filter(user=self.user,status="approved",expired=False).select_related("course")
+        for i in payments:
+            i.expired_at +=
+        print(test)
+        return True
 class Prices(models.Model):
     name=models.CharField(max_length=50)
     price=models.FloatField(default=0)

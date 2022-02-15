@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load cache %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_available_languages as LANGUAGES %}
 {% get_language_info_list for LANGUAGES as languages %}
@@ -16,7 +17,7 @@
     
     <!--====== Title ======-->
     <title>{% trans 'Agartha Academy' %} {% block title  %}{% endblock %}</title>
-    
+    {% cache 172800 static_head %}
     <!--====== Favicon Icon ======-->
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
 
@@ -37,15 +38,15 @@
 
     <!--====== Bootstrap css ======-->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    
+
     <!--====== Fontawesome css ======-->
     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
     
     <!--====== Default css ======-->
     <link rel="stylesheet" href="{% static 'css/default.css' %}">
-    
-    <!--====== Style css ======-->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!--====== Style css ======-->
 
     <link
   href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
@@ -53,8 +54,7 @@
 />
     <!--====== Responsive css ======-->
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-    <!-- <link rel="stylesheet" href="{% static 'css/bootstrab-rtl.css' %}"> -->
-
+ {% endcache %}
     <style type="text/css">
         p{
             margin-bottom:0 !important;
@@ -282,7 +282,7 @@
         {% if request.user.is_authenticated %}
         <a class="text-reset me-3"  href="{% url 'home:cart' request.user.slug %}">
             <i class="fa fa-shopping-bag"></i>
-            <span class="badge rounded-pill badge-notification bg-success">{{my_wishlist.course.count}}</span>
+            <span id="shop-numbers" class="badge rounded-pill badge-notification bg-success">{{my_wishlist.course.count}}</span>
         </a>
          {% else %}
      <a class="text-reset me-3"  href="{% url 'account_login' %}">
@@ -477,12 +477,12 @@
         <div class="footer-top pt-40 pb-70">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-3 col-md-4 col-sm-12">
                         <div class="footer-about mt-40">
                             <div class="logo">
                                 <a href="#"><img src="{% static 'images/logo-2.png' %}" alt="Logo"></a>
                             </div>
-                            <p>Gravida nibh vel velit auctor aliquetn quibibendum auci elit cons equat ipsutis sem nibh id elit. Duis sed odio sit amet nibh vulputate.</p>
+                            <p style="text-align:center;">Gravida nibh vel velit auctor aliquetn quibibendum auci elit cons equat ipsutis sem nibh id elit. Duis sed odio sit amet nibh vulputate.</p>
                             <ul class="mt-20">
                                 <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
                                 <li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -491,21 +491,16 @@
                             </ul>
                         </div> <!-- footer about -->
                     </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="col-lg-3 col-md-4 col-sm-12">
                         <div class="footer-link mt-40">
                             <div class="footer-title pb-25">
-                                <h6>Sitemap</h6>
+                                <h6>{% trans 'Sitemap' %}</h6>
                             </div>
                             <ul>
-                                <li><a href="{% url 'home:home' %}">  <i class="fa fa-angle-right"></i>Home</a>
                                 </li>
-                                <li><a href="{% url 'home:about' %}"><i class="fa fa-angle-right"></i>About us</a></li>
-                                <li><a href="{% url 'home:courses' %}"><i class="fa fa-angle-right"></i>Courses</a></li>
-                                <li><a href="{% url 'blogs:blogs' %}"><i class="fa fa-angle-right"></i>News</a></li>
-                                <li><a href="{% url 'home:events' %}"><i class="fa fa-angle-right"></i>Event</a></li>
-                                <li><a href="{% url 'home:teachers' %}"><i class="fa fa-angle-right"></i>Teachers</a></li>
-                                <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>Support</a></li>
-                                <li><a href="{% url 'home:contact' %}"><i class="fa fa-angle-right"></i>Contact</a></li>
+                                <li><a href="{% url 'home:about' %}"><i class="fa fa-angle-right"></i> {% trans 'About us' %}</a></li>
+                                <li><a href="{% url 'home:teachers' %}"><i class="fa fa-angle-right"></i> {% trans 'Teachers' %}</a></li>
+                                <li><a href="{% url 'home:contact' %}"><i class="fa fa-angle-right"></i> {% trans 'Contact' %}</a></li>
                             </ul>
                             <!-- <ul>
                                 <li><a href="#"><i class="fa fa-angle-right"></i>Gallery</a></li> 
@@ -516,24 +511,26 @@
                             </ul> -->
                         </div> <!-- footer link -->
                     </div>
-                    <div class="col-lg-2 col-md-6 col-sm-6">
+                    <div class="col-lg-3 col-md-4 col-sm-12">
                         <div class="footer-link support mt-40">
                             <div class="footer-title pb-25">
-                                <h6>Support</h6>
+                                <h6> {% trans 'Our Products' %}</h6>
                             </div>
                             <ul>
-                                <li><a href="{% url 'home:faqs' %}"><i class="fa fa-angle-right"></i>FAQS</a></li>
-                                <li><a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i>Privacy</a></li>
-                                <li><a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i>Policy</a></li>
-                                <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>Support</a></li>
+                                <li><a href="{% url 'home:courses' %}"><i class="fa fa-angle-right"></i> {% trans 'Courses' %}</a></li>
+                                <li><a href="{% url 'consultant:home' %}"><i class="fa fa-angle-right"></i> {% trans 'Consultations' %}</a></li>
+                                <li><a href="{% url 'blogs:blogs' %}"><i class="fa fa-angle-right"></i> {% trans 'Articles' %}</a></li>
+                                <li><a href="{% url 'home:events' %}"><i class="fa fa-angle-right"></i> {% trans 'Events' %}</a></li>
+
+                          
                                 <!-- <li><a href="#"><i class="fa fa-angle-right"></i>Documentation</a></li> -->
                             </ul>
                         </div> <!-- support -->
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-3 col-md-12 col-sm-12">
                         <div class="footer-address mt-40">
                             <div class="footer-title pb-25">
-                                <h6>Contact Us</h6>
+                                <h6> {% trans 'Support' %}</h6>
                             </div>
                             <ul>
                                
@@ -546,6 +543,18 @@
                                     </div>
                                 </li>
                             </ul>
+                            <div class="footer-link">
+                                <ul>
+                                <li>
+                                    <a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Privacy' %}</a>
+                                </li>
+                                <li><a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Policy' %}</a></li>
+                                <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i> {% trans 'Support' %}</a></li>
+                                <li><a href="{% url 'home:faqs' %}"><i class="fa fa-angle-right"></i> {% trans 'FAQS' %}</a></li>
+
+                            </ul>
+                            </div>
+                               
                         </div> <!-- footer address -->
                     </div>
                 </div> <!-- row -->
@@ -573,7 +582,7 @@
     <!--====== BACK TO TP PART ENDS ======-->
    
     
-    
+    {% cache 172800 static_js %}
     <!--====== jquery js ======-->
     <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
@@ -617,6 +626,7 @@
   type="text/javascript"
   src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"
 ></script>
+{% endcache %}
 </body>
 <script style="text/javascript">
    

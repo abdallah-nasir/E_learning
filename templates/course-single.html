@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load cache %}
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% load embed_video_tags %}
@@ -129,20 +130,12 @@ width:100% !important;
                                 </li>
                             </ul>
                         </div> <!-- course terms -->
+                        {% cache 86400 single_course course.slug  %}
                         <div class="corses-singel-image pt-50">
                             <iframe src="{{course.videos.first.video}}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" style="height:500px;" allowfullscreen="true"></iframe>                          
                         </div>
-                        
-                                     <!-- <div class="corses-singel-image pt-50">
-                            
-                            <video style="width:100%; max-height:500px;" controls>
-                                <source src="{{course.videos.first.video.url}}" type="video/mp4">
-                           
-                              Your browser does not support the video tag.
-                              </video>      
-                              </div>      -->
-                            <!-- <img src="{{course.image.url}}" alt="Courses"> -->
-                         <!-- corses singel image -->
+                        {% endcache %}
+                                    
                         
                         <div class="corses-tab mt-30">
                             <ul class="nav nav-justified" id="myTab" role="tablist">
@@ -196,7 +189,7 @@ width:100% !important;
                                                 <div id="collapseOne-{{i.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                                     <div class="card-body">
                                                     
-                                                        <a href="{% url 'home:video' course=i.my_course slug=i.slug %}"><span class="head">{{i.name}}</span></a>
+                                                        <a href="{% url 'home:video' course=i.my_course.slug slug=i.slug %}"><span class="head">{{i.name}}</span></a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -503,7 +496,6 @@ width:100% !important;
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {

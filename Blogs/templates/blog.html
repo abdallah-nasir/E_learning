@@ -1,6 +1,8 @@
 {% extends 'blog_base.html' %}
 {% load i18n %}
 {% block content %}
+<link rel='stylesheet' href='{% static "blog_audio/style.css" %}'>
+
 <style type="text/css">
  /* Style the button that is used to open and close the collapsible content */
  .collapsible {
@@ -121,9 +123,28 @@
 		</article>
 		{% elif blog.blog_type == "audio" %}
 		<article class="post format-audio margin-bottom">
-			<div class="entry-media">
-				<iframe src="{{blog.video}}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" style="height:500px;" allowfullscreen="true"></iframe>                          
-			</div>
+			<div class="wrapper">
+				<figure class="entry-thumb">
+					<img src="https://agarthaacademy.b-cdn.net/courses/course-1/index.jpg" width="1200" height="500" alt="">
+				</figure>
+				<div class="music music-controls">
+				  <span class="seek-bar">
+					<span class="knot"></span>
+				  </span>
+				  <span class="song-buffer"></span>
+				  <span class="song-current-time">00:00</span><span class="play">
+				  <i class="fa fa-play" aria-hidden="true"></i>
+				  <span class="song-duration">00:00</span>
+				  </span>
+				</div>
+			  </div>
+			  <audio controls id="music-player" preload="auto">
+				<source src="{{blog.video}}" type="audio/mpeg">
+			  Your browser does not support the audio element.
+			  </audio>
+			  
+		
+			  
 			<header class="entry-header">
 				<div class="icon-b">
 					<i class="fa fa-music"></i>
@@ -138,7 +159,7 @@
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
-							{{blog.get_comments}} {% trans 'comments' %}
+							{{blog.get_comments}} comments
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
@@ -150,13 +171,13 @@
 				{{blog.details|safe}}
 			</div>
 			<footer class="entry-footer">
-				<h3>{% trans 'Tags' %}</h3>
+				<h3>Tags</h3>
 				<div class="tags">
 					{% for b in blog.tags.all %}
 					<a href="">{{b.name}}</a>
 					{% endfor %}
 				</div>
-				<h3>{% trans 'Share' %}</h3>
+				<h3>Share</h3>
 				<div class="social-likes social-likes_notext">
 					<div class="facebook" title="Share link on Facebook"></div>
 					<div class="twitter" title="Share link on Twitter"></div>
@@ -427,6 +448,7 @@
 			</div>
 		</main>
 		<!-- END CONTENT -->
+		<script  src="{% static 'blog_audio/script.js' %}"></script>
 
 <script style="text/javascript">
 	var coll = document.getElementsByClassName("collapsible");

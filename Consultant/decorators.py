@@ -9,9 +9,9 @@ from django.contrib import messages
 def check_user_is_has_consul(function):
     def wrap(request, *args, **kwargs):
         teacher=get_object_or_404(Teacher_Time,id=kwargs["teacher"],available=True)
-        payment = Cosultant_Payment.objects.filter(user=request.user,teacher=teacher).exclude(status="approved")
+        payment = Cosultant_Payment.objects.filter(user=request.user,teacher=teacher).exclude(Q(status="approved") | Q(status='refund'))
         print(payment)
-        consultant=Consultant.objects.filter(user=request.user,teacher=teacher).exclude(status="completed")
+        consultant=Consultant.objects.filter(user=request.user,teacher=teacher).exclude(Q(status="completed") | Q(status="refund"))
         if payment.exists() or consultant.exists():
             messages.error(request,f"You Already Have Pending Consultant")
             return redirect(reverse("accounts:consultant_payment"))
@@ -22,7 +22,7 @@ def check_user_is_has_consul(function):
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
-
+  
 def check_user_is_has_consul_checkout(function):
     def wrap(request, *args, **kwargs):
         try:
@@ -82,7 +82,7 @@ def validate_post_checkout(function):
 
 def complete_user_data(function):
     def wrap(request, *args, **kwargs):
-        if request.user.first_name == None or request.user.last_name == None or request.user.phone ==None:
+        if not request.user.first_name or not request.user.last_name or not request.user.phone:
             messages.error(request,"complete your information first")
             return redirect(reverse("accounts:account_info"))
         else:

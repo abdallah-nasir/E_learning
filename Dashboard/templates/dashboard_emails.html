@@ -17,7 +17,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            {% comment %} <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> {% endcomment %}
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -42,7 +42,7 @@
                                         <td>{{i.status}}</td>                                                                           
                                         <td>
                                          {% if i.status != "solved" %}
-                                          <a href="{% url 'dashboard:single_email' i.id %}" class="btn btn-success">Check</a>
+                                          <a href="{% url 'dashboard:single_email' i.id %}?email=True" class="btn btn-success">Check</a>
                                           <button class="btn btn-danger" data-toggle="modal" data-target="#close-{{i.id}}">End</button>
 
                                             {% endif %}

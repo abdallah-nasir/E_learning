@@ -50,12 +50,37 @@
                                         <td>Null</td>
                                             {% endif %}
                                         <td>{{i.status}}</td>
-                                        {% if i.status == "declined" and i.method == "Western Union" %}
-                                        <td><a href="{% url 'accounts:edit_consultant_payment' i.id %}" class="btn btn-info">{% trans 'Edit' %}</a></td>
-                                            {% else %}
-                                        <td></td>
+                                        <td>
+                                            {% if i.status == "declined" and i.method == "Western Union" %}
+                                            <a href="{% url 'accounts:edit_consultant_payment' i.id %}" class="btn btn-info">{% trans 'Edit' %}</a>
+                                        
+                                            {% elif i.stats != "refund" %}
+                                            <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">{% trans 'Refund' %}</button>
+
+
                                         {% endif %}
+                                    </td>
                                     </tr>
+<!-- Modal -->
+<div class="modal fade" id="refund-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Refund</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you Sure ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
+          <a href="{% url 'accounts:consultant_refund' i.id %}" type="button" class="btn btn-danger">{% trans 'Refund' %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
                                     {% endfor %}
                                    </tbody>
                                 </table>

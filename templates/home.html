@@ -3,8 +3,15 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% block content %}
-<title>{% block title %}| Home{% endblock %}</title>
-
+<title>{% block title %}| {% trans 'Home' %}{% endblock %}</title>
+<style type="text/css">
+.course-slied .next{
+    right: -100% !important;
+}
+.course-slied .prev{
+    right: -95% !important;
+}
+</style>
    <!--====== SLIDER PART START ======-->
     
    <section id="slider-part" class="slider-active">
@@ -62,12 +69,12 @@
                         <div class="col-md-6">
                             <div class="singel-items text-center mt-30">
                                 <div class="items-image">
-                                    <img src="{% static 'images/category/ctg-1.jpg' %}" alt="Category">
+                                    <img src="{{i.image}}" style="height: 100px;"  alt="Category">
                                 </div>
                                 <div class="items-cont">
                                     <a href="#">
                                         <h5>{{i.name.title}}</h5>
-                                        <span>{{i.get_courses}}{% trans 'courses' %}</span>
+                                        <span>{{i.get_courses}} {% trans 'courses' %}</span>
                                     </a>
                                 </div>
                             </div> <!-- singel items -->
@@ -115,7 +122,7 @@
 
 <!--====== COURSE PART START ======-->
 
-<section id="course-part" class="pt-115 pb-115">
+<section id="course-part" class="pt-115 pb-120 gray-bg">
     <div class="container">
         <div class="row">
             <div class="col-lg-6">
@@ -128,37 +135,53 @@
         <div class="row course-slied mt-30">
             {% for i in data.courses %}
             <div class="col-lg-4">
-                <div class="singel-course-2">
+                <div class="singel-course">
                     <div class="thum">
                         <div class="image">
-                            <img  src="{{i.image}}" alt="Course">
+                            <img src="{{i.image}}" alt="Course">
                         </div>
                         <div class="price">
-                            <span>{{i.get_price}}</span>
+                            <span>${{i.get_price}}</span>
                         </div>
+                    </div>
+                    <div class="cont">
+                        <ul>
+                            {% with ''|center:i.total_rate as range %}
+                                {% for _ in range %}
+                                <li><i class="fa fa-star"></i></li>
+
+                                    {% endfor %}
+                                {% endwith %}
+                        </ul>
+                        <span>({{i.reviews.count}} {% trans 'Reviews' %})</span>
+                        <a href="{% url 'home:course' slug=i.slug %}"><h4>{{i.name.title|truncatewords:10}}</h4></a>
                         <div class="course-teacher">
                             <div class="thum">
-                                <a href="{% url 'home:course' i.slug %}"><img style="height:35px;" src="{{i.Instructor.image}}" alt="teacher"></a>
+                                <a href="{% url 'home:teacher' i.Instructor.slug %}"><img src="{{i.Instructor.image}}" alt="teacher"></a>
                             </div>
                             <div class="name">
                                 <a href="{% url 'home:teacher' i.Instructor.slug %}"><h6>{{i.Instructor.get_full_name.title}}</h6></a>
                             </div>
-                            <div class="review">
+                            <div class="admin">
                                 <ul>
-                                    {% with ''|center:i.total_rate as range %}
-                                    {% for _ in range %}
-                                    <li><i class="fa fa-star"></i></li>
-                                    {% endfor %}
-                                    {% endwith %}
+                                    <li><a href="#"><i class="fa fa-user"></i><span>{{i.students.count}}</span></a></li>
+                                    {% if i in my_wishlist.course.all %}
+                                    <input class="love-add-{{i.id}}" type="hidden" value="{{i.id}}">
+                                    <li id="love-add" class="love-add-{{i.id}}" data-index="{{i.id}}"><a>
+                                    <i id="love-color-{{i.id}}"  class="fa fa-heart" style="color:#ffc600;" ></i><span>{{i.likes}}</span></a></li>
+                                   {% else %}
+                                <input class="love-add-{{i.id}}" type="hidden" value="{{i.id}}">
+
+                                   <li id="love-add" class="love-add-{{i.id}}" data-index="{{i.id}}"><a><i id="love-color-{{i.id}}"  class="fa fa-heart"></i><span>{{i.likes}}</span></a></li>
+
+                                    {% endif %} 
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="cont">
-                        <a href="{% url 'home:course' i.slug %}"><h4>{{i.name.title|truncatewords:10}}</h4></a>
-                    </div>
                 </div> <!-- singel course -->
             </div>
+          
            {% endfor %}
         </div> <!-- course slied -->
     </div> <!-- container -->

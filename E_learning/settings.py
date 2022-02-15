@@ -133,27 +133,27 @@ WSGI_APPLICATION = 'E_learning.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
-DATABASES = {    
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
-    }
-}    
+# DATABASES = {    
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
+#     }
+# }    
   
-# import pymysql
-# pymysql.install_as_MySQLdb()
-# import MySQLdb
-# DATABASES={
-#     "default":{
-#         "ENGINE":"django.db.backends.mysql",
-#         "NAME":os.environ["NAME"],
-#         "USER":os.environ["USER"],
-#         "PASSWORD":os.environ["PASSWORD"],
-#         "HOST":"localhost",
-#         "PORT":"3306",
-#         'OPTIONS':{'sql_mode': 'STRICT_ALL_TABLES'},
-#     }      
-# }  
+import pymysql
+pymysql.install_as_MySQLdb()
+import MySQLdb
+DATABASES={   
+    "default":{
+        "ENGINE":"django.db.backends.mysql",
+        "NAME":"agarthaa_e_learning",
+        "USER":"agarthaa_root",
+        "PASSWORD":"AgarthaNew",
+        "HOST":"localhost",
+        "PORT":"3307",
+        'OPTIONS':{'sql_mode': 'STRICT_ALL_TABLES'},
+    }      
+}  
 CACHES = { 
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
@@ -199,12 +199,11 @@ TEMPUS_DOMINUS_LOCALIZE=True
 
 MODELTRANSLATION_LANGUAGES = ['en',"ar"]
 
-STATIC_URL = os.environ["static_url"]
-
-STATIC_ROOT= os.environ["static_root"]
-# STATICFILES_DIRS=[
-#   "https://agarthaacademy.b-cdn.net"
-# ]  
+STATIC_URL = '/static/'
+STATIC_ROOT=BASE_DIR/"static"
+STATICFILES_DIRS=[
+  BASE_DIR/"static_in_env"
+]  
      
 # for translation
 LOCALE_PATHS=(   
@@ -226,7 +225,7 @@ MESSAGE_TAGS = {
 }
 # "Email Backend"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.agartha.academy'
+EMAIL_HOST = 'smtppro.zoho.com'
 EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
 EMAIL_HOST_PASSWORD =os.environ["EMAIL_HOST_PASSWORD"]
 EMAIL_USE_TLS = False

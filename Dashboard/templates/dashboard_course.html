@@ -17,7 +17,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            <!-- <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> -->
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -52,15 +52,16 @@
                                         <td>{{i.course_status}}</td>
                                          <td>{{i.status}}</td>
                                         <td>
-                                    <a class="btn btn-success" href="{% url 'dashboard:add_video' i.slug %}">Add Video</a>
+                                    <!-- <a class="btn btn-success" href="{% url 'dashboard:add_video' i.slug %}">Add Video</a> -->
                                             {% if i.quiz %}
                                     <a class="btn btn-info" href="{% url 'dashboard:quiz' i.slug %}">Quiz</a>
                                             {% else %}
                                     <a class="btn btn-success" href="{% url 'dashboard:add_quiestions' i.slug %}">Add Quiz</a>
 
                                             {% endif %}
-                                    <a class="btn btn-primary" href="{% url 'dashboard:edit_course' i.slug %}">Edit Course</a>
-        
+                                    <a class="btn btn-success" href="{% url 'dashboard:edit_course' i.slug %}">Edit Course</a>
+                                    <a class="btn btn-primary" href="{% url 'dashboard:videos' i.slug %}">Videos</a>
+
                                 </td>
 
 

@@ -6,11 +6,21 @@ from home.views import FailedJsonResponse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from next_prev import next_in_order, prev_in_order
 from django.contrib import messages
 from .decorators import check_course_status
-from django.core.mail import send_mail,EmailMessage
-
+from django.core.mail import EmailMessage,get_connection
+import os
+PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
+PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
+PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
+SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
+PAYMENT_MAIL_CONNECTION = get_connection(
+host= SUPPORT_EMAIL_HOST, 
+port=PAYMENT_EMAIL_PORT, 
+username=PAYMENT_EMAIL_USERNAME, 
+password=PAYMENT_EMAIL_PASSWORD, 
+use_tls=False
+) 
 # Create your views here.
 
 @login_required(login_url="accounts:login")
@@ -62,8 +72,13 @@ def quiz_result(request,slug):
         result.degree=data["percent"]
         result.save()
         if created or result.status == "in-completed":
-            msg = EmailMessage(subject="Quiz Completed", body="thank you for your answers,our team will send you mail for the certification", 
-            from_email=settings.EMAIL_HOST_USER, to=[result.user.email])
+            msg = EmailMessage(
+            subject="Quiz Completed", 
+            body="thank you for your answers,our team will send you mail for the certification", 
+            from_email=PAYMENT_EMAIL_USERNAME,
+            to=[result.user.email],
+            connection=PAYMENT_MAIL_CONNECTION
+            )
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
             result.status ="completed"

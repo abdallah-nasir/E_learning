@@ -9,7 +9,7 @@ class BlogPaymentAdmin(admin.ModelAdmin):
 admin.site.register(Blog,BlogAdmin)
 admin.site.register(Blog_Comment)
 admin.site.register(Blog_Comment_Reply)
-admin.site.register(Blog_Views)
+# admin.site.register(Blog_Views)
 admin.site.register(Category)
 admin.site.register(Blog_Images)
 admin.site.register(Blog_Payment,BlogPaymentAdmin)

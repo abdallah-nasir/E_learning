@@ -231,7 +231,7 @@ li.resp-tab-item span .pic1{
                                 headers: {"X-CSRFToken": csrftoken}
                             }).then(function(res) {
                                
-                                window.location.href = '{% url "home:success" %}';                                
+                                window.location.href = '{% url "accounts:course_payment" %}';                                
                                 return res.json();
                             }).then(function(orderData) {
                              
@@ -266,8 +266,8 @@ li.resp-tab-item span .pic1{
                                 method: 'post',
                                 headers: {"X-CSRFToken": csrftoken}
                             }).then(function(res){
-                                window.location.href = '{% url "home:failed" %}';
-                                return res.json();
+                              window.location.href = '{% url "accounts:course_payment" %}';                                
+                              return res.json();
                             })
                             // Show a cancel page or return to cart
                            
@@ -310,9 +310,9 @@ $(document).on('click',"#card-data",function(){
   $.ajax({
     type:"GET",
     url:"{% url 'home:paymob_payment' course.slug %}",
-      success:function(res){
-
-          $("#card-data").remove();
+    success:function(res){
+      if (res.success == 1){
+        $("#card-data").remove();
         let html=` <iframe style=" display: block  !important;      
                           border: none  !important;         
                         height: 100vh  !important;        
@@ -321,8 +321,11 @@ $(document).on('click',"#card-data",function(){
                         text-align:center  !important;
                         align-items:center  !important;" width=100% src="https://accept.paymob.com/api/acceptance/iframes/${res.frame}?payment_token=${res.token}" ></iframe>`
         $("#card").html(html);
-          
-                  },
+                  }
+          else{
+            window.location.href="/checkout/courses/{{course.slug}}/";
+          }
+                },
   
                   });
                   // End

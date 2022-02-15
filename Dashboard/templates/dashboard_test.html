@@ -26,7 +26,11 @@
                         <div id="alert-box"></div>
                         <div id="image-box"></div>
                         <div class="card-body">
-                          {{data}}
+                            <form method="post">
+                                {% csrf_token %}
+                                {{form|crispy}}
+<button type="submit">submit</button>
+                            </form>
                         </div>
                     </div>
 

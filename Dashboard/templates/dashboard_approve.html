@@ -263,7 +263,6 @@
                                             <th>User</th>
                                             <th>Email</th>
                                             <th>Videos</th>
-                                            <th>Students</th>
                                             <th>Duration</th>
                                             <th>Category</th>
                                             <th>Price</th>
@@ -271,7 +270,6 @@
                                              <th>Course Status</th>
                                             <th>Status</th>
                                             <th>Image</th>
-                                            <th>Reviews</th>
                                              <th>Videos</th>
                                             <th>Action</th>
                                         </tr>
@@ -286,7 +284,6 @@
                                         <td>{{i.Instructor.email}}</td>
 
                                         <td>{{i.videos.count}}</td>
-                                          <td>{{i.students.count}}</td>
                                           <td>{{i.get_duration_model}}</td>
                                           <td>{{i.branch.name.title|truncatechars:20}}</td>
                                           <td>{{i.price}}</td>
@@ -295,8 +292,9 @@
                                  
                                           <td>{{i.course_status}}</td>
                                           <td>{{i.status}}</td>
-                                          <td><a target="_blank" href="{{i.image}}">image link</a></td>
-                                          <td>{{i.reviews.count}}</td>
+                                          <td>
+                                              <a target="_blank" href="{{i.image}}">image link</a></td>
+                                          
                                           <td><a href="{% url 'dashboard:course_videos' i.id %}">Videos</a></td>
 
                                         <td>

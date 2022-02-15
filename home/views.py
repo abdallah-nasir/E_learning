@@ -1,5 +1,6 @@
 from django.db.models.query_utils import Q
-from django.shortcuts import render,redirect,reverse
+from django.shortcuts import render,redirect
+from django.urls import reverse
 from .models import *
 import os
 from django.shortcuts import get_object_or_404
@@ -43,6 +44,16 @@ host= SUPPORT_EMAIL_HOST,
 port=SUPPORT_EMAIL_PORT, 
 username=SUPPORT_EMAIL_USERNAME, 
 password=SUPPORT_EMAIL_PASSWORD, 
+use_tls=False
+) 
+PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
+PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
+PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
+PAYMENT_MAIL_CONNECTION = get_connection(
+host= SUPPORT_EMAIL_HOST, 
+port=PAYMENT_EMAIL_PORT,  
+username=PAYMENT_EMAIL_USERNAME, 
+password=PAYMENT_EMAIL_PASSWORD, 
 use_tls=False
 ) 
 class FailedJsonResponse(JsonResponse):
@@ -119,7 +130,10 @@ def branch(request,slug):
     return render(request,"branch.html",context)
 
 def single_course(request,slug):
-    course=get_object_or_404(Course,slug=slug,status="approved")
+    course=cache.get(f"single_course_{slug}")
+    if course == None:
+        course=get_object_or_404(Course,slug=slug,status="approved")
+        cache.set("single_course_{slug}",course,60*30)
     form=ReviewForm(request.POST or None)
     if request.method == "POST":
         if request.user.is_authenticated:
@@ -140,13 +154,21 @@ def single_course(request,slug):
 
     context={"course":course,} 
     return render(request,"course-single.html",context)
- 
+
+@login_required(login_url="accounts:login")
+@check_if_payment_has_expired
 def videos(request,course,slug):
-    video=get_object_or_404(Videos,slug=slug)
+    video=cache.get(f"single_video_{slug}")
+    if video == None:
+        video=get_object_or_404(Videos,slug=slug)
+        cache.set(f"single_video_{slug}",video,60*30)
     if not request.user in video.my_course.students.all():
         messages.error(request,"sorry you should buy course first")
         return redirect(reverse("home:course",kwargs={"slug":video.my_course.slug}))
-    else:
+    else:  
+        if request.user not in video.watched_users.all():
+            video.watched_users.add(request.user)
+            video.save()
         if request.method == "POST":
             if request.user.is_authenticated:
                 if Reviews.objects.filter(user=request.user,course=video.my_course).exists():
@@ -171,7 +193,15 @@ def videos(request,course,slug):
     return render(request,"video.html",context)
 
 def events(request):
-    events=Events.objects.filter(Q(status="approved")|Q(status="start")).distinct()
+    events=cache.get("events")
+    today= datetime.date.today()
+    if events == None:
+        events=Events.objects.filter(Q(status="approved")|Q(status="start")).distinct()
+        for i in events:
+            if i.date < today:
+                i.status = "completed"
+                i.save()
+        cache.set("events",events,60*30)
     paginator = Paginator(events, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -269,14 +299,15 @@ def contact(request):
             email=form.cleaned_data.get("email")
             subject=form.cleaned_data.get("subject")
             message=form.cleaned_data.get("message")
-            send_mail( 
-            subject,
-            message,
-            email,
-            ["support@agartha.academy"],
-            fail_silently=False,
-            connection=SUPPORT_MAIL_CONNECTION
-        )
+            email_msg=EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=SUPPORT_EMAIL_USERNAME,
+                to=[SUPPORT_EMAIL_USERNAME],
+                reply_to=[email],
+                connection=SUPPORT_MAIL_CONNECTION
+                )
+            email_msg.send()
             instance.save()
             user= User.objects.filter(email=email.lower())
             if user.exists():
@@ -365,7 +396,7 @@ def checkout(request,course):
                 data=response.json()
                 print(data)
 
-                payment=Payment.objects.create(user=request.user,method="Western Union",transaction_number=number,course=my_course,       
+                payment=Payment.objects.create(user=request.user,amount=my_course.get_price(),method="Western Union",transaction_number=number,course=my_course,       
                     status="pending")
                 try:
                     if data["HttpCode"] == 201:
@@ -373,7 +404,13 @@ def checkout(request,course):
                         payment.save()
                 except:
                     pass
-                msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[request.user.email])
+                msg = EmailMessage(
+                subject="order confirm", 
+                body="thank you for your payment",
+                from_email=PAYMENT_EMAIL_USERNAME,
+                to=[request.user.email],
+                connection=PAYMENT_MAIL_CONNECTION
+                )  
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
                 messages.success(request,"We Have sent an Email, Please check your Inbox")
@@ -465,21 +502,26 @@ def capture(request,order_id,course):
         client = PayPalHttpClient(environment)
         response = client.execute(capture_order)
         data = response.result.__dict__['_dict']
-        print(data)
-        payment=Payment.objects.create(user=request.user,course_id=course,status="pending")
+        my_course=get_object_or_404(Course,id=course)
+        payment=Payment.objects.create(user=request.user,method="Paypal",amount=my_course.get_price(),course_id=course,status="pending")
         try:
             if data["status"] == "COMPLETED" and payment.status == "pending":
                 for i in data["purchase_units"]:
                     for b in i['payments']["captures"]:
                         transaction=b["id"]
                 payment.transaction_number=transaction
-                payment.method ="Paypal"
                 payment.save()
                 # payment.course.students.add(request.user)     i pussed adding student automaticly
                 # payment.course.save()
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
-                msg = EmailMessage(subject="order confirm", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[payment.user.email])
+                msg = EmailMessage(
+                    subject="order confirm",
+                    body="thank you for your payment",
+                    from_email=PAYMENT_EMAIL_USERNAME,
+                    connection=PAYMENT_MAIL_CONNECTION,
+                    to=[payment.user.email]
+                    )
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
                 return JsonResponse({"status":1})
@@ -584,8 +626,12 @@ def paymob_payment(request,course):
         url_3 = "https://accept.paymob.com/api/acceptance/payment_keys"
         r_3 = requests.post(url_3, json=data_3)
         payment_token = (r_3.json().get("token"))
-        print(payment_token)
-        return JsonResponse({"frame":PAYMOB_FRAME,"token":payment_token})
+        if payment_token == None:
+            success=0
+        else:
+            success=1
+        return JsonResponse({"success":success,"frame":PAYMOB_FRAME,"token":payment_token})
+
 
 
 @csrf_exempt    
@@ -608,17 +654,17 @@ def check_paymob_course_payment(request):
         user=User.objects.get(username=username)
         if descrption == "course":
             course=Course.objects.get(slug=name)
-            Payment.objects.create(method="Paymob",transaction_number=transaction_number,course=course,user=user,status="pending")
+            Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=course.get_price(),course=course,user=user,status="pending")
             next=("accounts:course_payment")
         elif descrption =="consultant": 
             teacher=Teacher_Time.objects.get(id=name)
             transaction_number=request.GET["id"]
-            Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,teacher=teacher,user=user,status="pending")
+            Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=teacher.price,teacher=teacher,user=user,status="pending")
             next=("accounts:consultant_payment")
         elif descrption == "blogs":
             prices=Prices.objects.get(id=name)
             now= date.today()
-            payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,user=user,created_at=now)
+            payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=prices.price,user=user,created_at=now)
             if prices.get_duration() == 'monthly':
                 payment.expired_at= now + datetime.timedelta(days=30*6)
             else:

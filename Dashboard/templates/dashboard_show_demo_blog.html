@@ -1,6 +1,8 @@
 {% extends 'blog_base.html' %}
-
+{% load static %}
 {% block content %}
+<link rel='stylesheet' href='{% static "blog_audio/style.css" %}'>
+
 <style type="text/css">
  /* Style the button that is used to open and close the collapsible content */
  .collapsible {
@@ -124,9 +126,28 @@
 		</article>
 		{% elif blog.blog_type == "audio" %}
 		<article class="post format-audio margin-bottom">
-			<div class="entry-media">
-				<iframe src="{{blog.video}}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" style="height:500px;" allowfullscreen="true"></iframe>                          
-			</div>
+			<div class="wrapper">
+				<figure class="entry-thumb">
+					<img src="https://agarthaacademy.b-cdn.net/courses/course-1/index.jpg" width="1200" height="500" alt="">
+				</figure>
+				<div class="music music-controls">
+				  <span class="seek-bar">
+					<span class="knot"></span>
+				  </span>
+				  <span class="song-buffer"></span>
+				  <span class="song-current-time">00:00</span><span class="play">
+				  <i class="fa fa-play" aria-hidden="true"></i>
+				  <span class="song-duration">00:00</span>
+				  </span>
+				</div>
+			  </div>
+			  <audio controls id="music-player" preload="auto">
+				<source src="{{blog.video}}" type="audio/mpeg">
+			  Your browser does not support the audio element.
+			  </audio>
+			  
+		
+			  
 			<header class="entry-header">
 				<div class="icon-b">
 					<i class="fa fa-music"></i>
@@ -336,6 +357,7 @@
 			</div>
 		</main>
 		<!-- END CONTENT -->
+	<script  src="{% static 'blog_audio/script.js' %}"></script>
 
 <script style="text/javascript">
 	var coll = document.getElementsByClassName("collapsible");

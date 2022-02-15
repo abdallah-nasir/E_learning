@@ -14,8 +14,39 @@
 .bg-success{
     background-color:#ffc600 !important;
 }
+body{
+    background-color:#fff !important;
+}
+.bg-light {
+  background-color: #fff !important;
+}
+#page-banner{
+    height:auto !important;
+}
+.logo img {
+    width: 100%;
+  }
+
 </style>
 
+
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-2.jpg' %})">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-banner-cont">
+                    <h2>{% trans 'Consultations' %}</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'consultant:home' %}">{% trans 'Consultations' %}</a></li>
+                        </ol>
+                    </nav>
+                </div>  <!-- page banner cont -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
     <!--====== Specialities PART START ======-->
     <section class="section section-features">
         <div class="container-fluid">
@@ -25,46 +56,16 @@
                 </div>
                 <div class="col-md-7">
                     <div class="section-header">
-                        <h2 class="mt-2">Teachers available for consultation</h2>
-                        <p>There are times when we feel that it is the end and then discover that it is the beginning, and there are doors that we feel closed and then discover that they are the real entrance.</p>
+                        <h2 class="mt-2">{% trans 'Teachers available for consultation' %}</h2>
+                        <p>{% trans 'There are times when we feel that it is the end and then discover that it is the beginning, and there are doors that we feel closed and then discover that they are the real entrance.' %}</p>
                     </div>
                     <div class="features-slider slider">
-                        <!-- Slider Item -->
+                        {% for i in profiles %}
                         <div class="feature-item text-center">
-                            <img src="{% static 'images/consultations/feature-01.jpg' %}" class="img-fluid" alt="Feature">
-                            <p>Batoul Agartha</p>
+                            <img src="{{i.image}}" class="img-fluid" alt="Feature">
+                            <p>{{i.first_name}}</p>
                         </div>
-                        <!-- /Slider Item -->
-                        <!-- Slider Item -->
-                        <div class="feature-item text-center">
-                            <img src="{% static 'images/consultations/feature-02.jpg' %}" class="img-fluid" alt="Feature">
-                            <p>Ola Agartha</p>
-                        </div>
-                        <!-- /Slider Item -->
-                        <!-- Slider Item -->
-                        <div class="feature-item text-center">
-                            <img src="{% static 'images/consultations/feature-03.jpg' %}" class="img-fluid" alt="Feature">
-                            <p>Nabil Kamal</p>
-                        </div>
-                        <!-- /Slider Item -->
-                        <!-- Slider Item -->
-                        <div class="feature-item text-center">
-                            <img src="{% static 'images/consultations/feature-04.jpg' %}" class="img-fluid" alt="Feature">
-                            <p>Mashaly</p>
-                        </div>
-                        <!-- /Slider Item -->
-                        <!-- Slider Item -->
-                        <div class="feature-item text-center">
-                            <img src="{% static 'images/consultations/feature-05.jpg' %}" class="img-fluid" alt="Feature">
-                            <p>Nour Agartha</p>
-                        </div>
-                        <!-- /Slider Item -->
-                        <!-- Slider Item -->
-                        <div class="feature-item text-center">
-                            <img src="{% static 'images/consultations/feature-06.jpg' %}" class="img-fluid" alt="Feature">
-                            <p>Sara</p>
-                        </div>
-                        <!-- /Slider Item -->
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -77,20 +78,17 @@
             <div class="row">
                 <div class="col-lg-4">
                     <div class="section-header ">
-                        <h2>Book Our Teacher</h2>
-                        <p>Meet your favorite teacher and book a counseling session in Agartha </p>
+                        <h2>{% trans 'Book Our Teacher' %}</h2>
+                        <p>{% trans 'Meet your favorite teacher and book a counseling session in Agartha' %} </p>
                     </div>
                     <div class="about-content">
                         <p>
-                            You can book a consultation with the preferred coach at the times available for each coach.
-                            After setting the date and booking, the reservation will be confirmed by the coach.
+                            {% trans 'You can book a consultation with the preferred coach at the times available for each coach.After setting the date and booking, the reservation will be confirmed by the coach.' %}
                         </p>
                         <p>
-                            You will receive an email in case of refusal. You will receive an email to notify you of the rejection of the reservation and the reason for the rejection.
-                            In the event of confirmation, you will receive an email with a confirmation of the appointment and a link to the meeting.
-                            Appointments are chosen according to Cairo time, so be sure to choose the date accurately.
+                            {% trans 'You will receive an email in case of refusal. You will receive an email to notify you of the rejection of the reservation and the reason for the rejection.In the event of confirmation, you will receive an email with a confirmation of the appointment and a link to the meeting.Appointments are chosen according to Cairo time, so be sure to choose the date accurately.' %}
                         </p>
-                        <a href="javascript:;">Read More..</a>
+                        <a href="{% url 'home:about' %}">{% trans 'Read More..' %}</a>
                     </div>
                 </div>
                 <div class="col-lg-8">
@@ -145,10 +143,10 @@
                                 </ul>
                                 <div class="row row-sm">
                                     <div class="col-6">
-                                        <a href="{% url 'consultant:get_consultant' i.user.slug %}?consultant={{i.id}}" class="btn view-btn">View Profile</a>
+                                        <a href="{% url 'consultant:get_consultant' i.user.slug %}?consultant={{i.id}}" class="btn view-btn">{% trans 'View Profile' %}</a>
                                     </div>
                                     <div class="col-6">
-                                        <a href="{% url 'consultant:checkout' i.user.slug %}?consultant={{i.id}}&date={{i.get_next_teacher_day}}" class="btn book-btn">Book Now</a>
+                                        <a href="{% url 'consultant:checkout' i.user.slug %}?consultant={{i.id}}&date={{i.get_next_teacher_day}}" class="btn book-btn">{% trans 'Book Now' %}</a>
                                     </div>
                                 </div>
                             </div>

@@ -15,6 +15,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 import json,requests 
+from django.shortcuts import get_object_or_404
 from .utils import *
 from .forms import MyCustomLoginForm,MyCustomSignupForm
 from allauth.account.views import SignupView,LoginView
@@ -338,35 +339,25 @@ def edit_consultant_payment(request,id):
     context={"form":form}
     return render(request,"edit_consultant_payment.html",context)
 
-# @login_required(login_url="accounts:login")
-# def add_refund(request):
-#     form=RefundForm(request.POST or None)
-#     if request.method == "POST":
-#         if form.is_valid():
-#             type=form.cleaned_data.get("consultant")
-#             if type == "Course Payment":
-#                 d
+@login_required(login_url="accounts:login")
+@check_consultant_refund
+def consultant_refund(request,id):   
+    payment=get_object_or_404(Cosultant_Payment,id=id)
+    refund=Refunds.objects.create(type="consultant_payment",content_id=id,user=request.user,transaction_number=payment.transaction_number)
+    data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":payment.get_consultant_date(),"teacher":payment.teacher.user.username}]}
+    refund.data=json.dumps(data)
+    refund.save()
+    messages.success(request,"Your Refund is Being Review By Admin")
+    return redirect(reverse("accounts:consultant_payment"))
 
-# def code_reset(request):
-#     form=CodeForm(request.POST or None)
-#     if request.method =="POST":
-#         if form.is_valid():
-#             email=form.cleaned_data.get("email")
-#             user=User.objects.filter(email=email)
-#             if user:
-#                 this_user=user.last()
-#                 if this_user.is_active == True:
-#                     messages.error(request,"your account is active")
-#                 else:
-#                     this_user.code=random_string_generator()
-#                     this_user.save()
-#                     msg = EmailMessage(subject="Account Created", body=f"code:{this_user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[this_user.email])
-#                     msg.content_subtype = "html"  # Main content is now text/html
-#                     msg.send()
-#                     messages.success(request,"code has been sent to your email")
-#             else:
-#                 messages.error(request,"invalid user")
-#         form=CodeForm()
-#     context={"form":form}
-#     return render(request,"account_code.html",context)
-
+@login_required(login_url="accounts:login")
+@check_course_refund
+def course_refund(request,slug,id):   
+    payment=get_object_or_404(Payment,id=id)
+    refund=Refunds.objects.create(type="course_payment",content_id=id,user=request.user,transaction_number=payment.transaction_number)
+    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","course":payment.course.name}]}
+    refund.data=json.dumps(my_data)
+    refund.save()
+    messages.success(request,"Your Refund is Being Review By Admin")
+    return redirect(reverse("accounts:course_payment"))
+ 

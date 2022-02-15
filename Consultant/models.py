@@ -60,10 +60,16 @@ class Teacher_Time(models.Model):
             for i in range(1,5):
                 all_days=next + datetime.timedelta(weeks=i)
                 list_days.append({"day":all_days.strftime("%m/%d/%Y"),"date":all_days.strftime('%A')})
+        elif date == iso:
+            difference = iso - date
+            next= now - datetime.timedelta(days=difference)
+            for i in range(1,5):
+                all_days=next + datetime.timedelta(weeks=i)
+                list_days.append({"day":all_days.strftime("%m/%d/%Y"),"date":all_days.strftime('%A')})
         else:  
             difference = date - iso
             next= now + datetime.timedelta(days=difference)
-            for i in range(1,5):
+            for i in range(0,4):
                 all_days=next + datetime.timedelta(weeks=i)
                 list_days.append({"day":all_days.strftime("%m/%d/%Y"),"date":all_days.strftime('%A')})
         context={"days":list_days}
@@ -131,12 +137,20 @@ class Teacher_Time(models.Model):
             for i in range(1,5):
                 all_days=next + datetime.timedelta(weeks=i)
                 list_days.append(all_days.strftime("%m/%d/%Y"))
+        elif date == iso:
+            difference = iso - date
+            next= now - datetime.timedelta(days=difference)
+            for i in range(1,5):
+                all_days=next + datetime.timedelta(weeks=i)
+                list_days.append({"day":all_days.strftime("%m/%d/%Y"),"date":all_days.strftime('%A')})
         else:  
             difference = date - iso
             next= now + datetime.timedelta(days=difference)
-            for i in range(1,5):
+            print(next)
+            for i in range(0,4):
                 all_days=next + datetime.timedelta(weeks=i)
                 list_days.append(all_days.strftime("%m/%d/%Y"))
+        print(list_days)
         return list_days
 
     def get_next_teacher_day(self):            #to get next day of teacher
@@ -203,7 +217,7 @@ def upload_consultant_payment(instance,filename):
 class CheckRejectConsultant(models.Manager):
     def get_query_set(self):
         rejects=Rejects.objects.filter(type="consultant_payment")
-        list=[]
+        list=[]    
         for i in rejects:
             # i.content_id
             list.append(i.content_id)
@@ -217,12 +231,13 @@ PAYMENT_CHOICES=(
 )    
 class Cosultant_Payment(models.Model):
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.SET_NULL,null=True)
-    consultant=models.ForeignKey(Consultant,null=True,on_delete=models.SET_NULL)
+    consultant=models.ForeignKey(Consultant,null=True,blank=True,on_delete=models.SET_NULL)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     method=models.CharField(choices=PAYMENTS,max_length=50)
     payment_image=models.ImageField(upload_to=upload_consultant_payment,null=True)
     transaction_number=models.CharField(max_length=50,null=True)
-    created_at=models.DateTimeField(auto_now_add=True)
+    amount=models.PositiveIntegerField(default=0)
+    created_at=models.DateField(auto_now_add=True)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     user_data=models.TextField()
     # check_reject=CheckRejectConsultant()

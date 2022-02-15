@@ -15,14 +15,15 @@ from crum import get_current_request
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 import datetime as compare_time
 from datetime import date,datetime,time
+from taggit.forms import *
+from taggit.models import Tag
 User=get_user_model()
 Audio_Extension=[".3gp",".aa",".aac",".aiff",".wav",".m4a",".amr",".mp3",".webm",".wmv",]
 Video_Extension=[".webm",".mkv",".flv",".avi",".wmv",".rmvb",".amv",".mp4",".m4p",".mpg",".mpeg",".m4v",".3gp"]
 
 class AddBlog(forms.ModelForm):
-    
     image=forms.ImageField(required=True)
-    class Meta:
+    class Meta:  
         model=Blog
         fields=["name","name_ar","details","category","paid","tags","image"]
     def clean_video(self):
@@ -64,7 +65,7 @@ class BlogQuoteForm(forms.ModelForm):
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        fields=["name","name_ar","quote","details","category","paid","tags","image"]
+        fields=["name","name_ar","quote","details","category","paid","image"]
     def clean_image(self):
         request=get_current_request()
         type=request.GET.get("blog_type")
@@ -84,7 +85,7 @@ class BlogLinkForm(forms.ModelForm):
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        fields=["name","name_ar","link","details","category","paid","tags","image"]
+        fields=["name","name_ar","link","details","category","paid","image"]
 
     def clean_image(self):
         request=get_current_request()
@@ -144,7 +145,7 @@ class BlogGalleryForm(forms.ModelForm):
     image=forms.FileField(required=True,widget=forms.ClearableFileInput(attrs={'multiple': True}))
     class Meta:
         model=Blog
-        fields=["name","name_ar","details","category","paid","tags","image"]
+        fields=["name","name_ar","details","category","paid","image"]
 
     def clean_image(self):
         request=get_current_request()
@@ -520,7 +521,7 @@ class Update_Certification(forms.ModelForm):
 class Refunds_Form(forms.ModelForm):
     class Meta:
         model=Refunds
-        exclude=["user","content_id","status"]
+        exclude=["user","content_id","status","data"]
         # extra_kwargs={"image":{"required":True}}
 
 

@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load cache %}
 {% load static %}
 {% block content %}
-   
+   <style type="text/css">
+    iframe{
+        width:100% !important;
+             }
+   </style>
     <!--====== PAGE BANNER PART START ======-->
     
     <section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-2.jpg' %})">
@@ -41,7 +46,7 @@
                                 <li>
                                     <div class="teacher-name">
                                         <div class="thum">
-                                            <img src="{{course.Instructor.image.url}}" style="max-height: 4rem;" alt="Teacher">
+                                            <img src="{{course.Instructor.image}}" style="max-height: 4rem;" alt="Teacher">
                                         </div>
                                         <div class="name">
                                             <span>{% trans 'Teacher' %}</span>
@@ -71,10 +76,11 @@
                                 </li>
                             </ul>
                         </div> <!-- course terms -->
-                        
+                        {% cache 86400 single_video video.video.slug %}
                         <div class="corses-singel-image pt-50">
-                            <iframe src="{{video.video_url}}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" style="height:500px; width: -moz-available;" allowfullscreen="true"></iframe>                          
+                            <iframe src="{{video.video}}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" style="height:500px;" allowfullscreen="true"></iframe>                          
                         </div>
+                        {% endcache %}
                          <!-- corses singel image -->
                         
                         <div class="corses-tab mt-30">
@@ -123,13 +129,14 @@
                                                         <ul>
                                                             <li><i class="fa fa-file-o"></i></li>
                                                            <li><span class="lecture">{% trans 'Lecture' %} {{forloop.counter}}</span></li>
+                                                           <br>
                                                           <li><span class="head">{{i.name}}</span></li>
                                                             <li><span class="time d-none d-md-block"><i class="fa fa-clock-o"></i> <span>{{i.get_duration_model}}</span></span></li>
                                                         </ul>
                                                     </a>
                                                 </div>
 
-                                                <div id="collapseOne-{{i.id}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                                <div id="collapseOne-{{i.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                                     <div class="card-body">
                                                         <a href="{% url 'home:video' course.slug i.slug %}">{% trans 'Preview Lecture' %}</a>
                                                         <p>{{i.name.title}}</p>
@@ -145,17 +152,23 @@
                                     <div class="instructor-cont">
                                         <div class="instructor-author">
                                             <div class="author-thum">
-                                                <img src="{{course.Instructor.image.url}}" style="max-height:10rem;" alt="Instructor">
+                                                <img src="{{course.Instructor.image}}" style="max-height:10rem;" alt="Instructor">
                                             </div>
                                             <div class="author-name">
                                                 <a href="#"><h5>{{course.Instructor.first_name.title}} {{course.Instructor.last_name.title}}</h5></a>
                                                 <span>{{course.Instructor.title.title}}</span>
                                                 <ul class="social">
-                                                    <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
-                                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                                    <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                                                </ul>
+                                                    <li><a href="mailto:{{course.Instructor.email}}"><i class="fa fa-envelope"></i></a></li> 
+                                                     {% for i in course.Instructor.get_user_data.social %}
+                                                         {% if i.facebook %}
+                                                     <li><a href="{{i.facebook}}"><i class="fa fa-facebook"></i></a></li>     
+                                                         {% elif i.twitter %}
+                                                        <li><a href="{{i.twitter}}"><i  class="fa fa-twitter"></i></a></li>   
+                                                         {% elif i.linkedin %}
+                                                        <li><a href="{{i.linkedin}}"><i class="fa fa-linkedin-square"></i></a></li>   
+                                                         {% endif %}
+                                             {% endfor %}
+                                                 </ul>
                                             </div>
                                         </div>
                                         <div class="instructor-description pt-25">
@@ -174,7 +187,7 @@
                                                <div class="singel-reviews">
                                                     <div class="reviews-author">
                                                         <div class="author-thum">
-                                                            <img src="{{i.user.image.url}}" style="max-height: 5rem;" alt="Reviews">
+                                                            <img src="{{i.user.image}}" style="max-height: 5rem;" alt="Reviews">
                                                         </div>
                                                         <div class="author-name">
                                                             <h6>{{i.user.first_name.title}} {{i.user.last_name.title}}</h6>
@@ -295,34 +308,16 @@
                                 </div> -->
                             </div> <!-- course features -->
                         </div>
-                        <div class="col-lg-12 col-md-6">
-                            <div class="You-makelike mt-30">
-                                <h4>{% trans 'You make like' %} </h4> 
-                                {% for i in same %}
-                                <div class="singel-makelike mt-20">
-                                    <div class="image">
-                                        <img src="{{i.image.url}}" style="max-height:7rem;" alt="Image">
-                                    </div>
-                                    <div class="cont">
-                                        <a href="#"><h4>{{i.name}}</h4></a>
-                                        <ul>
-                                            <li><a href="#"><i class="fa fa-user"></i>{{i.students.count}}</a></li>
-                                            <li>${{i.price|floatformat}}</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                    {% endfor %}
-                            </div>
-                        </div>
+                       
                         <div class="col-lg-12 col-md-6">
                             <div class="You-makelike mt-30">
                                 <h4>{% trans 'Recent Events' %}</h4> 
                                 {% for event in course.related_events %}
                                 <div class="cont">
-                                    <a href="#"><h4>{{event.name|truncatewords:10}}</h4></a>
+                                    <a href="{% url 'home:event' event.slug %}"><h4>{{event.name|truncatewords:10}}</h4></a>
                                    
                                 </div>
-                                <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image.url}}); max-height:7rem; margin-top:0px;">
+                                <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image}}); max-height:7rem; margin-top:0px;">
                                     <div data-countdown="{{event.date|date:'Y/m/d'}}"></div>
                                    
                                 </div> 
@@ -344,7 +339,7 @@
                                 <div class="singel-course mt-30">
                                     <div class="thum">
                                         <div class="image">
-                                            <img src="{{i.image.url}}" alt="Course">
+                                            <img src="{{i.image}}" alt="Course">
                                         </div>
                                         <div class="price">
                                             <span>${{i.price|floatformat}}</span>
@@ -370,7 +365,7 @@
                                         <a href="{% url 'home:course' slug=i.slug %}"><h4>{{i.name.title}}</h4></a>
                                         <div class="course-teacher">
                                             <div class="thum">
-                                                <a href="#"><img src="{{i.Instructor.image.url}}" alt="teacher"></a>
+                                                <a href="#"><img src="{{i.Instructor.image}}" alt="teacher"></a>
                                             </div>
                                             <div class="name">
                                                 <a href="#"><h6>{{i.Instructor.get_full_name.title}}</h6></a>

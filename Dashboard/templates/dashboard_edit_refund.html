@@ -9,7 +9,7 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Add Blog Price</h1>
+                    <h1 class="h3 mb-2 text-gray-800">Edit Refund</h1>
                     <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
                         For more information about DataTables, please visit the <a target="_blank"
                             href="https://datatables.net">official DataTables documentation</a>.</p> -->
@@ -24,8 +24,8 @@
                                 {% csrf_token %}
                                 
                                 <div class="form-group">
-                                    {{form.media}}
-                               {{form|crispy}}
+                                    
+                                    {{form|crispy }}
                                 </div>
                                 
                                 <button onclick="this.disabled=true,this.form.submit();" class="btn btn-primary" type="submit">Submit</button>

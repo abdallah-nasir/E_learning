@@ -36,7 +36,7 @@ def check_user_status(function):
 
 def complete_user_data(function):
     def wrap(request, *args, **kwargs):
-        if request.user.first_name == None or request.user.last_name == None or request.user.phone ==None:
+        if not request.user.first_name or not request.user.last_name or not request.user.phone:
             messages.error(request,"complete your information first")
             return redirect(reverse("accounts:account_info"))
         else:

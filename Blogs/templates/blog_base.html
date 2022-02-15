@@ -1,4 +1,4 @@
-{% load static %}
+ {% load static %}
 {% load i18n %}
 <!doctype html>
 <html lang="en" class="no-js">
@@ -44,6 +44,8 @@
 
 	<!-- Modernizr -->
 	<script src="{% static 'blogs/scripts/modernizr-custom.js' %}"></script>
+    <!-- <link rel="stylesheet" href="{% static 'css/style-rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'css/rtl.css' %}"> -->
 
 </head>
 <body>
@@ -92,7 +94,7 @@
 				<div class="container">
 					<ul>
 						<li class="nav-main-item active">
-							<a class="nav-main-link" href="{% url 'home:home' %}">{% trans 'Back To Course' %}</a>
+							<a class="nav-main-link" href="{% url 'home:home' %}">{% trans 'Back To Home' %}</a>
 							<!-- <div class="nav-main-sub">
 								<ul>
 									<li><a href="index.html">Default</a></li>
@@ -114,7 +116,7 @@
 							<a class="nav-main-link" href="#">{% trans 'Blogs Type' %}</a>
 							 <div class="nav-main-sub">
 								<ul>
-									<li><a href="{% url 'blogs:blogs_type' 'standard' %}">{% trans 'Standard post' %}</a></li>
+									<li><a href="{% url 'blogs:blogs_type' 'standard' %}">{% trans 'Article post' %}</a></li>
 									<li><a href="{% url 'blogs:blogs_type' 'gallery' %}">{% trans 'Gallery post' %}</a></li>
 									<li><a href="{% url 'blogs:blogs_type' 'video' %}">{% trans 'Video post' %}</a></li>
 									<li><a href="{% url 'blogs:blogs_type' 'audio' %}">{% trans 'Audio post' %}</a></li>

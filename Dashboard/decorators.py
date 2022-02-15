@@ -1,13 +1,16 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.http import HttpResponse
 from django.contrib import messages
-from home.models import Events,Course
+from .models import Refunds
+from home.models import Events,Course,Payment
 from Blogs.models import Blog
-from Consultant.models import  Consultant
+from Consultant.models import  Cosultant_Payment,Consultant
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 import datetime,json
+from functools import wraps
 
 def check_user_validation(function):
     def wrap(request, *args, **kwargs):
@@ -155,3 +158,63 @@ def check_blog_audio(function):
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap  
+
+
+def check_consultant_refund(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        payment=get_object_or_404(Cosultant_Payment,id=kwargs["id"])
+        refunds=Refunds.objects.filter(user=request.user,type="consultant_payment",content_id=payment.id).exclude(status="approved")
+        today= datetime.date.today()
+        if payment.status == 'refund':
+            messages.error(request,"this payment is already refunded")
+            return redirect(reverse("dashboard:consultant_payment"))
+        elif payment.status == "completed":
+            messages.error(request,"payment already completed")
+            return redirect(reverse("dashboard:consultant_payment"))
+        elif refunds.exists():
+            messages.error(request,"you already have pending refund for this payment")
+            return redirect(reverse("dashboard:consultant_payment"))
+        elif payment.consultant:
+            if payment.consultant.date < today or payment.consultant.date == today:
+                messages.error(request,"time already passed")
+                return redirect(reverse("dashboard:consultant_payment"))
+            elif payment.consultant.status == "completed" or payment.consultant.status == "started":
+                messages.error(request,"consultant already completed")
+                return redirect(reverse("dashboard:consultant_payment"))
+            elif payment.consultant.date > today:
+                difference= payment.consultant.date - today
+                if difference.days < 3:
+                    print("here")
+                    messages.error(request,"time already passed")
+                    return redirect(reverse("dashboard:consultant_payment"))
+                else:
+                    return function(request, *args, **kwargs)
+        else:
+            return function(request, *args, **kwargs)
+    return wrap
+
+
+def check_course_refund(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        course=get_object_or_404(Course,slug=kwargs['slug'])
+        payment=get_object_or_404(Payment,id=kwargs["id"])
+        today= datetime.date.today()
+        print(payment.created_at + datetime.timedelta(days=30))
+        refunds=Refunds.objects.filter(user=request.user,type="course_payment",content_id=payment.id).exclude(status="approved")
+        if payment.status == 'refund':
+            messages.error(request,"this payment is already refunded")
+            return redirect(reverse("dashboard:course_payment"))
+        elif payment.created_at + datetime.timedelta(days=30) <= today : 
+            messages.error(request,"you have passed 30 days returns")
+            return redirect(reverse("dashboard:course_payment"))
+        elif refunds.exists():
+            messages.error(request,"you already have pending refund for this payment")
+            return redirect(reverse("dashboard:course_payment"))
+        count=course.videos.filter(watched_users__username=request.user).count()
+        if count >= 3:
+            messages.error(request,"you already watched 2 videos in this course")
+            return redirect(reverse("dashboard:course_payment"))
+        return function(request, *args, **kwargs)
+    return wrap

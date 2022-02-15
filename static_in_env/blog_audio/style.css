@@ -1,21 +1,12 @@
-*{
-  margin:0;
-  padding:0;
-  outline:0;
-}
+
 
 body{
-  background:#05d4bd;
-  font-family:Verdana;
+  
 }
 
 div.wrapper{
   position:relative;
-  width:450px;
-  height:530px;
   margin:0 auto;
-  box-shadow:0px 80px 35px -40px rgba(84,75,33,0.4);
-  transform-origin:top center;
   /*transform:translateY(-570px);*/
 }
 
@@ -24,14 +15,7 @@ div.wrapper{
 }
 
 h5{
-  position:absolute;
-  left:50%;
-  text-align:center;
-  margin-left:-60px;
-  margin-top:200px;
-  font-size:10px;
-  color:rgba(0,0,0,1);
-  animation:pw 900ms ease-in-out infinite;
+ 
 }
 
 @keyframes pw{
@@ -108,27 +92,11 @@ h5{
 }
 
 div.wrapper:after{
-  position:absolute;
-  content:'';
-  width:95%;
-  height:15px;
-  background:rgba(0, 55, 49, 0.81);
-  display:block;
-  left:2.5%;
-  bottom:-37px;
-  border-radius:100%;
-  -webkit-filter:blur(2px);
-  -moz-filter:blur(2px);
-  -ms-filter:blur(2px);
-  filter:blur(2px);
-  /*box-shadow:0px 20px 8px 7px rgba(112,79,122,0.4);*/
-  z-index:-1;
+
 }
 
 .music-cover{
   height:42.5%;
-  background:#003731;
-  box-shadow:inset 0px 0px 225px rgba(0,0,0,0.3);
   text-align:center;
   overflow:hidden;
 }
@@ -144,11 +112,8 @@ div.wrapper:after{
 .album-controls{
   position:relative;
   height:42.5%;
-  background:#003731;
-  border-top:2px solid rgba(255,255,255,0.2);
   text-align:center;
   overflow:hidden;
-  box-shadow:inset 0px 0px 215px 50px #016a5f;
 }
 
 .album-img{
@@ -156,10 +121,8 @@ div.wrapper:after{
   margin-top:-195px;
   border-radius:8px;
   border-top:2px solid  rgba(255,255,255,0.4);
-  -webkit-filter:blur(16px);
   -moz-filter:blur(16px);
   -ms-filter:blur(16px);
-  filter:blur(16px);
 }
 
 .album-info{
@@ -327,7 +290,6 @@ span .fa-retweet, span .fa-home{
 
 #music-player{
   opacity:0;
-  position:absolute;
   top:-100px;
 }
 

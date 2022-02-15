@@ -15,7 +15,7 @@ from django.db.models import Q
 from itertools import chain
 from django.conf import settings
 from accounts.models import User
-from django.core.mail import send_mail,EmailMessage
+from django.core.mail import send_mail,EmailMessage,get_connection
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from datetime import datetime
@@ -25,7 +25,17 @@ import requests,string
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]  # PAYMOB
 PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
 PAYMOB_BLOG_INT=os.environ['PAYMOB_BLOG_INT']
-
+PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
+PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
+PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
+SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
+PAYMENT_MAIL_CONNECTION = get_connection(
+host= SUPPORT_EMAIL_HOST, 
+port=PAYMENT_EMAIL_PORT, 
+username=PAYMENT_EMAIL_USERNAME, 
+password=PAYMENT_EMAIL_PASSWORD, 
+use_tls=False
+) 
 @login_required(login_url="accounts:login")
 def home(request):
     blog_data=cache.get("blog_data")
@@ -131,14 +141,20 @@ def payment_pricing(request,id):
                 image=form.cleaned_data["image"]
                 number=form.cleaned_data["number"]
                 payment=Blog_Payment.objects.create(user=request.user,
-                method="Western Union",payment_image=image, transaction_number=number,status="pending",created_at=now)
+                method="Western Union",payment_image=image,amount=price.price, transaction_number=number,status="pending",created_at=now)
                 if price.get_duration() == 'monthly':
                     payment.created_at = now
                     payment.expired_at= now + datetime.timedelta(days=30*6)
                 else:
                     payment.expired_at= now + datetime.timedelta(days=365)
                 payment.save()
-                msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[payment.user.email])
+                msg = EmailMessage(
+                    subject="Payment completed", 
+                    body="thank you for your payment",
+                    from_email=PAYMENT_EMAIL_USERNAME,
+                    to=[payment.user.email],
+                    connection=PAYMENT_MAIL_CONNECTION
+                    )
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
                 messages.success(request,"We Have sent an Email,Please check your Inbox")
@@ -222,7 +238,7 @@ def paypal_capture(request,order_id,price_id):
                         transaction=b["id"]
                 now= datetime.date.today()
                 payment=Blog_Payment.objects.create(method="Paypal",
-                transaction_number=transaction,status="pending",user=request.user,created_at=now)
+                transaction_number=transaction,amount=price.price,status="pending",user=request.user,created_at=now)
                 if price.get_duration() == 'monthly':
                     payment.expired_at= now + datetime.timedelta(days=30*6)
                 else:
@@ -230,7 +246,13 @@ def paypal_capture(request,order_id,price_id):
                 payment.save()
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
-                msg = EmailMessage(subject="Payment completed", body="thank you for your payment", from_email=settings.EMAIL_HOST_USER, to=[payment.user.email])
+                msg = EmailMessage(
+                    subject="Payment completed", 
+                    body="thank you for your payment",
+                    from_email=PAYMENT_EMAIL_USERNAME, 
+                    to=[payment.user.email],
+                    connection=PAYMENT_MAIL_CONNECTION
+                    )
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
                 return JsonResponse({"status":1})
@@ -265,47 +287,47 @@ def paymob_payment(request,id):
         r_1 = requests.post(url_1, json=data_1)
         token = r_1.json().get("token")
         data_2 = {
-            "auth_token": token,
-            "delivery_needed": "false",
-                "amount_cents":prices.price * 100,
-                "currency": "EGP",
-                "merchant_order_id": merchant_order_id,  # 81
+        "auth_token": token,
+        "delivery_needed": "false",
+            "amount_cents":prices.price * 100,
+            "currency": "EGP",
+            "merchant_order_id": merchant_order_id,  # 81
 
-                "items": [
-        {
-            "name": prices.id,
-            "amount_cents": prices.price * 100,
-            "description": "blogs",
-            "quantity": "1"
-        },
-    
-        ],
-                "shipping_data": {
-                    "apartment": "803",
-                    "email": request.user.email,
-                    "floor": "42",
-                    "first_name": request.user.username,
-                    "street": "Ethan Land",
-                    "building": "8028",
-                    "phone_number": request.user.phone,
-                    "postal_code": "01898",
-                    "extra_description": "8 Ram , 128 Giga",
-                    "city": "Jaskolskiburgh",
-                    "country": "CR",
-                    "last_name": request.user.last_name,
-                    "state": "Utah"
-                },
-                "shipping_details": {
-                    "notes": " test",
-                    "number_of_packages": 1,
-                    "weight": 1,
-                    "weight_unit": "Kilogram",
-                    "length": 1,
-                    "width": 1,
-                    "height": 1,
-                    "contents": "product of some sorts"
-                }
+            "items": [
+    {
+        "name": prices.id,
+        "amount_cents": prices.price * 100,
+        "description": "blogs",
+        "quantity": "1"
+    },
+
+    ],
+            "shipping_data": {
+                "apartment": "803",
+                "email": request.user.email,
+                "floor": "42",
+                "first_name": request.user.username,
+                "street": "Ethan Land",
+                "building": "8028",
+                "phone_number": request.user.phone,
+                "postal_code": "01898",
+                "extra_description": "8 Ram , 128 Giga",
+                "city": "Jaskolskiburgh",
+                "country": "CR",
+                "last_name": request.user.last_name,
+                "state": "Utah"
+            },
+            "shipping_details": {
+                "notes": " test",
+                "number_of_packages": 1,
+                "weight": 1,
+                "weight_unit": "Kilogram",
+                "length": 1,
+                "width": 1,
+                "height": 1,
+                "contents": "product of some sorts"
             }
+        }
         url_2 = "https://accept.paymob.com/api/ecommerce/orders"
         r_2 = requests.post(url_2, json=data_2)
         my_id = r_2.json().get("id")
@@ -340,5 +362,9 @@ def paymob_payment(request,id):
         url_3 = "https://accept.paymob.com/api/acceptance/payment_keys"
         r_3 = requests.post(url_3, json=data_3)
         payment_token = (r_3.json().get("token"))
-        return JsonResponse({"frame":PAYMOB_FRAME,"token":payment_token})
+        if payment_token == None:
+            success=0
+        else:
+            success=1
+        return JsonResponse({"success":success,"frame":PAYMOB_FRAME,"token":payment_token})
 

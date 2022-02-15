@@ -23,6 +23,10 @@ path("edit/blog/payment/<str:id>/",views.edit_blog_payment,name="edit_blog_payme
 path("edit/course/payment/<str:id>/",views.edit_course_payment,name="edit_course_payment"),
 path("edit/consultant/payment/<str:id>/",views.edit_consultant_payment,name="edit_consultant_payment"),
 
+#refunds
+path("refunds/consultant/<int:id>/",views.consultant_refund,name="consultant_refund"),
+path("refunds/course/<int:id>/",views.course_refund,name="course_refund"),
+
 
 
 ]

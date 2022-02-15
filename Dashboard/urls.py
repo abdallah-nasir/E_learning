@@ -32,8 +32,8 @@ path("check/blog/audios/<str:slug>/",views.check_audio_blog,name="check_audio_bl
 
 #### course
 path("courses/",views.courses,name="courses"),
-path("videos/",views.videos,name="videos"),
-path("videos/<str:id>/",views.course_videos,name="course_videos"),
+path("videos/<str:slug>/",views.videos,name="videos"),
+path("demo/videos/<str:id>/",views.course_videos,name="course_videos"),
 
 path("delete/videos/<str:slug>/",views.delete_videos,name="delete_videos"),
 
@@ -111,6 +111,8 @@ path("category/add/",views.add_category,name="add_category"),
 path("branch/add/",views.add_branch,name="add_branch"),
 path("blog-category/add/",views.add_blog_category,name="add_blog_category"),
 
+# list categories
+path("categories/",views.list_category,name="list_category"),
 ### emails
 path("emails/",views.emails,name="emails"),
 path("email/<int:id>/",views.single_email,name="single_email"),
@@ -123,8 +125,10 @@ path("certification/approve/<int:id>/",views.edit_certifications,name="edit_cert
 ### refunds
 path("refunds/",views.refunds,name="refunds"),
 path("refunds/search/",views.search_refunds,name="search_refunds"),
-path("refunds/edit/<int:id>/",views.edit_refund,name="edit_refund"),
+path("refunds/approve/<int:id>/",views.approve_refund,name="approve_refund"),
 path("refunds/add/<int:id>/",views.add_refund,name="add_refund"),
+path("refunds/consultant/<int:id>/",views.consultant_refund,name="consultant_refund"),
+path("refunds/course/<str:slug>/<int:id>/",views.course_refund,name="course_refund"),
 
 #############
 path("test/",views.test,name="test"),

@@ -97,6 +97,7 @@ class Videos(models.Model):
     details=models.TextField()
     duration=models.FloatField(default=0)
     my_course=models.ForeignKey("Course",related_name="course",blank=True,null=True,on_delete=models.CASCADE)
+    watched_users=models.ManyToManyField(User,related_name="watched_users",blank=True)
     slug=models.SlugField(blank=True,unique=True)
     def __str__(self):
         return self.name
@@ -210,11 +211,16 @@ class Course(models.Model):
     def get_price(self):
         if self.discount > 0:
             price=self.discount
-        else:
+        else:  
             price=self.price
         return price
     def related_events(self):
+        today= datetime.date.today()
         events=Events.objects.filter(user=self.Instructor,category=self.branch,status="approved")[:4]
+        for i in events:
+            if i.date < today:
+                i.status = "completed"
+                i.save()
         return events
 
     def total_rate(self):
@@ -244,16 +250,14 @@ class Course(models.Model):
 
         return quiz
     def get_first_quiz(self):
+        request=get_current_request()   
         if self.quiz:
-            request=get_current_request()   
             try:
                 first=self.quiz.questions.first().slug
                 return reverse("quiz:home",kwargs={"slug":self.slug,"question":first})
             except:
-                messages.error(request,"Quiz is not ready yet")
                 return reverse("home:course",kwargs={"slug":self.slug})
         else:
-            messages.error(request,"Quiz is not ready yet")
             return reverse("home:course",kwargs={"slug":self.slug})
 
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
@@ -377,17 +381,32 @@ PAYMENT_CHOICES=(
 )
 class Payment(models.Model):
     method=models.CharField(choices=PAYMENTS,max_length=50)
-    payment_image=models.ImageField(upload_to=upload_payment_images,null=True)
+    payment_image=models.ImageField(blank=True,null=True)
     transaction_number=models.CharField(max_length=50,null=True)
+    amount=models.PositiveIntegerField(default=0)
     course=models.ForeignKey(Course,on_delete=models.SET_NULL,null=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
+    created_at=models.DateField(auto_now_add=True)
+    expired_at=models.DateField(auto_now_add=True)
+    expired=models.BooleanField(default=False)
     def __str__(self):
         return self.method
 
     def check_if_rejected(self):
         rejects=Rejects.objects.filter(type="payment",content_id=self.id,user=self.user).delete()
         return rejects
+    def add_expire_time(self):
+        if self.user.vip == True:
+            today= datetime.date.today()
+            payment=blog_model.Blog_Payment.objects.filter(user=self.user,expired=False,status="approved").last()
+            difference=payment.expired_at-today
+            self.expired_at +=datetime.timedelta(days=365) + difference
+            self.save()
+        else:
+            self.expired_at +=datetime.timedelta(days=365)
+            self.save()
+        return True
 
 class News(models.Model):
     name=models.CharField(max_length=200)

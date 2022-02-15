@@ -2,7 +2,7 @@ from modeltranslation.translator import translator, TranslationOptions
 from .models import Terms,Privacy
 from home.models import News
 from Blogs.models import Blog
-import taggit.models
+from taggit.models import Tag
 class NewsTranslationOptions(TranslationOptions):
     fields = ['text',]
     required_languages = ["ar"]
@@ -24,6 +24,8 @@ class BlogTranslate(TranslationOptions):
     required_languages = ["ar"]
 translator.register(Blog, BlogTranslate)
 
-# class TaggitTrans(TranslationOptions):
-#     fields = ['name']
-# translator.register(taggit.models.Tag, TaggitTrans)
+
+class TagTranslate(TranslationOptions):
+    fields=["name"]
+    required_languages=["ar"]
+translator.register(Tag, TagTranslate)

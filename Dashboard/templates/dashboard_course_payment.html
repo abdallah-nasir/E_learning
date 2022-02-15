@@ -29,6 +29,7 @@
                                             <th>Transaction</th>
                                             <th>Course</th>
                                             <th>Status</th>
+                                            <th>Expire Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -41,12 +42,41 @@
                                         <td>{{i.transaction_number}}</td>
                                         <td>{{i.course.name}}</td>
                                         <td>{{i.status}}</td>
+                                      
+                                        <td>{{i.expired_at}}</td>
+
                                         {% if i.status == "declined" and i.method == "Western Union" %}
-                                        <td><a href="{% url 'dashboard:edit_consultant_payment' i.id %}" class="btn btn-info">Edit</a></td>
+                                        <td>
+                                            <a href="{% url 'dashboard:edit_course_payment' i.id %}" class="btn btn-info">Edit</a>
+                                        <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button></td>
+                                        {% elif i.status != 'refund' %}
+                                       <td><button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button></td>
+
                                         {% else %}
                                         <td></td>
+
                                         {% endif %}
                                     </tr>
+                        <!-- Modal -->
+<div class="modal fade" id="refund-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Refund</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you Sure ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="{% url 'dashboard:course_refund' i.course.slug i.id %}" type="button" class="btn btn-danger">Refund</a>
+        </div>
+      </div>
+    </div>
+  </div>
                                     {% endfor %}
                                    </tbody>
                                 </table>

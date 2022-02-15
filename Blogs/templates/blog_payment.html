@@ -312,18 +312,22 @@ $(document).on('click',"#card-data",function(){
     type:"GET",
     url:"{% url 'blogs:paymob_payment' price.id %}",
       success:function(res){
-
+        if (res.success == 1){
           $("#card-data").remove();
-        let html=` <iframe style=" display: block  !important;      
-                          border: none  !important;         
-                        height: 100vh  !important;        
-                       
-                       
-                        text-align:center  !important;
-                        align-items:center  !important;" width=100% src="https://accept.paymob.com/api/acceptance/iframes/${res.frame}?payment_token=${res.token}" ></iframe>`
-        $("#card").html(html);
-          
+          let html=` <iframe style=" display: block  !important;      
+                            border: none  !important;         
+                          height: 100vh  !important;        
+                         
+                         
+                          text-align:center  !important;
+                          align-items:center  !important;" width=100% src="https://accept.paymob.com/api/acceptance/iframes/${res.frame}?payment_token=${res.token}" ></iframe>`
+          $("#card").html(html);
+                    }
+            else{
+              window.location.href="/blogs/payment/{{price.id}}/";
+            }
                   },
+          
   
                   });
                   // End

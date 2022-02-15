@@ -1,2 +1,12 @@
-change dashbaord form 
-change image view in dashbod edit payment
+change home all 
+change single-course  template
+change all views and decorators
+
+
+
+
+
+
+hr > (course,teacher,blog,event) except payment
+auto-confirm (every thing about payment payment)
+support (contact us)
