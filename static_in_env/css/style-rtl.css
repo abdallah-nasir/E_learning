@@ -1,66 +1,25 @@
-/*
-  Theme Name: Agartha Academy
-  Author: ZeTheme
-  Author URL: https://themeforest.net/user/pixelcurve
-  Support: zetheme24@gmail.com
-  Description: Creative  HTML5 template.
-  Version: 1.1
-*/
-
-/* CSS Index 
------------------------------------
-1. Theme default
-2. HEADER
-3. SLIDER
-4. CATEGORY
-5. ABOUT
-6. APPLY
-7. COURSE
-8. VIDEO FEATURES
-9. TEACHERS
-10. PUBLICATION
-11. TEASTIMONIAL
-12. NEWS
-13. FOOTER
-14. CATEGORY 2
-15. COURSE 2
-16. COUNTER
-17. TEACHERS 2
-18. EVENT 2
-19. COUNT DOWN
-20. PAGE BANNER
-21. ABOUT PAGE
-22. COURSES PAGE
-23. COURSE SINGEl PAGE
-24. EVENT PAGE
-25. EVENT SINGEL PAGE
-26. TEACHERS SInGEL PAGE
-27. BLOG PAGE
-28. BLOG SINGEL PAGE
-29. SHOP PAGE
-30. SHOP SINGEL PAGE
-31. CONTACT PAGE 
-
-*/
-
-
-/*===========================
-    1. Theme default css 
-===========================*/
 
 
 @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Roboto:300,400,500,700');
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'amiri', sans-serif;
     font-weight: 400;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-align:right;
 }
 
 img {
     max-width: 100%;
+}
+
+#header-part {
+    direction:rtl
+}
+.icon {
+    padding-left:6px;
 }
 
 a:focus,
@@ -80,6 +39,7 @@ i,
 span,
 a {
     display: inline-block;
+    /*padding-right:9px;*/
 }
 
 h1,
@@ -88,7 +48,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: Amiri, sans-serif;
     font-weight: 700;
     color: #1d2025;
     margin: 0px;
@@ -199,7 +159,7 @@ p {
         }
 
     .section-title h2 {
-        font-size: 48px;
+        font-size: 35px;
         color: #000;
         padding-top: 10px;
     }
@@ -739,6 +699,7 @@ p {
 
 .header-logo-support {
     border-bottom: 1px solid #cecece;
+    direction:rtl;
 }
 
 .support-button {
@@ -786,6 +747,7 @@ p {
 /*===== Header Menu =====*/
 
 .navigation {
+    direction:rtl;
 }
 
     .navigation.sticky {
@@ -826,73 +788,70 @@ p {
     }
 }
 
-.navigation .navbar {
-    padding: 0;
+
+.navigation .navbar .navbar-nav {
 }
 
-    .navigation .navbar .navbar-nav {
+    .navigation .navbar .navbar-nav li {
+        margin-left: 40px;
+        position: relative;
     }
 
-        .navigation .navbar .navbar-nav li {
-            margin-left: 40px;
-            position: relative;
-        }
-
-            .navigation .navbar .navbar-nav li:last-child {
-                margin-left: 0;
-            }
-
-            .navigation .navbar .navbar-nav li a {
-                font-size: 14px;
-                font-family: 'Montserrat', sans-serif;
-                font-weight: 700;
-                color: #07294d;
-                text-transform: uppercase;
-                -webkit-transition: all 0.4s linear;
-                transition: all 0.4s linear;
-                padding: 25px 0;
-            }
-
-        .navigation .navbar .navbar-nav > li > a.active,
-        .navigation .navbar .navbar-nav > li > a:hover {
-            color: #ffc600;
-        }
-
-        .navigation .navbar .navbar-nav li .sub-menu {
-            position: absolute;
-            top: 110%;
-            right: 0;
-            background-color: #07294d;
-            width: 200px;
-            opacity: 0;
-            visibility: hidden;
-            -webkit-transition: all 0.4s linear;
-            transition: all 0.4s linear;
-            z-index: 99;
-        }
-
-        .navigation .navbar .navbar-nav li:hover .sub-menu {
-            opacity: 1;
-            visibility: visible;
-            top: 100%;
-        }
-
-        .navigation .navbar .navbar-nav li .sub-menu li {
+        .navigation .navbar .navbar-nav li:last-child {
             margin-left: 0;
         }
 
-            .navigation .navbar .navbar-nav li .sub-menu li a {
-                padding: 10px 15px;
-                display: block;
-                border-bottom: 1px solid rgba(255, 198, 0, 0.5);
-                color: #fff;
-            }
+        .navigation .navbar .navbar-nav li a {
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #07294d;
+            text-transform: uppercase;
+            -webkit-transition: all 0.4s linear;
+            transition: all 0.4s linear;
+            padding: 25px 0;
+        }
 
-                .navigation .navbar .navbar-nav li .sub-menu li a.active,
-                .navigation .navbar .navbar-nav li .sub-menu li a:hover {
-                    padding-right: 20px;
-                    color: #ffc600;
-                }
+    .navigation .navbar .navbar-nav > li > a.active,
+    .navigation .navbar .navbar-nav > li > a:hover {
+        color: #ffc600;
+    }
+
+    .navigation .navbar .navbar-nav li .sub-menu {
+        position: absolute;
+        top: 110%;
+        right: 0;
+        background-color: #07294d;
+        width: 200px;
+        opacity: 0;
+        visibility: hidden;
+        -webkit-transition: all 0.4s linear;
+        transition: all 0.4s linear;
+        z-index: 99;
+    }
+
+    .navigation .navbar .navbar-nav li:hover .sub-menu {
+        opacity: 1;
+        visibility: visible;
+        top: 100%;
+    }
+
+    .navigation .navbar .navbar-nav li .sub-menu li {
+        margin-left: 0;
+    }
+
+        .navigation .navbar .navbar-nav li .sub-menu li a {
+            padding: 10px 15px;
+            display: block;
+            border-bottom: 1px solid rgba(255, 198, 0, 0.5);
+            color: #fff;
+        }
+
+            .navigation .navbar .navbar-nav li .sub-menu li a.active,
+            .navigation .navbar .navbar-nav li .sub-menu li a:hover {
+                padding-right: 20px;
+                color: #ffc600;
+            }
 
 .sub-nav-toggler {
     display: none;
@@ -1419,7 +1378,9 @@ p {
 /*=====================================================
     5. ABOUT css 
 ======================================================*/
-
+#about-page, #teachers-part {
+    direction: rtl
+}
 #about-part {
     position: relative;
     padding-bottom: 220px;
@@ -1449,7 +1410,7 @@ p {
 
 .about-cont p {
     padding-top: 30px;
-    text-align: left;
+    text-align: right;
 }
 
 .about-event {
@@ -1816,13 +1777,18 @@ p {
 /*=====================================================
     9. TEACHERS css 
 ======================================================*/
-
+#teachers-page {
+    direction:rtl;
+}
 .teachers-cont {
 }
 
     .teachers-cont p {
         padding-top: 30px;
     }
+#teachers-singel {
+    direction:rtl;
+}
 
 .singel-teachers {
     position: relative;
@@ -2164,13 +2130,14 @@ p {
 /*=====================================================
     13. FOOTER css 
 ======================================================*/
-#footer-part {
-    direction:rtl
-}
+
 .footer-top {
     background-color: #07294d;
 }
-
+#footer-part {
+    direction: rtl;
+}
+    
 .footer-about {
     padding-left: 50px;
 }
@@ -2240,8 +2207,6 @@ p {
                     color: #ffc600;
                     -webkit-transition: all 0.4s linear;
                     transition: all 0.4s linear;
-                   /* float: right;*/
-                    margin-top: 10px;
                 }
 
                 .footer-link ul li a:hover {
@@ -2668,8 +2633,6 @@ p {
 
         .happy-student .singel-student img {
             padding-bottom: 20px;
-            float: right;
-            max-width: 10%;
         }
 
         .happy-student .singel-student p {
@@ -2853,6 +2816,8 @@ p {
 .page-banner-cont {
     position: relative;
     z-index: 5;
+    direction:rtl;
+    text-align:right;
 }
 
     .page-banner-cont h2 {
@@ -2934,13 +2899,16 @@ p {
 
     .courses-top-search .nav {
         margin-top: 5px;
+        text-align:right;
+        direction:rtl
     }
 
-        .courses-top-search .nav .nav-item {
-            margin-left: 15px;
-            font-size: 15px;
-            color: #8a8a8a;
-        }
+
+.courses-top-search .nav .nav-item {
+    margin-left: 15px;
+    font-size: 15px;
+    color: #8a8a8a;
+}
 
             .courses-top-search .nav .nav-item a {
                 font-size: 16px;
@@ -2953,18 +2921,24 @@ p {
 
 .courses-search {
     position: relative;
+    direction: rtl;
+    float: left;
 }
 
-    .courses-search input {
-        height: 30px;
-        width: 240px;
-        background-color: #f6f6f6;
-        border: 0;
-        color: #8a8a8a;
-        font-size: 14px;
-        border-radius: 5px;
-        padding: 0 20px;
-    }
+.image img {
+    max-width: 100%
+}
+
+.courses-search input {
+    height: 30px;
+    width: 240px;
+    background-color: #f6f6f6;
+    border: 0;
+    color: #8a8a8a;
+    font-size: 14px;
+    border-radius: 5px;
+    padding: 0 20px;
+}
 
     .courses-search button {
         position: absolute;
@@ -3018,7 +2992,9 @@ p {
 /*=====================================================
     23. COURSE SINGEl PAGE css 
 ======================================================*/
-
+#corses-singel {
+    direction:rtl;
+}
 .corses-singel-left {
     padding: 45px 50px;
     background-color: #fff;
@@ -3100,6 +3076,7 @@ p {
                     font-weight: 600;
                     margin-right: 13px;
                 }
+
 
 .corses-singel-image {
 }
@@ -3585,7 +3562,9 @@ p {
 /*=====================================================
     24. EVENT PAGE css 
 ======================================================*/
-
+#event-page {
+    direction: rtl;
+}
 .singel-event-list {
     background-color: #fff;
     padding: 30px;
@@ -3649,7 +3628,9 @@ p {
 /*=====================================================
     25. EVENT SINGEL PAGE css 
 ======================================================*/
-
+#event-singel {
+    direction:rtl;
+}
 .events-area {
     background-color: #fff;
     padding: 45px 50px;
@@ -4471,7 +4452,9 @@ p {
 /*=====================================================
     31. CONTACT PAGE css 
 ======================================================*/
-
+#contact-page {
+    direction:rtl
+}
 .contact-from {
     background-color: #fff;
     padding: 50px;
@@ -4659,8 +4642,16 @@ p.form-message.error {
     color: #e3c871e8;
 }
 
+#support-mail {
+    margin-top: 9px;
+}
+
+.support {
+    float: right;
+}
+
 .logo img {
-    width: 75%;
+    max-width:80%;
 }
 
 .footer-copyright a {
@@ -4705,21 +4696,65 @@ p.form-message.error {
     padding: 50px 0;
 }
 
-
-
-
-.single-slider .container .row .col-xl-9 {
-    text-align:right;
-    right:-300px;
+p {
+    margin-bottom: 0 !important;
 }
 
-#course-part .container .row .col-lg-6 {
+.row > * {
+}
 
-    right: -600px;
+.right-icon ul li {
+    display: table-cell !important;
+}
+
+.nice-select {
+    display: none !important;
+}
+
+.fa-heart {
+    cursor: pointer;
 }
 
 
+#news-bar:hover {
+    transition: 0.37s;
+}
 
+.fa-search:hover {
+    color: #ffc600;
+}
+
+.fa-globe:hover {
+    color: #ffc600;
+}
+
+#news-bar a {
+    padding: 8px 2px;
+    font-size: 16px;
+    color: #fff;
+    text-decoration: none;
+}
+
+    #news-bar a:hover {
+        transition: 0.37s;
+        color: #ffc600;
+    }
+
+#info-img {
+    margin-right: 30px;
+}
+
+.navbar {
+    box-shadow: none !important;
+}
+
+.badge-notification {
+    background-color: #ffc600 !important;
+}
+
+.bg-light {
+    --mdb-bg-opacity: 0 !important;
+}
 
 @media only screen and (max-width:479px) {
     .section-features, .section-features, .section-specialities {
@@ -4841,6 +4876,8 @@ p.form-message.error {
     .nav-icon .fa-chevron-down {
         /* opacity: 0;*/
     }
+
+
 
 @media only screen and (max-width: 575.98px) {
     .navigation .navbar .navbar-nav li {

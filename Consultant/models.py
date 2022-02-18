@@ -76,12 +76,13 @@ class Teacher_Time(models.Model):
         return context
     
     def get_available_day(self):
-        get_cache=cache.get("consultant_data")
+        get_cache=cache.get(f"consultant_data_{self.user}")
         if get_cache:
-            data=get_cache
+
+            data=get_cache 
         else:
             teachers=Teacher_Time.objects.filter(user=self.user,available=True)
-            if teachers:
+            if teachers: 
                 sat=teachers.filter(date=6)
                 if sat:
                     sat_days=self.day_list_display(date=sat[0].date)
@@ -120,8 +121,8 @@ class Teacher_Time(models.Model):
                 data={"sat":sat,"sat_days":sat_days,"sun_days":sun_days,
                         "mon_days":mon_days,"tue_days":tue_days,"wed_days":wed_days,"thu_days":thu_days,"fri_days":fri_days
                         ,"mon":mon,"sun":sun,"tue":tue,"wed":wed,"thu":thu,"fri":fri}
-                cache.set("consultant_data",data,60*15)
-            else:
+                cache.set(f"consultant_data_{self.user}",data,60*15)
+            else:    
                 data=None
                 return redirect(reverse("consultant:home"))
         return data
@@ -207,6 +208,11 @@ class Consultant(models.Model):
     user_data=models.TextField()
     def __str__(self):
         return self.user.username
+    
+    def get_user_data(self):
+        data=json.loads(self.user_data)
+        return data
+        
 
 # def check_if_user__has_const(user):
 #     conslt=Consultant.objects.filter(Q(user=user,completed=False) | Q(user=user,pending=True))

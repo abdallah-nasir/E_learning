@@ -53,6 +53,18 @@ def check_if_user_data_complete(function):
     return wrap
 
 
+def check_if_user_in_course_videos(function):
+    def wrap(request, *args, **kwargs):
+        course=get_object_or_404(Course,slug=kwargs["course"])
+        if course.students.filter(username=request.user).exists():
+            return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"you should buy course first")
+            return redirect(reverse("home:course",kwargs={"slug":course.slug}))
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
 def check_if_payment_has_expired(function):
     def wrap(request, *args, **kwargs):
         course=get_object_or_404(Course,slug=kwargs["course"])
@@ -68,6 +80,12 @@ def check_if_payment_has_expired(function):
                 if payment.expired == False:
                     payment.expired = True
                     course.students.remove(payment.user)
+                    try:
+                        for i in course.videos.all():
+                            i.watched_users.remove(payment.user)
+                            i.save()
+                    except:
+                        pass
                     course.save()
                     payment.save()
                 messages.error(request,"payment has been expired for this course")

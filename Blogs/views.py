@@ -39,6 +39,7 @@ use_tls=False
 @login_required(login_url="accounts:login")
 def home(request):
     blog_data=cache.get("blog_data")
+
     if blog_data == None:
         data=get_blog_data()
         cache.set("blog_data",data,60*15)

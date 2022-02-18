@@ -106,7 +106,9 @@ class Videos(models.Model):
             self.slug = slugify(self.name)
             if Videos.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
-                self.slug =f"{slug}-{random_string_generator()}"
+                self.slug=f"{slug}-{self.user}"
+                if Videos.objects.filter(slug=self.slug).exists():
+                    self.slug =f"{slug}-{self.user}-{random_string_generator()}"
             else:
                 self.slug = slugify(self.name)          
         super(Videos, self).save()
@@ -188,7 +190,9 @@ class Course(models.Model):
             self.slug = slugify(self.name)
             if Course.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
-                self.slug =f"{slug}-{random_string_generator()}"
+                self.slug =f"{slug}-{self.Instructor}"
+                if Course.objects.filter(slug=self.slug).exists():
+                    self.slug=f"{slug}-{self.Instructor}-{random_string_generator()}"
             else:
                 self.slug = slugify(self.name)          
         super(Course, self).save()
@@ -260,7 +264,7 @@ class Course(models.Model):
         else:
             return reverse("home:course",kwargs={"slug":self.slug})
 
-def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
+def random_string_generator(size = 7, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
       
@@ -308,7 +312,9 @@ class Events(models.Model):
             self.slug = slugify(self.name)
             if Events.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
-                self.slug =f"{slug}-{random_string_generator()}"
+                self.slug =f"{slug}-{self.user}"
+                if Events.objects.filter(slug=self.slug).exists():
+                    self.slug=f"{slug}-{self.user}-{random_string_generator()}"
             else:
                 self.slug = slugify(self.name)          
         super(Events, self).save()

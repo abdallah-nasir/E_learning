@@ -156,15 +156,13 @@ def single_course(request,slug):
     return render(request,"course-single.html",context)
 
 @login_required(login_url="accounts:login")
+@check_if_user_in_course_videos
 @check_if_payment_has_expired
 def videos(request,course,slug):
     video=cache.get(f"single_video_{slug}")
     if video == None:
         video=get_object_or_404(Videos,slug=slug)
         cache.set(f"single_video_{slug}",video,60*30)
-    if not request.user in video.my_course.students.all():
-        messages.error(request,"sorry you should buy course first")
-        return redirect(reverse("home:course",kwargs={"slug":video.my_course.slug}))
     else:  
         if request.user not in video.watched_users.all():
             video.watched_users.add(request.user)

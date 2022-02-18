@@ -164,6 +164,9 @@ def check_consultant_refund(function):
     @wraps(function)
     def wrap(request, *args, **kwargs):
         payment=get_object_or_404(Cosultant_Payment,id=kwargs["id"])
+        if payment.method == "Western Union":
+            messages.error(request,"You cant refund Western Union Payment")
+            return redirect(reverse("dashboard:consultant_payment"))
         refunds=Refunds.objects.filter(user=request.user,type="consultant_payment",content_id=payment.id).exclude(status="approved")
         today= datetime.date.today()
         if payment.status == 'refund':
@@ -200,8 +203,10 @@ def check_course_refund(function):
     def wrap(request, *args, **kwargs):
         course=get_object_or_404(Course,slug=kwargs['slug'])
         payment=get_object_or_404(Payment,id=kwargs["id"])
-        today= datetime.date.today()
-        print(payment.created_at + datetime.timedelta(days=30))
+        if payment.method == "Western Union":
+            messages.error(request,"You cant refund Western Union Payment")
+            return redirect(reverse("dashboard:course_payment"))
+        today= datetime.date.today() 
         refunds=Refunds.objects.filter(user=request.user,type="course_payment",content_id=payment.id).exclude(status="approved")
         if payment.status == 'refund':
             messages.error(request,"this payment is already refunded")

@@ -6,7 +6,7 @@ from Consultant.models import Cosultant_Payment,Consultant,Teacher_Time ,Categor
 from home.models import Course,Payment,Events,Videos,News,Videos
 from Blogs.models import (Blog,Blog_Payment,Blog_Images,Prices)
 from Blogs.models import Category as Blog_Category
-
+from django.utils import translation
 from Quiz.models import *
 from Frontend.models import *
 from accounts.models import TeacherForms
@@ -23,6 +23,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from taggit.models import Tag
 from .models import *
+from django.core.cache import cache
 from django.contrib.auth.decorators import user_passes_test
 import json,requests
 import datetime as today_datetime
@@ -69,6 +70,7 @@ storage_name=os.environ['storage_name']
 agartha_cdn=os.environ['agartha_cdn']
 BLOGS_FOLDER_COLLECTIONID="41e8c113-0c1f-4af4-bc24-b70beed3e13f"
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
+
 
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
@@ -940,6 +942,7 @@ def events(request):
 @check_user_validation
 @check_if_teacher_has_event
 def add_event(request):
+    translation.deactivate()
     form=AddEvent(request.POST or None,request.FILES or None)
     if request.method == "POST":
         if form.is_valid():
@@ -1301,8 +1304,6 @@ def show_demo_blog(request,slug):
 @login_required(login_url="accounts:login")
 @for_admin_only
 def approve_content(request,id):
-    query=get_object_or_404(Blog_Payment,id=id,status="pending")
-    query.add_time_expired_to_related_course()
     if request.user.is_superuser:
         try:
             qs=request.GET["approve"]
@@ -1315,18 +1316,18 @@ def approve_content(request,id):
             elif qs == "blog_payment":
                 query=get_object_or_404(Blog_Payment,id=id,status="pending")
                 query.add_time_expired_to_related_course()
-                # query.status="approved"
-                # query.save()
-                # query.user.vip = True
-                # query.user.save()
-                # send_mail(
-                # 'Payment Completed',
-                # "Successfull Payment",
-                # PAYMENT_EMAIL_USERNAME,
-                # [query.user.email],
-                # fail_silently=False,
-                # connection=PAYMENT_MAIL_CONNECTION
-                # )
+                query.status="approved"
+                query.save()
+                query.user.vip = True
+                query.user.save()
+                send_mail(
+                'Payment Completed',
+                "Successfull Payment",
+                PAYMENT_EMAIL_USERNAME,
+                [query.user.email],
+                fail_silently=False,
+                connection=PAYMENT_MAIL_CONNECTION
+                )
                 messages.success(request,"Payment Approved Successfully")
             elif qs == "consultant_payment":
                 query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
@@ -1336,7 +1337,8 @@ def approve_content(request,id):
                 data=json.loads(query.user_data)
                 data_date=data["date"]
                 date=datetime.strptime(data_date,'%m/%d/%Y')
-                consult.date=date
+                consult.date=date 
+                consult.user_data=json.dumps(data)
                 consult.start_time=query.teacher.start_time
                 consult.end_time=query.teacher.end_time
                 consult.save()
@@ -1388,12 +1390,25 @@ def approve_content(request,id):
                 messages.success(request,"Teacher Approved Successfully")
             elif qs == "add_user":
                 query = get_object_or_404(AddStudentCourse,id=id,status="pending")
+                payment=Payment.objects.create(user=query.student,method="Western Union",transaction_number=f"added-student-{query.student}-{query.id}",
+                                               amount=0,course=query.course,
+                    status="approved")
+                payment.add_expire_time()
+                query.course.videos.first().save()
+                query.course.save()
                 query.status="approved"
                 query.course.students.add(query.student)
                 query.course.save()
                 query.save()
+                send_mail(
+                f'Course {query.course.name}',
+               f"you have been added to course {query.course.name}",
+                PAYMENT_EMAIL_USERNAME,
+                [query.student.email],
+                fail_silently=False,
+                connection=PAYMENT_MAIL_CONNECTION
+                )
                 messages.success(request,"User Added Successfully")
-
         except:
             return redirect(reverse("dashboard:home"))
     else:
@@ -1557,6 +1572,7 @@ def consultants_sessions(request):
 
 @login_required(login_url="accounts:login")
 def accept_consultant(request,id):
+    translation.deactivate()
     consultant=get_object_or_404(Consultant,id=id,status="pending",teacher__user=request.user)
     form=SessionForm(request.POST or None,instance=consultant)
     if request.method =="POST":
@@ -1585,7 +1601,30 @@ def accept_consultant(request,id):
     return render(request,"dashboard_consultant_accept.html",context)
 
 @login_required(login_url="accounts:login")
+def reject_consultant(request,id):
+    consultant=get_object_or_404(Consultant,id=id,status="pending",user=request.user)
+    consultant.status ="declined"
+    payment=Cosultant_Payment.objects.get(consultant=consultant)
+    if payment.method != "Western Union":
+        refund=Refunds.objects.create(type="consultant_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,)
+        data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":payment.get_consultant_date(),"teacher":payment.teacher.user.username}]}
+        refund.data=json.dumps(data)
+        refund.save()
+    consultant.save()
+    send_mail(
+        "Consultant Cancellation",
+        f"Consultant Has been canceled with teacher {consultant.teacher.user.get_full_name}",
+        DASHBOARD_EMAIL_HOST,
+        [consultant.user.email],
+        fail_silently=False,
+        connection=DASHBOARD_MAIL_CONNECTION
+        )
+    messages.success(request,"Consultant Rejected Successfully")
+    return redirect(reverse("dashboard:consultants"))
+
+@login_required(login_url="accounts:login")
 def edit_consultant(request,id):
+    translation.deactivate()
     consultant=get_object_or_404(Consultant,id=id,status="approved",teacher__user=request.user)
     form=SessionForm(request.POST or None,instance=consultant)
     if request.method =="POST":
@@ -1605,6 +1644,7 @@ def edit_consultant(request,id):
 
 @login_required(login_url="accounts:login")
 def start_consultant(request,id):
+    translation.deactivate()
     consultant=get_object_or_404(Consultant,id=id,status="approved",teacher__user=request.user)
     start_time_day=consultant.date
     start_time=consultant.start_time.strftime("%I:%M:%S %p") 
@@ -1620,6 +1660,7 @@ def start_consultant(request,id):
             )
     consultant.status="started"
     consultant.save()
+
     messages.success(request,"consultant started")
     return redirect(reverse("dashboard:consultants"))
 
@@ -1638,6 +1679,14 @@ def delete_session(request,id):
     else:
         session.available=False
         session.save()
+        teachers=cache.get("teacher_time")
+        if teachers: 
+            if session in teachers:    
+                teachers.remove(session)
+                cache.set("teacher_time",teachers,60*30)
+        days=cache.get(f"consultant_data_{session.user}")
+        if days:
+            cache.delete(f"consultant_data_{session.user}")
         messages.success(request,"Session Deactivated")
         return redirect(reverse("dashboard:consultants_sessions"))
 
@@ -1646,13 +1695,20 @@ def active_session(request,id):
     session=get_object_or_404(Teacher_Time,user=request.user,id=id,available=False)
     session.available=True
     session.save()
+    teachers=cache.get("teacher_time")
+    if teachers or teachers == []:
+        teachers.append(session)
+        cache.set("teacher_time",teachers,60*30) 
+    days=cache.get(f"consultant_data_{session.user}")
+    if days:
+        cache.delete(f"consultant_data_{session.user}")
     messages.success(request,"Session Activated")
     return redirect(reverse("dashboard:consultants_sessions"))
-
 @login_required(login_url="accounts:login")
-@check_user_validation
+@check_user_validation 
 # @check_if_teacher_have_consultants
-def add_consultant(request):
+def add_consultant(request):  
+    translation.deactivate()
     form=CosultantAddForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
@@ -1665,6 +1721,8 @@ def add_consultant(request):
             instance.save()
             messages.success(request,"Consultant Added Successfully")
             return redirect(reverse("dashboard:consultants_sessions"))
+        else:
+            print(form.errors)
     context={"form":form}
     return render(request,"dashboard_add_consultant.html",context)
 
@@ -1754,8 +1812,10 @@ def add_student_course(request):
                 messages.error(request,"user is already in course")
             elif AddStudentCourse.objects.filter(course=teacher_course,student=student_course,status="pending").exists():
                 messages.error(request,"you already have a pending request for this user")
-
                 # return redirect(reverse("dashboard:"))
+            
+            elif Payment.objects.filter(user=student_course,course=teacher_course,status="pending").exists():
+                messages.error(request,f"you already have a pending payment for user {user} for this course")
             else:
                 AddStudentCourse.objects.create(teacher=request.user,student=student_course,course=teacher_course,status="pending")
                 messages.success(request,"your request is being processed by admins")
@@ -2278,6 +2338,9 @@ def accpet_paymob_course_payment_refund(request,payment,refund):
     except:
         messages.error(request,"invalid payment refund")
 
+
+@login_required(login_url="accounts:login")
+@for_admin_only  
 def accpet_paymob_consultant_payment_refund(request,payment,refund):
     url_1 = "https://accept.paymob.com/api/auth/tokens"
     data_1 = {"api_key": PAYMOB_API_KEY}
@@ -2411,8 +2474,8 @@ def edit_course_payment(request,id):
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.status="pending"
-                today= today_datetime.date.today()
-                instance.expired_at=today
+                # today= today_datetime.date.today()
+                instance.expired_at=instance.created_at
                 image=request.FILES.get("payment_image")
                 if image:
                     url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{instance.course.slug}/{image}"

@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .decorators import check_course_status
+from .decorators import check_course_status,check_if_payment_has_expired
 from django.core.mail import EmailMessage,get_connection
 import os
 PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
@@ -25,6 +25,7 @@ use_tls=False
 
 @login_required(login_url="accounts:login")
 @check_course_status
+@check_if_payment_has_expired
 def quiz(request,slug,question):
     my_course=get_object_or_404(Course,slug=slug,status="approved")
     
@@ -61,6 +62,7 @@ def quiz(request,slug,question):
      
 @login_required(login_url="accounts:login")   
 @check_course_status
+@check_if_payment_has_expired
 def quiz_result(request,slug):
     course=get_object_or_404(Course,slug=slug)
     data=course.quiz.get_quiz_result(student=request.user)

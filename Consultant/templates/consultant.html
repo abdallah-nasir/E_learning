@@ -2,11 +2,18 @@
 {% load i18n %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list  for LANGUAGES as languages %}
 {% block content %}
 <!-- <link rel="stylesheet" href="{% static 'consultant/css/style.css' %}"> -->
-
+{% if LANGUAGE_CODE == "ar" %}
+<link rel="stylesheet" href="{% static 'css/cons-bootstrap.min-rtl.css' %}">
+<link rel="stylesheet" href="{% static 'css/cons-style-rtl.css' %}">
+{% else %}
 <link rel="stylesheet" href="{% static 'css/2019-bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/cons-style.css' %}">
+{% endif %}
 <style type="text/css">
 .fa-check-circle{
    color:#28a745; 
@@ -93,7 +100,9 @@ body{
                 </div>
                 <div class="col-lg-8">
                     <div class="doctor-slider slider">
+                      
                         {% for i in teachers %}
+                        
                         <div class="profile-widget">
                             <div class="doc-img">
                                 <a href="{% url 'consultant:get_consultant' i.user.slug %}?consultant={{i.id}}">
@@ -151,7 +160,7 @@ body{
                                 </div>
                             </div>
                         </div>
-                            {% endfor %}
+                            {% endfor %} 
 
                     </div>
                 </div>

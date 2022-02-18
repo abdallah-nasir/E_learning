@@ -372,7 +372,9 @@ class CosultantAddForm(forms.ModelForm):
     start_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
                 'append': 'fa fa-clock-o',
                 'icon_toggle': True,
-                "format":"H M S"
+                "format":"H M S",
+            
+                  
                 
             }))
     end_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
@@ -385,12 +387,17 @@ class CosultantAddForm(forms.ModelForm):
         model=Teacher_Time 
         fields="__all__"
         exclude=["user"]
+    def clean_price(self):
+        price=self.cleaned_data.get("price")
+        if int(price) <= 0:
+            raise forms.ValidationError("invalid price")
+        return price
 
 class SessionForm(forms.ModelForm):
-    start_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
+    start_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p",],widget=TimePicker(attrs={
                 'append': 'fa fa-clock-o',
                 'icon_toggle': True,
-                "format":"H M S"
+                "format":"H M S",
                 
             }))   
     end_time=forms.TimeField(required=True,input_formats=["%H:%M:%S %p"],widget=TimePicker(attrs={
@@ -405,6 +412,7 @@ class SessionForm(forms.ModelForm):
         model=Consultant 
         fields="__all__"
         exclude=["status","date","user_data","teacher","user"]
+
 class ConsultantCategoryForm(forms.ModelForm):
     class Meta:
         model=Consultant_Category 
@@ -462,7 +470,7 @@ class AddUserToCourseForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(AddUserToCourseForm, self).__init__(*args, **kwargs)
         request=get_current_request()
-        self.fields["course"].queryset = Course.objects.filter(Instructor=request.user)
+        self.fields["course"].queryset = Course.objects.filter(Instructor=request.user,status="approved")
 
 
 class AddUserDirector(forms.Form):

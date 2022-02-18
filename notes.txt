@@ -1,9 +1,0 @@
-director 
-       approve  > reject
-       payment > reject
-
-
-subscribe
-    add subscribe db 
-
-add  validation to user comments

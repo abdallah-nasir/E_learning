@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-20 10:28+0200\n"
+"POT-Creation-Date: 2022-02-18 16:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,9 +18,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\Blogs\templates\blog.html:48 .\Blogs\templates\blog.html:97
-#: .\Blogs\templates\blog.html:142 .\Blogs\templates\blog.html:187
-#: .\Blogs\templates\blog.html:228 .\Blogs\templates\blog.html:275
+#: .\Blogs\templates\blog.html:52 .\Blogs\templates\blog.html:98
+#: .\Blogs\templates\blog.html:162 .\Blogs\templates\blog.html:207
+#: .\Blogs\templates\blog.html:248 .\Blogs\templates\blog.html:295
 #: .\Blogs\templates\blog_search.html:27 .\Blogs\templates\blog_search.html:66
 #: .\Blogs\templates\blog_search.html:112
 #: .\Blogs\templates\blog_search.html:156
@@ -35,147 +35,141 @@ msgstr ""
 msgid "comments"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:60 .\Blogs\templates\blog.html:109
-#: .\Blogs\templates\blog.html:154 .\Blogs\templates\blog.html:199
-#: .\Blogs\templates\blog.html:241 .\Blogs\templates\blog.html:294
+#: .\Blogs\templates\blog.html:64 .\Blogs\templates\blog.html:110
+#: .\Blogs\templates\blog.html:219 .\Blogs\templates\blog.html:261
+#: .\Blogs\templates\blog.html:314
 msgid "Tags"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:66 .\Blogs\templates\blog.html:115
-#: .\Blogs\templates\blog.html:160 .\Blogs\templates\blog.html:205
-#: .\Blogs\templates\blog.html:247 .\Blogs\templates\blog.html:300
+#: .\Blogs\templates\blog.html:70 .\Blogs\templates\blog.html:116
+#: .\Blogs\templates\blog.html:225 .\Blogs\templates\blog.html:267
+#: .\Blogs\templates\blog.html:320
 msgid "Share"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:310
+#: .\Blogs\templates\blog.html:330
 msgid "Comments"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:319 .\Blogs\templates\blog.html:350
+#: .\Blogs\templates\blog.html:339 .\Blogs\templates\blog.html:370
 msgid "says"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:322 .\Blogs\templates\blog.html:353
+#: .\Blogs\templates\blog.html:342 .\Blogs\templates\blog.html:373
 msgid "at"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:329
+#: .\Blogs\templates\blog.html:349
 msgid "Reply"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:334 .\Blogs\templates\blog.html:381
-#: .\templates\course-single.html:330 .\templates\teachers-single.html:229
-#: .\templates\video.html:259
+#: .\Blogs\templates\blog.html:354 .\Blogs\templates\blog.html:401
+#: .\templates\course-single.html:323 .\templates\teachers-single.html:229
+#: .\templates\video.html:272
 msgid "Comment"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:373
+#: .\Blogs\templates\blog.html:393
 msgid "Leave a Comment"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:403 .\Blogs\templates\blog_type.html:228
+#: .\Blogs\templates\blog.html:423 .\Blogs\templates\blog_type.html:228
 #: .\Blogs\templates\blogs_2.html:358
 msgid "Recent Posts"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:412 .\Blogs\templates\blog_type.html:237
+#: .\Blogs\templates\blog.html:432 .\Blogs\templates\blog_type.html:237
 #: .\Blogs\templates\blogs_2.html:367
 msgid "Categories"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:9 .\accounts\templates\account_base.html:15
-#: .\templates\account\login.html:10 .\templates\account\signup.html:10
-#: .\templates\base.html:18
+#: .\Blogs\templates\blog_base.html:12
+#: .\accounts\templates\account_base.html:15 .\templates\account\login.html:10
+#: .\templates\account\signup.html:10 .\templates\base.html:19
 msgid "Agartha Academy"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:55
+#: .\Blogs\templates\blog_base.html:62
 msgid "Welcome to Agartha Blogs"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:61
+#: .\Blogs\templates\blog_base.html:68
+#: .\accounts\templates\account_consultant_payment.html:76
+#: .\accounts\templates\account_course_payment.html:78
 #: .\accounts\templates\account_events.html:68
 msgid "Close"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:83
+#: .\Blogs\templates\blog_base.html:90
 msgid "Search something…"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:95
-msgid "Back To Course"
+#: .\Blogs\templates\blog_base.html:102
+#: .\accounts\templates\account_base.html:59
+msgid "Back To Home"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:106 .\Blogs\templates\blog_base.html:109
+#: .\Blogs\templates\blog_base.html:113 .\Blogs\templates\blog_base.html:116
 msgid "Home Blogs"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:114
+#: .\Blogs\templates\blog_base.html:121
 msgid "Blogs Type"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:117
-msgid "Standard post"
+#: .\Blogs\templates\blog_base.html:124
+msgid "Article post"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:118
+#: .\Blogs\templates\blog_base.html:125
 msgid "Gallery post"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:119
+#: .\Blogs\templates\blog_base.html:126
 msgid "Video post"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:120
+#: .\Blogs\templates\blog_base.html:127
 msgid "Audio post"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:121
+#: .\Blogs\templates\blog_base.html:128
 msgid "Quote post"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:122
+#: .\Blogs\templates\blog_base.html:129
 msgid "Link post"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:127
+#: .\Blogs\templates\blog_base.html:134
 msgid "Pricing"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:170 .\templates\teachers-single.html:81
+#: .\Blogs\templates\blog_base.html:177 .\templates\teachers-single.html:81
 msgid "About"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:171
+#: .\Blogs\templates\blog_base.html:178
 msgid ""
-"Deep within you, the light you are looking for. You have the capabilities "
-"that successful people possess. Just discover it..then invest it in "
-"yourself. Eternal... Discover your inner kingdom"
+"Deep within you, the light you are looking for. <br/> You have the "
+"capabilities that successful people possess. <br/> Just discover it..then "
+"invest it in yourself. <br/> Eternal... <br/>Discover your inner kingdom"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:188 .\Blogs\templates\blog_base.html:194
-msgid "Support"
+#: .\Blogs\templates\blog_base.html:185 .\templates\base.html:497
+msgid "Sitemap"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:191 .\templates\base.html:225
-msgid "FAQS"
+#: .\Blogs\templates\blog_base.html:199 .\templates\base.html:517
+msgid "Our Products"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:192 .\Blogs\templates\blog_base.html:242
-msgid "Privacy"
-msgstr ""
-
-#: .\Blogs\templates\blog_base.html:193
-msgid "Policy"
-msgstr ""
-
-#: .\Blogs\templates\blog_base.html:202 .\templates\base.html:224
-#: .\templates\contact.html:52
-msgid "Contact Us"
-msgstr ""
-
-#: .\Blogs\templates\blog_base.html:242
+#: .\Blogs\templates\blog_base.html:224
 msgid "Terms"
+msgstr ""
+
+#: .\Blogs\templates\blog_base.html:224 .\templates\base.html:549
+msgid "Privacy"
 msgstr ""
 
 #: .\Blogs\templates\blog_search.html:76 .\Blogs\templates\blog_search.html:134
@@ -196,11 +190,11 @@ msgstr ""
 
 #: .\Blogs\templates\blog_search.html:216 .\Blogs\templates\blog_type.html:215
 #: .\Blogs\templates\blogs.html:342 .\Blogs\templates\blogs_2.html:345
-#: .\accounts\templates\account_blog_payment.html:75
+#: .\accounts\templates\account_blog_payment.html:76
 #: .\accounts\templates\account_consult.html:72
-#: .\accounts\templates\account_consultant_payment.html:78
+#: .\accounts\templates\account_consultant_payment.html:101
 #: .\accounts\templates\account_course.html:69
-#: .\accounts\templates\account_course_payment.html:79
+#: .\accounts\templates\account_course_payment.html:103
 #: .\accounts\templates\account_events.html:94
 msgid "Next"
 msgstr ""
@@ -231,93 +225,189 @@ msgid "Pricing Tables"
 msgstr ""
 
 #: .\Blogs\templates\pricing.html:155 .\templates\account\login.html:38
-#: .\templates\account\login.html:121 .\templates\account\signup.html:37
+#: .\templates\account\login.html:124 .\templates\account\signup.html:37
 #: .\templates\account\signup.html:68
 msgid "Sign Up"
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:61
-#: .\Consultant\templates\consultant.html:65
-#: .\Consultant\templates\consultant_teacher.html:22
-#: .\Consultant\templates\consultant_teacher.html:72 .\templates\base.html:213
-msgid "Consultant"
+#: .\Consultant\models.py:21
+msgid "Saturday"
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:64
-#: .\Consultant\templates\consultant_teacher.html:21 .\templates\about.html:15
-#: .\templates\base.html:187 .\templates\contact.html:32
-#: .\templates\course-single.html:74 .\templates\courses.html:15
-#: .\templates\event_single.html:17 .\templates\events.html:14
-#: .\templates\global_search.html:15 .\templates\teachers-single.html:16
-#: .\templates\teachers.html:15 .\templates\video.html:16
-#: .\templates\wishlist.html:15
+#: .\Consultant\models.py:22
+msgid "Sunday"
+msgstr ""
+
+#: .\Consultant\models.py:23
+msgid "Monday"
+msgstr ""
+
+#: .\Consultant\models.py:24
+msgid "Tuesday"
+msgstr ""
+
+#: .\Consultant\models.py:25
+msgid "Wednesday"
+msgstr ""
+
+#: .\Consultant\models.py:26
+msgid "Thursday"
+msgstr ""
+
+#: .\Consultant\models.py:27
+msgid "Friday"
+msgstr ""
+
+#: .\Consultant\templates\consultant.html:38
+#: .\Consultant\templates\consultant.html:42
+#: .\Consultant\templates\consultant_teacher.html:53
+#: .\Consultant\templates\consultant_teacher.html:57 .\templates\base.html:243
+#: .\templates\base.html:521
+msgid "Consultations"
+msgstr ""
+
+#: .\Consultant\templates\consultant.html:41
+#: .\Consultant\templates\consultant_teacher.html:56
+#: .\Dashboard\templates\dashboard_demo_event.html:17 .\templates\about.html:15
+#: .\templates\base.html:221 .\templates\contact.html:32
+#: .\templates\course-single.html:75 .\templates\courses.html:17
+#: .\templates\event_single.html:17 .\templates\events.html:15
+#: .\templates\global_search.html:15 .\templates\home.html:6
+#: .\templates\teachers-single.html:16 .\templates\teachers.html:16
+#: .\templates\video.html:21 .\templates\wishlist.html:15
 msgid "Home"
 msgstr ""
 
+#: .\Consultant\templates\consultant.html:59
+msgid "Teachers available for consultation"
+msgstr ""
+
+#: .\Consultant\templates\consultant.html:60
+msgid ""
+"There are times when we feel that it is the end and then discover that it is "
+"the beginning, and there are doors that we feel closed and then discover "
+"that they are the real entrance."
+msgstr ""
+
+#: .\Consultant\templates\consultant.html:81
+msgid "Book Our Teacher"
+msgstr ""
+
 #: .\Consultant\templates\consultant.html:82
-msgid "Teachers found"
+msgid "Meet your favorite teacher and book a counseling session in Agartha"
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:94
-#: .\accounts\templates\account_base.html:134
-#: .\accounts\templates\account_base.html:139
-msgid "Consultants"
+#: .\Consultant\templates\consultant.html:86
+msgid ""
+"You can book a consultation with the preferred coach at the times available "
+"for each coach.After setting the date and booking, the reservation will be "
+"confirmed by the coach."
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:95
-msgid "Take an Appointment"
+#: .\Consultant\templates\consultant.html:89
+msgid ""
+"You will receive an email in case of refusal. You will receive an email to "
+"notify you of the rejection of the reservation and the reason for the "
+"rejection.In the event of confirmation, you will receive an email with a "
+"confirmation of the appointment and a link to the meeting.Appointments are "
+"chosen according to Cairo time, so be sure to choose the date accurately."
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:105
-msgid "search"
+#: .\Consultant\templates\consultant.html:91
+msgid "Read More.."
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:85
-msgid "About Consultant"
+#: .\Consultant\templates\consultant.html:145
+#: .\Consultant\templates\consultant.html:202
+msgid "View Profile"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:89
-#: .\accounts\templates\account_course.html:29
-#: .\templates\course-single.html:112 .\templates\video.html:54
-msgid "Category"
+#: .\Consultant\templates\consultant.html:148
+#: .\Consultant\templates\consultant.html:205
+msgid "Book Now"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:90
-msgid "Days From"
+#: .\Consultant\templates\consultant_teacher.html:114
+msgid "Mon"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:91
-msgid "Available From"
+#: .\Consultant\templates\consultant_teacher.html:119
+msgid "Tue"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:95
-#: .\accounts\templates\account_consult.html:33
-#: .\accounts\templates\account_course.html:30
-#: .\templates\course-single.html:368
-msgid "Price"
+#: .\Consultant\templates\consultant_teacher.html:123
+msgid "Wed"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:96
-msgid "Days To"
+#: .\Consultant\templates\consultant_teacher.html:127
+msgid "Thu"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:98
-msgid "Available To"
+#: .\Consultant\templates\consultant_teacher.html:131
+msgid "Fri"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:105
-msgid "Payment"
+#: .\Consultant\templates\consultant_teacher.html:135
+msgid "Sat"
 msgstr ""
 
-#: .\Dashboard\templates\dashboard_single_email.html:21
-msgid "DataTables Example"
+#: .\Consultant\templates\consultant_teacher.html:139
+msgid "Sun"
 msgstr ""
 
-#: .\E_learning\settings.py:195
+#: .\Consultant\templates\consultant_teacher.html:274
+#: .\Consultant\templates\consultant_teacher.html:323
+#: .\Consultant\templates\consultant_teacher.html:374
+#: .\Consultant\templates\consultant_teacher.html:427
+#: .\Consultant\templates\consultant_teacher.html:479
+#: .\Consultant\templates\consultant_teacher.html:530
+#: .\Consultant\templates\consultant_teacher.html:582
+msgid "Available Time For Teacher"
+msgstr ""
+
+#: .\Dashboard\templates\dashboard_demo_event.html:18
+#: .\accounts\templates\account_base.html:114
+#: .\accounts\templates\account_base.html:119 .\templates\base.html:230
+#: .\templates\base.html:523 .\templates\event_single.html:18
+#: .\templates\events.html:12 .\templates\events.html:16
+msgid "Events"
+msgstr ""
+
+#: .\Dashboard\templates\dashboard_demo_event.html:51
+#: .\templates\event_single.html:51
+msgid "Book Your Seat"
+msgstr ""
+
+#: .\Dashboard\templates\dashboard_demo_event.html:62
+#: .\accounts\templates\account_events.html:31 .\templates\event_single.html:63
+msgid "Start Time"
+msgstr ""
+
+#: .\Dashboard\templates\dashboard_demo_event.html:73
+#: .\templates\event_single.html:74
+msgid "Finish Time"
+msgstr ""
+
+#: .\Dashboard\templates\dashboard_demo_event.html:84
+#: .\templates\event_single.html:85
+msgid "Address"
+msgstr ""
+
+#: .\Dashboard\templates\dashboard_demo_event.html:97
+#: .\templates\event_single.html:98
+msgid "Zoom Link"
+msgstr ""
+
+#: .\Dashboard\templates\dashboard_demo_event.html:98
+#: .\templates\event_single.html:99
+msgid "Click The Link"
+msgstr ""
+
+#: .\E_learning\settings.py:194 .\templates\base.html:315
 msgid "English"
 msgstr ""
 
-#: .\E_learning\settings.py:196
+#: .\E_learning\settings.py:195 .\templates\base.html:312
 msgid "Arabic"
 msgstr ""
 
@@ -325,91 +415,82 @@ msgstr ""
 msgid "User Dashboard"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:59 .\templates\base.html:217
-msgid "Profile"
-msgstr ""
-
-#: .\accounts\templates\account_base.html:64
-msgid "Back To Home"
-msgstr ""
-
-#: .\accounts\templates\account_base.html:70
+#: .\accounts\templates\account_base.html:65
 msgid "Teacher Dashboard"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:78
+#: .\accounts\templates\account_base.html:73
 msgid "Pages"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:86
+#: .\accounts\templates\account_base.html:81
 #: .\accounts\templates\account_consultant_payment.html:6
 msgid "Payments"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:90
+#: .\accounts\templates\account_base.html:85
 msgid "All Payment"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:91
-msgid "log Payments"
+#: .\accounts\templates\account_base.html:86
+msgid "Blog Payments"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:92
+#: .\accounts\templates\account_base.html:87
 #: .\accounts\templates\account_consultant_payment.html:13
 msgid "Consultant Payments"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:93
+#: .\accounts\templates\account_base.html:88
 #: .\accounts\templates\account_course_payment.html:13
 msgid "Course Payments"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:104
+#: .\accounts\templates\account_base.html:99
 #: .\accounts\templates\account_course_payment.html:32
 msgid "Course"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:108
+#: .\accounts\templates\account_base.html:103
 msgid "ll Courses"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:109
-#: .\accounts\templates\account_course.html:12 .\templates\base.html:196
-#: .\templates\course-single.html:75 .\templates\courses.html:16
-#: .\templates\global_search.html:16 .\templates\home.html:225
-#: .\templates\teachers-single.html:71 .\templates\video.html:17
+#: .\accounts\templates\account_base.html:104
+#: .\accounts\templates\account_course.html:12 .\templates\base.html:226
+#: .\templates\base.html:520 .\templates\course-single.html:76
+#: .\templates\courses.html:5 .\templates\courses.html:18
+#: .\templates\global_search.html:16 .\templates\home.html:248
+#: .\templates\teachers-single.html:71 .\templates\video.html:22
 msgid "Courses"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:119
-#: .\accounts\templates\account_base.html:124 .\templates\base.html:200
-#: .\templates\event_single.html:18 .\templates\events.html:11
-#: .\templates\events.html:15
-msgid "Events"
-msgstr ""
-
-#: .\accounts\templates\account_base.html:123
+#: .\accounts\templates\account_base.html:118
 msgid "All Events"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:138
+#: .\accounts\templates\account_base.html:129
+#: .\accounts\templates\account_base.html:134
+msgid "Consultants"
+msgstr ""
+
+#: .\accounts\templates\account_base.html:133
 msgid "All Consultants"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:264
-#: .\accounts\templates\account_base.html:329 .\templates\base.html:161
+#: .\accounts\templates\account_base.html:259
+#: .\accounts\templates\account_base.html:324 .\templates\base.html:349
 msgid "Logout"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:321
+#: .\accounts\templates\account_base.html:316
 msgid "Ready to Leave ?"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:326
+#: .\accounts\templates\account_base.html:321
 msgid "Select \"Logout\" below if you are ready to end your current session"
 msgstr ""
 
-#: .\accounts\templates\account_base.html:328
+#: .\accounts\templates\account_base.html:323
 msgid "Cancel"
 msgstr ""
 
@@ -468,18 +549,18 @@ msgstr ""
 msgid "Image Link"
 msgstr ""
 
-#: .\accounts\templates\account_blog_payment.html:51
-#: .\accounts\templates\account_consultant_payment.html:54
-#: .\accounts\templates\account_course_payment.html:55
+#: .\accounts\templates\account_blog_payment.html:53
+#: .\accounts\templates\account_consultant_payment.html:55
+#: .\accounts\templates\account_course_payment.html:56
 #: .\accounts\templates\account_events.html:49
 msgid "Edit"
 msgstr ""
 
-#: .\accounts\templates\account_blog_payment.html:63
+#: .\accounts\templates\account_blog_payment.html:64
 #: .\accounts\templates\account_consult.html:60
-#: .\accounts\templates\account_consultant_payment.html:66
+#: .\accounts\templates\account_consultant_payment.html:89
 #: .\accounts\templates\account_course.html:57
-#: .\accounts\templates\account_course_payment.html:67
+#: .\accounts\templates\account_course_payment.html:91
 #: .\accounts\templates\account_events.html:82
 msgid "Previous"
 msgstr ""
@@ -491,7 +572,7 @@ msgstr ""
 
 #: .\accounts\templates\account_consult.html:29
 #: .\accounts\templates\account_course.html:28
-#: .\templates\course-single.html:105 .\templates\video.html:47
+#: .\templates\course-single.html:106 .\templates\video.html:52
 msgid "Teacher"
 msgstr ""
 
@@ -508,9 +589,27 @@ msgstr ""
 msgid "To"
 msgstr ""
 
+#: .\accounts\templates\account_consult.html:33
+#: .\accounts\templates\account_course.html:30
+#: .\templates\course-single.html:361
+msgid "Price"
+msgstr ""
+
+#: .\accounts\templates\account_consultant_payment.html:58
+#: .\accounts\templates\account_consultant_payment.html:77
+#: .\accounts\templates\account_course_payment.html:59
+#: .\accounts\templates\account_course_payment.html:79
+msgid "Refund"
+msgstr ""
+
 #: .\accounts\templates\account_course.html:27
 #: .\accounts\templates\account_events.html:28
 msgid "Name"
+msgstr ""
+
+#: .\accounts\templates\account_course.html:29
+#: .\templates\course-single.html:113 .\templates\video.html:59
+msgid "Category"
 msgstr ""
 
 #: .\accounts\templates\account_course.html:31
@@ -518,12 +617,8 @@ msgid "Videos"
 msgstr ""
 
 #: .\accounts\templates\account_events.html:29
-#: .\templates\course-single.html:361 .\templates\video.html:290
+#: .\templates\course-single.html:354 .\templates\video.html:303
 msgid "Students"
-msgstr ""
-
-#: .\accounts\templates\account_events.html:31 .\templates\event_single.html:62
-msgid "Start Time"
 msgstr ""
 
 #: .\accounts\templates\account_events.html:32
@@ -548,7 +643,7 @@ msgid "Pleasure you are in Agartha"
 msgstr ""
 
 #: .\accounts\templates\account_user_info.html:22
-#: .\templates\account\login.html:183 .\templates\account\signup.html:168
+#: .\templates\account\login.html:186 .\templates\account\signup.html:168
 msgid "Submit"
 msgstr ""
 
@@ -561,11 +656,11 @@ msgid "click here"
 msgstr ""
 
 #: .\templates\about.html:12 .\templates\about.html:16
-#: .\templates\base.html:226
+#: .\templates\base.html:253
 msgid "About Us"
 msgstr ""
 
-#: .\templates\about.html:34
+#: .\templates\about.html:34 .\templates\base.html:501
 msgid "About us"
 msgstr ""
 
@@ -591,15 +686,15 @@ msgstr ""
 msgid "Our vision"
 msgstr ""
 
-#: .\templates\about.html:86 .\templates\home.html:177
+#: .\templates\about.html:86 .\templates\home.html:200
 msgid "Students enrolled"
 msgstr ""
 
-#: .\templates\about.html:92 .\templates\home.html:183
+#: .\templates\about.html:92 .\templates\home.html:206
 msgid "Courses Uploaded"
 msgstr ""
 
-#: .\templates\about.html:98 .\templates\home.html:189
+#: .\templates\about.html:98 .\templates\home.html:212
 msgid "People certified"
 msgstr ""
 
@@ -607,7 +702,7 @@ msgstr ""
 msgid "Global Teachers"
 msgstr ""
 
-#: .\templates\about.html:120 .\templates\home.html:212
+#: .\templates\about.html:120 .\templates\home.html:235
 msgid "Featured Teachers"
 msgstr ""
 
@@ -764,60 +859,60 @@ msgstr ""
 msgid "Your Password"
 msgstr ""
 
-#: .\templates\account\login.html:88 .\templates\account\signup.html:189
+#: .\templates\account\login.html:91 .\templates\account\signup.html:192
 msgid "submit"
 msgstr ""
 
-#: .\templates\account\login.html:89 .\templates\account\signup.html:190
+#: .\templates\account\login.html:92 .\templates\account\signup.html:193
 msgid "Forgot your password?"
 msgstr ""
 
-#: .\templates\account\login.html:124 .\templates\account\signup.html:71
+#: .\templates\account\login.html:127 .\templates\account\signup.html:71
 msgid "Your Full Name"
 msgstr ""
 
-#: .\templates\account\login.html:130 .\templates\account\signup.html:82
+#: .\templates\account\login.html:133 .\templates\account\signup.html:82
 #: .\templates\contact.html:67
 msgid "Email"
 msgstr ""
 
-#: .\templates\account\login.html:135 .\templates\account\signup.html:92
+#: .\templates\account\login.html:138 .\templates\account\signup.html:92
 msgid "Mobile Number"
 msgstr ""
 
-#: .\templates\account\login.html:141 .\templates\account\signup.html:103
+#: .\templates\account\login.html:144 .\templates\account\signup.html:103
 msgid "Password"
 msgstr ""
 
-#: .\templates\account\login.html:144 .\templates\account\signup.html:112
+#: .\templates\account\login.html:147 .\templates\account\signup.html:112
 msgid "Confirm Password"
 msgstr ""
 
-#: .\templates\account\login.html:149 .\templates\account\signup.html:123
+#: .\templates\account\login.html:152 .\templates\account\signup.html:123
 msgid "Gender"
 msgstr ""
 
-#: .\templates\account\login.html:154 .\templates\account\signup.html:129
+#: .\templates\account\login.html:157 .\templates\account\signup.html:129
 msgid "Female"
 msgstr ""
 
-#: .\templates\account\login.html:158 .\templates\account\signup.html:133
+#: .\templates\account\login.html:161 .\templates\account\signup.html:133
 msgid "Male"
 msgstr ""
 
-#: .\templates\account\login.html:171 .\templates\account\signup.html:151
+#: .\templates\account\login.html:174 .\templates\account\signup.html:151
 msgid "By signing up, you agree to our"
 msgstr ""
 
-#: .\templates\account\login.html:177 .\templates\account\signup.html:162
+#: .\templates\account\login.html:180 .\templates\account\signup.html:162
 msgid "Terms of use"
 msgstr ""
 
-#: .\templates\account\login.html:178 .\templates\account\signup.html:163
+#: .\templates\account\login.html:181 .\templates\account\signup.html:163
 msgid "and"
 msgstr ""
 
-#: .\templates\account\login.html:179 .\templates\account\signup.html:164
+#: .\templates\account\login.html:182 .\templates\account\signup.html:164
 msgid "Privacy Policy"
 msgstr ""
 
@@ -982,42 +1077,71 @@ msgid ""
 "mail address</a>."
 msgstr ""
 
-#: .\templates\base.html:155
-msgid "Need Help? call us free"
+#: .\templates\base.html:168
+msgid "Need Help? call us"
 msgstr ""
 
-#: .\templates\base.html:163
-msgid "Login"
+#: .\templates\base.html:193
+msgid "Join Us"
 msgstr ""
 
-#: .\templates\base.html:189 .\templates\teachers-single.html:68
-msgid "Dashboard"
-msgstr ""
-
-#: .\templates\base.html:204 .\templates\teachers-single.html:13
-#: .\templates\teachers-single.html:17 .\templates\teachers.html:12
-#: .\templates\teachers.html:16
+#: .\templates\base.html:234 .\templates\base.html:502
+#: .\templates\teachers-single.html:13 .\templates\teachers-single.html:17
+#: .\templates\teachers.html:13 .\templates\teachers.html:17
 msgid "Teachers"
 msgstr ""
 
-#: .\templates\base.html:208
+#: .\templates\base.html:238
 msgid "Blog"
 msgstr ""
 
-#: .\templates\base.html:222
+#: .\templates\base.html:249
 msgid "Service"
 msgstr ""
 
-#: .\templates\base.html:233
+#: .\templates\base.html:251 .\templates\contact.html:52
+msgid "Contact Us"
+msgstr ""
+
+#: .\templates\base.html:252 .\templates\base.html:553
+msgid "FAQS"
+msgstr ""
+
+#: .\templates\base.html:260
 msgid "Language"
 msgstr ""
 
-#: .\templates\base.html:295
+#: .\templates\base.html:345
+msgid "My profile"
+msgstr ""
+
+#: .\templates\base.html:353 .\templates\base.html:375
+msgid "Login"
+msgstr ""
+
+#: .\templates\base.html:378
+msgid "Signup"
+msgstr ""
+
+#: .\templates\base.html:450
 msgid "Search in Courses and Teachers"
 msgstr ""
 
-#: .\templates\contact.html:29 .\templates\contact.html:33
+#: .\templates\base.html:503 .\templates\contact.html:29
+#: .\templates\contact.html:33
 msgid "Contact"
+msgstr ""
+
+#: .\templates\base.html:522
+msgid "Articles"
+msgstr ""
+
+#: .\templates\base.html:533 .\templates\base.html:552
+msgid "Support"
+msgstr ""
+
+#: .\templates\base.html:551
+msgid "Policy"
 msgstr ""
 
 #: .\templates\contact.html:53
@@ -1044,180 +1168,167 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: .\templates\course-single.html:118 .\templates\video.html:60
+#: .\templates\course-single.html:119 .\templates\video.html:65
 msgid "Review"
 msgstr ""
 
-#: .\templates\course-single.html:126 .\templates\course-single.html:159
-#: .\templates\course-single.html:460 .\templates\courses.html:78
-#: .\templates\courses.html:137 .\templates\global_search.html:76
-#: .\templates\global_search.html:141 .\templates\teachers-single.html:74
-#: .\templates\teachers-single.html:110 .\templates\video.html:68
-#: .\templates\video.html:92 .\templates\video.html:368
-#: .\templates\wishlist.html:77 .\templates\wishlist.html:129
+#: .\templates\course-single.html:127 .\templates\course-single.html:152
+#: .\templates\course-single.html:453 .\templates\courses.html:80
+#: .\templates\courses.html:141 .\templates\global_search.html:76
+#: .\templates\global_search.html:141 .\templates\home.html:156
+#: .\templates\teachers-single.html:74 .\templates\teachers-single.html:110
+#: .\templates\video.html:73 .\templates\video.html:98
+#: .\templates\video.html:363 .\templates\wishlist.html:77
+#: .\templates\wishlist.html:129
 msgid "Reviews"
 msgstr ""
 
-#: .\templates\course-single.html:150 .\templates\video.html:83
+#: .\templates\course-single.html:143 .\templates\video.html:89
 msgid "Overview"
 msgstr ""
 
-#: .\templates\course-single.html:153 .\templates\video.html:86
+#: .\templates\course-single.html:146 .\templates\video.html:92
 msgid "Curriculum"
 msgstr ""
 
-#: .\templates\course-single.html:156 .\templates\video.html:89
+#: .\templates\course-single.html:149 .\templates\video.html:95
 msgid "Instructor"
 msgstr ""
 
-#: .\templates\course-single.html:167
+#: .\templates\course-single.html:160
 msgid "Course Summery"
 msgstr ""
 
-#: .\templates\course-single.html:188 .\templates\video.html:125
+#: .\templates\course-single.html:181 .\templates\video.html:131
 msgid "Lecture"
 msgstr ""
 
-#: .\templates\course-single.html:240 .\templates\teachers-single.html:147
-#: .\templates\video.html:169
+#: .\templates\course-single.html:233 .\templates\teachers-single.html:147
+#: .\templates\video.html:182
 msgid "Student Reviews"
 msgstr ""
 
-#: .\templates\course-single.html:266 .\templates\teachers-single.html:173
-#: .\templates\video.html:195
+#: .\templates\course-single.html:259 .\templates\teachers-single.html:173
+#: .\templates\video.html:208
 msgid "Star"
 msgstr ""
 
-#: .\templates\course-single.html:274 .\templates\teachers-single.html:181
-#: .\templates\video.html:203
+#: .\templates\course-single.html:267 .\templates\teachers-single.html:181
+#: .\templates\video.html:216
 msgid "Leave A Comment"
 msgstr ""
 
-#: .\templates\course-single.html:294 .\templates\teachers-single.html:200
-#: .\templates\video.html:223
+#: .\templates\course-single.html:287 .\templates\teachers-single.html:200
+#: .\templates\video.html:236
 msgid "Your Rating"
 msgstr ""
 
-#: .\templates\course-single.html:338 .\templates\teachers-single.html:234
-#: .\templates\video.html:267
+#: .\templates\course-single.html:331 .\templates\teachers-single.html:234
+#: .\templates\video.html:280
 msgid "Post Comment"
 msgstr ""
 
-#: .\templates\course-single.html:355
+#: .\templates\course-single.html:348
 msgid "Course Features"
 msgstr ""
 
-#: .\templates\course-single.html:357 .\templates\video.html:286
+#: .\templates\course-single.html:350 .\templates\video.html:299
 msgid "Duration"
 msgstr ""
 
-#: .\templates\course-single.html:358
+#: .\templates\course-single.html:351
 msgid "Lectures"
 msgstr ""
 
-#: .\templates\course-single.html:359
+#: .\templates\course-single.html:352
 msgid "Quizzes"
 msgstr ""
 
-#: .\templates\course-single.html:375
+#: .\templates\course-single.html:368
 msgid "Take Quiz"
 msgstr ""
 
-#: .\templates\course-single.html:379
+#: .\templates\course-single.html:372
 msgid "Enroll Now"
 msgstr ""
 
-#: .\templates\course-single.html:409
+#: .\templates\course-single.html:402
 msgid "Recent Event"
 msgstr ""
 
-#: .\templates\course-single.html:431 .\templates\video.html:339
+#: .\templates\course-single.html:424 .\templates\video.html:334
 msgid "Related Courses"
 msgstr ""
 
-#: .\templates\courses.html:12 .\templates\global_search.html:12
+#: .\templates\courses.html:14 .\templates\global_search.html:12
 msgid "Our Courses"
 msgstr ""
 
-#: .\templates\courses.html:41 .\templates\global_search.html:41
+#: .\templates\courses.html:43 .\templates\global_search.html:41
 #: .\templates\wishlist.html:41
 msgid "Showing"
 msgstr ""
 
-#: .\templates\courses.html:41 .\templates\global_search.html:41
+#: .\templates\courses.html:43 .\templates\global_search.html:41
 #: .\templates\wishlist.html:41
 msgid "0f"
 msgstr ""
 
-#: .\templates\courses.html:41
+#: .\templates\courses.html:43
 msgid "Results"
-msgstr ""
-
-#: .\templates\event_single.html:51
-msgid "Book Your Seat"
-msgstr ""
-
-#: .\templates\event_single.html:73
-msgid "Finish Time"
-msgstr ""
-
-#: .\templates\event_single.html:84
-msgid "Address"
-msgstr ""
-
-#: .\templates\event_single.html:97
-msgid "Zoom Link"
-msgstr ""
-
-#: .\templates\event_single.html:98
-msgid "Click The Link"
 msgstr ""
 
 #: .\templates\faqs.html:13
 msgid "Friendly Asked Questions"
 msgstr ""
 
+#: .\templates\faqs.html:14
+msgid ""
+"The most frequently asked questions about LearnPLUS are listed below.<br>If "
+"you want to ask a question at you, please contact us"
+msgstr ""
+
 #: .\templates\global_search.html:110 .\templates\global_search.html:176
 msgid "Sorry we didn\"t find what you want"
 msgstr ""
 
-#: .\templates\home.html:70
+#: .\templates\home.html:77
 msgid "courses"
 msgstr ""
 
-#: .\templates\home.html:123
+#: .\templates\home.html:130
 msgid "Our course"
 msgstr ""
 
-#: .\templates\home.html:124
+#: .\templates\home.html:131
 msgid "Featured courses"
 msgstr ""
 
-#: .\templates\home.html:195
+#: .\templates\home.html:218
 msgid "Global Teacher"
 msgstr ""
 
-#: .\templates\home.html:211
+#: .\templates\home.html:234
 msgid "Top Tutors"
 msgstr ""
 
-#: .\templates\home.html:236
+#: .\templates\home.html:259
 msgid "Happy Students"
 msgstr ""
 
-#: .\templates\home.html:269
+#: .\templates\home.html:292
 msgid "Upcoming events"
 msgstr ""
 
-#: .\templates\home.html:299
+#: .\templates\home.html:322
 msgid "Latest Blog"
 msgstr ""
 
-#: .\templates\home.html:300
+#: .\templates\home.html:323
 msgid "From the Blogs"
 msgstr ""
 
-#: .\templates\home.html:314 .\templates\home.html:335
+#: .\templates\home.html:337 .\templates\home.html:358
 msgid "By"
 msgstr ""
 
@@ -1276,7 +1387,7 @@ msgstr ""
 msgid "The social account has been disconnected."
 msgstr ""
 
-#: .\templates\socialaccount\signup.html:81
+#: .\templates\socialaccount\signup.html:84
 #, python-format
 msgid ""
 "You  are about to use your %(provider_name)s account to login to\n"
@@ -1284,23 +1395,23 @@ msgid ""
 "following form:"
 msgstr ""
 
-#: .\templates\video.html:100
+#: .\templates\teachers-single.html:68
+msgid "Dashboard"
+msgstr ""
+
+#: .\templates\video.html:106
 msgid "Lecture Summery"
 msgstr ""
 
-#: .\templates\video.html:134
+#: .\templates\video.html:141
 msgid "Preview Lecture"
 msgstr ""
 
-#: .\templates\video.html:284
+#: .\templates\video.html:297
 msgid "Lecture Features"
 msgstr ""
 
-#: .\templates\video.html:300
-msgid "You make like"
-msgstr ""
-
-#: .\templates\video.html:319
+#: .\templates\video.html:314
 msgid "Recent Events"
 msgstr ""
 

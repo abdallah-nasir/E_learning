@@ -17,7 +17,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            {% comment %} <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> {% endcomment %}
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -48,13 +48,15 @@
                                         <td>
                                             {% if i.status == "pending" %}
                                     <a class="btn btn-primary" href="{% url 'dashboard:accept_consultant' i.id %}" class="btn btn-success">Accept</button>
+                                        <a  data-toggle="modal" data-target="#reject-{{i.id}}"  class="btn btn-danger">Reject</button>
+                                            <a  data-toggle="modal" data-target="#details-{{i.id}}"  class="btn btn-info">Details</button>
+
                                             {% elif i.status == "approved" %}
                                         <button  data-toggle="modal" data-target="#start-{{i.id}}"  class="btn btn-success">Start</button>
                                         <a class="btn btn-primary" href="{% url 'dashboard:edit_consultant' i.id %}" class="btn btn-info">Edit</button>
 
                                         {% elif i.status == "started" %}
                                         <button  data-toggle="modal" data-target="#end-{{i.id}}"  class="btn btn-danger">End</button>
-
                                             {% endif %}
                                         </td>
 
@@ -79,11 +81,12 @@
                                             </div>
                                         </div>
                                         </div>
-                                        <div class="modal fade" id="end-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+                                        <div class="modal fade" id="reject-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">End Consultant</h5>
+                                                    <h5 class="modal-title" id="exampleModalLabel">Reject Consultant</h5>
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                     </button>
@@ -94,10 +97,43 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                     
-                                                    <a  href="{% url 'dashboard:complete_consultant' i.id %}" class="btn btn-success">Complete</a>                                            </div>
+                                                    <a href="{% url 'dashboard:reject_consultant' i.id %}" class="btn btn-success">Reject</a>                                            </div>
                                                 </div>
                                             </div>
                                             </div>
+                                            <div class="modal fade" id="details-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-scrollable" id="start-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel">Consultant Details</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="card" style="width: 18rem;">
+                                                                <div class="card-body">
+                                                                  <h5 class="card-title">Fullname: <br>{{i.get_user_data.full_name}}</h5>
+                                                                  <h5 class="card-title">Specialization:<br> {{i.get_user_data.specialization}}</h5>
+                                                                  <h5 class="card-title">Topic:<br> {{i.get_user_data.topic}}</h5>
+                                                                  <h5 class="card-title">Email:<br> {{i.get_user_data.email}}</h5>
+                                                                  <h5 class="card-titlet">Phone: <br>{{i.get_user_data.phone}}</h5>
+
+                                                                  
+
+                                                                </div>
+                                                              </div>
+                                                    
+
+                                                              
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                </div>
+                                                        </div>
+                                                    </div>
+                                                    </div>
                                     {% endfor %}
                                    </tbody>
                                 </table>

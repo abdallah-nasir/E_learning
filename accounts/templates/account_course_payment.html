@@ -54,7 +54,8 @@
                                         <td>
                                         {% if i.status == "declined" and i.method == "Western Union" %}
                                         <a href="{% url 'accounts:edit_course_payment' i.id %}" class="btn btn-info">{% trans 'Edit' %}</a></td>
-                                        {% elif i.status != "refund" %}
+                                        {% endif %}
+                                        {% if i.status != "refund" %}
                                         <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">{% trans 'Refund' %}</button>
 
                                     {% endif %}

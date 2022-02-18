@@ -44,21 +44,30 @@ from datetime import date
 
 def home(request):
     teachers=cache.get("teacher_time")
-    if teachers == None:
-        teachers=Teacher_Time.objects.filter(available=True).order_by("-id")
+    if teachers:
         teacher_list={}
         for i in teachers:
             if i.user not in teacher_list.keys(): 
                 teacher_list[i.user]=i
         teachers=list(teacher_list.values())
-        cache.set("teacher_time",teachers,60*30)
+
+    elif teachers == None: 
+        teachers=Teacher_Time.objects.filter(available=True).order_by("-id")
+        repeat_teacher=cache.set("teacher_time",list(teachers),60*30)
+        teachers=cache.get("teacher_time")
+
+        teacher_list={}
+        for i in teachers:
+            if i.user not in teacher_list.keys(): 
+                teacher_list[i.user]=i
+        teachers=list(teacher_list.values())
     profiles=cache.get("profiles_teacher")
     if profiles == None:
         profiles=User.objects.filter(account_type="teacher")[:10]
         cache.set("profiles_teacher",profiles,60*60*24)
     context={"teachers":teachers,"profiles":profiles}
     return render(request,"consultant.html",context)
-
+ 
 def get_consultant(request,slug):
     try:
         id=request.GET["consultant"]

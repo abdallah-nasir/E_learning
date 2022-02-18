@@ -1,7 +1,10 @@
  {% load static %}
 {% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list for LANGUAGES as languages %}
 <!doctype html>
-<html lang="en" class="no-js">
+<html {% if LANGUAGE_CODE == "ar" %} dir="rtl" lang="ar"{% else %}lang="en"{% endif %} class="no-js">
 <head>
 	<meta charset="utf-8">
 	<meta name="description" content="Blogio clean and simple blog template">
@@ -38,14 +41,17 @@
 	<link rel="stylesheet" href="{% static 'blogs/styles/unsemantic-grid.css' %}">
 
 	<!-- Main css -->
-	<link rel="stylesheet" href="{% static 'blogs/styles/main.css' %}">
 
-	<link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700%7CKaushan+Script%7CMontserrat:700' rel='stylesheet' type='text/css'>
 
 	<!-- Modernizr -->
 	<script src="{% static 'blogs/scripts/modernizr-custom.js' %}"></script>
-    <!-- <link rel="stylesheet" href="{% static 'css/style-rtl.css' %}">
-    <link rel="stylesheet" href="{% static 'css/rtl.css' %}"> -->
+    <!-- Main css -->
+	{% if LANGUAGE_CODE == "ar" %}
+        <link rel="stylesheet" href="{% static 'blogs/styles/main-rtl.css' %}">
+		{% else %}
+		<link rel="stylesheet" href="{% static 'blogs/styles/main.css' %}">
+	{% endif %}
+<link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700%7CKaushan+Script%7CMontserrat:700' rel='stylesheet' type='text/css'>
 
 </head>
 <body>
@@ -161,91 +167,66 @@
 {% endblock %}
 
 
-        		<!-- BEGIN FOOTER -->
-		<footer class="site-footer">
-			<div class="container">
-
-				<div class="site-footer-inner margin-bottom">
-					<div class="grid-container">
-						<div class="grid-33 tablet-grid-33">
-							<div class="widget">
-								<h3 class="widget-title">{% trans 'About' %}</h3>
-								<p>{% trans 'Deep within you, the light you are looking for. You have the capabilities that successful people possess. Just discover it..then invest it in yourself. Eternal... Discover your inner kingdom' %}.</p>
-								<ul class="nav-social">
-									<li><a href="https://www.facebook.com/AgarthaAcademy"><i class="fa fa-facebook"></i></a></li>
-									<li><a href="https://twitter.com/AgarthaAcademy"><i class="fa fa-twitter"></i></a></li>
-									<li><a href="https://www.instagram.com/AgarthaAcademy/"><i class="fa fa-instagram"></i></a></li>
-								</ul>
+       		<!-- BEGIN FOOTER -->
+			   <footer class="site-footer">
+				<div class="container">
+	
+					<div class="site-footer-inner margin-bottom">
+						<div class="row">
+							<div class="col-md-5">
+								<div class="widget">
+									<h3 class="widget-title">{% trans 'About' %}</h3>
+									<p>{% trans 'Deep within you, the light you are looking for. <br/> You have the capabilities that successful people possess. <br/> Just discover it..then invest it in yourself. <br/> Eternal... <br/>Discover your inner kingdom' %}.</p>
+	
+								</div>
 							</div>
-						</div>
-						<!-- <div class="grid-33 tablet-grid-33">
-							<div class="widget">
-								<h3 class="widget-title">Tweets</h3>
-								<div id="tweets" class="tweets" data-username="alexilin"></div>
+							<div class="col-md-2 ">
+								<div class="footer-link support mt-40">
+									<div class="footer-title pb-25">
+										<h3 class="widget-title">{% trans 'Sitemap' %}</h3>
+									</div>
+									<ul>
+										<li><a href="{% url 'home:home' %}"> Home</a></li>
+										<li><a href="{% url 'home:teachers' %}"> Teachers</a></li>
+										<li><a href="{% url 'home:about' %}"> About us</a></li>
+										<li><a href="{% url 'home:contact' %}"> Contact</a></li>
+	
+									</ul>
+								</div> <!-- support -->
 							</div>
-						</div> -->
-						<div class="grid-33 tablet-grid-33">
-							<div class="footer-link support mt-40">
-								<div class="footer-title pb-25">
-									<h3 class="widget-title">{% trans 'Support' %}</h3>
+							<div class="col-md-3 ">
+								<div class="footer-address mt-40">
+									<div class="footer-title pb-25">
+										<h3>{% trans 'Our Products' %}</h3>
+									</div>
+									<ul>
+										<li><a href="{% url 'home:courses' %}"> Courses</a></li>
+										<li><a href="/blogs"> Articles</a></li>
+										<li><a href="/consultant"> Consultations</a></li>
+										<li><a href="{% url 'home:events' %}"> Events</a></li>
+										<!-- <li><a href="#"> Documentation</a></li> -->
+									</ul>
+								</div> <!-- footer address -->
+							</div>
+							<div class="col-md-2 ">
+								<div class="widget">
+									<h3 class="widget-title">Support</h3>
 								</div>
 								<ul>
-									<li><a href="{% url 'home:faqs' %}"><i class="fa fa-angle-right"></i>{% trans 'FAQS' %}</a></li>
-									<li><a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i>{% trans 'Privacy' %}</a></li>
-									<li><a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i>{% trans 'Policy' %}</a></li>
-									<li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>{% trans 'Support' %}</a></li>
-									<!-- <li><a href="#"><i class="fa fa-angle-right"></i>Documentation</a></li> -->
+									<li><a href="{% url 'home:faqs' %}"> FAQS</a></li>
+									<li><a href="{% url 'home:privacy' %}"> Privacy</a></li>
+									<li><a href="{% url 'home:privacy' %}"> Policy</a></li>
+									<li><a href="mailto:support@agartha.academy"> Support</a></li>
 								</ul>
-							</div> <!-- support -->
-						</div>
-						<div class="grid-33 tablet-grid-33">
-							<div class="footer-address mt-40">
-								<div class="footer-title pb-25">
-									<h6>{% trans 'Contact Us' %}</h6>
-								</div>
-								<ul>
-								   
-									<li>
-										<div class="icon">
-											<i class="fa fa-envelope-o"></i>
-											
-										</div>
-										<div class="cont">
-											<p>info@agartha.academy</p>
-										</div>
-									</li>
-								</ul>
-							</div> <!-- footer address -->
-						</div>
-						<!-- <div class="grid-33 tablet-grid-33">
-							<div class="widget">
-								<h3 class="widget-title">Popular Tags</h3>
-								<div class="tags">
-									<a href="">Must see</a>
-									<a href="">Awesome</a>
-									<a href="">Lovely</a>
-									<a href="">Motivation</a>
-									<a href="">Hot</a>
-									<a href="">Interesting</a>
-									<a href="">Inspiration</a>
-									<a href="">Future</a>
-									<a href="">Growth</a>
-									<a href="">My day</a>
-									<a href="">Positive</a>
-									<a href="">Tools</a>
-									<a href="">Style</a>
-									<a href="">Smile</a>
-								</div>
 							</div>
-						</div> -->
+						</div>
 					</div>
+	
+					<p class="center">© 2022 Copyright : Agartha Academy<a href="{% url 'home:terms' %}"> {% trans 'Terms' %}</a><a href="{% url 'home:privacy' %}"> | {% trans 'Privacy' %}</a></p>
+	
 				</div>
-
-				<p class="center">© 2022 Copyright : Agartha Academy<a href="{% url 'home:terms' %}"> {% trans 'Terms' %}</a><a href="{% url 'home:privacy' %}"> | {% trans 'Privacy' %}</a></p>
-
-			</div>
-		</footer>
-		<!-- END FOOTER -->
+			</footer>
+			<!-- END FOOTER -->
 
 	</div>
 

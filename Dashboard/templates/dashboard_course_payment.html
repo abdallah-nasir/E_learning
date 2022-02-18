@@ -45,17 +45,14 @@
                                       
                                         <td>{{i.expired_at}}</td>
 
-                                        {% if i.status == "declined" and i.method == "Western Union" %}
                                         <td>
-                                            <a href="{% url 'dashboard:edit_course_payment' i.id %}" class="btn btn-info">Edit</a>
+                                          {% if i.status == "declined" and i.method == "Western Union" %}
                                         <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button></td>
-                                        {% elif i.status != 'refund' %}
-                                       <td><button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button></td>
-
-                                        {% else %}
-                                        <td></td>
-
                                         {% endif %}
+                                        {% if i.status != 'refund' %}
+                                      <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button>
+                                        {% endif %}
+                                        </td>
                                     </tr>
                         <!-- Modal -->
 <div class="modal fade" id="refund-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

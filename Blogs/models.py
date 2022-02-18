@@ -7,7 +7,7 @@ from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
 from home import models as Home_Models
-import json
+import json,datetime
 from Dashboard.models import Rejects
 from django.shortcuts import render
 from django.conf import settings
@@ -24,7 +24,6 @@ def slugify(str):
     str = str.replace("؟", "")
     return str
 import string,random
-
 
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -107,8 +106,10 @@ class Blog(models.Model):
             self.slug = slugify(self.name)
             if Blog.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
-                self.slug =f"{slug}-{random_string_generator()}"
-            else:
+                self.slug =f"{slug}-{self.user}"
+                if Blog.objects.filter(slug=self.slug).exists():
+                    self.slug =f"{slug}-{self.user}-{random_string_generator()}"
+            else: 
                 self.slug = slugify(self.name)          
         super(Blog, self).save()
         
@@ -229,14 +230,16 @@ class Blog_Payment(models.Model):
     expired_at=models.DateField(blank=True,null=True)
     expired=models.BooleanField(default=False)
 
-    def __str__(self):  
+    def __str__(self):    
         return self.method
 
     def add_time_expired_to_related_course(self):
-        payments=Home_Models.Payment.objects.filter(user=self.user,status="approved",expired=False).select_related("course")
+        payments=Home_Models.Payment.objects.filter(user=self.user,status="approved",expired=False).select_related("user")
+        today=datetime.date.today()
+        difference=self.expired_at - today
         for i in payments:
-            i.expired_at +=
-        print(test)
+            i.expired_at +=difference
+            i.save()
         return True
 class Prices(models.Model):
     name=models.CharField(max_length=50)

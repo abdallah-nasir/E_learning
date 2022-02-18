@@ -1,13 +1,14 @@
 {% extends 'dashboard_base.html' %}
 {% load crispy_forms_tags %}
-
+{% load i18n %}
+{% load static %}
 {% block content %}
 <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-
-                <!-- Begin Page Content -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/ar.min.js"></script>
+<!-- Begin Page Content -->
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
@@ -39,5 +40,12 @@
 
                 </div>
                 <!-- /.container-fluid -->
-                
+                {% comment %} <script type="text/javascript" src="{% static 'dashboard/consultant/moment.js' %}"></script>
+                <script type="text/javascript" src="{% static 'dashboard/consultant/ar.js' %}"></script> {% endcomment %}
+  <script type="text/javascript">
+    $('#id_start_time').datetimepicker({ 
+    
+        language: 'en' 
+    });
+  </script>
 {% endblock %}

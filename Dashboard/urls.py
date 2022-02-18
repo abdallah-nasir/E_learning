@@ -82,6 +82,8 @@ path("consultants/activate/<int:id>/",views.accept_consultant,name="accept_consu
 path("consultants/start/<int:id>/",views.start_consultant,name="start_consultant"),
 path("consultants/edit/<int:id>/",views.edit_consultant,name="edit_consultant"),
 path("consultants/",views.consultants,name="consultants"),
+path("consultants/reject/<int:id>/",views.reject_consultant,name="reject_consultant"),
+
 path("consultants/add/category/",views.add_consultant_category,name="add_consultant_category"),
 
 path("consultants/add/",views.add_consultant,name="add_consultant"),

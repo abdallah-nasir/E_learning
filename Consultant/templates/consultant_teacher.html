@@ -2,9 +2,13 @@
 {% load i18n %}
 {% load static %}
 {% block content %}
+{% if LANGUAGE_CODE == "ar" %}
+<link rel="stylesheet" href="{% static 'css/cons-bootstrap.min-rtl.css' %}">
+<link rel="stylesheet" href="{% static 'css/cons-style-rtl.css' %}">
+{% else %}
 <link rel="stylesheet" href="{% static 'css/2019-bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/cons-style.css' %}">
-
+{% endif %}
 <!-- <link rel="stylesheet" href="{% static 'plugins/fontawesome/css/fontawesome.min.css' %}">
 <link rel="stylesheet" href="{% static 'plugins/fontawesome/css/all.min.css' %}"> -->
 <style type="text/css">

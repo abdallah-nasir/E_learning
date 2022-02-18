@@ -135,12 +135,13 @@ table {
 }
 
 a {
-  color: #C7B29A;
+    color: darkred;
 }
 
 a:hover {
-  text-decoration: none;
-}
+        text-decoration: none;
+        color: darkgreen;
+    }
 
 b,
 strong {
@@ -556,15 +557,40 @@ iframe {
   padding-bottom: 40px;
 }
 
-.site-footer .site-footer-inner {
-  padding: 80px;
-  background: #1a1a1a;
-  color: #ffffff;
+
+.site-footer-inner {
+    padding: 75px;
+    color: black;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-left: 60px;
 }
 
+.site-footer .container:before {
+    background: url(../images/bg-footer.png) no-repeat 50% 0/100% auto;
+    position: absolute;
+    content: '';
+    height: 70%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    right: -8px;
+    opacity: 55%;
+    z-index: -1;
+}
+.site-footer-inner .row {
+    margin-top: -50px
+}
 .site-footer p,
 .site-footer ul {
-  font-size: 0.7857142857em;
+    font-weight: bold;
+    color: midnightblue;
+}
+.site-footer .center {
+    text-align: center;
+    top: 30px;
 }
 
 /*=============================================>>>>>
@@ -599,22 +625,10 @@ iframe {
   color: inherit;
   z-index: 5;
 }
+.nav-main ul .nav-main-item .nav-main-link:hover {
+        color: darkred;
+    }
 
-.nav-main ul .nav-main-item .nav-main-link:before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  width: 10px;
-  height: 10px;
-  background: #fff;
-  border-radius: 50%;
-  -webkit-transform: translate(-50%, 20px);
-          transform: translate(-50%, 20px);
-  opacity: 0;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-}
 
 .nav-main ul .nav-main-item .nav-main-sub {
   position: absolute;
@@ -1061,8 +1075,8 @@ form .loader {
 = COMMON ELEMENTS =
 ===============================================>>>>>*/
 .logo {
-  width: 40px;
-  margin: auto;
+    margin: auto;
+    width: 23%;
 }
 
 .logo img {
@@ -1894,6 +1908,9 @@ form .loader {
     background: #E8E8E8;
     padding: 40px 40px 80px;
   }
+    .logo {
+        width: 40%;
+    }
 }
 
 @media (max-width: 1023px) {
@@ -1906,6 +1923,7 @@ form .loader {
   }
   .site-footer .site-footer-inner {
     padding: 40px;
+
   }
   .page-heading {
     padding: 40px;
