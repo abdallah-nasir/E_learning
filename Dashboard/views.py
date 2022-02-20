@@ -12,7 +12,7 @@ from Frontend.models import *
 from accounts.models import TeacherForms
 from django.core.paginator import Paginator
 from .forms import *
-from django.core.mail import send_mail,send_mass_mail,get_connection
+from django.core.mail import send_mail,EmailMessage,send_mass_mail,get_connection
 from django.db.models import Q
 from django.conf import settings
 from accounts.forms import ChangeUserDataForm,ChangeTeacherDataForm
@@ -62,6 +62,17 @@ username=SUPPORT_EMAIL_USERNAME,
 password=SUPPORT_EMAIL_PASSWORD, 
 use_tls=False
 ) 
+PAYMENT_NOTIFICATION_EMAIL_USERNAME=os.environ['PAYMENT_NOTIFICATION_EMAIL_USERNAME']
+PAYMENT_NOTIFICATION_EMAIL_PASSWORD=os.environ['PAYMENT_NOTIFICATION_EMAIL_PASSWORD']
+PAYMENT_NOTIFICATION_EMAIL_HOST=os.environ["PAYMENT_NOTIFICATION_EMAIL_HOST"]
+PAYMENT_NOTIFICATION_EMAIL_PORT=os.environ["PAYMENT_NOTIFICATION_EMAIL_PORT"]
+PAYMENT_NOTIFICATION_EMAIL_CONNECTION=get_connection(
+host= PAYMENT_NOTIFICATION_EMAIL_HOST, 
+port=PAYMENT_NOTIFICATION_EMAIL_PORT, 
+username=PAYMENT_NOTIFICATION_EMAIL_USERNAME, 
+password=PAYMENT_NOTIFICATION_EMAIL_PASSWORD, 
+use_tls=False
+)
 # Create your views here.
 AccessKey=os.environ['AccessKey']
 Storage_Api=os.environ['Storage_Api']
@@ -71,7 +82,18 @@ agartha_cdn=os.environ['agartha_cdn']
 BLOGS_FOLDER_COLLECTIONID="41e8c113-0c1f-4af4-bc24-b70beed3e13f"
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
 
-
+def send_mail_approve(request,user,body,subject):
+    msg = EmailMessage(
+        subject=subject,
+        body=body,
+        from_email=PAYMENT_NOTIFICATION_EMAIL_USERNAME,
+        to=[PAYMENT_NOTIFICATION_EMAIL_USERNAME],
+        reply_to=[user],
+        connection=PAYMENT_NOTIFICATION_EMAIL_CONNECTION
+        )
+    msg.content_subtype = "html"  # Main content is now text/html
+    msg.send()
+    return True
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -2452,6 +2474,9 @@ def edit_blog_payment(request,id):
                     except:
                         pass                 
                 instance.save()
+                body="payment edit is waiting for your approve"
+                subject="edit action"
+                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:blog_payment"))
     else:
@@ -2492,6 +2517,9 @@ def edit_course_payment(request,id):
                     except:
                         pass                 
                 instance.save()
+                body="payment edit is waiting for your approve"
+                subject="edit action"
+                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:course_payment"))
     else:
@@ -2530,6 +2558,9 @@ def edit_consultant_payment(request,id):
                     except:
                         pass                 
                 instance.save()
+                body="payment edit is waiting for your approve"
+                subject="edit action"
+                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:consultant_payment"))
     else:

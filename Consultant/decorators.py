@@ -33,9 +33,7 @@ def check_user_is_has_consul_checkout(function):
             id=request.GET['consultant']
             teacher=get_object_or_404(Teacher_Time,id=id,available=True)
             payment = Cosultant_Payment.objects.filter(user=request.user,teacher=teacher).exclude(Q(status="approved") | Q(status="refund"))
-            print(payment)
             consultant=Consultant.objects.filter(user=request.user,teacher=teacher).exclude(Q(status="completed") |Q(status="refund") |Q(status="declined") )
-            print(consultant)
             if payment.exists() :
                 messages.error(request,f"You Already Have Pending Consultant")
                 return redirect(reverse("accounts:consultant_payment"))
@@ -43,7 +41,6 @@ def check_user_is_has_consul_checkout(function):
                 messages.error(request,f"You Already Have Pending Consultant")
                 return redirect(reverse("accounts:consultants"))
             else:
-                print("asd")
                 return function(request, *args, **kwargs)
         except:
             return redirect(reverse("consultant:home"))

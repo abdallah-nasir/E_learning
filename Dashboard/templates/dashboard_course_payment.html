@@ -46,11 +46,14 @@
                                         <td>{{i.expired_at}}</td>
 
                                         <td>
-                                          {% if i.status == "declined" and i.method == "Western Union" %}
-                                        <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button></td>
-                                        {% endif %}
-                                        {% if i.status != 'refund' %}
-                                      <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button>
+                                      
+                                        {% if i.status == 'declined' and i.method == "Western Union" %}
+                                      <a href="{% url 'dashboard:edit_course_payment' i.id %}" class="btn btn-info">Edit</a>
+                                      {% endif %}
+                                  {% if i.status != "refund" and i.method != "Western Union" %}
+                                  <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button>
+
+                                      
                                         {% endif %}
                                         </td>
                                     </tr>

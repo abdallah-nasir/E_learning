@@ -143,7 +143,7 @@ class Teacher_Time(models.Model):
             next= now - datetime.timedelta(days=difference)
             for i in range(1,5):
                 all_days=next + datetime.timedelta(weeks=i)
-                list_days.append({"day":all_days.strftime("%m/%d/%Y"),"date":all_days.strftime('%A')})
+                list_days.append(all_days.strftime("%m/%d/%Y"))
         else:  
             difference = date - iso
             next= now + datetime.timedelta(days=difference)

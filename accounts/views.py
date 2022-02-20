@@ -20,6 +20,18 @@ from .utils import *
 from .forms import MyCustomLoginForm,MyCustomSignupForm
 from allauth.account.views import SignupView,LoginView
 from Dashboard import models as dahboard_models
+from django.core.mail import EmailMessage,get_connection
+PAYMENT_NOTIFICATION_EMAIL_USERNAME=os.environ['PAYMENT_NOTIFICATION_EMAIL_USERNAME']
+PAYMENT_NOTIFICATION_EMAIL_PASSWORD=os.environ['PAYMENT_NOTIFICATION_EMAIL_PASSWORD']
+PAYMENT_NOTIFICATION_EMAIL_HOST=os.environ["PAYMENT_NOTIFICATION_EMAIL_HOST"]
+PAYMENT_NOTIFICATION_EMAIL_PORT=os.environ["PAYMENT_NOTIFICATION_EMAIL_PORT"]
+PAYMENT_NOTIFICATION_EMAIL_CONNECTION=get_connection(
+host= PAYMENT_NOTIFICATION_EMAIL_HOST, 
+port=PAYMENT_NOTIFICATION_EMAIL_PORT, 
+username=PAYMENT_NOTIFICATION_EMAIL_USERNAME, 
+password=PAYMENT_NOTIFICATION_EMAIL_PASSWORD, 
+use_tls=False
+)
 # from allauth.account.forms import LoginForm,SignupForm
 Storage_Api=os.environ["Storage_Api"]
 storage_name=os.environ["storage_name"]
@@ -71,6 +83,19 @@ from django.contrib.sites.models import Site
 
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+def send_mail_approve(request,user,body,subject):
+    msg = EmailMessage(
+        subject=subject,
+        body=body,
+        from_email=PAYMENT_NOTIFICATION_EMAIL_USERNAME,
+        to=[PAYMENT_NOTIFICATION_EMAIL_USERNAME],
+        reply_to=[user],
+        connection=PAYMENT_NOTIFICATION_EMAIL_CONNECTION
+        )
+    msg.content_subtype = "html"  # Main content is now text/html
+    msg.send()
+    return True
 
 @login_required(login_url="accounts:login")
 @check_user_is_student
@@ -255,6 +280,9 @@ def edit_blog_payment(request,id):
                     except:
                         pass                 
                 instance.save()
+                body="payment edit is waiting for your approve"
+                subject="edit action"
+                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:blog_payment"))
     else:
@@ -293,6 +321,9 @@ def edit_course_payment(request,id):
                     except:
                         pass                 
                 instance.save()
+                body="payment edit is waiting for your approve"
+                subject="edit action"
+                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:course_payment"))
     else:
@@ -331,9 +362,12 @@ def edit_consultant_payment(request,id):
                     except:
                         pass                 
                 instance.save()
+                body="payment edit is waiting for your approve"
+                subject="edit action"
+                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 messages.success(request,"Payment Edited Successfully")
                 return redirect(reverse("accounts:consultant_payment"))
-    else:
+    else:  
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("accounts:consultant_payment"))
     context={"form":form}

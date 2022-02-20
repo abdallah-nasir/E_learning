@@ -36,6 +36,29 @@ username=PAYMENT_EMAIL_USERNAME,
 password=PAYMENT_EMAIL_PASSWORD, 
 use_tls=False
 ) 
+PAYMENT_NOTIFICATION_EMAIL_USERNAME=os.environ['PAYMENT_NOTIFICATION_EMAIL_USERNAME']
+PAYMENT_NOTIFICATION_EMAIL_PASSWORD=os.environ['PAYMENT_NOTIFICATION_EMAIL_PASSWORD']
+PAYMENT_NOTIFICATION_EMAIL_HOST=os.environ["PAYMENT_NOTIFICATION_EMAIL_HOST"]
+PAYMENT_NOTIFICATION_EMAIL_PORT=os.environ["PAYMENT_NOTIFICATION_EMAIL_PORT"]
+PAYMENT_NOTIFICATION_EMAIL_CONNECTION=get_connection(
+host= PAYMENT_NOTIFICATION_EMAIL_HOST, 
+port=PAYMENT_NOTIFICATION_EMAIL_PORT, 
+username=PAYMENT_NOTIFICATION_EMAIL_USERNAME, 
+password=PAYMENT_NOTIFICATION_EMAIL_PASSWORD, 
+use_tls=False
+)
+def send_mail_approve(request,user,body,subject):
+    msg = EmailMessage(
+        subject=subject,
+        body=body,
+        from_email=PAYMENT_NOTIFICATION_EMAIL_USERNAME,
+        to=[PAYMENT_NOTIFICATION_EMAIL_USERNAME],
+        reply_to=[user],
+        connection=PAYMENT_NOTIFICATION_EMAIL_CONNECTION
+        )
+    msg.content_subtype = "html"  # Main content is now text/html
+    msg.send()
+    return True
 @login_required(login_url="accounts:login")
 def home(request):
     blog_data=cache.get("blog_data")
@@ -158,6 +181,9 @@ def payment_pricing(request,id):
                     )
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
+                body="new payment is waiting for your approve"
+                subject="new payment"
+                send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
                 messages.success(request,"We Have sent an Email,Please check your Inbox")
                 return redirect(reverse("blogs:blogs"))
             else:
@@ -256,6 +282,9 @@ def paypal_capture(request,order_id,price_id):
                     )
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
+                body="new payment is waiting for your approve"
+                subject="new payment"
+                send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
                 return JsonResponse({"status":1})
             else:
                 return JsonResponse({"status":0})

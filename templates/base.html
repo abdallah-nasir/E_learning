@@ -17,7 +17,7 @@
     
     <!--====== Title ======-->
     <title>{% trans 'Agartha Academy' %} {% block title  %}{% endblock %}</title>
-    {% comment %} {% cache 172800 static_head %} {% endcomment %}
+    {% cache 172800 static_head %}
     <!--====== Favicon Icon ======-->
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
 
@@ -50,6 +50,7 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
   rel="stylesheet"
 />
+{% endcache %}
 {% if LANGUAGE_CODE == "ar" %}
     <!--====== Bootstrap css ======-->
     <link rel="stylesheet" href="{% static 'css/rtl.css' %}">
@@ -66,7 +67,7 @@
 <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 
     <!--====== Responsive css ======-->
- {% comment %} {% endcache %} {% endcomment %}
+
     <style type="text/css">
         p{
             margin-bottom:0 !important;

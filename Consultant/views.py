@@ -41,7 +41,29 @@ use_tls=False
 )
 from django.db.models import F
 from datetime import date
-
+PAYMENT_NOTIFICATION_EMAIL_USERNAME=os.environ['PAYMENT_NOTIFICATION_EMAIL_USERNAME']
+PAYMENT_NOTIFICATION_EMAIL_PASSWORD=os.environ['PAYMENT_NOTIFICATION_EMAIL_PASSWORD']
+PAYMENT_NOTIFICATION_EMAIL_HOST=os.environ["PAYMENT_NOTIFICATION_EMAIL_HOST"]
+PAYMENT_NOTIFICATION_EMAIL_PORT=os.environ["PAYMENT_NOTIFICATION_EMAIL_PORT"]
+PAYMENT_NOTIFICATION_EMAIL_CONNECTION=get_connection(
+host= PAYMENT_NOTIFICATION_EMAIL_HOST, 
+port=PAYMENT_NOTIFICATION_EMAIL_PORT, 
+username=PAYMENT_NOTIFICATION_EMAIL_USERNAME, 
+password=PAYMENT_NOTIFICATION_EMAIL_PASSWORD, 
+use_tls=False
+)
+def send_mail_approve(request,user,body,subject):
+    msg = EmailMessage(
+        subject=subject,
+        body=body,
+        from_email=PAYMENT_NOTIFICATION_EMAIL_USERNAME,
+        to=[PAYMENT_NOTIFICATION_EMAIL_USERNAME],
+        reply_to=[user],
+        connection=PAYMENT_NOTIFICATION_EMAIL_CONNECTION
+        )
+    msg.content_subtype = "html"  # Main content is now text/html
+    msg.send()
+    return True
 def home(request):
     teachers=cache.get("teacher_time")
     if teachers:
@@ -169,6 +191,9 @@ def western_payment(request,teacher):
                 )
             msg.content_subtype = "html"  # Main content is now text/html
             msg.send()
+            body="new payment is waiting for your approve"
+            subject="new payment"
+            send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
             messages.success(request,"We Have sent an Email,Please check your Inbox")
             return redirect(reverse("accounts:consultant_payment"))
         else:
@@ -369,6 +394,9 @@ def paypal_capture(request,teacher_id,order_id,user,user_data_form):
                     )
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
+                body="new payment is waiting for your approve"
+                subject="new payment"
+                send_mail_approve(request,user=user.email,subject=subject,body=body)
                 return JsonResponse({"status":1})
             else:
                 return JsonResponse({"status":0})
