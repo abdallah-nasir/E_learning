@@ -13,6 +13,7 @@ import random,string
 from Dashboard import models as dashboard_models
 from django.conf import settings
 from home import models as home_models
+from phonenumber_field.modelfields import PhoneNumberField
 import json,os
 agartha_cdn=os.environ["agartha_cdn"]
 default_image=os.environ["default_image"]
@@ -41,7 +42,7 @@ GENDER=(
 )   
 class User(AbstractUser):
     account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20,default="student")
-    phone=models.CharField(max_length=14)
+    phone=PhoneNumberField(unique=True)
     account_image=models.ImageField(blank=True,null=True,default=f"{default_image}")
     my_data=models.TextField(blank=True,null=True)
     gender=models.CharField(max_length=20,choices=GENDER,default="male")

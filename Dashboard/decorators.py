@@ -10,6 +10,7 @@ from Consultant.models import  Cosultant_Payment,Consultant
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 import datetime,json
+from django.core.cache import cache
 from functools import wraps
 
 def check_user_validation(function):
@@ -40,7 +41,6 @@ def for_admin_only(function):
 def check_if_user_director(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_director:
-            messages.error(request,"You Don't Have Permission")
             return redirect(reverse("dashboard:home"))
         elif request.user.is_superuser or request.user.account_type == "teacher" and request.user.is_active == True:
             return function(request, *args, **kwargs)
@@ -93,7 +93,7 @@ def check_if_teacher_have_pending_video_upload(function):
         if course:
             if course.videos.filter(duration=0).exists():
                 messages.error(request,"You Should Upload Previous Videos First")
-                return redirect(reverse("dashboard:videos"))
+                return redirect(reverse("dashboard:videos",kwargs={"slug":course.slug}))
             else:
                 return function(request, *args, **kwargs)
 
@@ -114,7 +114,7 @@ def check_blog_video(function):
         # elif blog.status == "approved":
         #     messages.error(request,"please edit blog first")
         #     return redirect(reverse("dashboard:blogs"))
-        elif blog.video and blog.get_blog_video_status == None:
+        elif blog.video and blog.get_blog_video_status == False:
             messages.error(request,"please edit blog first,you already have a video")
             return redirect(reverse("dashboard:blogs"))
         else:
@@ -223,3 +223,15 @@ def check_course_refund(function):
             return redirect(reverse("dashboard:course_payment"))
         return function(request, *args, **kwargs)
     return wrap
+
+# def check_course_cache_email_notification(function):
+#     @wraps(function)
+#     def wrap(request, *args, **kwargs):
+#         time=cache.get(f"dashboard_email_notification_course_{request.user.email}")
+#         if time == "course":
+#             messages.error(request,"you should wait for admin approve before you can edit")
+#             return redirect(reverse("dashboard:courses"))
+#         else:
+#             cache.set(f"dashboard_email_notification_{request.user.email}","course",60*60*3)
+#             return function(request, *args, **kwargs)
+#     return wrap

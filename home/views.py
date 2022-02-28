@@ -54,27 +54,27 @@ host= SUPPORT_EMAIL_HOST,
 port=PAYMENT_EMAIL_PORT,  
 username=PAYMENT_EMAIL_USERNAME, 
 password=PAYMENT_EMAIL_PASSWORD, 
-use_tls=False
+use_tls=False    
 ) 
-PAYMENT_NOTIFICATION_EMAIL_USERNAME=os.environ['PAYMENT_NOTIFICATION_EMAIL_USERNAME']
-PAYMENT_NOTIFICATION_EMAIL_PASSWORD=os.environ['PAYMENT_NOTIFICATION_EMAIL_PASSWORD']
-PAYMENT_NOTIFICATION_EMAIL_HOST=os.environ["PAYMENT_NOTIFICATION_EMAIL_HOST"]
-PAYMENT_NOTIFICATION_EMAIL_PORT=os.environ["PAYMENT_NOTIFICATION_EMAIL_PORT"]
-PAYMENT_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= PAYMENT_NOTIFICATION_EMAIL_HOST, 
-port=PAYMENT_NOTIFICATION_EMAIL_PORT, 
-username=PAYMENT_NOTIFICATION_EMAIL_USERNAME, 
-password=PAYMENT_NOTIFICATION_EMAIL_PASSWORD, 
+TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
+TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
+TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
+TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
+TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
+host= TASK_NOTIFICATION_EMAIL_HOST, 
+port=TASK_NOTIFICATION_EMAIL_PORT, 
+username=TASK_NOTIFICATION_EMAIL_USERNAME, 
+password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
 use_tls=False
 )
 def send_mail_approve(request,user,body,subject):
     msg = EmailMessage(
         subject=subject,
         body=body,
-        from_email=PAYMENT_NOTIFICATION_EMAIL_USERNAME,
-        to=[PAYMENT_NOTIFICATION_EMAIL_USERNAME],
+        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
+        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
         reply_to=[user],
-        connection=PAYMENT_NOTIFICATION_EMAIL_CONNECTION
+        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
         )
     msg.content_subtype = "html"  # Main content is now text/html
     msg.send()
@@ -143,10 +143,19 @@ def courses(request):
     context={"course":page_obj}
     return render(request,"courses.html",context)
 
+def course_category(request,slug):
+    category=get_object_or_404(Category,slug=slug)
+    courses=Course.objects.filter(branch__category=category,status="approved").select_related("branch").order_by("-id")
+    paginator = Paginator(courses, 8) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"course":page_obj,"category":category}
+    return render(request,"course_category.html",context)
+
 def branch(request,slug):
     branch=get_object_or_404(Branch,slug=slug)
-    course=Course.objects.filter(branch=branch,status="approved")
-    paginator = Paginator(course, 8) # Show 25 contacts per page.
+    courses=Course.objects.filter(branch=branch,status="approved").order_by("-id")
+    paginator = Paginator(courses, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context={"course":page_obj,"branch":branch}
@@ -334,6 +343,9 @@ def contact(request):
             if user.exists():
                 instance.user = user[0]
                 instance.save()
+            subject="contact request"
+            body=f"a new contact email from {email}"
+            send_mail_approve(request,user=email,subject=subject,body=body)
             messages.success(request,"thank you for your message")
     context={}
     return render(request,"contact.html",context)
@@ -659,9 +671,6 @@ def paymob_payment(request,course):
             success=1
         return JsonResponse({"success":success,"frame":PAYMOB_FRAME,"token":payment_token})
 
-
-
-@csrf_exempt    
 def check_paymob_course_payment(request):
     try:
         id=request.GET["id"]
@@ -673,7 +682,6 @@ def check_paymob_course_payment(request):
         header= {"Bearer":token}
         r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
         data=r_2.json() 
-        print(data) 
         descrption=data["order"]["items"][0]["description"]
         username=data["order"]["shipping_data"]["first_name"]
         transaction_number=request.GET["id"]

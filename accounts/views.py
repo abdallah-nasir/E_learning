@@ -21,15 +21,15 @@ from .forms import MyCustomLoginForm,MyCustomSignupForm
 from allauth.account.views import SignupView,LoginView
 from Dashboard import models as dahboard_models
 from django.core.mail import EmailMessage,get_connection
-PAYMENT_NOTIFICATION_EMAIL_USERNAME=os.environ['PAYMENT_NOTIFICATION_EMAIL_USERNAME']
-PAYMENT_NOTIFICATION_EMAIL_PASSWORD=os.environ['PAYMENT_NOTIFICATION_EMAIL_PASSWORD']
-PAYMENT_NOTIFICATION_EMAIL_HOST=os.environ["PAYMENT_NOTIFICATION_EMAIL_HOST"]
-PAYMENT_NOTIFICATION_EMAIL_PORT=os.environ["PAYMENT_NOTIFICATION_EMAIL_PORT"]
-PAYMENT_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= PAYMENT_NOTIFICATION_EMAIL_HOST, 
-port=PAYMENT_NOTIFICATION_EMAIL_PORT, 
-username=PAYMENT_NOTIFICATION_EMAIL_USERNAME, 
-password=PAYMENT_NOTIFICATION_EMAIL_PASSWORD, 
+TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
+TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
+TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
+TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
+TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
+host= TASK_NOTIFICATION_EMAIL_HOST, 
+port=TASK_NOTIFICATION_EMAIL_PORT, 
+username=TASK_NOTIFICATION_EMAIL_USERNAME, 
+password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
 use_tls=False
 )
 # from allauth.account.forms import LoginForm,SignupForm
@@ -88,10 +88,10 @@ def send_mail_approve(request,user,body,subject):
     msg = EmailMessage(
         subject=subject,
         body=body,
-        from_email=PAYMENT_NOTIFICATION_EMAIL_USERNAME,
-        to=[PAYMENT_NOTIFICATION_EMAIL_USERNAME],
+        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
+        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
         reply_to=[user],
-        connection=PAYMENT_NOTIFICATION_EMAIL_CONNECTION
+        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
         )
     msg.content_subtype = "html"  # Main content is now text/html
     msg.send()
@@ -136,6 +136,9 @@ def check_teacher_form(request):
             instance.status="pending"
             instance.save()
             messages.success(request,"your request is being review by admins")
+            body=f"teacher join request from {request.user.email}"
+            subject="teacher join"
+            send_mail_approve(request,user=request.user.email,subject=subject,body=body)
             return redirect(reverse("accounts:account_info"))
     context={"form":form}
     return render(request,"check_teacher.html",context)
@@ -382,6 +385,9 @@ def consultant_refund(request,id):
     refund.data=json.dumps(data)
     refund.save()
     messages.success(request,"Your Refund is Being Review By Admin")
+    body=f"refund from {request.user.email}"
+    subject="refund payment"
+    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
     return redirect(reverse("accounts:consultant_payment"))
 
 @login_required(login_url="accounts:login")
@@ -393,5 +399,8 @@ def course_refund(request,slug,id):
     refund.data=json.dumps(my_data)
     refund.save()
     messages.success(request,"Your Refund is Being Review By Admin")
+    body=f"refund from {request.user.email}"
+    subject="refund payment"
+    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
     return redirect(reverse("accounts:course_payment"))
  

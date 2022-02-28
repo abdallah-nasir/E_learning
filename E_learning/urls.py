@@ -14,8 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.http.response import FileResponse
-from django.shortcuts import render,get_object_or_404
+from . import views
 from django.urls import path,include,re_path
 from django.conf.urls import (handler400, handler403, handler404, handler500
 )
@@ -27,10 +26,10 @@ import os
 # from allauth.urls
 
 
-urlpatterns = [
+# urlpatterns = [
+# ]
+urlpatterns = i18n_patterns(
     path("i18n/", include("django.conf.urls.i18n")),
-]
-urlpatterns += i18n_patterns(
     path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
     path('agartha/admin/dashboard/', admin.site.urls),
     # path('oauth/', include('social_django.urls', namespace='social')), 
@@ -43,10 +42,13 @@ urlpatterns += i18n_patterns(
     path('blogs/', include('Blogs.urls',namespace="blogs")),  
     path('consultant/', include('Consultant.urls',namespace="consultant")),  
     path('dashboard/', include('Dashboard.urls',namespace="dashboard")),  
+    path("language/",views.change_language,name="language"), 
     # path('__debug__/', include(debug_toolbar.urls)),
     re_path('rosetta/', include('rosetta.urls')),prefix_default_language=False,
+ 
 )
-       
+
+
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

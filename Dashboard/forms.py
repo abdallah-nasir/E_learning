@@ -18,14 +18,14 @@ from datetime import date,datetime,time
 from taggit.forms import *
 from taggit.models import Tag
 User=get_user_model()
-Audio_Extension=[".3gp",".aa",".aac",".aiff",".wav",".m4a",".amr",".mp3",".webm",".wmv",]
+Audio_Extension=[".3gp",".aa",".aac",".aiff",".wav",".m4a",".amr",".mp3",".webm",".wmv",".mkv"]
 Video_Extension=[".webm",".mkv",".flv",".avi",".wmv",".rmvb",".amv",".mp4",".m4p",".mpg",".mpeg",".m4v",".3gp"]
-
+IMAGE_EXTENSIONS=[".webp",".gif",".png",".jpg",".jpeg"]
 class AddBlog(forms.ModelForm):
     image=forms.ImageField(required=True)
     class Meta:  
         model=Blog
-        fields=["name","name_ar","details","category","paid","tags","image"]
+        fields=["name_en","name_ar","details","category","paid","tags","image"]
     def clean_video(self):
         request=get_current_request()
         video=self.cleaned_data.get("video")      
@@ -44,14 +44,13 @@ class AddBlog(forms.ModelForm):
         request=get_current_request()
         type=request.GET.get("blog_type")
         image=request.FILES.getlist("image")
-        image_extentions=[".png",".jpg",",jpeg"]
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
         for i in image:
             image_extension=os.path.splitext(i.name)[1]
             print(image_extension)
-            if image_extension.lower() not in image_extentions:
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
         return image
 
@@ -65,19 +64,18 @@ class BlogQuoteForm(forms.ModelForm):
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        fields=["name","name_ar","quote","details","category","paid","image"]
+        fields=["name_en","name_ar","quote","details","category","paid","image"]
     def clean_image(self):
         request=get_current_request()
         type=request.GET.get("blog_type")
         image=request.FILES.getlist("image")
-        image_extentions=[".png",".jpg",",jpeg"]
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
         for i in image:
             image_extension=os.path.splitext(i.name)[1]
             print(image_extension)
-            if image_extension.lower() not in image_extentions:
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
         return image
 class BlogLinkForm(forms.ModelForm):
@@ -85,80 +83,64 @@ class BlogLinkForm(forms.ModelForm):
     image=forms.ImageField(required=True)
     class Meta:
         model=Blog
-        fields=["name","name_ar","link","details","category","paid","image"]
+        fields=["name_en","name_ar","link","details","category","paid","image"]
 
     def clean_image(self):
         request=get_current_request()
         type=request.GET.get("blog_type")
         image=request.FILES.getlist("image")
-        image_extentions=[".png",".jpg",",jpeg"]
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
         for i in image:
             image_extension=os.path.splitext(i.name)[1]
             print(image_extension)
-            if image_extension.lower() not in image_extentions:
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
         return image
     
 class BlogVideoForm(forms.ModelForm):
-    video=forms.FileField(label="Video")
+    video=forms.FileField(required=True,label="Video")
     class Meta:
         model=Blog
         fields=["video"]
     
     def clean_video(self):
         video=self.cleaned_data["video"]      
-        request=get_current_request()
-        blog_type=request.GET.get("blog_type")
-        video_extentions=Video_Extension
-        if blog_type == "video":
-            if video is False:
-                raise forms.ValidationError("please insert a video")
-            else:
-                video_type=os.path.splitext(video.name)[1]
-                if video_type not in  video_extentions:
-                    raise forms.ValidationError("invalid video extension")
+        video_type=os.path.splitext(video.name)[1]
+        if video_type not in  Video_Extension:
+            raise forms.ValidationError("invalid video extension")
         return video
 
 class BlogAudioForm(forms.ModelForm):
-    video=forms.FileField(label="Audio")
+    video=forms.FileField(required=True,label="Audio")
     class Meta:
         model=Blog
         fields=["video"]
-    
+     
     def clean_video(self):
-        video=self.cleaned_data["video"]      
-        request=get_current_request()
-        blog_type=request.GET.get("blog_type")
-        audio_extentions=Audio_Extension
-        if  blog_type == "audio":
-            if video is False:
-                raise forms.ValidationError("please insert audio")
-            else:
-                video_type=os.path.splitext(video.name)[1]
-                if video_type not in  audio_extentions:
-                    raise forms.ValidationError("invalid audio extension")
+        video=self.cleaned_data.get("video")     
+        video_type=os.path.splitext(video.name)[1]
+        if video_type.lower() not in Audio_Extension:
+            raise forms.ValidationError("invalid audio extension")
         return video
 class BlogGalleryForm(forms.ModelForm):
     image=forms.FileField(required=True,widget=forms.ClearableFileInput(attrs={'multiple': True}))
     class Meta:
         model=Blog
-        fields=["name","name_ar","details","category","paid","image"]
+        fields=["name_en","name_ar","details","category","paid","image"]
 
     def clean_image(self):
         request=get_current_request()
         type=request.GET.get("blog_type")
         image=request.FILES.getlist("image")
-        image_extentions=[".png",".jpg",",jpeg"]
         if type != "gallery":
             if len(image) > 1:  
                 raise forms.ValidationError(f"Select only one image for {type} Blog")
         for i in image:
             image_extension=os.path.splitext(i.name)[1]
             print(image_extension)
-            if image_extension.lower() not in image_extentions:
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
         return image
 
@@ -175,9 +157,8 @@ class AddCourse(forms.ModelForm):
         request=get_current_request()
         try:
             if request.FILES["image"]:
-                image_extentions=[".png",".jpg",",jpeg"]
                 image_extension=os.path.splitext(image.name)[1]
-                if image_extension.lower() not in image_extentions:
+                if image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
         except:
             pass
@@ -196,9 +177,8 @@ class EditCourse(forms.ModelForm):
         request=get_current_request()
         try:
             if request.FILES["image"]:
-                image_extentions=[".png",".jpg",",jpeg"]
                 image_extension=os.path.splitext(image.name)[1]
-                if image_extension.lower() not in image_extentions:
+                if image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
         except:
             pass
@@ -258,8 +238,7 @@ class AddEvent(forms.ModelForm):
     def clean_image(self):
         image=self.cleaned_data.get("image")
         image_extentions=[".png",".jpg",",jpeg"]
-        image_extension=os.path.splitext(image.name)[1]
-        if image_extension.lower() not in image_extentions:
+        if image_extension.lower() not in IMAGE_EXTENSIONS:
             raise forms.ValidationError("invalid image extension")
         return image
     def clean_date(self):
@@ -317,9 +296,8 @@ class Edit_event(forms.ModelForm):
     def clean_image(self):
         image=self.cleaned_data.get("image")
         if image:
-            image_extentions=[".png",".jpg",",jpeg"]
             image_extension=os.path.splitext(image.name)[1]
-            if image_extension.lower() not in image_extentions:
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
         return image
     def clean_date(self):
@@ -419,8 +397,14 @@ class ConsultantCategoryForm(forms.ModelForm):
         fields="__all__"
         
 class UploadVideoForm(forms.Form):
-    # title=forms.CharField(max_length=50)
     video=forms.FileField()
+    def clean_video(self):
+        video=self.cleaned_data.get("video")
+        video_extension=os.path.splitext(video.name)[1]
+        print(video_extension)
+        if video_extension.lower() not in Video_Extension:
+            raise forms.ValidationError("invalid video extension")
+        return video 
 ############################
 # Get model details for superuser
 
@@ -489,7 +473,13 @@ class CategoryForm(forms.ModelForm):
         fields="__all__"
         extra_kwargs={"image":{"required":True}}
         exclude=["slug"]
-        
+    def clean_image(self):
+        request=get_current_request()
+        image=request.FILES.get("image")
+        image_extension=os.path.splitext(image.name)[1]
+        if image_extension.lower() not in IMAGE_EXTENSIONS:
+            raise forms.ValidationError("invalid image extension")
+        return image
 class BranchForm(forms.ModelForm):
     class Meta:
         model=Branch
@@ -526,12 +516,18 @@ class Update_Certification(forms.ModelForm):
         fields=["image"]
         extra_kwargs={"image":{"required":True}}
 
+    def clean_image(self):
+        request=get_current_request()
+        image=request.FILES.get("image")
+        image_extension=os.path.splitext(image.name)[1]
+        if image_extension.lower() not in IMAGE_EXTENSIONS:
+            raise forms.ValidationError("invalid image extension")
+        return image
 class Refunds_Form(forms.ModelForm):
     class Meta:
         model=Refunds
         exclude=["user","content_id","status","data"]
         # extra_kwargs={"image":{"required":True}}
-
 
 
 class BlogPaymentFom(forms.ModelForm):
@@ -540,16 +536,35 @@ class BlogPaymentFom(forms.ModelForm):
         model=Blog_Payment
         fields=["payment_image","transaction_number"]
 
-
+    def clean_payment_image(self):
+        request=get_current_request()
+        image=request.FILES.get("payment_image")
+        image_extension=os.path.splitext(image.name)[1]
+        if image_extension.lower() not in IMAGE_EXTENSIONS:
+            raise forms.ValidationError("invalid image extension")
+        return image
 class CoursePaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
     class Meta:
         model=Payment
         fields=["payment_image","transaction_number"]
-
+    def clean_payment_image(self):
+        request=get_current_request()
+        image=request.FILES.get("payment_image")
+        image_extension=os.path.splitext(image.name)[1]
+        if image_extension.lower() not in IMAGE_EXTENSIONS:
+            raise forms.ValidationError("invalid image extension")
+        return image
 class ConsultantPaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
     class Meta:
         model=Cosultant_Payment
         fields=["payment_image","transaction_number"]
 
+    def clean_payment_image(self):
+        request=get_current_request()
+        image=request.FILES.get("payment_image")
+        image_extension=os.path.splitext(image.name)[1]
+        if image_extension.lower() not in IMAGE_EXTENSIONS:
+            raise forms.ValidationError("invalid image extension")
+        return image

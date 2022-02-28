@@ -17,10 +17,9 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            {% comment %} <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> {% endcomment %}
                         </div>
                         <div class="card-body">
-                            {% if form_number == 1 %}
                             <form method="POST" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                
@@ -47,15 +46,7 @@
                                 
                                           <button onclick="this.disabled=true,this.form.submit();" class="btn btn-primary" type="submit">Submit</button>
                                         </form>
-                            {% elif form_number == 2 %}
-                            <form method="GET">
-                                <div class="form-group">
-                                    {{form|crispy}}
-                                </div>
-                                
-                                <button onclick="this.disabled=true,this.form.submit();" class="btn btn-primary" type="submit">Submit</button>
-                            </form>
-                            {% endif %}
+                         
                           
                         </div>
                     </div>

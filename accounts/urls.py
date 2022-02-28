@@ -1,6 +1,7 @@
 from django.urls import path,include
 from . import views
 from .views import *
+
 app_name="accounts"
 urlpatterns = [
 path("logout/",views.logout_view,name="logout"),

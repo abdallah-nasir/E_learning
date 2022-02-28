@@ -67,62 +67,63 @@ li.resp-tab-item span .pic1{
 											</div> -->
 										</div>
 									</div>
-									<div class="tab-1 resp-tab-content" aria-labelledby="tab_item-1">
+                  <div class="tab-1 resp-tab-content" aria-labelledby="tab_item-3">	
 										<div class="payment-info">
-											<h3> Bank Transfer</h3>
-											<!--<h3>حوالة بنكية </h3>-->
-											<table class="table">
-												<tr>
-													<th>Payment Information</th>
-													<th>Info in English</th>
-													<th>Info in Arabic</th>
-												</tr>
-												<tr>
-													<td>Bank name</td>
-													<td>suez canal Bank</td>
-													<td>بنك قناة السويس</td>
-												</tr>
-												<tr>
-													<td>IBan</td>
-													<td colspan="2">EG260017001801820017420650101</td>
-												</tr>
-												<tr>
-													<td>Riceve Name</td>
-													<td>Nabil Kamal Mohamed</td>
-													<td>نبيل كمال محمد</td>
-												</tr>
-												<tr>
-													<td>Branch:</td>
-													<td>Al AHRAR BRANCH</td>
-													<td>فرع الأحرار</td>
-												</tr>
-												<tr>
-													<td>Swift Code</td>
-													<td>SUCAEGCXXXX</td>
-													<td>SUCAEGCXXXX</td>
-												</tr>
-											</table>
-											<h4 style="color:red">
-											 الرجاء استخدام رقم طلبك كمرجع لعملية الدفع
-											</h4>
-                      <form method="POST" enctype="multipart/form-data">
-                        {{ form.non_field_errors }}
-                        {% csrf_token %}
-                      
-                        <div class="tab-for">
-                          <h5>Phone Number</h5>
-                          {{ form.number.errors }}
-                          <input type="text" name="number" id="number" required="true">
-                          <h5>Image receipt</h5>
-                          {{ form.payment_image.errors }}
-                          <input type="file" name="payment_image" required="true">
-                        </div>
-                        <br /><br />
-                        <input type="hidden" name="payment"  value="Bank Transaction">
-                        <input type="submit"  value="submit">
-                      </form>
 											
-										</div>
+											<h3 class="pay-title">Western Union Info</h3>
+										
+												<div class="tab-for">
+													<table>
+														<tr>
+															<th colspan="3"> <h5>  التحويل عبر الويسترن باسم</h5></th>
+														</tr>
+														<tr>
+															<td>Name Recive: </td>
+															<td><h5> Nabil Kamal Mohamed </h5> </td>
+														</tr>
+														<tr>
+															<td>اسم المستلم </td>
+															<td>نبيل كمال محمد </td>
+														</tr>
+														<tr>
+															<td> Country:</td>
+															<td> Egypt</td>
+														</tr>
+														<tr>
+															<td>Mobil Number:</td>
+															<td>00201011609810</td>
+														</tr>
+													</table>
+													<h4 style="color:red">
+														الرجاء استخدام رقم طلبك كمرجع لعملية الدفع
+													</h4>
+												</div>
+                        <form method="POST" enctype="multipart/form-data">
+                          {{ form.non_field_errors }}
+                          {% csrf_token %}
+                        
+                          <div class="tab-for">
+                            <h5>Transaction ID</h5>
+                            {{ form.number.errors }}
+                            <input type="text" name="number" id="number" required="true" placeholder="MTCN">
+                            <h5>Image receipt</h5>
+                            {{ form.payment_image.errors }}
+                            <input type="file" name="payment_image" required="true">
+                          </div>
+                          <br /><br />
+                          <input type="hidden" name="payment"  value="Western Union">
+                          <input type="submit"  value="submit">
+                        </form>
+											
+											<div class="single-bottom">
+													<ul>
+														<!-- <li>
+															<input type="checkbox"  id="brand" value="">
+															<label for="brand"><span></span>By checking this box, I agree to the Terms & Conditions & Privacy Policy.</label>
+														</li> -->
+													</ul>
+											</div>
+										</div>	
 									</div>
 									<div class="tab-1 resp-tab-content" aria-labelledby="tab_item-2">
 										<div class="payment-info">

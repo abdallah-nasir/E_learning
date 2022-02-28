@@ -925,9 +925,11 @@ p {
                 top: -5px;
                 left: 0;
             }
-
+#profile-list {
+    left: -12px;
+    top: -3px;
+}
 /*===== Index-2 =====*/
-
 .header-social ul li {
     display: inline-block;
     margin-right: 10px;
@@ -1148,11 +1150,16 @@ p {
 
 .slider-2.single-slider {
     padding-top: 230px;
-    padding-bottom: 250px;
+    padding-bottom: 252px;
 }
 
 /*===== Index-3 =====*/
-
+.con-slider {
+    direction: rtl;
+}
+.con-course ,#news-part {
+    direction: rtl;
+}
 #slider-part-3 {
     position: relative;
     padding-top: 220px;
@@ -1306,12 +1313,15 @@ p {
 
 .category-text {
 }
+#category-2-part {
+    direction:rtl;
+}
 
-    .category-text h2 {
-        font-size: 36px;
-        color: #fff;
-        padding: 0 50px;
-    }
+.category-text h2 {
+    font-size: 36px;
+    color: #fff;
+    padding: 0 50px;
+}
 
 .singel-category {
     padding: 20px 0;
@@ -1516,6 +1526,7 @@ p {
     background-color: #fff;
     border-radius: 5px;
     overflow: hidden;
+    direction:rtl;
 }
 
     .singel-course > .thum {
@@ -1527,9 +1538,10 @@ p {
     }
 
         .singel-course .thum .image img {
-            width: 100%;
+       
             -webkit-transition: all 0.4s linear;
             transition: all 0.4s linear;
+            height:16rem;
         }
 
     .singel-course:hover .thum .image img {
@@ -1675,8 +1687,14 @@ p {
     }
 
     .course-slied .prev.slick-arrow {
-        right: auto;
-        left: 50px;
+        left: auto;
+        right: 50px;
+    }
+    .course-slied .prev {
+        left: -100% !important;
+    }
+    .course-slied .next {
+        left: -95% !important;
     }
 
     .course-slied .slick-arrow i {
@@ -2073,6 +2091,7 @@ p {
         .singel-news .news-thum img {
             width: 100%;
             border-radius: 5px;
+            max-width: 75%;
         }
 
     .singel-news .news-cont {
@@ -2408,6 +2427,7 @@ p {
         .singel-course-2 > .thum .image > img {
             border-radius: 5px;
             width: 100%;
+            height: 24rem;
         }
 
         .singel-course-2 > .thum .price {
@@ -2447,6 +2467,7 @@ p {
 
                 .singel-course-2 > .thum .course-teacher > .thum img {
                     border-radius: 50%;
+                    height:40px;
                 }
 
             .singel-course-2 > .thum .course-teacher .name {
@@ -2655,13 +2676,14 @@ p {
         position: absolute;
         bottom: 0;
         left: 0;
+        transform: scaleX(-1);
     }
-
-
+.student-image img {
+    max-width: 75%;
+}
 /*=====================================================
     18. EVENT 2 css 
 ======================================================*/
-
 .event-bg {
     position: relative;
     border-radius: 5px;
@@ -3039,7 +3061,7 @@ p {
                 }
 
             .corses-singel-left .course-terms ul li .teacher-name .name {
-                padding-right: 60px;
+                padding-right: 83px;
             }
 
                 .corses-singel-left .course-terms ul li .review span,
@@ -4215,7 +4237,9 @@ p {
 /*=====================================================
     29. SHOP PAGE css 
 ======================================================*/
-
+#shop-numbers {
+    left: 128px;
+}
 .shop-top-search {
     background-color: #fff;
     padding: 15px 30px;
@@ -4756,6 +4780,7 @@ p {
     --mdb-bg-opacity: 0 !important;
 }
 
+
 @media only screen and (max-width:479px) {
     .section-features, .section-features, .section-specialities {
         background-color: #fff;
@@ -4812,6 +4837,10 @@ p {
     .footer-top .container {
         margin-right: 20px;
     }
+    .logo img {
+        max-width: 60%;
+        text-align: center;
+    }
 }
 
 
@@ -4829,6 +4858,10 @@ p {
     .nav-icon .navbar .navbar-nav li {
         margin-left: 30px;
         color: red
+    }
+    .logo img {
+        max-width: 60%;
+        text-align: center;
     }
 }
 
@@ -4855,6 +4888,10 @@ p {
 
     .navigation .container .row .col-8 {
         margin-right: -25px;
+    }
+    .logo img {
+        max-width: 60%;
+        text-align: center;
     }
 }
 
@@ -4893,4 +4930,13 @@ p {
         .navigation .navbar .navbar-nav li a {
             font-size: 9px;
         }
+    .logo img {
+        max-width: 60%;
+        text-align: center;
+    }
+}
+@media (min-width: 992px) {
+    .offset-lg-1 {
+        margin-right: 0;
+    }
 }

@@ -21,7 +21,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            {% comment %} <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> {% endcomment %}
                         </div>
                         <div class="card-body">
                             <form method="POST" action="{% url 'dashboard:complete_add_video' video %}" enctype="multipart/form-data" id="upload-form">
@@ -109,7 +109,8 @@
                             </button>
                           </div>`;
                           $("#result").html(html1);
-                            
+                          window.location.href = '/dashboard/videos/{{slug}}/';
+
                       },
                       cache:false,
                       contentType:false,

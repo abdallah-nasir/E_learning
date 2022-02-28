@@ -123,7 +123,7 @@ class Blog(models.Model):
             self.save()
         count=self.viewers.count()
         return count
-
+ 
     def get_quote(self):
         try:
             data=json.loads(self.data)
@@ -142,7 +142,6 @@ class Blog(models.Model):
     def same_category(self):
         blogs=Blog.objects.filter(status="approved",category=self.category).order_by("-created_at")[:5]
         return blogs
-
     def get_comments(self):
         comments=self.comments.count()
         replies=self.blog_comment_reply.count()
@@ -153,11 +152,15 @@ class Blog(models.Model):
             try:
                 blog_data=json.loads(self.data)
                 length=blog_data["video_length"]
+                if length > 0:
+                    result =True
+                else:
+                    result=False
             except:
-                length=None
+                result=False
         else:
-            length=None
-        return length
+            result=False
+        return result
     def get_blog_audio_status(self):
         if self.blog_type =="audio" :
             if not self.video:

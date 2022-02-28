@@ -163,7 +163,7 @@ COURSE_STATUS=(
     ("pending","pending"),
     ("approved","approved"),
     ("declined","declined")
-)
+)   
 class Course(models.Model):
     name=models.CharField(max_length=150)
     videos=models.ManyToManyField(Videos)

@@ -27,6 +27,8 @@
                                             <th>User</th>
                                             <th>Name</th>
                                             <th>Category</th>
+                                              <th>Blog Type</th>
+
                                             <th>Comments</th>
                                             <th>Paid</th>
                                             <th>status</th>
@@ -41,14 +43,19 @@
                                         <td>{{i.user.username}}</td>
                                         <td>{{i.name|truncatewords:10}}</td>
                                         <td>{{i.category|truncatewords:10}}</td>
+                                        <td>{{i.blog_type}}</td>
+
                                         <td>{{i.comments.count}}</td>
                                         <td>{{i.paid}}</td>
                                         <td>{{i.status}}</td>
                                         <td>
-                                          {% if i.status != "pending" %}
+                                         
                                         <a href="{% url 'dashboard:edit_blog' i.slug %}" class="btn btn-success">Edit</a>
-                                        {% endif %}
-                                        {% if i.blog_type == "video" and i.get_blog_video_status == True %}
+                                      {% if i.status != "approved" %}
+                                      <a href="{% url 'dashboard:show_demo_blog' i.slug %}" target="__" class="btn btn-info">Details</a>
+
+                                          {% endif %}
+                                        {% if i.blog_type == "video" and i.get_blog_video_status == False %}
                                         <a href="{% url 'dashboard:check_blog_video' i.slug %}" class="btn btn-info">Check Video</a>
                                         {% endif %}
                                         {% if i.blog_type == "audio" and i.get_blog_audio_status == True %}

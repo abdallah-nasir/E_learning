@@ -15,6 +15,7 @@ import random,string,requests
 from crum import get_current_request   
 from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
+from phonenumber_field.formfields import PhoneNumberField
 
 Storage_Api=os.environ["Storage_Api"]
 library_id=os.environ["library_id"]
@@ -40,13 +41,9 @@ GENDER=(
 ) 
 class MyCustomSignupForm(SignupForm):
     gender=forms.ChoiceField(label="Are You",required=True,choices=GENDER)
-    phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
-    # image=forms.ImageField(label="Profile Picture",required=False)
+    phone=PhoneNumberField(required=True)
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
     terms_privacy=forms.BooleanField(required=True)
-
-    # about_me=forms.CharField(widget=forms.HiddenInput())
-    # title=forms.CharField(widget=forms.HiddenInput())
     def clean(self):
         image=self.cleaned_data.get("image")
         if image:
@@ -58,7 +55,11 @@ class MyCustomSignupForm(SignupForm):
                 raise forms.ValidationError("image size is more 2 MB")
             elif type not in list_type:   
                 raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
-    
+    def clean_phone(self):
+        phone=self.cleaned_data.get("phone")
+        if User.objects.filter(phone=phone).exists():
+            raise forms.ValidationError("User with that phone number is already exists")
+        return phone
     def save(self, request):
         # Ensure you call the parent class's save.
         # .save() returns a User object.
@@ -72,29 +73,21 @@ class MyCustomSignupForm(SignupForm):
         elif gender == "female":
             user.account_image=f"https://{agartha_cdn}/default_image/female.jpg"
         user.first_name=user.username
-        # if self.cleaned_data["account_type"] == "teacher":
-        #     user.about_me=self.cleaned_data["about_me"]
-        #     user.title=self.cleaned_data["about_me"]
-        user.save()
-        # if user.account_type == "teacher":
-        #     user.code=random_string_generator()
 
-        #     user.is_active = False
-        #     user.save()
-        #     msg = EmailMessage(subject="Account Created", body=f"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account, \n use this code to complete your profile info \
-        #                        your code:{user.code} \n url:{request.scheme}://{request.META['HTTP_HOST']}/profile/validate/teacher/", from_email=settings.EMAIL_HOST_USER, to=[user.email])
-        #     msg.content_subtype = "html"  # Main content is now text/html
-        #     msg.send()
-        #     messages.success(request,"you have created your Teacher Account and our Team Will be in Touch with you soon to Activate Your account")
+        user.save()
         return user
    
 class MyCustomSocialSignupForm(SocialSignUpForm):
     gender=forms.ChoiceField(label="Are You",required=True,choices=GENDER)
-    phone=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Phone Number"}))
-    # image=forms.ImageField(required=True)
+    phone=PhoneNumberField(required=True)
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
     terms_privacy=forms.BooleanField(required=True)
 
+    def clean_phone(self):
+        phone=self.cleaned_data.get("phone")
+        if User.objects.filter(phone=phone).exists():
+            raise forms.ValidationError("User with that phone number is already exists")
+        return phone
     def clean(self):
         image=self.cleaned_data.get("image")
         print(image)
@@ -195,10 +188,16 @@ from django.contrib.auth import get_user_model
 User=get_user_model()
 class ChangeUserDataForm(forms.ModelForm):
     account_image=forms.ImageField(required=False)
+    phone=PhoneNumberField(required=True)
     class Meta:
         model=User
         fields=["account_image","first_name","last_name","phone",]
 
+    def clean_phone(self):
+        phone=self.cleaned_data.get("phone")
+        if User.objects.filter(phone=phone).exists():
+            raise forms.ValidationError("User with that phone number is already exists")
+        return phone
 class ChangeTeacherDataForm(forms.ModelForm):
     account_image=forms.ImageField(required=False)
     facebook=forms.CharField(required=False,max_length=120,widget=forms.TextInput(attrs={"placeholder":"Your facebook link"}))
@@ -206,10 +205,11 @@ class ChangeTeacherDataForm(forms.ModelForm):
     twitter=forms.CharField(required=False,max_length=120,widget=forms.TextInput(attrs={"placeholder":"Your twitter link"}))
     about_me=forms.CharField(widget=forms.Textarea())
     title=forms.CharField(max_length=120)
+    phone=PhoneNumberField(required=True)
     class Meta:
         model=User
         fields=["account_image","first_name","last_name","phone","facebook","twitter","linkedin","title","about_me"]
-        kwargs={"first_name":{"required":True},"last_name":{"required":True}}
+        extra_kwargs={"first_name":{"required":True},"last_name":{"required":True}}
     def clean_facebook(self): 
         facebook=self.cleaned_data.get("facebook")
         print(facebook[0:25])

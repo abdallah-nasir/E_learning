@@ -1,25 +1,25 @@
 
-from django.http.response import FileResponse
-from django.http import HttpResponseForbidden
-
-def media_access(request, path):    
-    access_granted = False
-
-    user = request.user
-    if user.is_authenticated():
-        if user.is_staff:
-            # If admin, everything is granted
-            access_granted = True
-        else:
-            # For simple user, only their documents can be accessed
-            doc = user.related_PRF_user.i_image  #Customize this...
-
-            path = f"images/{path}"
-            if path == doc:
-                access_granted = True
-
-    if access_granted:
-        response = FileResponse(user.related_PRF_user.i_image)
-        return response
-    else:
-        return HttpResponseForbidden('Not authorized to access this media.')
+from ast import While
+from django.http import HttpResponseRedirect,HttpResponse
+from django.shortcuts import redirect
+from django.utils import translation
+from django.urls import reverse
+from django.utils.translation import get_language,get_language_info
+from django.conf import settings
+import urllib
+def change_language(request):
+    current_language=get_language()
+    path=request.GET["path"]
+    language=request.GET["language"]
+    count=-1
+    path_list=path.split("/")
+    final_path=f"/{language}{path}"
+    for i in settings.LANGUAGES:
+        count +=1
+        if settings.LANGUAGES[count][0] in path_list[:2]:
+            index=path_list.index(settings.LANGUAGES[count][0])
+            path_list[index]=language
+            translation.activate(language) 
+            final_path="/".join(path_list)
+            break
+    return redirect(final_path)

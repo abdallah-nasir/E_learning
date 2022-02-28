@@ -19,7 +19,7 @@
 		position: absolute;
 		margin: 0 auto;
 		height: 3px;
-		background: #ffdc12;
+		/*background: #ffdc12;*/
 		left: 0;
 		right: 0;
 		bottom: -10px
@@ -176,7 +176,7 @@
 					{% if i.blog_type == "standard" %}
 					<article class="post format-standard">
 						<header class="entry-header">
-							<figure class="entry-thumb">
+							<figure class="entry-thumb entry-img">
 								<img src="{{i.image.first.image}}" width="1000" height="667" alt="">
 							</figure>
 							<div class="icon-b">
@@ -266,7 +266,7 @@
 					{% elif i.blog_type == "gallery" %}
 					<article class="post format-gallery">
 						<header class="entry-header">
-							<figure class="entry-thumb">
+							<figure class="entry-thumb entry-img">
 								<img src="{{i.image.first.image}}" width="1000" height="667" alt="">
 							</figure>
 							<div class="icon-b">

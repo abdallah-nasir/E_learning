@@ -1160,6 +1160,7 @@ form .loader {
 
     .post .entry-header .entry-meta {
         font-size: 14px;
+        margin-bottom: -18px;
     }
 
         .post .entry-header .entry-meta span {
@@ -1200,7 +1201,7 @@ form .loader {
     }
 
         .post .entry-header .entry-category a {
-            display: inline-block;
+            /*display: inline-block;*/
             padding: 5px 10px;
             background: #C7B29A;
             border-radius: 130px 130px 130px 130px / 10px 10px 10px 10px;
@@ -1229,8 +1230,11 @@ form .loader {
     .post .entry-thumb img {
         width: 100%;
         height: auto;
-        vertical-align: bottom;
+        vertical-align: bottom; 
     }
+.entry-img {
+    height:18rem;
+}
 
 .post .entry-content {
     padding: 80px;
@@ -1431,6 +1435,10 @@ form .loader {
         width: 100%;
         margin-bottom: 80px;
     }
+.nav-main-sub {
+    text-align:right;
+}
+
 
 .featured-posts .post .entry-header .entry-header-title {
     position: absolute;

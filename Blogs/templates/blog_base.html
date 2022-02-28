@@ -47,9 +47,9 @@
 	<script src="{% static 'blogs/scripts/modernizr-custom.js' %}"></script>
     <!-- Main css -->
 	{% if LANGUAGE_CODE == "ar" %}
-        <link rel="stylesheet" href="{% static 'blogs/styles/main-rtl.css' %}">
+        <link rel="stylesheet" href="{% static 'blogs/styles/blog-main-rtl.css' %}">
 		{% else %}
-		<link rel="stylesheet" href="{% static 'blogs/styles/main.css' %}">
+		<link rel="stylesheet" href="{% static 'blogs/styles/blog-main.css' %}">
 	{% endif %}
 <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700%7CKaushan+Script%7CMontserrat:700' rel='stylesheet' type='text/css'>
 
@@ -78,13 +78,25 @@
 			<div class="container">
 
 				<div class="logo">
-					<a href="{% url 'blogs:blogs' %}"><img src="{% static 'blogs/images/logo.png' %}" width="50" height="79" alt="Blogio"></a>
+					<a href="{% url 'blogs:blogs' %}"><img src="{% static 'blogs/images/logo3.png' %}" width="50" height="79" alt="Blogio"></a>
 				</div>
-
 				<ul class="nav-social">
-					<li><a href="https://www.facebook.com/AgarthaAcademy"><i class="fa fa-facebook"></i></a></li>
-					<li><a href="https://twitter.com/AgarthaAcademy"><i class="fa fa-twitter"></i></a></li>
-					<li><a href="https://www.instagram.com/AgarthaAcademy/"><i class="fa fa-instagram"></i></a></li>
+				<li>
+				<a title="{% trans 'Profile' %}"  href="{% url 'accounts:account_info' %}"><i class="fa fa-user"></i></a>
+					</li>
+				<li>
+					<a title="{% trans 'Signout' %}"  href="{% url 'accounts:logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i>
+					</a>
+					</li>
+					<li>
+						{% if LANGUAGE_CODE == "ar" %}
+						<a title="{% trans 'English' %}" href="{% url 'language' %}?path={{request.path}}&language=en"><i class="fa fa-language" aria-hidden="true"></i>
+							{% else %}
+						<a title="{% trans 'Arabic' %}" href="{% url 'language' %}?path={{request.path}}&language=ar"><i class="fa fa-language" aria-hidden="true"></i>
+							{% endif %}
+
+					</a>
+					</li>
 				</ul>
 
 				<form class="form-search" method="GE" action="{% url 'blogs:search' %}">
@@ -111,10 +123,12 @@
 							</div> -->
 						</li>
 						<li class="nav-main-item ">
-							<a class="nav-main-link" href="{% url 'blogs:blogs' %}">{% trans 'Home Blogs' %}</a>
+							<a class="nav-main-link" href="{% url 'blogs:blogs' %}">  {% trans 'Home Blogs' %}</a>
 							<div class="nav-main-sub">
 								<ul>
-									<li><a href="{% url 'blogs:blogs'  %}?index=1">{% trans 'Home Blogs' %} 2</a></li>
+									<li> <a class="nav-main-link" href="{% url 'blogs:blogs' %}"><i class="fa fa-th-large"></i>  {% trans 'Home Blogs' %}</a>
+									
+									<li> <a href="{% url 'blogs:blogs'  %}?index=1"><i class="fa fa-th-list"></i>  {% trans 'Home Blogs list' %} </a></li>
 								</ul>
 							</div>
 						</li>

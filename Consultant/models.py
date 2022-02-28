@@ -247,7 +247,7 @@ class Cosultant_Payment(models.Model):
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     user_data=models.TextField()
     # check_reject=CheckRejectConsultant()
-    # objects=models.Manager()
+    # objects=models.Manager() 
     def __str__(self):
         return self.method
   

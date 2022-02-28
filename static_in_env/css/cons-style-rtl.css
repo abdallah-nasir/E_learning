@@ -2057,7 +2057,7 @@ button.bg-danger:hover {
 .logo {
 	display: inline-block;
 	margin-left: 30px;
-	width: 160px;
+	max-width:80%;
 }
 
 .header-contact-img {

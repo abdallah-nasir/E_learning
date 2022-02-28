@@ -82,15 +82,15 @@ INSTALLED_APPS = [
     'captcha',
     "admin_honeypot",
     "modeltranslation",
-
+  'phonenumber_field',
 ] 
 
 MIDDLEWARE = [
     
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -203,6 +203,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT=BASE_DIR/"static"
 STATICFILES_DIRS=[
   BASE_DIR/"static_in_env"
+
 ]  
      
 # for translation

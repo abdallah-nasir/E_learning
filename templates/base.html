@@ -61,7 +61,7 @@
 {% else %}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/base-style.css' %}">
 
 {% endif %}
 <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
@@ -198,6 +198,7 @@
                         </div>
                        
                     </div>
+                    {% if not request.user.vip %}
                     <div class="col-lg-8 col-md-8">
                         <div class="support-button float-right d-none d-md-block ">
                          
@@ -208,6 +209,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div> <!-- row -->
             </div> <!-- container -->
         </div> <!-- header logo support -->
@@ -217,7 +219,7 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                       <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light" >
+<nav class="navbar navbar-expand-lg navbar-light " >
     <!-- Container wrapper -->
     <div class="container-fluid">
       <!-- Toggle button -->
@@ -322,16 +324,20 @@
             aria-labelledby="navbarDropdownMenuLink"
           >
             <li>
-              <a class="dropdown-item" href="/ar/">{% trans 'Arabic' %}</a>
+                {% if LANGUAGE_CODE == "ar" %}
+               
+              <a class="dropdown-item" title="{% trans 'English' %}" href="{% url 'language' %}?path={{request.path}}&language=en">{% trans 'English' %}</a>
+              {% else %}
+            <a class="dropdown-item" title="{% trans 'Arabic' %}" href="{% url 'language' %}?path={{request.path}}&language=ar">{% trans 'Arabic' %}</a>
+
+             
+              {% endif %}
             </li>
-            <li>
-              <a class="dropdown-item" href="/en/">{% trans 'English' %}</a>
-            </li>
-          
+         
           </ul>
         </div>
         <!-- Avatar -->
-        <div class="dropdown">
+        <div class="dropdown" id="profile-list">
             {% if request.user.is_authenticated %}
           <a
             class="dropdown-toggle d-flex align-items-center hidden-arrow"
@@ -490,12 +496,14 @@
         <div class="footer-top pt-40 pb-70">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-12">
+                    <div class="col-lg-5 col-md-4 col-sm-12">
                         <div class="footer-about mt-40">
                             <div class="logo">
                                 <a href="#"><img src="{% static 'images/logo-2.png' %}" alt="Logo"></a>
                             </div>
-                            <p style="text-align:center;">Gravida nibh vel velit auctor aliquetn quibibendum auci elit cons equat ipsutis sem nibh id elit. Duis sed odio sit amet nibh vulputate.</p>
+                            <p >
+                                Deep within you, the light you are looking for.<br/>You have the capabilities that successful people possess. <br />Just discover it.. then invest it in yourself. <br />Eternal... <br />Discover your inner kingdom.
+                            </p>
                             <ul class="mt-20">
                                 <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
                                 <li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -504,7 +512,7 @@
                             </ul>
                         </div> <!-- footer about -->
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-12">
+                    <div class="col-lg-2 col-md-4 col-sm-12" style="padding:0">
                         <div class="footer-link mt-40">
                             <div class="footer-title pb-25">
                                 <h6>{% trans 'Sitemap' %}</h6>
@@ -524,7 +532,7 @@
                             </ul> -->
                         </div> <!-- footer link -->
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-12">
+                    <div class="col-lg-2 col-md-4 col-sm-12" >
                         <div class="footer-link support mt-40">
                             <div class="footer-title pb-25">
                                 <h6> {% trans 'Our Products' %}</h6>
@@ -545,17 +553,7 @@
                             <div class="footer-title pb-25">
                                 <h6> {% trans 'Support' %}</h6>
                             </div>
-                            <ul>
-                               
-                                <li>
-                                    <div class="icon">
-                                        <i class="fa fa-envelope-o"></i>
-                                    </div>
-                                    <div class="cont">
-                                        <p>info@agartha.academy</p>
-                                    </div>
-                                </li>
-                            </ul>
+                            
                             <div class="footer-link">
                                 <ul>
                                 <li>
@@ -577,7 +575,7 @@
         <div class="footer-copyright pt-10 pb-25">
             <div class="container">
                 <div class="row">
-                    <div  class="col offset-lg-3">
+                    <div  class="col-12 offset-lg-3">
                         <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url 'home:terms' %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url 'home:privacy' %}">Privacy Policy</a></p>
                     </div>
               

@@ -1404,6 +1404,9 @@ form .loader {
   width: 100%;
   margin-bottom: 80px;
 }
+.nav-main-sub {
+    text-align: left;
+}
 
 .featured-posts .post .entry-header .entry-header-title {
   position: absolute;

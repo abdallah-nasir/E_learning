@@ -1,12 +1,1 @@
-change home all 
-change single-course  template
-change all views and decorators
-
-
-
-
-
-
-hr > (course,teacher,blog,event) except payment
-auto-confirm (every thing about payment payment)
-support (contact us)
+change complete,check video in blog and course html 
