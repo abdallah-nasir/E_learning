@@ -566,11 +566,12 @@ def edit_blog(request,slug):
             instance.status="pending"
             instance.save()
             time=cache.get(f"dashoard_blog_email_{request.user}")
-            if time != True:
-                body=f"blog edit from user {request.user.emil}"
-                subject="new blog"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+            if time and time == True:
+                pass
             else:
+                body=f"blog edit from user {request.user.email}"
+                subject="edit blog"
+                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 cache.set(f"dashoard_blog_email_{request.user}",True,60*60*3)
             messages.success(request,"Your Blog is Waiting for Admin Approve")
             return redirect(reverse("dashboard:blogs"))
@@ -672,11 +673,13 @@ def edit_course(request,slug):
                     pass
                 instance.save()
                 time=cache.get(f"dashoard_course_email_{request.user}")
-                if time != True:
-                    body=f"course edit from user {request.user.emil}"
-                    subject="new course"
-                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                if time and time == True:
+                    pass
                 else:
+                    print(time)
+                    body=f"course edit from user {request.user.email}"
+                    subject="edit course"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                     cache.set(f"dashoard_course_email_{request.user}",True,60*60*3)
                 messages.success(request,"Course Edited Successfully")
                 return redirect(reverse("dashboard:courses"))
@@ -1057,11 +1060,12 @@ def edit_event(request,id):
                 instance.get_similar_event()
                 instance.save() 
                 time=cache.get(f"dashoard_event_email_{request.user}")
-                if time != True:
-                    body=f"event edit from user {request.user.emil}"
+                if time and time == True:
+                    pass
+                else:
+                    body=f"event edit from user {request.user.email}"
                     subject="event edit"
                     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                else:
                     cache.set(f"dashoard_event_email_{request.user}",True,60*60*3)
                 messages.success(request,"Event updated successfully")
                 return redirect("dashboard:events")
