@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load hosts %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+
+    <!--====== PAGE BANNER PART START ======-->
+
+    <section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-3.jpg' %})">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-banner-cont">
+                        <h2>{{event.name.title}}</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'home:events' %}">{% trans 'Events' %}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:event' event.slug %}">{{event.name.title}}</a></li>
+                            </ol>
+                        </nav>
+                    </div> <!-- page banner cont -->
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+
+    <!--====== PAGE BANNER PART ENDS ======-->
+
+    <!--====== EVENTS PART START ======-->
+
+    <section id="event-singel" class="pt-120 pb-120 gray-bg">
+        <div class="container">
+            <div class="events-area">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="events-left">
+                            <h3>{{event.name.title}}</h3>
+                            <a href="#"><span><i class="fa fa-calendar"></i> {{event.date|date:"d M Y"}}</span></a>
+                            <a href="#"><span><i class="fa fa-clock-o"></i>{{event.start_time|date:"h a"}} - {{event.end_time|date:"h a"}}</span></a>
+                            <a href="#"><span><i class="fa fa-map-marker"></i> {{event.place}}</span></a>
+                            <img src="{{event.image}}" width="100%" alt="Event">
+                            <p>{{event.get_details.details}}</p>
+                        </div> <!-- events left -->
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="events-right">
+                            <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image}}); max-height:7rem;">
+                                <div data-countdown="{{event.date|date:'Y/m/d'}}"></div>
+                                <div class="events-coundwon-btn pt-30">
+                                    <a href="#" class="main-btn">{% trans 'Book Your Seat' %}</a>
+                                </div>
+                            </div>
+                             <!-- events countdown -->
+                            <div class="events-address mt-30">
+                                <ul>
+                                    <li>
+                                        <div class="singel-address">
+                                            <div class="icon">
+                                                <i class="fa fa-clock-o"></i>
+                                            </div>
+                                            <div class="cont">
+                                                <h6>{% trans 'Start Time' %}</h6>
+                                                <span>{{event.start_time|date:"h a"}}</span>
+                                            </div>
+                                        </div> <!-- singel address -->
+                                    </li>
+                                    <li>
+                                        <div class="singel-address">
+                                            <div class="icon">
+                                                <i class="fa fa-bell-slash"></i>
+                                            </div>
+                                            <div class="cont">
+                                                <h6>{% trans 'Finish Time' %}</h6>
+                                                <span>{{event.end_time|date:"h a"}}</span>
+                                            </div>
+                                        </div> <!-- singel address -->
+                                    </li>
+                                    <li>
+                                        <div class="singel-address">
+                                            <div class="icon">
+                                                <i class="fa fa-map"></i>
+                                            </div>
+                                            <div class="cont">
+                                                <h6>{% trans 'Address' %}</h6>
+                                                <span>{{event.place}}</span>
+                                            </div>
+                                        </div> <!-- singel address -->
+                                    </li>
+                                    <li>
+                                        {% if event.status == "start" and request.user in event.students.all %}
+                                     
+                                        <div class="singel-address">
+                                            <div class="icon">
+                                                <i class="fa fa-map"></i>
+                                            </div>
+                                            <div class="cont">
+                                                <h6>{% trans 'Zoom Link' %}</h6>
+                                                <span><a href="{{event.get_details.zoom}}" target="__">{% trans 'Click The Link' %}</a></span>
+                                            </div>
+                                        </div> <!-- singel address -->
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                               
+
+                            </div> <!-- events address -->
+                        </div> <!-- events right -->
+                    </div>
+                </div> <!-- row -->
+            </div> <!-- events-area -->
+        </div> <!-- container -->
+    </section>
+
+    <!--====== EVENTS PART ENDS ======-->
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDl1Qm4mijtUtNxatNRNBUChoiw0agcm8E&callback=initMap&v=weekly"
+    async
+  ></script>
+
+<script type="text/javascript">
+// In this example, we center the map, and add a marker, using a LatLng object
+// literal instead of a google.maps.LatLng object. LatLng object literals are
+// a convenient way to add a LatLng coordinate and, in most cases, can be used
+// in place of a google.maps.LatLng object.
+let map;
+
+function initMap() {
+  const mapOptions = {
+    zoom: 8,
+    center: { lat:26.208207485755935,lng:32.06606741076944 },
+  };
+  map = new google.maps.Map(document.getElementById("contact-map"), mapOptions);
+  const marker = new google.maps.Marker({
+    // The below line is equivalent to writing:
+    // position: new google.maps.LatLng(-34.397, 150.644)
+    position: { lat: 27.09569985550897, lng: 33.82203544278415 },
+    map: map,
+  });
+  // You can use a LatLng literal in place of a google.maps.LatLng object when
+  // creating the Marker object. Once the Marker object is instantiated, its
+  // position will be available as a google.maps.LatLng object. In this case,
+  // we retrieve the marker's position using the
+  // google.maps.LatLng.getPosition() method.
+  const infowindow = new google.maps.InfoWindow({
+    content: "<p>Marker Location:" + marker.getPosition() + "</p>",
+  });
+  google.maps.event.addListener(marker, "click", () => {
+    infowindow.open(map, marker);
+  });
+}
+  
+</script>
+{% endblock %}

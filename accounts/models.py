@@ -42,7 +42,7 @@ GENDER=(
 )   
 class User(AbstractUser):
     account_type=models.CharField(choices=ACCOUNT_TYPE,max_length=20,default="student")
-    phone=PhoneNumberField(unique=True)
+    phone=PhoneNumberField()
     account_image=models.ImageField(blank=True,null=True,default=f"{default_image}")
     my_data=models.TextField(blank=True,null=True)
     gender=models.CharField(max_length=20,choices=GENDER,default="male")

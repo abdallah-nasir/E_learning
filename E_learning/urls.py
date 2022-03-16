@@ -25,7 +25,7 @@ import os
 # import debug_toolbar
 # from allauth.urls
 
-
+ 
 # urlpatterns = [
 # ]
 urlpatterns = i18n_patterns(
@@ -41,6 +41,8 @@ urlpatterns = i18n_patterns(
     # url(r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:], protected_serve, {'document_root': settings.MEDIA_ROOT}),
     path('blogs/', include('Blogs.urls',namespace="blogs")),  
     path('consultant/', include('Consultant.urls',namespace="consultant")),  
+    path('library/', include('library.urls',namespace="library")),  
+
     path('dashboard/', include('Dashboard.urls',namespace="dashboard")),  
     path("language/",views.change_language,name="language"), 
     # path('__debug__/', include(debug_toolbar.urls)),

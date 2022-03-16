@@ -1,1 +1,9 @@
-change complete,check video in blog and course html 
+Library     (option free or paid) (should be subscriber user)
+    1-movies (videos)   AGARTHA
+    2-music             AGARTHA
+    3-audio book           
+    4-E-book (document)
+ artist access have access to upload
+
+ change preload time to 100
+ add recent artist

@@ -72,7 +72,6 @@ def home(request):
             if i.user not in teacher_list.keys(): 
                 teacher_list[i.user]=i
         teachers=list(teacher_list.values())
-
     elif teachers == None: 
         teachers=Teacher_Time.objects.filter(available=True).order_by("-id")
         repeat_teacher=cache.set("teacher_time",list(teachers),60*30)

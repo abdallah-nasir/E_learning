@@ -1,6 +1,5 @@
 # Create your models here.
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.db.models.signals import pre_save,post_save
@@ -19,7 +18,7 @@ User=get_user_model()
 def slugify(str):
     str = str.replace(" ", "-")
     str = str.replace(",", "-")
-    str = str.replace("(", "-")
+    str = str.replace("(", "-")       
     str = str.replace(")", "")
     str = str.replace("؟", "")
     return str
@@ -27,11 +26,26 @@ import string,random
 
 def random_string_generator(size = 5, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+DOMAIN=(
+    (1,"agartha"),
+    (2,"kemet"),
+)
 class Category(models.Model):
     name=models.CharField(max_length=100)
+    domain_type=models.IntegerField(choices=DOMAIN,default=1)
 
+    slug=models.SlugField(unique=True,blank=True,max_length=100)
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+            if Category.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+        super(Category, self).save()
+
 class Blog_Comment(models.Model):
     blog=models.ForeignKey("Blog",related_name="blog_comment",on_delete=models.CASCADE)
     comment=models.TextField()
@@ -80,7 +94,7 @@ BLOG_STATUS=(
     ("approved","approved"),
     ("declined","declined")
 )
- 
+
 class Blog(models.Model):
     name=models.CharField(max_length=100)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -89,6 +103,7 @@ class Blog(models.Model):
     image=models.ManyToManyField(Blog_Images,related_name="blog_comment",blank=True)
     video=models.FileField(blank=True,null=True,upload_to=upload_blog_videos,max_length=400)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
+    domain_type=models.IntegerField(choices=DOMAIN,default=1)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     paid=models.BooleanField(default=False)
@@ -106,10 +121,10 @@ class Blog(models.Model):
             self.slug = slugify(self.name)
             if Blog.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
-                self.slug =f"{slug}-{self.user}"
+                self.slug =f"{slug}-{self.user.username}"
                 if Blog.objects.filter(slug=self.slug).exists():
-                    self.slug =f"{slug}-{self.user}-{random_string_generator()}"
-            else: 
+                    self.slug=f"{slug}-{self.user}-{random_string_generator()}"
+            else:
                 self.slug = slugify(self.name)          
         super(Blog, self).save()
         
@@ -140,7 +155,10 @@ class Blog(models.Model):
         return link
 
     def same_category(self):
-        blogs=Blog.objects.filter(status="approved",category=self.category).order_by("-created_at")[:5]
+        blogs=Blog.objects.filter(status="approved",category=self.category,domain_type=1).order_by("-created_at")[:5]
+        return blogs
+    def same_kemet_category(self):
+        blogs=Blog.objects.filter(status="approved",category=self.category,domain_type=2).order_by("-created_at")[:5]
         return blogs
     def get_comments(self):
         comments=self.comments.count()
@@ -177,12 +195,24 @@ class Blog(models.Model):
 
 def get_blog_data():
     teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
-    cat=Category.objects.order_by("-id")[:6]
-    slider_blogs=Blog.objects.filter(status="approved").order_by("-created_at")[:5]
-    recent_blog=Blog.objects.filter(status="approved").order_by("-created_at")[:6]
-    blogs=Blog.objects.filter(status="approved").order_by("-id")
-    context={"recent_teachers":teacher,"recent_categories":cat,"slider":slider_blogs,"recent_blogs":recent_blog,"blogs":blogs}
+    cat=Category.objects.filter(domain_type=1).order_by("-id")[:6]
+    blogs_query=Blog.objects.filter(status="approved",domain_type=1)
+    blogs=blogs_query.order_by("-id")
+    slider_blogs=blogs_query.order_by("-created_at")[:5]
+    recent_blog=blogs_query.order_by("-created_at")[:6]
+    context={"recent_teachers":list(teacher),"recent_categories":list(cat),"slider":list(slider_blogs),"recent_blogs":list(recent_blog),"blogs":list(blogs)}
     return context
+
+def get_kemet_blog_data():
+    teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
+    cat=Category.objects.filter(domain_type=2).order_by("-id")[:6]
+    blogs_query=Blog.objects.filter(status="approved",domain_type=2)
+    blogs=blogs_query.order_by("-id")
+    slider_blogs=blogs_query.order_by("-created_at")[:5]
+    recent_blog=blogs_query.order_by("-created_at")[:6]
+    context={"recent_teachers":list(teacher),"recent_categories":list(cat),"slider":list(slider_blogs),"recent_blogs":list(recent_blog),"blogs":list(blogs)}
+    return context
+
 def recent_teachers():
     teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
     return teacher 
@@ -192,11 +222,16 @@ def recent_categories():
 def blog_slider():
     blogs=Blog.objects.filter(status="approved").order_by("-created_at")[:5]
     return blogs
+def blog_kemet_slider():
+    blogs=Blog.objects.filter(status="approved",domain_type=2).order_by("-created_at")[:5]
+    return blogs
    
 def recent_blogs():
     blog=Blog.objects.filter(status="approved").order_by("-created_at")[:6]
     return blog
-
+def recent_kemet_blogs():
+    blog=Blog.objects.filter(status="approved",domain_type=2).order_by("-created_at")[:6]
+    return blog
 # class Blog_Views(models.Model):
 #     blog=models.OneToOneField(Blog,on_delete=models.CASCADE,related_name="blog_viewers")
 #     viewers=models.ManyToManyField(User,blank=True)

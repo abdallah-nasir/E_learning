@@ -62,13 +62,11 @@ def send_mail_approve(request,user,body,subject):
 @login_required(login_url="accounts:login")
 def home(request):
     blog_data=cache.get("blog_data")
-
     if blog_data == None:
         data=get_blog_data()
-        cache.set("blog_data",data,60*15)
+        cache.set("blog_data",data,60*60*24)
     else:
-        data=cache.get("blog_data")
-        
+        data=cache.get("blog_data")     
     blogs=data["blogs"]
     paginator = Paginator(blogs, 9) # Show 25 contacts per page.
     page_number = request.GET.get('page')
@@ -79,6 +77,22 @@ def home(request):
         return render(request,"blogs_2.html",context)
     except:
         return render(request,"blogs.html",context)
+    
+@login_required(login_url="accounts:login")
+def category(request,slug):
+    category=get_object_or_404(Category,slug=slug)
+    blogs=Blog.objects.filter(category=category,domain_type=1,status="approved").select_related("category").order_by("-id")
+    blog_data=cache.get("blog_data")
+    if blog_data == None:
+        data=get_blog_data()
+        cache.set("blog_data",data,60*15)
+    else:
+        data=cache.get("blog_data")
+    paginator = Paginator(blogs, 9) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request,"blogs_category.html",{'blogs':blogs,"data":data})
+
 
 @login_required(login_url="accounts:login")
 @check_user_is_member
@@ -94,7 +108,7 @@ def single_blog(request,slug):
 @login_required(login_url="accounts:login")
 def blog_search(request):
     qs=request.GET.get("search")
-    blog=Blog.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(category__name__icontains=qs,status="approved") |Q(tags__name__icontains=qs,status="approved")).distinct() 
+    blog=Blog.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(category__name__icontains=qs,status="approved") |Q(tags__name__icontains=qs,status="approved")).exclude(domain_type=2).distinct() 
     if len(blog) == 0:
         qs=None
         page_obj=[]
@@ -148,7 +162,6 @@ import datetime
 @login_required(login_url="accounts:login")
 def pricing(request):
     prices=Prices.objects.all()
- 
     return render(request,"pricing.html",{'prices':prices})
 
 @login_required(login_url="accounts:login")
@@ -293,8 +306,8 @@ def paypal_capture(request,order_id,price_id):
 
 @login_required(login_url="accounts:login")
 def blogs_type(request,type):
-    blogs=Blog.objects.filter(status="approved",blog_type=type)
-    paginator = Paginator(blogs, 1) # Show 25 contacts per page.
+    blogs=Blog.objects.filter(status="approved",blog_type=type,domain_type=1)
+    paginator = Paginator(blogs, 1) # Show 25 contacts per pag.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context={"blogs":page_obj,"slider":blog_slider(),"type":type,

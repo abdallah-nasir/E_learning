@@ -1,5 +1,6 @@
 {% extends 'dashboard_base.html' %}
 
+{% load hosts %}
 
 
 {% block content %}
@@ -42,7 +43,7 @@
                                    <tbody>
                                        {% for i in courses %}
                                     <tr>
-                                        <td>{{i.name|truncatewords:10}}</td>
+                                        <td><a href="{% url 'home:course' i.slug %}">{{i.name|truncatewords:10}}</a></td>
                                         <td>{{i.Instructor.username}}</td>
                                         <td>{{i.branch.name|truncatewords:10}}</td>
                                         <td>{{i.price}}</td>

@@ -49,6 +49,7 @@ path("events/",views.events,name="events"),
 path("demo/event/<int:id>/",views.demo_event,name="demo_event"),
 path("add/events/",views.add_event,name="add_event"),
 path("edit/events/<str:id>/",views.edit_event,name="edit_event"),
+
 path("delete/events/<str:id>/",views.delete_event,name="delete_event"),
 path("start/events/<str:slug>/",views.start_event,name="start_event"),
 path("finish/events/<str:id>/",views.finish_event,name="finish_event"),
@@ -131,6 +132,20 @@ path("refunds/approve/<int:id>/",views.approve_refund,name="approve_refund"),
 path("refunds/add/<int:id>/",views.add_refund,name="add_refund"),
 path("refunds/consultant/<int:id>/",views.consultant_refund,name="consultant_refund"),
 path("refunds/course/<str:slug>/<int:id>/",views.course_refund,name="course_refund"),
+
+
+####### library
+path("library/",views.library,name="library"),
+# path("library/e-book/add/",views.add_e_book,name="add_e_book"), 
+path("library/movies/add/",views.add_movies,name="add_movies"), 
+
+####### ads   
+path("ads/<str:slug>/",views.ads,name="ads"),
+path("search-ads/",views.search_ads,name="search_ads"), 
+path("library/add/category/",views.add_library_category,name="add_library_category"), 
+path("ads-ada/<int:id>/<str:domain>/",views.add_ads,name="add_ads"), 
+path("remove-ads/<int:id>/",views.remove_ads,name="remove_ads"), 
+
 
 #############
 path("test/",views.test,name="test"),

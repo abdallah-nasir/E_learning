@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
-"""
+""" 
 import os
 from dotenv import load_dotenv, find_dotenv
 
@@ -41,9 +41,9 @@ if DEBUG == False:
     CSRF_COOKIE_SECURE = True 
     SECURE_REFERRER_POLICY = 'same-origin'
     SECURE_HSTS_INCLUDE_SUBDOMAINS =True
-ALLOWED_HOSTS = ["127.0.0.1","www.agartha.academy","agartha.academy"]
-
-
+# ALLOWED_HOSTS = ["127.0.0.1","www.agartha.academy","agartha.academy"]
+ALLOWED_HOSTS = ["localhost",'kemet.localhost',"127.0.0.1","kemet.127.0.0.1"]
+  
 # Application definition
 
 INSTALLED_APPS = [
@@ -62,7 +62,9 @@ INSTALLED_APPS = [
     "Consultant",
     "Dashboard",
     "Frontend",
+    "library",
     #my packegs
+    "django_hosts",
     'rosetta',
     'embed_video',
     "taggit",
@@ -86,7 +88,7 @@ INSTALLED_APPS = [
 ] 
 
 MIDDLEWARE = [
-    
+    "django_hosts.middleware.HostsRequestMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -95,15 +97,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-   
     'accounts.middleware.OneSessionPerUserMiddleware',
     'crum.CurrentRequestUserMiddleware',
- 
+    "django_hosts.middleware.HostsResponseMiddleware"
        ]
 
-
-
 ROOT_URLCONF = 'E_learning.urls'
+ROOT_HOSTCONF = 'E_learning.hosts'
+DEFAULT_HOST ="www"  
 # APPEND_SLASH=False 
 TEMPLATES = [
     {

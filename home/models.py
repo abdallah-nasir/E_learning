@@ -20,7 +20,7 @@ import os
 import time
 import datetime
 import json
-from Dashboard.models import Rejects
+from Dashboard.models import Rejects,Ads
 from django.contrib.auth import get_user_model
 User=get_user_model()
 Quiz= Quiz.models.Quiz()
@@ -29,24 +29,41 @@ from django.template.loader import render_to_string
 def slugify(str):
     str = str.replace(" ", "-")
     str = str.replace(",", "-")
-    str = str.replace("(", "-")
+    str = str.replace("(", "-")       
     str = str.replace(")", "")
     str = str.replace("؟", "")
     return str
-def get_home_data():
+
+def get_home_data():  
     events=Events.objects.filter(status="approved").order_by("-date")[:5]
-    courses=Course.objects.filter(status="approved").order_by("-id")[0:5]
+    courses=Course.objects.filter(status="approved").exclude(domain_type=2).order_by("-id")[0:5]
     teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:4]
-    categories=Category.objects.order_by("?")[:6]
+    categories=Category.objects.filter(domain_type=1).order_by("?")[:6]
     testimonial=Testimonials.objects.order_by("?")[:4]
-    blogs=blog_model.Blog.objects.filter(status="approved").order_by("-id")[:4]
-    context={"events":events,"courses":courses,"teachers":teachers,"blogs":blogs,"categories":categories,"testimonials":testimonial}
+    blogs=blog_model.Blog.objects.filter(status="approved").exclude(domain_type=2).order_by("-id")[:4]
+    ads=Ads.objects.filter(domain_type=1)
+    context={"events":list(events),"ads":list(ads),"courses":list(courses),"teachers":list(teachers),"blogs":list(blogs),"categories":list(categories),"testimonials":list(testimonial)}
     return context
+
+def get_home_data_subdomain():
+    events=Events.objects.filter(status="approved").order_by("-date")[:5]
+    courses=Course.objects.filter(status="approved",domain_type=2).order_by("-id")[0:5]
+    teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:4]
+    categories=Category.objects.filter(domain_type=2).order_by("?")[:6]
+    testimonial=Testimonials.objects.order_by("?")[:4]
+    blogs=blog_model.Blog.objects.filter(status="approved",domain_type=2).order_by("-id")[:4]
+    ads=Ads.objects.filter(domain_type=2)
+    context={"events":list(events),"ads":list(ads),"courses":list(courses),"teachers":list(teachers),"blogs":list(blogs),"categories":list(categories),"testimonials":list(testimonial)}
+    return context
+DOMAIN=(
+    (1,"agartha"),
+    (2,"kemet"),
+)
 class Category(models.Model):
     name=models.CharField(max_length=100)
     slug=models.SlugField(unique=True,blank=True,null=True)
     image=models.ImageField(null=True)
-
+    domain_type=models.IntegerField(choices=DOMAIN,default=1)
     def __str__(self):
         return self.name  
     def save(self, *args, **kwargs):
@@ -59,7 +76,7 @@ class Category(models.Model):
                 self.slug = slugify(self.name)          
         super(Category, self).save()
     def get_courses(self):
-        courses=Course.objects.filter(branch__category=self).count()
+        courses=Course.objects.filter(branch__category=self).exclude(domain_type=2).count()
         return courses
 
 
@@ -164,11 +181,13 @@ COURSE_STATUS=(
     ("approved","approved"),
     ("declined","declined")
 )   
+
 class Course(models.Model):
     name=models.CharField(max_length=150)
     videos=models.ManyToManyField(Videos)
     Instructor=models.ForeignKey(User,related_name="instractor",on_delete=models.CASCADE)
     image=models.ImageField()
+    domain_type=models.IntegerField(choices=DOMAIN,default=1)
     students=models.ManyToManyField(User,blank=True)
     duration=models.FloatField(default=0)
     branch=models.ForeignKey(Branch,null=True,on_delete=models.SET_NULL)
@@ -197,7 +216,7 @@ class Course(models.Model):
                 self.slug = slugify(self.name)          
         super(Course, self).save()
     def same(self):
-        courses=Course.objects.filter(branch=self.branch,status="approved").exclude(id=self.id).order_by("-id")[:4]
+        courses=Course.objects.filter(branch=self.branch,status="approved").exclude(id=self.id,domain_type=2).order_by("-id")[:4]
         return courses
     def get_duration_model(self):
         return time.strftime('%H:%M:%S',  time.gmtime(self.duration))
@@ -264,6 +283,13 @@ class Course(models.Model):
         else:
             return reverse("home:course",kwargs={"slug":self.slug})
 
+    def get_domain(self):
+        for i in DOMAIN:
+            while self.domain_type == i[0]:
+                domain=i[1]
+                print(domain)
+                break
+        return domain
 def random_string_generator(size = 7, chars = string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -320,7 +346,7 @@ class Events(models.Model):
         super(Events, self).save()
         
     def get_students_events(self):
-        course=Course.objects.filter(branch=self.category,status="approved",Instructor=self.user)
+        course=Course.objects.filter(branch=self.category,status="approved",Instructor=self.user).exclude(domain_type=2)
         list=[]
         for i in course:
             for b in i.students.all():

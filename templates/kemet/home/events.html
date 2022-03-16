@@ -1,0 +1,86 @@
+{% extends 'kemet/home/base.html' %}
+{% load hosts %}
+
+{% load i18n %}
+{% load static  %}
+{% block content %}
+    <!--====== PAGE BANNER PART START ======-->
+    
+    <section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-3.jpg' %})">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-banner-cont">
+                        <h2>{% trans 'Events' %}</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:events' %}">{% trans 'Events' %}</a></li>
+                            </ol>
+                        </nav>
+                    </div>  <!-- page banner cont -->
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== PAGE BANNER PART ENDS ======-->
+   
+    <!--====== EVENTS PART START ======-->
+    
+    <section id="event-page" class="pt-90 pb-120 gray-bg">
+        <div class="container">
+           <div class="row">
+               {% for i in events %}
+               <div class="col-lg-6">
+                   <div class="singel-event-list mt-30">
+                       <div class="event-thum">
+                           <img src="{{i.image}}" alt="Event">
+                       </div>
+                       <div class="event-cont">
+                           <span><i class="fa fa-calendar"></i> {{i.date|date:"d M Y"}}</span>
+                            <a href="{% url 'home:event' i.slug %}"><h4>{{i.name|truncatechars_html:70}}</h4></a>
+                            <span><i class="fa fa-clock-o"></i> {{i.start_time|date:"h a"}} - {{i.end_time|date:"h a"}}</span>
+                            <span><i class="fa fa-map-marker"></i> {{i.place.title}}</span>
+                            <p>{{i.get_details.details|truncatechars_html:70}}</p>
+                       </div>
+                   </div>
+               </div>
+               {% endfor %}
+           </div> <!-- row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <nav class="courses-pagination mt-50">
+                        {% if events.has_other_pages  %}
+                        <ul class="pagination justify-content-center">
+                           {% if teachers.has_previous  %}
+                            <li class="page-item">
+                                <a href="?page={{ events.previous_page_number }}" aria-label="Previous">
+                                    <i class="fa fa-angle-left"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% for i in events.paginator.page_range %}
+                            {% if events.number == i %}
+                            <li class="page-item"><a class="active" >{{i}}</a></li>
+                          {% else %}
+                            <li class="page-item"><a href="?page={{ i }}">{{i}}</a></li>
+                                        {% endif %}
+                                        {% endfor %}
+                            {% if events.has_next %}
+                            <li class="page-item">
+                                <a href="?page={{ events.next_page_number }}" aria-label="Next">
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    </nav>  <!-- courses pagination -->
+                </div>
+            </div>  <!-- row -->
+        </div> <!-- container -->
+    </section>
+    <!--====== EVENTS PART ENDS ======-->
+ 
+   {% endblock %}

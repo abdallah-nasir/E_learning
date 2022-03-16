@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load hosts %}
+
 {% load i18n %}
 {% load static  %}
 {% block content %}
@@ -14,8 +16,8 @@
                         <h2>{% trans 'Our Courses' %}</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:courses' %}">{% trans 'Courses' %}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url  'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url  'home:courses' %}">{% trans 'Courses' %}</a></li>
                             </ol>
                         </nav>
                     </div>  <!-- page banner cont -->
@@ -44,7 +46,7 @@
                         </ul> <!-- nav -->
                         
                         <div class="courses-search float-right">
-                            <form method="GET" action="{% url 'home:course_search' %}">
+                            <form method="GET" action="{% url  'home:course_search' %}">
                                 <input type="text" name="qs" placeholder="Search">
                                 <button type="button"><i class="fa fa-search"></i></button>
                             </form>
@@ -80,16 +82,16 @@
                                     <span>({{i.reviews.count}} {% trans 'Reviews' %})</span>
                                     <br>
                                   
-                                    <a href="{% url 'home:course' slug=i.slug %}"><h4>{{i.name.title|truncatewords:10}}</h4></a>
+                                    <a href="{% url  'home:course' slug=i.slug %}"><h4>{{i.name.title|truncatewords:10}}</h4></a>
                                     <div id="collapse-{{i.id}}">
 
                                     </div>
                                     <div class="course-teacher">
                                         <div class="thum">
-                                            <a href="{% url 'home:teacher' i.Instructor.slug %}"><img src="{{i.Instructor.image}}" alt="teacher_{{i.Instructor.username}}"></a>
+                                            <a href="{% url  'home:teacher' i.Instructor.slug %}"><img src="{{i.Instructor.image}}" alt="teacher_{{i.Instructor.username}}"></a>
                                         </div>
                                         <div class="name">
-                                            <a href="{% url 'home:teacher' i.Instructor.slug %}"><h6>{{i.Instructor.get_full_name.title}}</h6></a>
+                                            <a href="{% url  'home:teacher' i.Instructor.slug %}"><h6>{{i.Instructor.get_full_name.title}}</h6></a>
                                         </div>
                                         <div class="admin">
                                             <ul>
@@ -140,16 +142,16 @@
                                             </ul>
                                             <span>({{i.reviews.count}} {% trans 'Reviews' %})</span>
                                             <br>
-                                            <a href="{% url 'home:course' i.slug %}"><h4>{{i.name.title}}</h4></a>
+                                            <a href="{% url  'home:course' i.slug %}"><h4>{{i.name.title}}</h4></a>
                                             <div id="collapse-2-{{i.id}}">
 
                                             </div>
                                             <div class="course-teacher">
                                                 <div class="thum">
-                                                    <a href="{% url 'home:teacher' i.Instructor.slug %}"><img src="{{i.Instructor.image}}" alt="teacher"></a>
+                                                    <a href="{% url  'home:teacher' i.Instructor.slug %}"><img src="{{i.Instructor.image}}" alt="teacher"></a>
                                                 </div>
                                                 <div class="name">
-                                                    <a href="{% url 'home:teacher' i.Instructor.slug %}"><h6>{{i.Instructor.username.title}}</h6></a>
+                                                    <a href="{% url  'home:teacher' i.Instructor.slug %}"><h6>{{i.Instructor.username.title}}</h6></a>
                                                 </div>
                                                 <div class="admin">
                                                     <ul>

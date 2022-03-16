@@ -86,7 +86,7 @@ class FailedJsonResponse(JsonResponse):
 
 def global_search(request):
     qs=request.GET.get("qs")
-    courses=Course.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(branch__name__icontains=qs,status="approved") | Q(branch__category__name__icontains=qs,status="approved") | Q(Instructor__username=qs,status="approved")).distinct() 
+    courses=Course.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(branch__name__icontains=qs,status="approved") | Q(branch__category__name__icontains=qs,status="approved") | Q(Instructor__username=qs,status="approved")).exclude(domain_type=2).distinct() 
     if len(courses) == 0:
         page_obj=[]
         qs=None
@@ -99,7 +99,7 @@ def global_search(request):
 
 def course_search(request):
     qs=request.GET.get("qs")
-    course=Course.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(branch__name__icontains=qs,status="approved") | Q(branch__category__name__icontains=qs,status="approved")).distinct() 
+    course=Course.objects.filter(Q(name__icontains=qs,status="approved") | Q(details__icontains=qs,status="approved") | Q(branch__name__icontains=qs,status="approved") | Q(branch__category__name__icontains=qs,status="approved")).exclude(domain_type=2).distinct() 
 
     if len(course) == 0:
         page_obj=[]
@@ -114,9 +114,15 @@ def home(request):
     data=cache.get("data")
     if data ==None:
         data=get_home_data()
-        cache.set("data",data,60*15)
+        print(data)
+        for i in data["courses"]:
+            print(i.status)
+        cache.set("data",data,60*60*24*3)  
     else:
         data=cache.get("data")
+        print(data)
+        for i in data["courses"]:
+            print(i.status)
     # data=get_home_data()
     # cache.set("data",data,60*15)
     context={"data":data}
@@ -136,7 +142,7 @@ def subscribe(request):
             messages.success(request,"you have subscribed to our daily news")
     return redirect(reverse("home:home"))
 def courses(request):
-    course=Course.objects.filter(status="approved")
+    course=Course.objects.filter(status="approved").exclude(domain_type=2)
     paginator = Paginator(course, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -145,7 +151,7 @@ def courses(request):
 
 def course_category(request,slug):
     category=get_object_or_404(Category,slug=slug)
-    courses=Course.objects.filter(branch__category=category,status="approved").select_related("branch").order_by("-id")
+    courses=Course.objects.filter(branch__category=category,status="approved").exclude(domain_type=2).select_related("branch").order_by("-id")
     paginator = Paginator(courses, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -154,7 +160,7 @@ def course_category(request,slug):
 
 def branch(request,slug):
     branch=get_object_or_404(Branch,slug=slug)
-    courses=Course.objects.filter(branch=branch,status="approved").order_by("-id")
+    courses=Course.objects.filter(branch=branch,status="approved").exclude(domain_type=2).order_by("-id")
     paginator = Paginator(courses, 8) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -294,19 +300,6 @@ def about(request):
 
 
    
-def category(request,slug):
-    blogs=Blog.objects.filter(category__slug=slug)
-    categories=Category.objects.all()
-    if len(blogs) == 0:
-        category_name=[]
-        page_obj=None
-    else:
-        category_name=blogs.first().category.name
-        paginator = Paginator(blogs, 8) # Show 25 contacts per page.
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-    context={"blogs":page_obj,"categories":categories,"category_name":category_name,"slug":slug,"popular":popular_blogs()}
-    return render(request,"category.html",context)
 
     
 

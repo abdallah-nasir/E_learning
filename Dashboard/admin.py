@@ -5,4 +5,5 @@ from .models import *
 admin.site.register(Rejects)
 admin.site.register(Refunds)
 admin.site.register(AddStudentCourse)
+admin.site.register(Ads)
 

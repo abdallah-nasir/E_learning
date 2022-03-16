@@ -1,5 +1,6 @@
 {% extends 'account_base.html' %}
 {% load i18n %}
+{% load hosts %}
 
 
 
@@ -44,7 +45,7 @@
                                         <td>{{i.user.username}}</td>
                                         <td>{{i.method}}</td>
                                         <td>{{i.transaction_number}}</td>
-                                        <td>{{i.course.name|truncatewords:20}}</td>
+                                        <td><a href="{% url 'home:course' i.course.slug %}">{{i.course.name|truncatewords:20}}</a></td>
                                         {% if i.payment_image %}
                                         <td><a target="__blank" href="{{i.payment_image}}">{% trans 'Image Link' %}</a></td>
                                             {% else %}

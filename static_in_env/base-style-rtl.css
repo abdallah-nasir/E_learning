@@ -8,7 +8,8 @@ body {
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align:right;
+    text-align: right;
+    overflow-x: hidden;
 }
 
 img {
@@ -82,6 +83,7 @@ ul, ol {
     margin: 0px;
     padding: 0px;
     list-style-type: none;
+    direction: rtl;
 }
 
 p {
@@ -1535,6 +1537,7 @@ p {
 
     .singel-course .thum .image {
         overflow: hidden;
+        text-align:center;
     }
 
         .singel-course .thum .image img {
@@ -1542,6 +1545,7 @@ p {
             -webkit-transition: all 0.4s linear;
             transition: all 0.4s linear;
             height:16rem;
+            width:100%;
         }
 
     .singel-course:hover .thum .image img {
@@ -1820,7 +1824,8 @@ p {
         .singel-teachers .image img {
             -webkit-transition: all 0.4s linear;
             transition: all 0.4s linear;
-            width: 100%;
+            /*width: 100%;*/
+            height:18rem;
         }
 
     .singel-teachers:hover .image img {
@@ -2243,7 +2248,7 @@ p {
 
 .footer-address ul li {
     position: relative;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
 }
 
     .footer-address ul li:last-child {
@@ -2427,7 +2432,7 @@ p {
         .singel-course-2 > .thum .image > img {
             border-radius: 5px;
             width: 100%;
-            height: 24rem;
+            height: 20rem;
         }
 
         .singel-course-2 > .thum .price {
@@ -4774,6 +4779,7 @@ p {
 
 .badge-notification {
     background-color: #ffc600 !important;
+    left:129px;
 }
 
 .bg-light {
@@ -4848,6 +4854,110 @@ p {
     padding-right: 30px;
     padding-left: 30px;
 }
+
+/*Start FAQ page*/
+
+.dir-rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+.faq-nav {
+    flex-direction: column;
+    margin: 0 0 32px;
+    border-radius: 2px;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 5px rgba(85, 85, 85, 0.15);
+}
+
+    .faq-nav .nav-link {
+        position: relative;
+        display: block;
+        margin: 0;
+        padding: 13px 16px;
+        background-color: #fff;
+        border: 0;
+        border-bottom: 1px solid #ddd;
+        border-radius: 0;
+        color: #616161;
+        transition: background-color .2s ease;
+    }
+
+        .faq-nav .nav-link:hover {
+            background-color: #f6f6f6;
+        }
+
+        .faq-nav .nav-link.active {
+            background-color: #f6f6f6;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.87);
+        }
+
+        .faq-nav .nav-link:last-of-type {
+            border-bottom-right-radius: 2px;
+            border-bottom-left-radius: 2px;
+            border-bottom: 0;
+        }
+
+        .faq-nav .nav-link i.mdi {
+            margin-left: 5px;
+            font-size: 18px;
+            position: relative;
+        }
+
+.tab-content {
+    box-shadow: 0 1px 5px rgba(85, 85, 85, 0.15);
+}
+
+    .tab-content .card {
+        border-radius: 0;
+    }
+
+    .tab-content .card-header {
+        padding: 15px 16px;
+        border-radius: 0;
+        background-color: #f6f6f6;
+    }
+
+        .tab-content .card-header h5 {
+            margin: 0;
+        }
+
+            .tab-content .card-header h5 button {
+                display: block;
+                width: 100%;
+                padding: 0;
+                border: 0;
+                font-weight: 700;
+                color: rgba(0, 0, 0, 0.87);
+                text-align: right;
+                white-space: normal;
+            }
+
+                .tab-content .card-header h5 button:hover, .tab-content .card-header h5 button:focus, .tab-content .card-header h5 button:active, .tab-content .card-header h5 button:hover:active {
+                    text-decoration: none;
+                }
+
+    .tab-content .card-body p {
+        color: #616161;
+    }
+
+        .tab-content .card-body p:last-of-type {
+            margin: 0;
+        }
+
+.accordion > .card:not(:first-child) {
+    border-top: 0;
+}
+
+.collapse.show .card-body {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.faq-icons{
+    font-size: 15px !important;
+    }
+
+/*end FAQ page*/
 
 @media only screen and (max-width: 1199px) {
     .container-fluid {

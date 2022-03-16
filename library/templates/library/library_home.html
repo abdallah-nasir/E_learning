@@ -1,0 +1,285 @@
+{% load static  %}
+{% load hosts %}
+{% load i18n %}
+<!DOCTYPE html>
+<html class="no-js"> 
+    <head>
+        <meta charset="utf-8">
+        <title>{% trans 'Agartha Library' %} | {% trans 'Home Page' %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="{% static 'library/bootstrap/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'library/assets/css/owl.carousel.css' %}">  
+        <link rel="stylesheet" href="{% static 'library/assets/css/owl.theme.css' %}">
+        <link rel="stylesheet" href="{% static 'library/assets/css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'library/assets/css/responsive.css' %}">
+    </head>
+    <body>
+
+
+        <!-- End of nav bar -->
+
+        <div class="slider-area">
+            <div class="slider">
+                <div id="bg-slider" class="owl-carousel owl-theme">
+
+                    <div class="item"><img src="{% static 'library/assets/img/slide1/slider-image-2.jpg' %}" alt="The Last of us"></div>
+                    <div class="item"><img src="{% static 'library/assets/img/slide1/slider-image-1.jpg' %}" alt="GTA V"></div>
+
+                </div>
+            </div>
+            <div class="container slider-content">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12">
+                        <h2>{% trans 'Library Agartha contributes to the development of your consciousness' %}</h2>
+                        <p>{% trans 'Start where you are, all content has been carefully selected' %}</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Welcome area -->
+        <div class="Welcome-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 Welcome-entry  col-sm-12">
+                        <div class="col-md-5 col-md-offset-2 col-sm-6 col-xs-12">
+                            <div class="welcome_text wow fadeInLeft" data-wow-delay="0.3s" data-wow-offset="100">
+                                <div class="row">
+                                    <div class="col-md-10 col-md-offset-1 col-sm-12 text-center page-title">
+                                        <!-- /.feature title -->
+                                        <h2>{% trans 'Grow Awareness' %} </h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-6 col-xs-12">
+                            <div class="welcome_services wow fadeInRight" data-wow-delay="0.3s" data-wow-offset="100">
+                                <div class="row">
+                                    <div class="col-xs-6 m-padding">
+                                        <div class="welcome-estate">
+                                            <div class="welcome-icon">
+                                                <!--<i class="pe-7s-notebook pe-4x"></i>-->
+                                                <a href="{% url 'library:e_books' %}"> <img src="{% static 'library/assets/img/icon/ebooks.png' %}"></a>
+                                            </div>
+                                            <h3>{% trans 'E-Books' %}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 m-padding">
+                                        <div class="welcome-estate">
+                                            <div class="welcome-icon">
+                                                <!--<i class="pe-7s-headphones pe-4x"></i>-->
+                                                <a href="https://kemet.agartha.academy/audiobooks"> <img src="{% static 'library/assets/img/icon/AudioBooks.png' %}"></a>
+                                            </div>
+                                            <h3>{% trans 'Audio Books' %}</h3>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-xs-12 text-center">
+                                        <i class="welcome-circle"></i>
+                                    </div>
+
+                                    <div class="col-xs-6 m-padding">
+                                        <div class="welcome-estate">
+                                            <div class="welcome-icon">
+                                                <!--<i class="pe-7s-video pe-4x"></i>-->
+                                                <a href="https://kemet.agartha.academy/movies">  <img src="{% static 'library/assets/img/icon/film.png' %}"></a>
+                                            </div>
+                                            <h3>{% trans 'Documentaries' %}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 m-padding">
+                                        <div class="welcome-estate">
+                                            <div class="welcome-icon">
+                                                <!--<i class="pe-7s-music pe-4x"></i>-->
+                                                <a href="https://kemet.agartha.academy/music">   <img src="{% static 'library/assets/img/icon/music.png' %}"></a>
+                                            </div>
+                                            <h3>{% trans 'Best Music' %} </h3>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- property No. Pages -->
+        <div class="content-No. Pages recent-property" style="background-color: #FCFCFC; padding-bottom: 55px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1 col-sm-12 text-center page-title">
+                        <!-- /.feature title -->
+                        <h2>{% trans 'Recent E-books' %}</h2>
+                        <p>{% trans 'The most important e-books that have just arrived' %} </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="proerty-th">
+                        {% for i in data.e_books %}
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="{{i.get_data_e_book.images.first}}"><img src="{{i.get_data_e_book.first_image}}"></a>
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-1.html">{{i.name.title}}</a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 120 </span>
+                                    <span class="proerty-price pull-right">$ {{i.get_price}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- property No. Pages -->
+        <div class="content-No. Pages recent-property" style="background-color: #FCFCFC; padding-bottom: 55px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1 col-sm-12 text-center page-title">
+                        <!-- /.feature title -->
+                        <h2>{% trans 'Recent AudioBooks' %}</h2>
+                        <p>{% trans 'The most important AudioBooks that have just arrived' %} </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="proerty-th">
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="property-1.html"><img src="assets/img/demo/property-6.jpg"></a>
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-1.html">Super Book & E-Book </a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 120 </span>
+                                    <span class="proerty-price pull-right">$ 300</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="property-2.html"><img src="assets/img/demo/property-2.jpg"></a>
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-2.html">Super Book & E-Book </a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 250 </span>
+                                    <span class="proerty-price pull-right">$ 300</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="property-3.html"><img src="assets/img/demo/property-5.jpg"></a>
+
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-3.html">Super Book & E-Book </a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 250 </span>
+                                    <span class="proerty-price pull-right">$ 300</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="property-1.html"><img src="assets/img/demo/property-4.jpg"></a>
+
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-1.html">Super Book & E-Book </a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 250 </span>
+                                    <span class="proerty-price pull-right">$ 300</span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="property-3.html"><img src="assets/img/demo/property-5.jpg"></a>
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-3.html">Super Book & E-Book </a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 250 </span>
+                                    <span class="proerty-price pull-right">$ 300</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="property-2.html"><img src="assets/img/demo/property-3.jpg"></a>
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-2.html">Super Book & E-Book </a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 250 </span>
+                                    <span class="proerty-price pull-right">$ 300</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="property-1.html"><img src="assets/img/demo/property-6.jpg"></a>
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-1.html">Super Book & E-Book </a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 250 </span>
+                                    <span class="proerty-price pull-right">$ 300</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 p0">
+                            <div class="box-two proerty-item">
+                                <div class="item-thumb">
+                                    <a href="property-1.html"><img src="assets/img/demo/property-6.jpg"></a>
+                                </div>
+                                <div class="item-entry overflow">
+                                    <h5><a href="property-1.html">Super Book & E-Book </a></h5>
+                                    <div class="dot-hr"></div>
+                                    <span class="pull-left"><b>No. Pages :</b> 250 </span>
+                                    <span class="proerty-price pull-right">$ 300</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="{% static 'library/assets/js/jquery-1.10.2.min.js' %}"></script>
+
+        <script src="{% static 'library/assets/js/owl.carousel.min.j' %}s"></script>
+
+        <script src="{% static 'library/assets/js/icheck.min.js' %}"></script>
+
+        <script src="{% static 'library/assets/js/main.js' %}"></script>
+
+    </body>
+</html>

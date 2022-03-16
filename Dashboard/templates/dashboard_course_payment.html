@@ -1,4 +1,5 @@
 {% extends 'dashboard_base.html' %}
+{% load hosts %}
 
 
 
@@ -40,7 +41,7 @@
                                         <td>{{i.user.username}}</td>
                                         <td>{{i.method}}</td>
                                         <td>{{i.transaction_number}}</td>
-                                        <td>{{i.course.name}}</td>
+                                        <td><a href="{% url 'home:course' i.course.slug %}">{{i.course.name}}</a></td>
                                         <td>{{i.status}}</td>
                                       
                                         <td>{{i.expired_at}}</td>

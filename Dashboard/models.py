@@ -3,6 +3,9 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from home import models as Home_Models
 import json
+from django.apps import apps
+# Course = apps.get_model('home', 'Course')
+
 # from Home_Models import Course
 User=get_user_model()
 def slugify(str):
@@ -68,4 +71,22 @@ class Refunds(models.Model):
         payment_id=data["payment_id"]
         context={"method":method,"amount":amount,"data":my_data,"payment_id":payment_id}
         return context
+DOMAINS=(
+    (1,"agartha"),
+    (2,"kemet")
+)
+class Ads(models.Model): 
+    course=models.ForeignKey(settings.COURSE_MODEL,on_delete=models.CASCADE)
+    domain_type=models.IntegerField(choices=DOMAINS,default=1)
 
+    def __str__(self):
+        return self.course.name 
+    
+    def get_domain(self):
+        for i in DOMAINS:
+            while self.domain_type == i[0]:
+                domain=i[1]
+                print(domain)
+                break
+        return domain
+    

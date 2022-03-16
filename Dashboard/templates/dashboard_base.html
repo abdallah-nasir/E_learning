@@ -1,4 +1,6 @@
 {% load static %}
+{% load hosts %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -156,7 +158,45 @@
                     </div>
                 </div>
             </li>
+            {% if request.user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapselibrary"
+                    aria-expanded="true" aria-controls="collapselibrary">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Library</span>
+                </a>
+                <div id="collapselibrary" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">All Library:</h6>
+                        <a class="collapse-item" href="{% url 'dashboard:library' %}?type=movies">Movies</a>
+                        <a class="collapse-item" href="{% url 'dashboard:library' %}?type=audio">Audio</a>
+                        <a class="collapse-item" href="{% url 'dashboard:library' %}?type=audio-book">Audio Book</a>
+                        <a class="collapse-item" href="{% url 'dashboard:library' %}?type=e-book">E-Book</a>
+                        <a class="collapse-item" href="{% url 'dashboard:add_movies' %}">Add Movies</a>
 
+                        <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
+                        <a class="collapse-item" href="cards.html">Course Payments</a> -->
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseads"
+                    aria-expanded="true" aria-controls="collapseads">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Ads</span>
+                </a>
+                <div id="collapseads" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">All Ads:</h6>
+                        <a class="collapse-item" href="{% url 'dashboard:ads' slug='agartha' %}">Agartha</a>
+                        <a class="collapse-item" href="{% url 'dashboard:ads' slug='kemet'  %}">Kemet</a>
+                        <a class="collapse-item" href="{% url 'dashboard:search_ads'  %}">Add Ads</a>
+
+                    </div>
+                </div>
+            </li>
+            {% endif %}
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapconsaltant"
                 aria-expanded="true" aria-controls="collapconsaltant">
@@ -234,6 +274,7 @@
                             <a class="collapse-item" href="{% url 'dashboard:add_category' %}">Add Course Category</a>
                             <a class="collapse-item" href="{% url 'dashboard:add_blog_category' %}">Add Blog Category</a>
                             <a class="collapse-item" href="{% url 'dashboard:add_consultant_category' %}">Add Consultant Category</a>
+                            <a class="collapse-item" href="{% url 'dashboard:add_library_category' %}">Add Library Category</a>
 
                             <!-- <a class="collapse-item" href="register.html"></a>
                             <a class="collapse-item" href="forgot-password.html">Forgot Password</a>

@@ -5,6 +5,8 @@ app_name="Blogs"
 urlpatterns = [
 path("",views.home,name="blogs"),
 path("blog/<str:slug>/",views.single_blog,name="blog"),
+path("category/<str:slug>/",views.category,name="category"),
+
 path("search/",views.blog_search,name="search"),
 path("pricing/",views.pricing,name="pricing"),
 path("payment/<str:id>/",views.payment_pricing,name="payment"),

@@ -22,11 +22,13 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from taggit.models import Tag
+from library.models import *
 from .models import *
 from django.core.cache import cache 
 from django.contrib.auth.decorators import user_passes_test
 import json,requests
 import datetime as today_datetime
+from os.path import splitext
 from datetime import datetime
 from django.contrib.auth import get_user_model
 User=get_user_model()
@@ -79,7 +81,7 @@ Storage_Api=os.environ['Storage_Api']
 library_id=os.environ['library_id']
 storage_name=os.environ['storage_name']
 agartha_cdn=os.environ['agartha_cdn']
-BLOGS_FOLDER_COLLECTIONID="41e8c113-0c1f-4af4-bc24-b70beed3e13f"
+BLOGS_FOLDER_COLLECTIONID= os.environ["BLOGS_FOLDER_COLLECTIONID"]
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
 
 def send_mail_approve(request,user,body,subject):
@@ -93,9 +95,82 @@ def send_mail_approve(request,user,body,subject):
         )
     msg.content_subtype = "html"  # Main content is now text/html
     msg.send()
-    return True
+    return True  
 
+def change_cache_value(request,name,data_check,action,number=0,domain=None):
+    if domain == None: 
+        data=cache.get("data")
+    else:
+        data=cache.get("kemet_data")
+    if data:
+        if action == "remove":
+            cache_name=data[name]
+            if data_check in cache_name:
+                print("here")
+                cache_name.remove(data_check)
+                if domain == None : 
+                    cache.set("data",data,60*60*24*3)
+                else:
+                    cache.set("kemet_data",data,60*60*24*3)
+        elif action == "add":
+            cache_name=data[name]
+            print(len(cache_name))
+            if number >= len(cache_name):
+                print("here")
+                if data_check not in cache_name:
+                    cache_name.append(data_check)
+                    if  domain == None:
+                        cache.set("data",data,60*60*24*3)
+                    else:
+                        cache.set("kemet_data",data,60*60*24*3)
+    return data
+def change_blog_cache(request,data_check,action,domain=None):
+    if domain == None:
+        data=cache.get("blog_data")
+    else:
+        data=cache.get("kemet_blog_data")
+    if data:
+        if action == "remove":
+            blogs_cache=data["blogs"]
+            slider_cache=data["slider"]
+            recent_cache=data["recent_blogs"]
+            if data_check in blogs_cache:
+                blogs_cache.remove(data_check)
+            elif data_check in slider_cache:
+                slider_cache.remove(data_check)
+            elif data_check in recent_cache:
+                recent_cache.remove(data_check) 
+            if domain == None:
+                cache.set("blog_data",data,60*60*24)
+            else:
+                cache.set("kemet_blog_data",data,60*60*24)
+        elif action == "add":
+            blogs_cache=data["blogs"]
+            slider_cache=data["slider"]
+            recent_cache=data["recent_blogs"]
+            if data_check not in blogs_cache:
+                blogs_cache.append(data_check)
+            elif data_check not in slider_cache and len(slider_cache) < 5:
+                slider_cache.append(data_check)
+            elif data_check not in recent_cache and len(recent_cache) < 6:
+                recent_cache.append(data_check)
+            if domain == None:
+                cache.set("blog_data",data,60*60*24)
+            else:
+                cache.set("kemet_blog_data",data,60*60*24)
+    return data
 
+def delete_image(request,file_url,image_url,headers,name):
+    response = requests.get(file_url, headers=headers) 
+    data=response.json()
+    for i in data:
+        print(i['ObjectName'],name)
+        while i['ObjectName'] == name: 
+            response = requests.delete(image_url,headers=headers)
+            data=response.json()
+            print(data)
+            break
+    return data
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -208,8 +283,6 @@ def blogs(request):
     context={"blogs":page_obj}
     return render(request,"dashboard_blogs.html",context)
 
-
-
 @login_required(login_url="accounts:login")
 @check_user_validation
 def add_blog(request):
@@ -218,7 +291,7 @@ def add_blog(request):
         type=request.GET["blog_type"]
         if type not in blog_type_list:
             return redirect(reverse("dashboard:blogs"))
-        elif type == "link":
+        elif type == "link": 
             form=BlogLinkForm(request.POST or None,request.FILES or None)
         elif type == "quote":
             form=BlogQuoteForm(request.POST or None,request.FILES or None)
@@ -271,7 +344,11 @@ def add_blog(request):
                         instance.tags.add(tags)
                         instance.save()
                 image=request.FILES.getlist("image")
+                count=0
                 for i in image:
+                    count +=1
+                    image_extension=os.path.basename(i.name).split(".")[1]   
+                    i.name=f"{instance.slug}-{count}.{image_extension}"
                     image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{i}"
                     headers = {
                         "AccessKey": Storage_Api,
@@ -294,7 +371,7 @@ def add_blog(request):
                     return redirect(reverse("dashboard:add_video_blog",kwargs={"slug":instance.slug}))
                 elif type == "audio":
                     return redirect(reverse("dashboard:add_audio_blog",kwargs={"slug":instance.slug}))
-                body=f"new blog from user {request.user.emil}"
+                body=f"new blog from user {request.user.email}"
                 subject="new blog"
                 send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 messages.success(request,"Your Blog is Waiting for Admin Approve")
@@ -333,7 +410,7 @@ def add_video_blog(request,slug):
             my_blog_data["video_length"]=data["length"]  
             blog.data=json.dumps(my_blog_data)
             blog.save()
-            body=f"new blog from user {request.user.emil}"
+            body=f"new blog from user {request.user.email}"
             subject="new blog"
             send_mail_approve(request,user=request.user.email,subject=subject,body=body)
             messages.success(request,"Video added successfully")
@@ -367,7 +444,7 @@ def add_audio_blog(request,slug):
                     blog.save()
             except:
                 pass
-            body=f"new blog from user {request.user.emil}"
+            body=f"new blog from user {request.user.email}"
             subject="new blog"
             send_mail_approve(request,user=request.user.email,subject=subject,body=body)
             messages.success(request,"Audio added successfully")
@@ -408,12 +485,12 @@ def check_blog_video(request,slug):
     blog=get_object_or_404(Blog,slug=slug)
     form=BlogVideoForm(request.POST or None,request.FILES or None)
     blog_data=json.loads(blog.data)
-    video_uid=blog_data["video_guid"]
+    video_uid=blog_data["video_guid"] 
     url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video_uid}"
     headers = {
                 "Accept": "application/json",
                 "Content-Type": "application/*+json",
-                "AccessKey": AccessKey
+                "AccessKey": AccessKey 
             }
     my_response = requests.get( url,headers=headers)
     try:
@@ -503,51 +580,39 @@ def edit_blog(request,slug):
                         pass
                     else:
                         instance.tags.remove(i)
-            image=request.FILES.getlist("image")
-            if image != []:
-                if type != "gallery":
-                    this_image=image[-1]
-                    if len(blog.image.all()) > 1:
-                        blog.image.all().delete()
-                        image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{this_image}"
+            image=form.cleaned_data.get("image")
+            if image:
+                if  blog.blog_type != "gallery":
+                    if len(blog.image.all()) > 0:
+                        messages.error(request,"delete current image first")
+                        return redirect(reverse("dashboard:edit_blog",kwargs={"slug":blog.slug}))
+                    else:
+                        print(image)
+                        image_extension=os.path.basename(image.name).split(".")[1]   
+                        image.name=f'{instance.slug}.{image_extension}'
+                        image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user.username}/{instance.slug}/{image}"
                         headers = {
                             "AccessKey": Storage_Api,
                         "Content-Type": "application/octet-stream",
                         }
 
-                        response = requests.put(image_url,data=this_image,headers=headers)
+                        response = requests.put(image_url,data=image,headers=headers)
                         data=response.json()
                         try:
                             if data["HttpCode"] == 201:
-                                image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{this_image}"
+                                image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{image}"
                                 image=Blog_Images.objects.create(blog=instance,image=image_location)
                                 instance.image.add(image)
                                 instance.save()
                         except:
                             pass
-                    elif blog.image.last() != this_image:
-
-                        blog.image.all().delete()
-                        image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{this_image}"
-                        headers = {
-                            "AccessKey": Storage_Api,
-                        "Content-Type": "application/octet-stream",
-                        }
-
-                        response = requests.put(image_url,data=this_image,headers=headers)
-                        data=response.json()
-                        print(data)
-                        try:
-                            if data["HttpCode"] == 201:
-                                image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{this_image}"
-                                image=Blog_Images.objects.create(blog=instance,image=image_location)
-                                instance.image.add(image)
-                                instance.save()
-                        except:
-                            pass
-                else:
+                elif blog.blog_type =="gallery":
+                    count=0
                     for i in image:
-                        image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user}/{instance.slug}/{i}"
+                        count +=1
+                        image_extension=os.path.basename(i.name).split(".")[1]   
+                        i.name=f'{instance.slug}-{count}.{image_extension}'
+                        image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user.username}/{instance.slug}/{i}"
                         headers = {
                             "AccessKey": Storage_Api,
                         "Content-Type": "application/octet-stream",
@@ -573,6 +638,12 @@ def edit_blog(request,slug):
                 subject="edit blog"
                 send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                 cache.set(f"dashoard_blog_email_{request.user}",True,60*60*3)
+            if instance.domain_type == 2:
+                change_cache_value(request,name="blogs",data_check=instance,action="remove",domain="kemet")
+                change_blog_cache(request,data_check=instance,action="remove",domain="kemet")
+            else:
+                change_cache_value(request,name="blogs",data_check=instance,action="remove")
+                change_blog_cache(request,data_check=instance,action="remove")
             messages.success(request,"Your Blog is Waiting for Admin Approve")
             return redirect(reverse("dashboard:blogs"))
     context={"blog":blog,"form":form}
@@ -583,7 +654,19 @@ def edit_blog(request,slug):
 def delete_blog_image(request,id):
     image=get_object_or_404(Blog_Images,id=id)
     if image.blog.user == request.user:
-        image.delete()
+        headers = {
+            "AccessKey": Storage_Api,
+            "Content-Type": "application/octet-stream",
+        }   
+        name=os.path.basename(image.image.name)  
+        file_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{request.user.username}/{image.blog.slug}/"
+        image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{request.user.username}/{image.blog.slug}/{name}"
+        response=delete_image(request,image_url=image_url,name=name,file_url=file_url,headers=headers)
+        try:
+            if response["HttpCode"] == 200:
+                image.delete()
+        except:
+            pass
     return redirect(reverse("dashboard:edit_blog",kwargs={"slug":image.blog.slug}))
 
 @login_required(login_url="accounts:login")
@@ -642,35 +725,31 @@ def edit_course(request,slug):
             if form.is_valid():
                 instance=form.save(commit=False)
                 instance.status = "pending"
-                try:
-                    if request.FILES["image"]:
-                        print(request.FILES["image"])
-                        file_name=request.FILES["image"]
-                        url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/"
-                        headers = {
-                            "Accept": "*/*", 
-                            "AccessKey":Storage_Api}
-                        response = requests.get(url, headers=headers) 
-                        data=response.json()
-                        for i in data:
-                            url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{i['ObjectName']}"
-                            headers = {
-                                "Content-Type": "application/octet-stream",
-                                "AccessKey": Storage_Api
-                            }
-                            response = requests.delete(url,headers=headers)
-                        url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{file_name}"
-                        file=form.cleaned_data.get("image")
-                        response = requests.put(url,data=file,headers=headers)
-                        data=response.json()
-                        try:
-                            if data["HttpCode"] == 201:
-                                instance.image = f"https://{agartha_cdn}/courses/{instance.slug}/{file_name}"
-                                instance.save()
-                        except:
-                            pass
-                except:
-                    pass
+                if form.cleaned_data.get("image"):
+                    current_image=course.image.name
+                    current_image_name=os.path.basename(current_image)  
+                    image_url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{current_image_name}"
+                    file_url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/"
+                    headers = {
+                        "Accept": "*/*", 
+                        "AccessKey":Storage_Api}
+                    delete_image(request,file_url=file_url,image_url=image_url,headers=headers,name=current_image_name)
+                    image=form.cleaned_data.get("image")
+                    image_path=os.path.basename(image.name).split(".")[1]
+                    image.name=f"{instance.slug}.{image_path}"
+                    url=f"https://storage.bunnycdn.com/{storage_name}/courses/{instance.slug}/{image}"
+                    headers = {
+                        "AccessKey": Storage_Api,
+                        "Content-Type": "application/octet-stream",
+                        }    
+                    response = requests.put(url,data=image,headers=headers)
+                    data=response.json()
+                    try:
+                        if data["HttpCode"] == 201:
+                            instance.image = f"https://{agartha_cdn}/courses/{instance.slug}/{image}"
+                            instance.save()
+                    except:
+                        pass
                 instance.save()
                 time=cache.get(f"dashoard_course_email_{request.user}")
                 if time and time == True:
@@ -681,6 +760,11 @@ def edit_course(request,slug):
                     subject="edit course"
                     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                     cache.set(f"dashoard_course_email_{request.user}",True,60*60*3)
+                    if instance.domain_type == 2:
+                        change_cache_value(request,name="courses",data_check=instance,action="remove",domain="kemet")
+                    else:
+                        change_cache_value(request,name="courses",data_check=instance,action="remove")
+
                 messages.success(request,"Course Edited Successfully")
                 return redirect(reverse("dashboard:courses"))
     else:
@@ -740,7 +824,7 @@ def add_course(request):
             data=response.json()
             instance.collection=data["guid"]
             instance.save()
-            body=f"new course from user {request.user.emil}"
+            body=f"new course from user {request.user.email}"
             subject="new course"
             send_mail_approve(request,user=request.user.email,subject=subject,body=body)
             messages.success(request,"course added successfully")
@@ -800,6 +884,10 @@ def edit_videos(request,slug):
             instance.my_course.save()
         
             instance.save()
+            if video.my_course.domain_type == 2:
+                change_cache_value(request,name="courses",data_check=video.my_course,action="remove",domain="kemet")
+            else:
+                change_cache_value(request,name="courses",data_check=video.my_course,action="remove")
             messages.success(request,"video edited successfully")
             return redirect(reverse("dashboard:videos",kwargs={"slug":video.my_course.slug}))
     else:
@@ -992,7 +1080,10 @@ def add_event(request):
             instance.end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
             instance.user=request.user
             instance.image=None
-            image=request.FILES["image"]
+            image=form.cleaned_data.get("image")
+            instance.save() 
+            image_extension=os.path.basename(image.name).split(".")[1]   
+            image.name=f"{instance.slug}.{image_extension}"
             image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
             headers = {
                     "AccessKey": Storage_Api,
@@ -1003,7 +1094,7 @@ def add_event(request):
             data=response.json()
             try:
                 if data["HttpCode"] == 201:
-                    instance.image = f"https://{agartha_cdn}/events/{instance.user.username}/{image}"
+                    instance.image = f"https://{agartha_cdn}/events/{instance.user.username}/{image.name}"
             except:
                 pass
             zoom=form.cleaned_data.get("zoom_link")
@@ -1011,7 +1102,7 @@ def add_event(request):
             data={'zoom':zoom,"details":details}
             instance.details=json.dumps(data)  
             instance.save() 
-            body=f"new event from user {request.user.emil}"
+            body=f"new event from user {request.user.email}"
             subject="new event"
             send_mail_approve(request,user=request.user.email,subject=subject,body=body)
             messages.success(request,"Event added successfully")
@@ -1025,8 +1116,11 @@ def add_event(request):
 @login_required(login_url="accounts:login")
 @check_user_validation
 def edit_event(request,id):
-    event=get_object_or_404(Events,id=id,status="declined")
+    event=get_object_or_404(Events,id=id)
+    if event.status == "start" or event.status =="completed":
+        return redirect(reverse("dashboard:events"))
     form=Edit_event(request.POST or None,request.FILES or None,instance=event)
+    form.initial["image"]=None
     form.initial["details"]=event.get_details()["details"]
     form.initial["zoom_link"]=event.get_details()["zoom"]
     if request.user == event.user:
@@ -1042,15 +1136,23 @@ def edit_event(request,id):
                 data={'zoom':zoom,"details":details}
                 instance.details=json.dumps(data)  
                 instance.status="pending"
-                if instance.image:
-                    image=request.FILES["image"]
-                    image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
+                if form.cleaned_data.get("image"):
+                    current_image=event.image.name
+                    current_image_name=os.path.basename(current_image)  
+                    image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{current_image_name}"
+
                     headers = {
                             "AccessKey": Storage_Api,
                             "Content-Type": "application/octet-stream",
                             }
-
-                    response = requests.put(image_url,data=image,headers=headers)
+                    file_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/"
+                    delete_image(request,file_url=file_url,image_url=image_url,headers=headers,name=current_image_name)
+                    image=form.cleaned_data.get("image")
+                    image_extension=os.path.basename(image.name).split(".")[1]   
+                    image.name=f"{instance.slug}.{image_extension}"
+                    new_image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
+                    print(image.name)
+                    response = requests.put(url=new_image_url,data=image,headers=headers)
                     data=response.json()
                     try:
                         if data["HttpCode"] == 201:
@@ -1067,14 +1169,19 @@ def edit_event(request,id):
                     subject="event edit"
                     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                     cache.set(f"dashoard_event_email_{request.user}",True,60*60*3)
+                change_cache_value(request,name="events",data_check=instance,action="remove")
                 messages.success(request,"Event updated successfully")
                 return redirect("dashboard:events")
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect("dashboard:events")
-    context={"form":form}
-    return render(request,"dashboard_add_events.html",context)
+    context={"form":form,"event":event}
+    return render(request,"dashboard_edit_event.html",context)
 
+
+
+
+    return redirect(reverse("dashboard:edit_event",kwargs={"id":event.id}))
 @login_required(login_url="accounts:login")
 @check_user_validation
 def delete_event(request,id):
@@ -1115,6 +1222,7 @@ def start_event(request,slug):
 
         event.status="start"
         event.save()
+        change_cache_value(request,name="blogs",data_check=event,action="remove")
         messages.success(request,"Event Has Been Started")
     else:
         messages.error(request,"invalid event status")
@@ -1346,7 +1454,12 @@ def approve(request):
 
 @login_required(login_url="accounts:login")
 def show_demo_blog(request,slug):
-    blog=get_object_or_404(Blog,status="pending",slug=slug,user=request.user)
+    blog=get_object_or_404(Blog,status="pending",slug=slug)
+    if request.user.is_director or request.user.is_superuser or request.user == blog.user:  
+        pass
+    else:
+        messages.error(request,"you dont have permission")
+        return redirect(reverse("dashboard:home"))
     context={"blog":blog}
     return render(request,"dashboard_show_demo_blog.html",context)
 
@@ -1361,6 +1474,12 @@ def approve_content(request,id):
                 query=get_object_or_404(Blog,id=id,status="pending")
                 query.status="approved"
                 query.save()
+                if query.domain_type == 2:
+                    change_cache_value(request,name="blogs",data_check=query,action="add",number=4,domain="kemet")
+                    change_blog_cache(request,data_check=query,action="add",domain="kemet")
+                else:
+                    change_cache_value(request,name="blogs",data_check=query,action="add",number=4)
+                    change_blog_cache(request,data_check=query,action="add")   
                 messages.success(request,"Blog Approved Successfully")
             elif qs == "blog_payment":
                 query=get_object_or_404(Blog_Payment,id=id,status="pending")
@@ -1405,11 +1524,16 @@ def approve_content(request,id):
                 query=get_object_or_404(Course,id=id,status="pending")
                 query.status="approved"
                 query.save()
+                if query.domain_type == 2:
+                    change_cache_value(request,name="courses",data_check=query,action="add",number=5,domain="kemet")
+                else:
+                    change_cache_value(request,name="courses",data_check=query,action="add",number=5)
                 messages.success(request,"Course Approved Successfully")
-            elif qs == "events":
+            elif qs == "events":   
                 query=get_object_or_404(Events,id=id,status="pending")
                 query.status="approved"
                 query.save()
+                change_cache_value(request,name="events",data_check=query,action="add",number=5)
                 messages.success(request,"Event Approved Successfully")
             elif qs == "payment":
                 query=get_object_or_404(Payment,id=id,status="pending")
@@ -1768,6 +1892,9 @@ def add_consultant(request):
             instance.start_time=datetime.strptime(f"{start}","%I:%M:%S %p").time()
             instance.end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
             instance.save()
+            days=cache.get(f"consultant_data_{instance.user}")
+            if days:
+                cache.delete(f"consultant_data_{instance.user}")
             messages.success(request,"Consultant Added Successfully")
             return redirect(reverse("dashboard:consultants_sessions"))
         else:
@@ -2637,3 +2764,200 @@ def edit_consultant_payment(request,id):
     context={"form":form}
     return render(request,"dashboard_edit_consultant_payment.html",context)
 
+########## libraries
+@login_required(login_url="accounts:login")
+@check_user_validation
+def library(request):
+ 
+    # return redirect(reverse("dashboard:home"))
+    context={} 
+    return render(request,"dashboard_library.html",context)
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+def add_library_category(request):
+    form=LibraryCategoryForm(request.POST or None)
+    if request.method == 'POST':
+        form.save()
+        messages.success(request,"library category added successfully")
+        form=LibraryCategoryForm()
+    context={"form":form} 
+    return render(request,"dashboard_add_library_category.html",context)
+
+def add_images_to_library(request,form,images,url_name):
+    status=False
+    instance=form.save(commit=False)
+    library_data={"images":[]}
+    instance.save() 
+    for i in images:
+        headers = {  
+                    "Accept": "*/*", 
+                    "AccessKey":Storage_Api}
+        url=f"https://storage.bunnycdn.com/{storage_name}/{url_name}/{instance.slug}/{i}"
+        response = requests.put(url,data=i,headers=headers)
+        data=response.json()
+        try:
+            if data["HttpCode"] == 201:
+                image = f"https://{agartha_cdn}/{url_name}/{instance.slug}/{i}"
+                library_data["images"].append(image)
+                instance.save()
+        except:
+            pass
+    instance.data=json.dumps(library_data)
+    instance.save()
+    messages.success(request,"library added successfully")
+    status=True
+    return status
+# @login_required(login_url="accounts:login")
+# @check_user_validation
+# def add_e_book(request):
+#     form=E_Book_LibraryForm(request.POST or None,request.FILES or None)
+#     if request.method == "POST":
+#         if form.is_valid():
+#             response=add_to_library(request,form,slug="e_book")
+#             if response:
+#                 return redirect(reverse("dashboard:add_e_book_file"))
+#     context={"form":form} 
+#     return render(request,"dashboard_add_library.html",context)
+
+# @login_required(login_url="accounts:login")
+# @check_user_validation
+# def add_e_book_file(request,slug):
+#     book=get_object_or_404(E_Book,status="pending")
+#     if book.get_book():
+#         pass
+#     form=E_Book_File_Form(request.POST or None,request.FILES or None)
+#     if request.method == "POST":
+#         if form.is_valid():
+#             response=add_to_library(request,form,slug="e_book")
+#             if response:
+#                 return redirect(reverse("dashboard:add_e_book_file"))
+#     context={"form":form} 
+#     return render(request,"dashboard_add_library.html",context)
+
+def add_movies_to_library(request,slug,instance):
+    url = f"http://video.bunnycdn.com/library/{library_id}/collections"
+    data_1 = {"name":slug}
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/*+json",
+        "AccessKey": AccessKey
+    }
+    response = requests.post( url, json=data_1, headers=headers)
+    reponse_data=response.json()
+    movies_data={"collection_guid":reponse_data["guid"]}
+    instance.data=json.dumps(movies_data)
+    instance.save()
+    url = f"http://video.bunnycdn.com/library/{library_id}/videos"         
+    data_2 = {"title":slug,"collectionId":reponse_data["guid"]}
+    response = requests.post( url, json=data_2, headers=headers)
+    data_3=response.json()
+    movies_data={"video_uid":data_3["guid"]}
+    instance.data=json.dumps(movies_data)
+    instance.save()  
+    return True
+@login_required(login_url="accounts:login")
+@for_admin_only 
+def add_movies(request):
+    form =MoviesLibraryForm(request.POST or None,request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            instance=form.save(commit=False)
+            images=request.FILES.getlist("image")
+            response=add_images_to_library(request,form,images,url_name="e-books")
+            if response:
+                add_movies_to_library(request,slug=instance.slug,instance=instance)
+                return redirect(reverse("dashboard:uplaod_movie_video"))
+    context={"form":form}
+    return render(request,"dashboard_add_movies.html",context)
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+def uplaod_movie_video(request,slug):
+    movie=get_object_or_404(Movies,slug=slug,user=request.user)
+    form=MoviesVideoForm(request.POST or None,request.FILES or None)
+    if movie.check_movies():
+        messages.error(request,"video is already uploaded")
+        # return redirect(reverse("dashboard:movie",kwargs={"slug":video.my_course.slug}))
+    else:
+        if request.is_ajax():
+            if form.is_valid():
+                url = f"http://video.bunnycdn.com/library/{library_id}/movies/{movie.get_movies.video_uid}"
+                file=form.cleaned_data.get("video")
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/*+json",
+                    "AccessKey": AccessKey
+                }
+                response = requests.put( url, data=file, headers=headers)
+                movie_url=f"https://iframe.mediadelivery.net/embed/{library_id}/{movie.get_movies.video_uid}?autoplay=false"
+                movie_data={"video":movie_url}
+                movie.data=json.dumps(movie_data)
+                response = requests.get( url, headers=headers)
+                data=response.json()
+                movie.duration=data["length"]  
+                video.save()
+                messages.success(request,"Movie added successfully")
+                return JsonResponse({"message":"1"})
+            else:
+                return FailedJsonResponse({"message":"1"})
+    context={"form":form,"video":video.slug,"slug":video.my_course.slug}
+    return render(request,"dashboard_add_movie_video.html",context)
+########## libraries
+
+@login_required(login_url="accounts:login")
+@for_admin_only
+def ads(request,slug):
+    if slug == "agartha":
+        ads=Ads.objects.filter(domain_type=1)
+    elif slug == "kemet":
+        ads=Ads.objects.filter(domain_type=2)
+    else:
+        return redirect(reverse("dashboard:home"))
+    context={"ads":ads} 
+    return render(request,"dashboard_ads.html",context)
+
+
+@login_required(login_url="accounts:login")
+@for_admin_only
+def search_ads(request):  
+    form=AdsForm(request.POST or None)
+    course=None
+    domain=None
+    if request.method == "POST":
+        if form.is_valid():
+            course=Course.objects.filter(name__icontains=form.cleaned_data.get("course"))
+            domain=form.cleaned_data.get("domain")
+    context={"form":form,"course":course,"domain":domain} 
+    return render(request,"dashboard_add_ads.html",context)
+
+
+@login_required(login_url="accounts:login")
+@for_admin_only
+def add_ads(request,id,domain):  
+    course=get_object_or_404(Course,id=id)
+    if not Ads.objects.filter(course=course,domain_type=domain).exists():
+        if int(course.domain_type) == int(domain):
+            messages.error(request,"course is already on this domain")
+        else:
+            ads=Ads.objects.create(course=course,domain_type=domain)
+            if int(domain) == 2:
+                change_cache_value(request,name="ads",data_check=ads,action="add",domain="kemet")
+            else:
+                change_cache_value(request,name="ads",data_check=ads,action="add")
+            messages.success(request,"course added successfully to the Ads")
+    else: 
+        messages.error(request,"course is already in Ads")
+    return redirect(reverse("dashboard:search_ads"))
+@login_required(login_url="accounts:login")
+@for_admin_only
+def remove_ads(request,id):  
+    ads=get_object_or_404(Ads,id=id)
+    if ads.domain_type == 2:
+        change_cache_value(request,name="ads",data_check=ads,action="remove",domain="kemet")
+    else:
+        change_cache_value(request,name="ads",data_check=ads,action="remove")
+    ads.delete()
+    messages.success(request,"Ads deleted successsfully")
+
+    return redirect(reverse("dashboard:ads",kwargs={"slug":ads.get_domain()}))

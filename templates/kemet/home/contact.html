@@ -1,0 +1,167 @@
+{% extends 'kemet/home/base.html' %}
+{% load hosts %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+
+<!-- CSS only -->
+<style type="text/css">
+    
+    
+    i, span, a {
+        display: initial;
+      }
+        
+      img{
+        max-width: 80%;
+      }
+</style>
+    <!--====== PAGE BANNER PART START ======-->
+    
+    <section id="page-banner" class="pt-105 pb-130 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-6.jpg' %})">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-banner-cont">
+                        <h2>{% trans 'Contact' %}</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% host_url 'home:home' host 'kemet' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="{% host_url 'home:contact' host 'kemet' %}">{% trans 'Contact' %}</a></li>
+                            </ol>
+                        </nav>
+                    </div>  <!-- page banner cont -->
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== PAGE BANNER PART ENDS ======-->
+    
+    <!--====== CONTACT PART START ======-->
+    
+    <section id="contact-page" class="pt-90 pb-120 gray-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="contact-from mt-30">
+                        <div class="section-title">
+                            <h5>{% trans 'Contact Us' %}</h5>
+                            <h2>{% trans 'Keep in touch' %}</h2>
+                        </div> <!-- section title -->
+                        <div class="main-form pt-45">
+                            <form action="{% host_url 'home:contact' host 'kemet' %}" method="post" data-toggle="validator">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="singel-form form-group">
+                                            <input name="name" type="text" placeholder="{% trans 'Your name' %}" data-error="Name is required." required="required">
+                                            <div class="help-block with-errors"></div>
+                                        </div> <!-- singel form -->
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="singel-form form-group">
+                                            <input name="email" type="email" placeholder="{% trans 'Email' %}" data-error="Valid email is required." required="required">
+                                            <div class="help-block with-errors"></div>
+                                        </div> <!-- singel form -->
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="singel-form form-group">
+                                            <input name="subject" type="text" placeholder="{% trans 'Subject' %}" data-error="Subject is required." required="required">
+                                            <div class="help-block with-errors"></div>
+                                        </div> <!-- singel form --> 
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="singel-form form-group">
+                                            <input name="phone" type="text" placeholder="{% trans 'Phone' %}" data-error="Phone is required." required="required">
+                                            <div class="help-block with-errors"></div>
+                                        </div> <!-- singel form -->
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="singel-form form-group">
+                                            <textarea name="message" placeholder="{% trans 'Message' %}" data-error="Please,leave us a message." required="required"></textarea>
+                                            <div class="help-block with-errors"></div>
+                                        </div> <!-- singel form -->
+                                    </div>
+                                    <p class="form-message"></p>
+                                    <div class="col-md-12">
+                                        <div class="singel-form">
+                                            <button type="submit" class="main-btn">{% trans 'Send' %}</button>
+                                        </div> <!-- singel form -->
+                                    </div> 
+                                </div> <!-- row -->
+                            </form>
+                        </div> <!-- main form -->
+                    </div> <!--  contact from -->
+                </div>
+                <div class="col-lg-5">
+                    <div class="contact-address mt-30">
+                        <ul>
+                           
+                            <li>
+                                <div class="singel-address">
+                                    <div class="icon">
+                                        <i class="fa fa-phone"></i>
+                                    </div>
+                                    <div class="cont">
+                                        <p>+201011609810</p>
+                                        <!-- <p>+1 222 345 342</p> -->
+                                    </div>
+                                </div> <!-- singel address -->
+                            </li>
+                            <li>
+                                <div class="singel-address">
+                                    <div class="icon">
+                                        <i class="fa fa-envelope-o"></i>
+                                    </div>
+                                    <div class="cont">
+                                        <p>info@agartha.academy</p>
+                                        <p>support@agartha.academy</p>
+                                    </div>
+                                </div> <!-- singel address -->
+                            </li>
+                        </ul>
+                    </div> <!-- contact address -->
+                    <div class="contact-address mt-30">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="collapse navbar-collapse sub-menu-bar">
+                                    <ul>
+                                        <li><a href="https://www.youtube.com/c/AgarthaAcademy"><i class="bi bi-youtube"></i></a></li>
+                                        <li><a href="https://twitter.com/AgarthaAcademy"><i class="bi bi-twitter"></i></a></li>
+                                        <li><a href="https://www.linkedin.com/company/42931194/admin/"><i class="bi bi-linkedin"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-4 ">
+                                <div class="collapse navbar-collapse sub-menu-bar">
+                                    <ul>
+                                        <li><a href="https://www.facebook.com/AgarthaAcademy"><i class="bi bi-facebook"></i></a></li>
+                                        <li><a href="https://t.me/AgarthaAcademy"><i class="bi bi-telegram"></i></a></li>
+                                        <li><a href="https://www.pinterest.com/AgarthaAcademy/"><i class="bi bi-pinterest"></i></a></li>
+                                    </ul> 
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="collapse navbar-collapse sub-menu-bar"> 
+                                    <ul>
+                                        <li><a href="https://www.instagram.com/AgarthaAcademy/"> <img height="50px" src="{% static 'images/instagram.png' %}">
+                                        </a>
+                                    </li>
+                                        <li><a href="https://www.tiktok.com/@agartha_academy">
+                                            <img height="70px"  src="{% static 'images/tiktok.png' %}">
+                                        </a></li>
+                                        <li><a id="whatsapp-img" href="https://wa.me/message/EHP6CV4WO7CTM1"><img height="50px" src="{% static 'images/whatsapp.png' %}" alt="icon" id="whatsapp-img"/></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== CONTACT PART ENDS ======-->
+   
+  {% endblock %}

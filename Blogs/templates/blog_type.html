@@ -1,5 +1,7 @@
 {% extends 'blog_base.html' %}
 {% load i18n %}
+{% load hosts %}
+
 {% block content %}
 		<!-- BEGIN CONTENT -->
 		<main class="site-content">
@@ -55,7 +57,7 @@
 							<div class="icon-b">
 								<i class="fa fa-newspaper-o"></i>
 							</div>
-							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-category"><a href="{% url 'blogs:category' i.category.slug %}">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
 								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
 								<div class="entry-meta">
@@ -101,7 +103,7 @@
 							<div class="icon-b">
 								<i class="fa fa-film"></i>
 							</div>
-							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-category"><a href="{% url 'blogs:category' i.category.slug %}">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
 								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a></h2>
 								<div class="entry-meta">
@@ -127,7 +129,7 @@
 								<i class="fa fa-link"></i>
 							</div>
 							<div class="entry-header-title">
-								<h2><a href="{{i.image.first.image}}">{{i.category.name.title|truncatewords:10}}</a></h2>
+								<h2><a href="{% url 'blogs:category' i.category.slug %}">{{i.category.name.title|truncatewords:10}}</a></h2>
 								<a class="entry-link btn" href="{[i.get_link]}"><i class="fa fa-external-link"></i> {{i.get_link}}</a>
 							</div>
 						</header>
@@ -145,7 +147,7 @@
 							<div class="icon-b">
 								<i class="fa fa-image"></i>
 							</div>
-							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-category"><a href="{% url 'blogs:category' i.category.slug %}">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
 								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a></h2>
 								<div class="entry-meta">
@@ -174,7 +176,7 @@
 							<div class="icon-b">
 								<i class="fa fa-music"></i>
 							</div>
-							<div class="entry-category"><a href="">{{i.category.name.title|truncatewords:10}}</a></div>
+							<div class="entry-category"><a href="{% url 'blogs:category' i.category.slug %}">{{i.category.name.title|truncatewords:10}}</a></div>
 							<div class="entry-header-title">
 								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatewords:10}}</a></h2>
 								<div class="entry-meta">

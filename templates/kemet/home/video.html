@@ -1,0 +1,445 @@
+{% extends 'kemet/home/base.html' %}
+{% load hosts %}
+{% load i18n %}
+{% load cache %}
+{% load static %}
+{% block content %}
+   <style type="text/css">
+    iframe{
+        width:100% !important;
+             }
+   </style>
+    <!--====== PAGE BANNER PART START ======-->
+    
+    <section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-2.jpg' %})">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-banner-cont">
+                        <h2>{{video.name.title}}</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'home:courses'  %}">{% trans 'Courses' %}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'home:course' slug=course.slug  %}">{{course.name.title}}</a></li>
+                            </ol>
+                        </nav>
+                    </div>  <!-- page banner cont -->
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== PAGE BANNER PART ENDS ======-->
+    
+    <!--====== COURSES SINGEl PART START ======-->
+    
+    <section id="corses-singel" class="pt-90 pb-120 gray-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="corses-singel-left mt-30">
+                        <div class="title">
+                            <h3>{{course.name.title}}</h3>
+                        </div> <!-- title -->
+                        <div class="course-terms">
+                            <ul>
+                                <li>
+                                    <div class="teacher-name">
+                                        <div class="thum">
+                                            <img src="{{course.Instructor.image}}" style="max-height: 4rem;" alt="Teacher">
+                                        </div>
+                                        <div class="name">
+                                            <span>{% trans 'Teacher' %}</span>
+                                            <h6>{{course.Instructor.username.title}}</h6>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="course-category">
+                                        <span>{% trans 'Category' %}</span>
+                                        <h6>{{course.branch.category.name}} </h6>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="review">
+                                        <span>{% trans 'Review' %}</span>
+                                        <ul>
+                                            {% with ''|center:course.total_rate as range %}
+                                            {% for _ in range %}
+                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                 {% endfor %}
+                                        {% endwith %}
+                                            
+                                            <li class="rating">({{course.reviews.count}} {% trans 'Reviews' %})</li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div> <!-- course terms -->
+                        {% cache 86400 single_video video.video.slug %}
+                        <div class="corses-singel-image pt-50">
+                            <iframe src="{{video.video}}" loading="lazy" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" style="height:500px;" allowfullscreen="true"></iframe>                          
+                        </div>
+                        {% endcache %}
+                         <!-- corses singel image -->
+                        
+                        <div class="corses-tab mt-30">
+                            <ul class="nav nav-justified" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="active" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">{% trans 'Overview' %}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="curriculam-tab" data-toggle="tab" href="#curriculam" role="tab" aria-controls="curriculam" aria-selected="false">{% trans 'Curriculum' %}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="instructor-tab" data-toggle="tab" href="#instructor" role="tab" aria-controls="instructor" aria-selected="false">{% trans 'Instructor' %}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">{% trans 'Reviews' %}</a>
+                                </li>
+                            </ul>
+                            
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                                    <div class="overview-description">
+                                        <div class="singel-description pt-40">
+                                            <h6>{% trans 'Lecture Summery' %}</h6>
+                                           
+                                            <p style=" scrollbar-width: auto; height: 10rem; width: auto;overflow-y: scroll;">{{video.details}}</p>
+
+                                           
+                                        </div>
+                                        <!-- <div class="singel-description pt-40">
+                                            <h6>Requrements</h6>
+                                            <p>Lorem ipsum gravida nibh vel velit auctor aliquetn sollicitudirem quibibendum auci elit cons equat ipsutis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a sit amet mauris. Morbi accumsan ipsum velit. Nam nec tellus .</p>
+                                        </div> -->
+                                    </div> <!-- overview description -->
+                                </div>
+                                <div class="tab-pane fade" id="curriculam" role="tabpanel" aria-labelledby="curriculam-tab">
+                                    <div class="curriculam-cont">
+                                        <div class="title">
+                                            
+                                            <h6>{{course.name.title}}</h6>
+                                        </div>
+                                        <div class="accordion" id="accordionExample">
+                                            {% for i in course.videos.all %}
+                                            <div class="card">
+                                                <div class="card-header" id="headingOne">  
+                                                    <a href="#" data-toggle="collapse" data-target="#collapseOne-{{i.id}}" aria-expanded="true" aria-controls="collapseOne-{{i.id}}">
+                                                        <ul>
+                                                            <li><i class="fa fa-file-o"></i></li>
+                                                           <li><span class="lecture">{% trans 'Lecture' %} {{forloop.counter}}</span></li>
+                                                           <br>
+                                                          <li><span class="head">{{i.name}}</span></li>
+                                                            <li><span class="time d-none d-md-block"><i class="fa fa-clock-o"></i> <span>{{i.get_duration_model}}</span></span></li>
+                                                        </ul>
+                                                    </a>
+                                                </div>
+
+                                                <div id="collapseOne-{{i.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                                    <div class="card-body">
+                                                        <a href="{% url 'home:video' course.slug i.slug %}">{% trans 'Preview Lecture' %}</a>
+                                                        <p>{{i.name.title}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                          
+                                        </div>
+                                    </div> <!-- curriculam cont -->
+                                </div>
+                                <div class="tab-pane fade" id="instructor" role="tabpanel" aria-labelledby="instructor-tab">
+                                    <div class="instructor-cont">
+                                        <div class="instructor-author">
+                                            <div class="author-thum">
+                                                <img src="{{course.Instructor.image}}" style="max-height:10rem;" alt="Instructor">
+                                            </div>
+                                            <div class="author-name">
+                                                <a href="#"><h5>{{course.Instructor.first_name.title}} {{course.Instructor.last_name.title}}</h5></a>
+                                                <span>{{course.Instructor.title.title}}</span>
+                                                <ul class="social">
+                                                    <li><a href="mailto:{{course.Instructor.email}}"><i class="fa fa-envelope"></i></a></li> 
+                                                     {% for i in course.Instructor.get_user_data.social %}
+                                                         {% if i.facebook %}
+                                                     <li><a href="{{i.facebook}}"><i class="fa fa-facebook"></i></a></li>     
+                                                         {% elif i.twitter %}
+                                                        <li><a href="{{i.twitter}}"><i  class="fa fa-twitter"></i></a></li>   
+                                                         {% elif i.linkedin %}
+                                                        <li><a href="{{i.linkedin}}"><i class="fa fa-linkedin-square"></i></a></li>   
+                                                         {% endif %}
+                                             {% endfor %}
+                                                 </ul>
+                                            </div>
+                                        </div>
+                                        <div class="instructor-description pt-25">
+                                            <p style=" scrollbar-width: auto; height: 10rem; width: auto;overflow-y: scroll;">{{course.Instructor.about_me}}</p>
+                                        </div>
+                                    </div> <!-- instructor cont -->
+                                </div>
+                                <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                                    <div class="reviews-cont">
+                                        <div class="title">
+                                            <h6>{% trans 'Student Reviews' %}</h6>
+                                        </div>
+                                        <ul>
+                                            {% for i in course.reviews.all %}
+                                           <li>
+                                               <div class="singel-reviews">
+                                                    <div class="reviews-author">
+                                                        <div class="author-thum">
+                                                            <img src="{{i.user.image}}" style="max-height: 5rem;" alt="Reviews">
+                                                        </div>
+                                                        <div class="author-name">
+                                                            <h6>{{i.user.first_name.title}} {{i.user.last_name.title}}</h6>
+                                                            <span>{{i.created_at|date:"M d, Y H:i"}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="reviews-description pt-20">
+                                                        <p>{{i.review}}</p>
+                                                        <div class="rating">
+                                                            <ul>
+                                                                {% with ''|center:i.rate as range %}
+                                                                {% for _ in range %}
+                                                                <li><i class="fa fa-star"></i></li>
+                                                                {% endfor %}
+                                                                {% endwith %}
+                                                              
+                                                            </ul>
+                                                            <span> {{i.rate}} {% trans 'Star' %}</span>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- singel reviews -->
+                                           </li>
+                                           {% endfor %}
+                                        </ul>
+                                        <div class="title pt-15">
+                                            <h6>{% trans 'Leave A Comment' %}</h6>
+                                        </div>
+                                        <div class="reviews-form">
+                                            <form id="comment-form" action="{% url 'home:video' course.slug video.slug %}" method="POST">
+                                             
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                    <!-- <div class="col-md-6">
+                                                        <div class="form-singel">
+                                                            <input name="first_name" type="text" placeholder="First name" required>
+                                                        </div>
+                                                    </div> -->
+                                                    <!-- <div class="col-md-6">
+                                                        <div class="form-singel">
+                                                            <input name="rate" type="number" placeholder="Last Name">
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="col-lg-12">
+                                                        <div class="form-singel">
+                                                            <div class="rate-wrapper">
+                                                                <div class="rate-label">{% trans 'Your Rating' %}:</div>
+                                                                <div class="rate">
+                                                       
+                                                            <div class="rate-item">  
+                                                                <input type="checkbox" style="opacity:0; position:absolute;" value="1"  name="rate">
+                                                            <i class="fa fa-star"  aria-hidden="true" ></i>
+                                                            </div>
+                                                            
+                                                  <div class="rate-item">  
+                                                       <input type="checkbox" style="opacity:0; position:absolute;" value="2"  name="rate">
+                                                <i class="fa fa-star"  aria-hidden="true" ></i>
+                                                  </div>
+                                                  
+                                                  <div class="rate-item"> 
+                                                       <input type="checkbox" style="opacity:0; position:absolute;" value="3"  name="rate"> 
+                                                <i class="fa fa-star"  aria-hidden="true" ></i>
+                                                  </div>
+                                                 
+                                                  <div class="rate-item"> 
+                                                       <input type="checkbox"  style="opacity:0; position:absolute;"value="4"  name="rate"> 
+                                                <i class="fa fa-star"  aria-hidden="true" ></i>
+                                                  </div>
+                                                   
+                                                    <div class="rate-item">  
+                                                      <input type="checkbox" style="opacity:0; position:absolute;" value="5"  name="rate">
+                                                <i class="fa fa-star"  aria-hidden="true" ></i>
+                                                  </div>
+                                                    
+                                                                
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-singel">
+                                                            <textarea name="review" placeholder="{% trans 'Comment' %}" Required></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div id="message">
+
+                                                        </div>
+                                                        <div class="form-singel">
+                                                            <button type="submit" id='post_comment' class="main-btn">{% trans 'Post Comment' %}</button>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- row -->
+                                            </form>
+                                        </div>
+                                    </div> <!-- reviews cont -->
+                                </div>
+                            </div> <!-- tab content -->
+                        </div>
+                    </div> <!-- corses singel left -->
+                    
+                </div>
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-6">
+                            <div class="course-features mt-30">
+                               <h4>{% trans 'Lecture Features' %} </h4>
+                                <ul>
+                                    <li><i class="fa fa-clock-o"></i>{% trans 'Duration' %} : <span>{{video.get_duration_model}}</span></li>
+                                    <!-- <li><i class="fa fa-clone"></i>Leactures : <span>{{course.videos.count}}</span></li> -->
+                                    <!-- <li><i class="fa fa-beer"></i>Quizzes :  <span>05</span></li> -->
+                                    
+                                    <li><i class="fa fa-user-o"></i>{% trans 'Students' %} :  <span>{% if not course.students.count %}0 {% else %} {{course.students.count}} {% endif %}</span></li>
+                                </ul>
+                                <!-- <div class="price-button pt-10">
+                                    <span>Price : <b>${{course.price|floatformat}}</b></span>
+                                    <a href="#" class="main-btn">Enroll Now</a>
+                                </div> -->
+                            </div> <!-- course features -->
+                        </div>
+                       
+                        <div class="col-lg-12 col-md-6">
+                            <div class="You-makelike mt-30">
+                                <h4>{% trans 'Recent Events' %}</h4> 
+                                {% for event in course.related_events %}
+                                <div class="cont">
+                                    <a href="{% url 'home:event' event.slug %}"><h4>{{event.name|truncatewords:10}}</h4></a>
+                                   
+                                </div>
+                                <div class="events-coundwon bg_cover" data-overlay="8" style="background-image: url({{event.image}}); max-height:7rem; margin-top:0px;">
+                                    <div data-countdown="{{event.date|date:'Y/m/d'}}"></div>
+                                   
+                                </div> 
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- row -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="releted-courses pt-95">
+                       <div class="title">
+                            <h3>{% trans 'Related Courses' %}</h3>
+                        </div>
+                        <div class="row">
+                            {% for i in same %}
+                            <div class="col-md-6">
+                                <div class="singel-course mt-30">
+                                    <div class="thum">
+                                        <div class="image">
+                                            <img src="{{i.image}}" alt="Course">
+                                        </div>
+                                        <div class="price">
+                                            <span>${{i.price|floatformat}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="cont">
+                                        <ul>
+                                            {% if i.rate  %}
+                                            {% with ''|center:i.rate as range %}
+                                            {% for _ in range %}
+                                            <li><i class="fa fa-star"></i></li>
+
+                                                    {% endfor %}
+                                            {% endwith %}
+                                            {% else %}
+                                            <li><i class="fa fa-star"></i></li>
+
+                                            {% endif %}
+                                         
+                                        </ul>
+                                        <span>({{i.reviews.count}} {% trans 'Reviews' %})</span>
+                                        <br>
+                                        <a href="{% url 'home:course' slug=i.slug %}"><h4>{{i.name.title}}</h4></a>
+                                        <div class="course-teacher">
+                                            <div class="thum">
+                                                <a href="#"><img src="{{i.Instructor.image}}" alt="teacher"></a>
+                                            </div>
+                                            <div class="name">
+                                                <a href="#"><h6>{{i.Instructor.get_full_name.title}}</h6></a>
+                                            </div>
+                                            <div class="admin">
+                                                <ul>
+                                                    <li><a href="#"><i class="fa fa-user"></i><span>{{i.students.count}}</span></a></li>
+                                                    {% if i in my_wishlist.course.all %}
+                                                    <input class="love-add-{{i.id}}" type="hidden" value="{{i.id}}">
+                                                    <li id="love-add" class="love-add-{{i.id}}" data-index="{{i.id}}"><a><i id="love-color-{{i.id}}"  class="fa fa-heart" style="color:#ffc600;" ></i><span>{{i.likes}}</span></a></li>
+                                                   {% else %}
+                                                <input class="love-add-{{i.id}}" type="hidden" value="{{i.id}}">
+            
+                                                   <li id="love-add" class="love-add-{{i.id}}" data-index="{{i.id}}"><a><i id="love-color-{{i.id}}"  class="fa fa-heart"></i><span>{{i.likes}}</span></a></li>
+            
+                                                    {% endif %}                                     
+                                                           </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- singel course -->
+                            </div>
+                            {% endfor %}
+                        </div> <!-- row -->
+                    </div> <!-- releted courses -->
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== COURSES SINGEl PART ENDS ======-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $("#").click(function(e){
+
+        // prevent from normal form behaviour
+            e.preventDefault();
+            // serialize the form data  
+            var serializedData = $("#comment-form").serialize();
+            //let target_element = $('#add-html-here');
+            $.ajax({
+                type : 'POST',
+                url :  "{% url 'home:course' course.slug %}",
+                data : serializedData,
+                success : function(response){
+                //reset the form after successful submit
+                if(!response["valid"]){
+
+                    $("#comment-form")[0].reset();
+                      
+                  let html_1=`  
+                 <div class="u-s-m-b-30">
+    
+                    <label for="c-message"></label>
+                    <p> Messgae Sent Successfully </p>
+                </div>`;
+                         
+                 
+                    $("#message").html(html_1);
+
+                }
+                
+                },
+                error : function(response){
+                    console.log(response)
+                }
+            });
+       });
+
+</script>
+   {% endblock %}

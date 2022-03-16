@@ -1,4 +1,5 @@
 {% load static %}
+{% load hosts %}
 {% load i18n %}
 {% load cache %}
 {% get_current_language as LANGUAGE_CODE %}
@@ -53,15 +54,14 @@
 {% endcache %}
 {% if LANGUAGE_CODE == "ar" %}
     <!--====== Bootstrap css ======-->
-    <link rel="stylesheet" href="{% static 'css/rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base-rtl.css' %}">
     <!--====== Style css ======-->
-    <link rel="stylesheet" href="{% static 'css/style-rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base-style-rtl.css' %}">
     <!--====== Responsive css ======-->
-    <!-- <link rel="stylesheet" href="{% static 'css/bootstrab-rtl.css' %}"> -->
 {% else %}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 
-<link rel="stylesheet" href="{% static 'css/base-style.css' %}">
+<link rel="stylesheet" href="{% static 'css/base-style2.css' %}">
 
 {% endif %}
 <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
@@ -191,7 +191,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4">
                         <div class="logo">
-                            <a href="{% url 'home:home' %}">
+                            <a href="{% url  'home:home'  %}">
                                 <img src="{% static 'images/logo.png' %}" alt="Logo">
                             </a>
                           
@@ -233,29 +233,29 @@
       <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="active" href="{% url 'home:home' %}">{% trans 'Home' %}</a>
+                <a class="active" href="{% url  'home:home' %}">{% trans 'Home' %}</a>
                 
             </li>
          
             <li class="nav-item">
-                <a href="{% url 'home:courses'%}">{% trans 'Courses' %}</a>
+                <a href="{% url  'home:courses'%}">{% trans 'Courses' %}</a>
               
             </li>
             <li class="nav-item">
-                <a href="{% url 'home:events' %}">{% trans 'Events' %}</a>
+                <a href="{% url  'home:events' %}">{% trans 'Events' %}</a>
                 
             </li>
             <li class="nav-item">
-                <a href="{% url 'home:teachers' %}">{% trans 'Teachers' %}</a>
+                <a href="{% url  'home:teachers' %}">{% trans 'Teachers' %}</a>
                 
             </li>
             <li class="nav-item">
-                <a href="{% url 'blogs:blogs' %}">{% trans 'Blog' %}</a>
+                <a href="{% url  'blogs:blogs' %}">{% trans 'Blog' %}</a>
 
             </li>                            
            
              <li class="nav-item">
-                <a href="{% url 'consultant:home' %}">{% trans 'Consultations' %}</a>
+                <a href="{% url  'consultant:home' %}">{% trans 'Consultations' %}</a>
                
             </li> 
           
@@ -263,9 +263,9 @@
             <li class="nav-item">
                 <a href="#">{% trans 'Service' %}</a>
                 <ul class="sub-menu">
-                <li><a href="{% url 'home:contact' %}">{% trans 'Contact Us' %}</a></li> 
-                <li><a href="{% url 'home:faqs' %}">{% trans 'FAQS' %}</a></li>
-                <li><a href="{% url 'home:about' %}">{% trans 'About Us' %}</a></li>
+                <li><a href="{% url  'home:contact' %}">{% trans 'Contact Us' %}</a></li> 
+                <li><a href="{% url  'home:faqs' %}">{% trans 'FAQS' %}</a></li>
+                <li><a href="{% url  'home:about' %}">{% trans 'About Us' %}</a></li>
                
             </ul> 
             </li>
@@ -295,12 +295,12 @@
             <i class="fa fa-search"></i>
         </a>
         {% if request.user.is_authenticated %}
-        <a class="text-reset me-3"  href="{% url 'home:cart' request.user.slug %}">
+        <a class="text-reset me-3"  href="{% url  'home:cart' request.user.slug %}">
             <i class="fa fa-shopping-bag"></i>
             <span id="shop-numbers" class="badge rounded-pill badge-notification bg-success">{{my_wishlist.course.count}}</span>
         </a>
          {% else %}
-     <a class="text-reset me-3"  href="{% url 'account_login' %}">
+     <a class="text-reset me-3"  href="{% url  'account_login' %}">
          <i class="fa fa-shopping-bag"></i>
         <span class="badge rounded-pill badge-notification bg-success">0</span>
         </a>
@@ -326,9 +326,9 @@
             <li>
                 {% if LANGUAGE_CODE == "ar" %}
                
-              <a class="dropdown-item" title="{% trans 'English' %}" href="{% url 'language' %}?path={{request.path}}&language=en">{% trans 'English' %}</a>
+              <a class="dropdown-item" title="{% trans 'English' %}" href="{% url  'language' %}?path={{request.path}}&language=en">{% trans 'English' %}</a>
               {% else %}
-            <a class="dropdown-item" title="{% trans 'Arabic' %}" href="{% url 'language' %}?path={{request.path}}&language=ar">{% trans 'Arabic' %}</a>
+            <a class="dropdown-item" title="{% trans 'Arabic' %}" href="{% url  'language' %}?path={{request.path}}&language=ar">{% trans 'Arabic' %}</a>
 
              
               {% endif %}
@@ -361,15 +361,15 @@
             aria-labelledby="navbarDropdownMenuAvatar"
           >
             <li>
-              <a class="dropdown-item" href="{% url 'accounts:account_info' %}">{% trans 'My profile' %}</a>
+              <a class="dropdown-item" href="{% url  'accounts:account_info' %}">{% trans 'My profile' %}</a>
             </li>
             {% if request.user.is_authenticated %}
             <li>
-              <a class="dropdown-item" href="{% url 'accounts:logout' %}">{% trans 'Logout' %}</a>
+              <a class="dropdown-item" href="{% url  'accounts:logout' %}">{% trans 'Logout' %}</a>
             </li>
             {% else %}
             <li>
-              <a class="dropdown-item" href="{% url 'accounts:login' %}">{% trans 'Login' %}</a>
+              <a class="dropdown-item" href="{% url  'accounts:login' %}">{% trans 'Login' %}</a>
             </li>
             {% endif %}
           </ul>
@@ -391,10 +391,10 @@
               aria-labelledby="navbarDropdownMenuLink"
             >
               <li>
-                <a class="dropdown-item" href="{% url 'accounts:login' %}">{% trans 'Login' %}</a>
+                <a class="dropdown-item" href="{% url  'accounts:login' %}">{% trans 'Login' %}</a>
               </li>
               <li>
-                <a class="dropdown-item" href="{% url 'accounts:signup' %}">{% trans 'Signup' %}</a>
+                <a class="dropdown-item" href="{% url  'accounts:signup' %}">{% trans 'Signup' %}</a>
               </li>
             
             </ul>
@@ -433,7 +433,7 @@
                                                         </ul>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a href="{% url 'accounts:account_info' %}"><i class="fa fa-user"></i></a>
+                                                        <a href="{% url  'accounts:account_info' %}"><i class="fa fa-user"></i></a>
                                                     
                                                     </li>
                                                 </ul>
@@ -464,7 +464,7 @@
                 <span></span>
                 <span></span>
             </div>
-            <form action="{% url 'home:global_search' %}" method='GET' >
+            <form action="{% url  'home:global_search' %}" method='GET' >
 
                 <input type="text" name="qs" placeholder="{% trans 'Search in Courses and Teachers' %}">
                 <button><i class="fa fa-search"></i></button>
@@ -519,16 +519,16 @@
                             </div>
                             <ul>
                                 </li>
-                                <li><a href="{% url 'home:about' %}"><i class="fa fa-angle-right"></i> {% trans 'About us' %}</a></li>
-                                <li><a href="{% url 'home:teachers' %}"><i class="fa fa-angle-right"></i> {% trans 'Teachers' %}</a></li>
-                                <li><a href="{% url 'home:contact' %}"><i class="fa fa-angle-right"></i> {% trans 'Contact' %}</a></li>
+                                <li><a href="{% url  'home:about' %}"><i class="fa fa-angle-right"></i> {% trans 'About us' %}</a></li>
+                                <li><a href="{% url  'home:teachers' %}"><i class="fa fa-angle-right"></i> {% trans 'Teachers' %}</a></li>
+                                <li><a href="{% url  'home:contact' %}"><i class="fa fa-angle-right"></i> {% trans 'Contact' %}</a></li>
                             </ul>
                             <!-- <ul>
                                 <li><a href="#"><i class="fa fa-angle-right"></i>Gallery</a></li> 
                                 <li><a href="shop.html"><i class="fa fa-angle-right"></i>Shop</a></li> 
-                                <li><a href="{% url 'home:teachers' %}"><i class="fa fa-angle-right"></i>Teachers</a></li>
+                                <li><a href="{% url  'home:teachers' %}"><i class="fa fa-angle-right"></i>Teachers</a></li>
                                 <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>Support</a></li>
-                                <li><a href="{% url 'home:contact' %}"><i class="fa fa-angle-right"></i>Contact</a></li>
+                                <li><a href="{% url  'home:contact' %}"><i class="fa fa-angle-right"></i>Contact</a></li>
                             </ul> -->
                         </div> <!-- footer link -->
                     </div>
@@ -538,10 +538,10 @@
                                 <h6> {% trans 'Our Products' %}</h6>
                             </div>
                             <ul>
-                                <li><a href="{% url 'home:courses' %}"><i class="fa fa-angle-right"></i> {% trans 'Courses' %}</a></li>
-                                <li><a href="{% url 'consultant:home' %}"><i class="fa fa-angle-right"></i> {% trans 'Consultations' %}</a></li>
-                                <li><a href="{% url 'blogs:blogs' %}"><i class="fa fa-angle-right"></i> {% trans 'Articles' %}</a></li>
-                                <li><a href="{% url 'home:events' %}"><i class="fa fa-angle-right"></i> {% trans 'Events' %}</a></li>
+                                <li><a href="{% url  'home:courses' %}"><i class="fa fa-angle-right"></i> {% trans 'Courses' %}</a></li>
+                                <li><a href="{% url  'consultant:home' %}"><i class="fa fa-angle-right"></i> {% trans 'Consultations' %}</a></li>
+                                <li><a href="{% url  'blogs:blogs' %}"><i class="fa fa-angle-right"></i> {% trans 'Articles' %}</a></li>
+                                <li><a href="{% url  'home:events' %}"><i class="fa fa-angle-right"></i> {% trans 'Events' %}</a></li>
 
                           
                                 <!-- <li><a href="#"><i class="fa fa-angle-right"></i>Documentation</a></li> -->
@@ -557,11 +557,11 @@
                             <div class="footer-link">
                                 <ul>
                                 <li>
-                                    <a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Privacy' %}</a>
+                                    <a href="{% url  'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Privacy' %}</a>
                                 </li>
-                                <li><a href="{% url 'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Policy' %}</a></li>
+                                <li><a href="{% url  'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Policy' %}</a></li>
                                 <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i> {% trans 'Support' %}</a></li>
-                                <li><a href="{% url 'home:faqs' %}"><i class="fa fa-angle-right"></i> {% trans 'FAQS' %}</a></li>
+                                <li><a href="{% url  'home:faqs' %}"><i class="fa fa-angle-right"></i> {% trans 'FAQS' %}</a></li>
 
                             </ul>
                             </div>
@@ -576,7 +576,7 @@
             <div class="container">
                 <div class="row">
                     <div  class="col-12 offset-lg-3">
-                        <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url 'home:terms' %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url 'home:privacy' %}">Privacy Policy</a></p>
+                        <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url  'home:terms' %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url  'home:privacy' %}">Privacy Policy</a></p>
                     </div>
               
                 </div> 
@@ -652,7 +652,7 @@ $(document).on('click',"#love-add",function(){
         $.ajax({
         
 
-            url:"{% url 'home:wishlist_add' %}",
+            url:"{% url  'home:wishlist_add' %}",
             data:{
                 'id':_productId,
                 
@@ -705,7 +705,7 @@ $(document).on('click',"#love-add",function(){
             $.ajax({
             
     
-                url:"{% url 'home:wishlist_remove' %}",
+                url:"{% url  'home:wishlist_remove' %}",
                 data:{
                     'id':_productId,
                     

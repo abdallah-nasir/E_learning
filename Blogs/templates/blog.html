@@ -1,8 +1,10 @@
 {% extends 'blog_base.html' %}
 {% load i18n %}
+{% load hosts %}
+
 {% load static %}
 {% block content %}
-<link rel='stylesheet' href='{% static "blog_audio/style.css" %}'>
+ <link rel='stylesheet' href='{% static "blog_audio/audio-style.css" %}'> 
 
 <style type="text/css">
  /* Style the button that is used to open and close the collapsible content */
@@ -40,7 +42,7 @@
 				<div class="icon-b">
 					<i class="fa fa-newspaper-o"></i>
 				</div>
-				<div class="entry-category"><a href="">{{blog.category.name.title}}</a></div>
+				<div class="entry-category"><a href="{% url 'blogs:category' blog.category.slug %}">{{blog.category.name.title}}</a></div>
 				<div class="entry-header-title">
 					<h1>{{blog.name.title}}</h1>
 					<div class="entry-meta">
@@ -86,7 +88,7 @@
 				<div class="icon-b">
 					<i class="fa fa-film"></i>
 				</div>
-				<div class="entry-category"><a href="">{{blog.category.name.title}}</a></div>
+				<div class="entry-category"><a href="{% url 'blogs:category' blog.category.slug %}">{{blog.category.name.title}}</a></div>
 				<div class="entry-header-title">
 					<h1>{{blog.name.title}}</h1>
 					<div class="entry-meta">
@@ -124,10 +126,24 @@
 		</article>
 		{% elif blog.blog_type == "audio" %}
 		<article class="post format-audio margin-bottom">
+		
 			<div class="wrapper">
-				<figure class="entry-thumb">
-					<img src="https://agarthaacademy.b-cdn.net/courses/course-1/index.jpg" width="1200" height="500" alt="">
-				</figure>
+				<div class="music music-cover">
+				  <img src="{{blog.image.first.image}}" alt="" class="cover-img" />
+				</div>
+				<div class="music album-controls">
+				  <!-- <img src="{{blog.image.first.image}}" alt="" class="album-img" /> -->
+				  <!-- <div class="album-info">
+					<span class="album-title">Kaabil</span>
+					<span class="song-title">Kaabil Hoon</span>
+					<span class="song-utility">
+					  <i class="fa fa-home" aria-hidden="true"></i>
+					  <i class="fa fa-random" aria-hidden="true"></i>
+					  <i class="fa fa-retweet" aria-hidden="true"></i>
+					  <i class="fa fa-clock-o" aria-hidden="true"></i>
+					</span>
+				  </div> -->
+				</div>
 				<div class="music music-controls">
 				  <span class="seek-bar">
 					<span class="knot"></span>
@@ -144,8 +160,6 @@
 			  Your browser does not support the audio element.
 			  </audio>
 			  
-		
-			  
 			<header class="entry-header">
 				<div class="icon-b">
 					<i class="fa fa-music"></i>
@@ -160,7 +174,7 @@
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-comments"></i>
-							{{blog.get_comments}} {% trans 'comments' %}
+							{{blog.get_comments}} comments
 						</span>
 						<span class="entry-meta-comments">
 							<i class="fa fa-eye" aria-hidden="true"> {{blog.get_views}}</i>
@@ -282,7 +296,7 @@
 				<div class="icon-b">
 					<i class="fa fa-image"></i>
 				</div>
-				<div class="entry-category"><a href="">{{blog.category.name.title}}</a></div>
+				<div class="entry-category"><a href="{% url 'blogs:category' blog.category.slug %}">{{blog.category.name.title}}</a></div>
 				<div class="entry-header-title">
 					<h1>{{blog.name.title}}</h1>
 					<div class="entry-meta">
@@ -423,7 +437,7 @@
 	<div class="widget">
 		<h3 class="widget-title">{% trans 'Recent Posts' %}</h3>
 		<ul>
-			{% for i in blog.same_category %}
+			{% for i in blog.same_kemet_category %}
 			<li><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:'10'}}</a> <span>{{i.created_at|date:"M d, Y"}}</span></li>
 			{% endfor %}
 		</ul>
@@ -433,7 +447,7 @@
 		<h3 class="widget-title">{% trans 'Categories' %}</h3>
 		<ul>
 			{% for i in categories %}
-			<li><a href="">{{i.name}}</a></li>
+			<li><a href="{% url 'blogs:category' i.slug %}">{{i.name}}</a></li>
 			{% endfor %}
 		</ul>
 	</div>
@@ -449,7 +463,7 @@
 			</div>
 		</main>
 		<!-- END CONTENT -->
-		<script  src="{% static 'blog_audio/script.js' %}"></script>
+		<script  src="{% static 'blog_audio/audio-script.js' %}"></script>
 
 <script style="text/javascript">
 	var coll = document.getElementsByClassName("collapsible");

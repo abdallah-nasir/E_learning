@@ -1,0 +1,419 @@
+{% extends 'kemet/home/base.html' %}
+{% load static %}
+{% load hosts %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+<title>{% block title %}| {% trans 'Home' %}{% endblock %}</title>
+<style type="text/css">
+.course-slied .next{
+    right: -100% !important;
+}
+.course-slied .prev{
+    right: -95% !important;
+}
+</style>
+   <!--====== SLIDER PART START ======-->
+    
+   <section id="slider-part" class="slider-active">
+    <div class="single-slider slider-2 bg_cover" style="background-image: url({% static 'images/slider/s-2.jpg' %})" data-overlay="4">
+        <div class="container con-slider">
+            <div class="row">
+                <div class="col-xl-9 col-lg-10">
+                    <div class="slider-cont">
+                        <h1 data-animation="bounceInLeft" data-delay="1s">More than 5,000+ courses for develop your skill</h1>
+                        <a data-animation="fadeInUp" data-delay="1.3s" href="#" class="main-btn">Start Trial now</a>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </div> <!-- single slider -->
+    
+    <div class="single-slider slider-2 bg_cover" style="background-image: url({% static 'images/slider/s-3.jpg' %})" data-overlay="4">
+        <div class="container con-slider">
+            <div class="row">
+                <div class="col-xl-9 col-lg-10">
+                    <div class="slider-cont">
+                        <h1 data-animation="bounceInLeft" data-delay="1s">More than 5,000+ courses for develop your skill</h1>
+                        <a data-animation="fadeInUp" data-delay="1.3s" href="#" class="main-btn">Start Trial now</a>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </div> <!-- single slider -->
+    
+    <div class="single-slider slider-2 bg_cover" style="background-image: url({% static 'images/slider/s-1.jpg' %})" data-overlay="4">
+        <div class="container con-slider">
+            <div class="row">
+                <div class="col-xl-9 col-lg-10">
+                    <div class="slider-cont">
+                        <h1 data-animation="bounceInLeft" data-delay="1s">More than 5,000+ courses for develop your skill</h1>
+                        <a data-animation="fadeInUp" data-delay="1.3s" href="#" class="main-btn">Start Trial now</a>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </div> <!-- single slider -->
+</section>
+
+<!--====== SLIDER PART ENDS ======-->
+
+<!--====== CATEGORY PART START ======-->
+
+<section id="category-2-part">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="category-2-items pt-10">
+                    <div class="row">
+                        {% for i in data.categories %}
+                        <div class="col-md-6">
+                            <div class="singel-items text-center mt-30">
+                                <div class="items-image">
+                                    <img src="{{i.image}}" style="height: 100px;"  alt="Category">
+                                </div>
+                                <div class="items-cont">
+                                    <a href="{% host_url 'home:course_category' slug=i.slug %}">
+                                        <h5>{{i.name.title}}</h5>
+                                        <span>{{i.get_courses}} {% trans 'courses' %}</span>
+                                    </a>
+                                </div>
+                            </div> <!-- singel items -->
+                        </div>
+                    {% endfor %}
+                    </div> <!-- row -->
+                </div> <!-- category -->
+            </div>
+            <div class="col-lg-5 offset-lg-1">
+                <div class="category-form">
+                    <div class="form-title text-center">
+                        <h3>{% trans 'Subscribe to Agartha free' %}</h3>
+                        <span>{% trans 'Sign up now' %}</span>
+                    </div>
+                    <div class="main-form">
+                        <form action="{% host_url 'home:subscribe' host 'kemet'  %}" method="POST">
+                          
+                            {% csrf_token %}
+                            <div class="singel-form">
+                                <input type="text" name="name" placeholder="Your name">
+                                {{form.name.errors}}
+                            </div>
+                            <div class="singel-form">
+                                <input type="email" name="email" placeholder="Your Mail">
+                            {% for error in form.email.errors %}
+                                {{error}}
+                            {% endfor %}
+                            </div>
+                            <div class="singel-form">
+                                <input type="text" name="phone" placeholder="Your Phone">
+                                {{form.phone.errors}}
+                            </div>
+                            <div class="singel-form">
+                                <button class="main-btn" type="submit">Get it Now</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+<!--====== CATEGORY PART ENDS ======-->
+
+<!--====== COURSE PART START ======-->
+
+<section id="course-part" class="pt-115 pb-120 gray-bg">
+    <div class="container">
+        <div class="row con-course">
+            <div class="col-lg-6">
+                <div class="section-title pb-45">
+                    <h5>{% trans 'Our course' %}</h5>
+                    <h2>{% trans 'Featured courses' %} </h2>
+                </div> <!-- section title -->
+            </div>
+        </div> <!-- row -->
+        <div class="row course-slied mt-30">
+            {% for i in data.courses %}
+            <div class="col-lg-4">
+                <div class="singel-course-2">
+                    <div class="thum">
+                        <div class="image">
+                            <img src="{{i.image}}" alt="Course">
+                        </div>
+                        <div class="price">
+                            <span>${{i.get_price}}</span>
+                        </div>
+                        <div class="course-teacher">
+                            <div class="thum">
+                                <a href="{% host_url 'home:teacher' i.Instructor.slug host 'kemet' %}"><img src="{{i.Instructor.image}}" alt="teacher"></a>
+                            </div>
+                            <div class="name">
+                                <a href="{% host_url 'home:teacher' i.Instructor.slug host 'kemet' %}"><h6>{{i.Instructor.get_full_name.title}}</h6></a>
+                            </div>
+                            <div class="review">
+                                <ul>
+                                    {% with ''|center:i.total_rate as range %}
+                                    {% for _ in range %}
+                                    <li><i class="fa fa-star"></i></li>
+
+                                    {% endfor %}
+                                    {% endwith %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cont">
+                        <span>({{i.reviews.count}} {% trans 'Reviews' %})</span>
+                        <a href="{% host_url 'home:course' slug=i.slug host 'kemet' %}"><h4>{{i.name.title|truncatewords:10}}</h4></a>
+                      
+                    </div>
+                </div> <!-- singel course -->
+
+                
+            </div>
+          
+           {% endfor %}
+        </div> <!-- course slied -->
+    </div> <!-- container -->
+</section>
+
+<!--====== COURSE PART ENDS ======-->
+
+<!--====== COUNTER PART START ======-->
+
+<div id="counter-part" class="bg_cover pt-65 pb-110" data-overlay="8" style="background-image: url({% static 'images/bg-2.jpg' %})">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-sm-6">
+                <div class="singel-counter text-center mt-40">
+                    <span><span class="counter">2,000</span>+</span>
+                    <p>{% trans 'Students enrolled' %}</p>
+                </div> <!-- singel counter -->
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="singel-counter text-center mt-40">
+                    <span><span class="counter">1,000</span>+</span>
+                    <p>{% trans 'Courses Uploaded' %}</p>
+                </div> <!-- singel counter -->
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="singel-counter text-center mt-40">
+                    <span><span class="counter">11,000</span>+</span>
+                    <p>{% trans 'People certified' %}</p>
+                </div> <!-- singel counter -->
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="singel-counter text-center mt-40">
+                    <span><span class="counter">500</span>+</span>
+                    <p>{% trans 'Global Teacher' %}</p>
+                </div> <!-- singel counter -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</div>
+
+<!--====== COUNTER PART ENDS ======-->
+
+<!--====== TEACHERS PART START ======-->
+
+<section id="teachers-part" class="pt-65 pb-120 gray-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="section-title mt-50 pb-25">
+                    <h5>{% trans 'Top Tutors' %}</h5>
+                    <h2>{% trans 'Featured Teachers' %}</h2>
+                </div> <!-- section title -->
+                <div class="teachers-2">
+                    <div class="row">
+                        {% for i in data.teachers %}
+                        <div class="col-md-6">
+                            <div class="teachers-2-singel mt-30">
+                                <div class="thum">
+                                    <img src="{{i.image}}" style="height:50px;" alt="Teacher">
+                                </div>
+                                <div class="cont">
+                                    <a href="{% host_url 'home:teacher' i.slug host 'kemet' %}"><h5>{{i.get_full_name.title}}</h5></a>
+                                    <p>{{i.get_user_data.title|truncatechars:10}}</p>
+                                    <span><i class="fa fa-book"></i>{{i.get_user_courses}} {% trans 'Courses' %}</span>
+                                </div>
+                            </div> <!-- teachers 2 singel -->
+                        </div>
+                        {% endfor %}
+                    </div> <!-- row -->
+                </div> <!-- teachers 2 -->
+            </div>
+            <div class="col-lg-6 ">
+                <div class="happy-student mt-55">
+                    <div class="happy-title">
+                        <h3>{% trans 'Happy Students' %}</h3>
+                    </div>
+                    <div class="student-slied">
+                        {% for i in data.testimonials %}
+                        <div class="singel-student">
+                            <img src="{% static 'images/teachers/teacher-2/quote.png' %}" alt="Quote">
+                            <p>{{i.review}}</p>
+                            <h6>{{i.user.first_name|truncatechars:5}}</h6>
+                            <!-- <span>Bsc, Engineering</span> -->
+                        </div> <!-- singel student -->
+                        {% endfor %}
+                      
+                    </div> <!-- student slied -->
+                    <div class="student-image">
+                        <img src="{% static 'images/teachers/teacher-2/happy.png' %}" alt="Image">
+                    </div>
+                </div> <!-- happy student -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+<!--====== TEACHERS PART ENDS ======-->
+
+<!--====== EVENT 2 PART START ======-->
+
+<section id="event-part" class="pt-120">
+    <div class="container">
+        <div class="event-bg bg_cover" style="background-image: url({% static 'images/bg-3.jpg' %})">
+            <div class="row">
+                <div class="col-lg-5 offset-lg-6 col-md-8 offset-md-2 col-sm-10 offset-sm-1">
+                    <div class="event-2 pt-90 pb-70">
+                        <div class="event-title">
+                            <h3>{% trans 'Upcoming events' %}</h3>
+                        </div> <!-- event title -->
+                        <ul>
+                            {% for i in data.events %}
+                            <li>
+                                <div class="singel-event">
+                                    <span><i class="fa fa-calendar"></i>{{i.date|date:'Y/m/d'}}</span>
+                                    <a href="{% host_url 'home:event' i.slug host 'kemet' %}"><h4>{{i.name|truncatechars:10}}</h4></a>
+                                    <span><i class="fa fa-clock-o"></i>{{i.start_time|date:"h a"}} - {{i.end_time|date:"h a"}}</span>
+                                    <span><i class="fa fa-map-marker"></i>{{i.place}}</span>
+                                </div>
+                            </li>
+                         {% endfor %}
+                        </ul> 
+                    </div> <!-- event 2 -->
+                </div>
+            </div> <!-- row -->
+        </div>
+    </div> <!-- container -->
+</section>
+
+<!--====== EVENT 2 PART ENDS ======-->
+
+<!--====== NEWS PART START ======-->
+
+<section id="news-part" class="pt-115 pb-110">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="section-title pb-50">
+                    <h5>{% trans 'Latest Blog' %}</h5>
+                    <h2>{% trans 'From the Blogs' %}</h2>
+                </div> <!-- section title -->
+            </div>
+        </div> <!-- row -->
+        <div class="row">
+            <div class="col-lg-6">
+                {% for i in data.blogs|slice:1 %}
+                <div class="singel-news mt-30">
+                    <div class="news-thum pb-25">
+                        <img src="{{i.image.first.image}}" alt="News">
+                    </div>
+                    <div class="news-cont">
+                        <ul>
+                            <li><a href="{% host_url 'blogs:blog' i.slug host 'kemet' %}"><i class="fa fa-calendar"></i>{{i.created_at|date:"M d, Y"}} </a></li>
+                            <li><a href="{% host_url 'home:teacher' i.slug host 'kemet' %}"> <span>{% trans 'By' %}</span> {{i.user.get_full_name.title }}</a></li>
+                        </ul>
+                        <a href="{% host_url 'blogs:blog' i.slug host 'kemet' %}"><h3>{{i.name|truncatechars:20}}</h3></a>
+                        <p>{{i.details|safe|truncatechars:100}}</p>
+                    </div>
+                </div> <!-- singel news -->
+                {% endfor %}
+            </div>
+            <div class="col-lg-6">
+                {% for i in data.blogs %}
+                <div class="singel-news news-list">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="news-thum mt-30">
+                                <img src="{{i.image.first.image}}" alt="News">
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="news-cont mt-30">
+                                <ul>
+                                    <li><a href="{% host_url 'blogs:blog'  i.slug host 'kemet' %}"><i class="fa fa-calendar"></i>{{i.created_at|date:"M d, Y"}}</a></li>
+                                    <li><a href="{% host_url 'home:teacher' i.slug host 'kemet' %}"> <span>{% trans 'By' %}</span> {{i.user.get_full_name.title}}</a></li>
+                                </ul>
+                                <a href="{% host_url 'blogs:blog' i.slug host 'kemet' %}"><h3>{{i.name|truncatewords:10}}</h3></a>
+                                <p>{{i.details|safe|truncatechars:100}}</p>
+                            </div>
+                        </div>
+                    </div> <!-- row -->
+                </div> <!-- singel news -->
+               {% endfor %}
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+<!--====== NEWS PART ENDS ======-->
+
+<section id="course-part" class="pt-115 pb-120 gray-bg">
+    <div class="container">
+        <div class="row con-course">
+            <div class="col-lg-6">
+                <div class="section-title pb-45">
+                    <h5>{% trans 'Kemet Courses' %}</h5>
+                    <h2>{% trans 'Featured courses' %} </h2>
+                </div> <!-- section title -->
+            </div>
+        </div> <!-- row -->
+        <div class="row course-slied mt-30">
+            {% for i in data.ads %}
+            <div class="col-lg-4">
+                <div class="singel-course-2">
+                    <div class="thum">
+                        <div class="image">
+                            <img src="{{i.course.image}}" alt="Course">
+                        </div>
+                        <div class="price">
+                            <span>${{i.course.get_price}}</span>
+                        </div>
+                        <div class="course-teacher">
+                            <div class="thum">
+                                <a href="{% url 'home:teacher' i.course.Instructor.slug %}"><img src="{{i.course.Instructor.image}}" alt="teacher"></a>
+                            </div>
+                            <div class="name">
+                                <a href="{% url 'home:teacher' i.course.Instructor.slug %}"><h6>{{i.course.Instructor.get_full_name.title}}</h6></a>
+                            </div>
+                            <div class="review">
+                                <ul>
+                                    {% with ''|center:i.course.total_rate as range %}
+                                    {% for _ in range %}
+                                    <li><i class="fa fa-star"></i></li>
+
+                                    {% endfor %}
+                                    {% endwith %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cont">
+                        <span>({{i.course.reviews.count}} {% trans 'Reviews' %})</span>
+                        <a href="{% url 'home:course' slug=i.course.slug %}"><h4>{{i.course.name.title|truncatewords:10}}</h4></a>
+                      
+                    </div>
+                </div> <!-- singel course -->
+
+                
+            </div>
+          
+           {% endfor %}
+        </div> <!-- course slied -->
+    </div> <!-- container -->
+</section>
+{% endblock %}
