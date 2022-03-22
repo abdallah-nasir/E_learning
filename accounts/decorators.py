@@ -107,8 +107,6 @@ def check_course_refund(function):
     return wrap
 
 
-
-
 def check_consultant_refund(function):
     @wraps(function)
     def wrap(request, *args, **kwargs):
@@ -141,4 +139,25 @@ def check_consultant_refund(function):
                     return function(request, *args, **kwargs)
         else:
             return function(request, *args, **kwargs)
+    return wrap
+
+
+def redirect_teacher_movies_payment(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.account_type == "teacher":
+            return redirect(reverse("dashboard:movies_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+def redirect_teacher_audio_payment(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.account_type == "teacher":
+            return redirect(reverse("dashboard:audio_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
     return wrap

@@ -7,7 +7,7 @@ from home.models import Course,Branch,Videos,Events,Payment,News,Category,Suppor
 from .models import Rejects,AddStudentCourse,Refunds,Ads
 from Consultant.models import Cosultant_Payment,Teacher_Time,Consultant
 from Consultant.models import Category as Consultant_Category
-from library.models import E_Book,Audio_Book,Music,Movies,Library_Payment,Category as Library_Category
+from library.models import E_Book,Audio_Book,Audio_Tracks,Music,Movies,Library_Payment,Category as Library_Category
 from Quiz.models import Question ,Answers,Certification
 import os
 from django.db.models import Q
@@ -551,6 +551,22 @@ class BlogPaymentFom(forms.ModelForm):
         if image_extension.lower() not in IMAGE_EXTENSIONS:
             raise forms.ValidationError("invalid image extension")
         return image
+
+
+class MoviesPaymentFom(forms.ModelForm):
+    payment_image=forms.ImageField(required=False)
+    class Meta:
+        model=Library_Payment
+        fields=["payment_image","transaction_number"]
+
+    def clean_payment_image(self):
+        request=get_current_request()
+        image=request.FILES.get("payment_image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image
 class CoursePaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
     class Meta:
@@ -618,6 +634,22 @@ class LibraryCategoryForm(forms.ModelForm):
 class MoviesLibraryForm(forms.ModelForm):
     image=forms.ImageField(required=True)
     price=forms.FloatField(required=False,min_value=0)
+    summery=forms.CharField(required=True,widget=forms.Textarea())
+    class Meta:
+        model=Movies
+        fields=["name","category","summery","image","price"]
+    def clean_image(self):
+        request=get_current_request()
+        image=request.FILES.getlist("image")
+        for i in image:
+            image_extension=os.path.splitext(i.name)[1]
+            while image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image 
+class MoviesLibraryEditForm(forms.ModelForm):
+    image=forms.ImageField(required=False)
+    price=forms.FloatField(required=False,min_value=0)
+    summery=forms.CharField(required=False,widget=forms.Textarea())
     class Meta:
         model=Movies
         fields=["name","category","image","price"]
@@ -630,7 +662,7 @@ class MoviesLibraryForm(forms.ModelForm):
                 raise forms.ValidationError("invalid image extension")
         return image 
 class MoviesVideoForm(forms.Form):
-    video=forms.ImageField(required=True)
+    video=forms.FileField(required=True)
     def clean_video(self):
         request=get_current_request()
         video=self.cleaned_data.get("video")
@@ -652,3 +684,39 @@ class AdsForm(forms.Form):
             raise forms.ValidationError("no course match this name")
         return course
 
+
+class AddTrackForm(forms.ModelForm):
+    price=forms.FloatField(required=False,min_value=0)
+    about=forms.CharField(required=True,widget=forms.Textarea())
+    class Meta: 
+       model=Audio_Tracks  
+       fields=["name","price","category","about","image"]
+       
+    def clean_image(self):
+        image=self.cleaned_data.get("image")
+        image_extension=os.path.splitext(image.name)[1]
+        while image_extension.lower() not in IMAGE_EXTENSIONS:
+            raise forms.ValidationError("invalid image extension")
+        print(image)
+        return image 
+
+class MusicForm(forms.ModelForm):
+    class Meta:
+       model=Music  
+       fields=["name","track","is_play"]
+    
+    def __init__(self, *args, **kwargs):
+        super(MusicForm, self).__init__(*args, **kwargs)
+        request=get_current_request()
+        self.fields["track"].queryset = Audio_Tracks.objects.filter(user=request.user)
+
+
+class UploadMusicForm(forms.Form):
+    music=forms.FileField(required=True)
+
+    def clean_music(self):
+        music=self.cleaned_data.get("music")
+        music_extension=os.path.splitext(music.name)[1]
+        while music_extension.lower() not in Audio_Extension:
+            raise forms.ValidationError("invalid music extension")
+        return music 

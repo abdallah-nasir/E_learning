@@ -1,7 +1,8 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
-import string,random,json
+import string,random,json,time,mutagen
+
 from django.contrib.auth import get_user_model
 User=get_user_model()
 # Create your models here.
@@ -39,16 +40,29 @@ STATUS=(
    (2,"music"),
    (3,"audio book"),
    (4,"e-book")
-)
-
+) 
+LIBRARY_TYPE=(
+    (1,"audio_book"),
+    (2,"music"),
+    (3,"movies"),
+    (4,"e_book")
+) 
+class Comments(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    library=models.IntegerField(choices=LIBRARY_TYPE,default=1)
+    content_id=models.IntegerField(null=True)
+    comment=models.TextField() 
+    created_at=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.user.username
 
 class Audio_Book(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=150)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     data=models.TextField()
-    students=models.ManyToManyField(User,blank=True)
     duration=models.PositiveIntegerField(null=True)
     price=models.FloatField(null=True)
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
@@ -71,17 +85,64 @@ class Audio_Book(models.Model):
         except:
             price= self.price
         return price
+
+class Audio_Tracks(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    name=models.CharField(max_length=100)
+    image=models.ImageField()
+    music=models.ManyToManyField("Music",blank=True)
+    category=models.ForeignKey(Category,on_delete=models.CASCADE)
+    price=models.FloatField(null=True)
+    comments=models.ManyToManyField(Comments,blank=True)
+    data=models.TextField()
+    status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
+    slug=models.SlugField(unique=True,blank=True,max_length=100)
+    
+    def __str__(self):
+        return self.name
+
+    def get_price(self):
+        try:
+            data=json.loads(self.data)
+            if data["discount"]:
+                price=data["discount"]
+            else:
+                price=self.price
+        except:
+            if self.price:
+                price= self.price
+            else:
+                price=0
+        return price
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+            if Audio_Tracks.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+        super(Audio_Tracks, self).save()
+    def get_data(self):
+        data=json.loads(self.data)
+        return data
+    def get_total_duration(self):
+        duration=0
+        for i in self.music.all():
+            duration +=i.duration
+        total_time=time.strftime('%H:%M:%S',  time.gmtime(duration))
+        return total_time
+    def get_cache_data(self):
+        same=Audio_Tracks.objects.filter(status="approved",category=self.category).exclude(id=self.id).select_related("user")[:4]
+        context={"same":same}
+        return context
 class Music(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=150)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    category=models.ForeignKey(Category,on_delete=models.CASCADE)
     data=models.TextField()
-    students=models.ManyToManyField(User,blank=True)
+    track=models.ForeignKey(Audio_Tracks,related_name="music_track",null=True,on_delete=models.CASCADE)
     duration=models.PositiveIntegerField(null=True)
-    price=models.FloatField(null=True)
-    status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
-
+    is_play=models.BooleanField(default=False)
     slug=models.SlugField(unique=True,blank=True,max_length=100)
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -90,26 +151,38 @@ class Music(models.Model):
                 slug=slugify(self.name)
                 self.slug =f"{slug}-{random_string_generator()}"
         super(Music, self).save()
+    def get_duration_model(self):
+        return time.strftime('%H:%M:%S',  time.gmtime(self.duration))
 
-    def get_price(self):
+
+    def get_music(self):
         try:
             data=json.loads(self.data)
-            if data["discount"]:
-                price=data["discount"]
-            else:
-                price=self.price
+            music=data["audio_url"]
         except:
-            price= self.price
-        return price
+            music=None
+        return music
+
+    def check_music(self):
+        try:
+            data=json.loads(self.data)
+            if data["audio_url"]:
+                return True
+            else:
+                return False
+        except:
+            return False
+        
 class Movies(models.Model):
-    name=models.CharField(max_length=150)
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    name=models.CharField(max_length=150) 
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     data=models.TextField()
-    students=models.ManyToManyField(User,blank=True)
     duration=models.PositiveIntegerField(null=True)
     price=models.FloatField(null=True)
+    comments=models.ManyToManyField(Comments,blank=True)
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
     slug=models.SlugField(unique=True,blank=True,max_length=100)
     def save(self, *args, **kwargs):
@@ -118,8 +191,19 @@ class Movies(models.Model):
             if Movies.objects.filter(slug=self.slug).exists():
                 slug=slugify(self.name)
                 self.slug =f"{slug}-{random_string_generator()}"
-        super(Movies, self).save()
+        super(Movies, self).save() 
+    def get_duration_model(self):
+        return time.strftime('%H:%M:%S',  time.gmtime(self.duration))
 
+    def get_related(self):
+        movies=Movies.objects.filter(category=self.category).exclude(id=self.id).select_related("category")[:4]
+        print(movies) 
+        return movies 
+    def get_movie_data(self):
+        data=json.loads(self.data)
+        summery=data["summery"]
+        context={"summery":summery}
+        return context
     def get_price(self):
         try:
             data=json.loads(self.data)
@@ -128,7 +212,10 @@ class Movies(models.Model):
             else:
                 price=self.price
         except:
-            price= self.price
+            if self.price:
+                price= self.price
+            else:
+                price=0
         return price
     def check_movies(self):
         try:
@@ -140,13 +227,46 @@ class Movies(models.Model):
         except:
             result=False
         return result
+    def get_demo_movie(self):
+        data=json.loads(self.data)
+        demo_video_url=data["demo_video_url"]
+        demo_video_uid=data["demo_video_uid"]
+        demo_video_duration=int(data["demo_duration"])
+        context={"demo_video_url":demo_video_url,"demo_video_uid":demo_video_uid,"demo_duration":demo_video_duration}
+        return context
+    def get_movies(self):
+        data=json.loads(self.data)
+        video_uid=data["video_uid"]
+        collection=data["collection_guid"]
+        image=data["images"][0]
+        video_url=data.get("video")
+        context={"collection":collection,"video_uid":video_uid,"video_url":video_url,"image":image}
+        return context
+    def check_demo_movies(self):
+        try:
+            data=json.loads(self.data)
+            if data["demo_video_url"]:
+                result=True
+            else:
+                result=False
+        except:
+            result=False
+        return result
+    def check_duration(self):
+        if self.duration:
+            if self.duration > 0:
+                return True
+            else:
+                return False
+        else:
+            return False 
 class E_Book(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=150)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     data=models.TextField()
-    students=models.ManyToManyField(User,blank=True)
     price=models.FloatField(null=True)
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
     slug=models.SlugField(unique=True,blank=True,max_length=100)
@@ -188,11 +308,16 @@ class E_Book(models.Model):
         context={"images":images,"first_image":first_image}
         return context
     
+      
+class Artist(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    status=models.CharField(choices=ACTION_CHOICES,default="pending",max_length=10)
+    data=models.TextField()
 PAYMENT_CHOICES=(
     ("pending","pending"),
     ("approved","approved"),
-    ("declined","declined"),
-    ("refund","refund"),
+    ("declined","declined"), 
+    ("refund","refund"), 
     )
 
 PAYMENTS=(
@@ -201,14 +326,22 @@ PAYMENTS=(
     ("Paypal","Paypal")
 )
 class Library_Payment(models.Model):
-    method=models.IntegerField(choices=PAYMENTS)
+    method=models.CharField(choices=PAYMENTS,max_length=100)
+    library_type=models.IntegerField(choices=LIBRARY_TYPE,default=3)
     payment_image=models.ImageField(blank=True,null=True)
     transaction_number=models.CharField(max_length=50,null=True)
     amount=models.PositiveIntegerField(default=0)
+    content_id=models.IntegerField()
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
-    status=models.IntegerField(choices=PAYMENT_CHOICES,default=1)
+    status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=10)
     created_at=models.DateField()
-    expired_at=models.DateField(blank=True,null=True)
-    expired=models.BooleanField(default=False)
+    # expired_at=models.DateField(blank=True,null=True)
+    # expired=models.BooleanField(default=False)
 
-    def __str_(self):return self.methpd
+    def __str_(self):return self.method
+
+    def get_movies(self):
+        if self.library_type == 3:
+            movies=Movies.objects.get(id=self.content_id)
+            print(movies)
+        return movies

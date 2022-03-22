@@ -20,7 +20,7 @@ from Blogs.models import Blog_Payment,Prices
 from django.core.mail import send_mail,EmailMessage,get_connection
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from datetime import date
+from datetime import date 
 import datetime
 from django.forms import ValidationError
 from django.core.cache import cache
@@ -699,9 +699,10 @@ def check_paymob_course_payment(request):
                 payment.expired_at= now + datetime.timedelta(days=365)
             payment.save()
             next=("accounts:blog_payment")
+
         send_mail(
                 'Payment Completed',
-                "Successfull Payment",
+                "Successfull Payment",  
                 PAYMENT_EMAIL_USERNAME,
                 [user.email],
                 fail_silently=False,

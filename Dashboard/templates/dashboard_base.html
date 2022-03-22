@@ -101,6 +101,9 @@
                         <a class="collapse-item" href="{% url 'dashboard:blog_payment' %}">Blog Payments</a>
                         <a class="collapse-item" href="{% url 'dashboard:consultant_payment' %}">Consultant Payments</a>
                         <a class="collapse-item" href="{% url 'dashboard:course_payment' %}">Course Payments</a>
+                        <a class="collapse-item" href="{% url 'dashboard:movies_payment' %}">Movies Payments</a>
+
+                        
                     </div>
                 </div>
             </li>
@@ -168,7 +171,7 @@
                 <div id="collapselibrary" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">All Library:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:library' %}?type=movies">Movies</a>
+                        <a class="collapse-item" href="{% url 'dashboard:movies' %}">Movies</a>
                         <a class="collapse-item" href="{% url 'dashboard:library' %}?type=audio">Audio</a>
                         <a class="collapse-item" href="{% url 'dashboard:library' %}?type=audio-book">Audio Book</a>
                         <a class="collapse-item" href="{% url 'dashboard:library' %}?type=e-book">E-Book</a>
@@ -179,7 +182,25 @@
                     </div>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapselibraryaudio"
+                    aria-expanded="true" aria-controls="collapselibraryaudio">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Library Audio</span>
+                </a>
+                <div id="collapselibraryaudio" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">All Audios:</h6>
+                            <a class="collapse-item" href="{% url 'dashboard:audios:tracks' %}">Tracks</a>
+                        <a class="collapse-item" href="{% url 'dashboard:audios:add_track' %}">Add Track</a>
+                        <a class="collapse-item" href="{% url 'dashboard:audios:add_audio' %}">Add Music</a>
 
+
+                        <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
+                        <a class="collapse-item" href="cards.html">Course Payments</a> -->
+                    </div>
+                </div>
+            </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseads"
                     aria-expanded="true" aria-controls="collapseads">
@@ -416,6 +437,8 @@
 
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=teacher">Teachers</a>
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=add_user">User Course</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=movies">Movies</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=movie_payment">Movies Payment</a>
 
                         <!-- <a class="collapse-item" href="register.html"></a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
@@ -439,6 +462,7 @@
                         <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=blog">Blog Refund</a>
                         <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=course">Course Refund</a>
                         <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=consultant">Consultant Refund</a>
+                        <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=movies">Movies Refund</a>
                         <a class="collapse-item" href="{% url 'dashboard:search_refunds' %}">Add Refund</a>
 
                       

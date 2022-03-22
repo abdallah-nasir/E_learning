@@ -1,6 +1,8 @@
 from django.urls import path,include
 from . import views 
 from .views import *
+from . import movies
+from . import audios
 app_name="Dashboard"
 
 urlpatterns = [
@@ -8,11 +10,14 @@ path("",views.home,name="home"),
 path("blog/payment/",views.blog_payment,name="blog_payment"),
 path("course/payment/",views.course_payment,name="course_payment"),
 path("consultant/payment/",views.consultant_payment,name="consultant_payment"),
+path("movies/payment/",views.movies_payment,name="movies_payment"),
 
 # edits
 path("blog/payment/edit/<int:id>/",views.edit_blog_payment,name="edit_blog_payment"),
 path("course/payment/edit/<int:id>/",views.edit_course_payment,name="edit_course_payment"),
 path("consultant/payment/edit/<int:id>/",views.edit_consultant_payment,name="edit_consultant_payment"),
+path("movies/payment/edit/<str:slug>/<int:id>/",movies.edit_movies_payment,name="edit_movies_payment"),
+
 
 ### blogs
 path("blogs/",views.blogs,name="blogs"),
@@ -132,13 +137,22 @@ path("refunds/approve/<int:id>/",views.approve_refund,name="approve_refund"),
 path("refunds/add/<int:id>/",views.add_refund,name="add_refund"),
 path("refunds/consultant/<int:id>/",views.consultant_refund,name="consultant_refund"),
 path("refunds/course/<str:slug>/<int:id>/",views.course_refund,name="course_refund"),
-
+path("refunds/movies/<str:slug>/<int:id>/",movies.movie_refund,name="movie_refund"),
 
 ####### library
 path("library/",views.library,name="library"),
-# path("library/e-book/add/",views.add_e_book,name="add_e_book"), 
-path("library/movies/add/",views.add_movies,name="add_movies"), 
+path("library/movies/",movies.movies,name="movies"),
+path("library/movies/check/<str:slug>/",movies.check_movie,name="check_movie"),
+path("library/movies/delete/<str:slug>/",movies.delete_movie,name="delete_movie"),
+path("library/movies/edit/<str:slug>/",movies.edit_movie,name="edit_movie"),
+path("library/movies/demo/upload/<str:slug>/",movies.upload_demo_movie,name="upload_demo_movie"),
+path("library/movies/demo/check/<str:slug>/",movies.check_demo_movie,name="check_demo_movie"),
 
+# path("library/e-book/add/",views.add_e_book,name="add_e_book"), 
+path("library/movies/add/",movies.add_movies,name="add_movies"), 
+path("library/movies/video/<str:slug>/",movies.uplaod_movie_video,name="uplaod_movie_video"), 
+path("library/audio/",include("Dashboard.audio_urls",namespace="audios")), 
+  
 ####### ads   
 path("ads/<str:slug>/",views.ads,name="ads"),
 path("search-ads/",views.search_ads,name="search_ads"), 

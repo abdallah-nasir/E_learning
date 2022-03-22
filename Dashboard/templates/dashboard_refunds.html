@@ -50,6 +50,8 @@
                                         <td>Blog</td>
                                         {% elif i.type == "consultant_payment" %}
                                         <td>Consultant</td>
+                                        {% elif i.type == "movie_payment" %}
+                                        <td>Movies</td>
                                         {% endif %}
                                         <td>{{i.get_refund_data.data}}</td> 
                                         <td>{{i.status}}</td>                                  

@@ -7,7 +7,7 @@ urlpatterns = [
 path("logout/",views.logout_view,name="logout"),
 path("signup/",CustomSignupView.as_view(),name="signup"),
 path("login/",CustomSigninView.as_view(),name="login"),
-
+ 
 path("validate/teacher/",views.check_teacher_form,name="validate_teacher"),
 path("",views.account_info,name="account_info"),
 # path("code/reset/",views.code_reset,name="code"),
@@ -16,6 +16,7 @@ path("blog/payment/",views.blog_payment,name="blog_payment"),
 path("course/payment/",views.course_payment,name="course_payment"),
 path("consultant/payment/",views.consultant_payment,name="consultant_payment"),
 # path("profile/blogs/",views.blogs,name="blogs"),
+ 
 path("courses/",views.courses,name="courses"),
 path("events/",views.events,name="events"),
 path("consultants/",views.consultants,name="consultants"),

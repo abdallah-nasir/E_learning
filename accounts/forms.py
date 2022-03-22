@@ -8,6 +8,7 @@ from django.core.mail import send_mail,EmailMessage
 from home.models import Payment
 from Consultant.models import  Cosultant_Payment
 from Blogs.models import Blog_Payment
+from library.models import Library_Payment,Artist
 from .models import TeacherForms,User
 from django.contrib import messages
 from django.conf import settings
@@ -21,6 +22,12 @@ Storage_Api=os.environ["Storage_Api"]
 library_id=os.environ["library_id"]
 storage_name=os.environ["storage_name"]
 agartha_cdn=os.environ["agartha_cdn"]
+# Audio_Extension=[".3gp",".aa",".aac",".aiff",".wav",".m4a",".amr",".mp3",".webm",".wmv",".mkv"]
+# Video_Extension=[".webm",".mkv",".flv",".avi",".wmv",".rmvb",".amv",".mp4",".m4p",".mpg",".mpeg",".m4v",".3gp"]
+Audio_Extension=[".wav",".mp3"]
+Video_Extension=[".mp4"]
+IMAGE_EXTENSIONS=[".webp",".gif",".png",".jpg",".jpeg"]
+BOOK_EXTENSION=[".pdf"]
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 class MyCustomLoginForm(LoginForm):
@@ -67,7 +74,6 @@ class MyCustomSignupForm(SignupForm):
         gender=self.cleaned_data["gender"]
         user.gender=gender
         user.phone=self.cleaned_data["phone"]
-        image=request.POST.get("image")
         if gender == "male":
             user.account_image=f"https://{agartha_cdn}/default_image/male.jpg"
         elif gender == "female":
@@ -198,6 +204,14 @@ class ChangeUserDataForm(forms.ModelForm):
         if User.objects.filter(phone=phone).exists():
             raise forms.ValidationError("User with that phone number is already exists")
         return phone
+    def clean_account_image(self):
+        request=get_current_request()
+        image=request.FILES.get("account_image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image
 class ChangeTeacherDataForm(forms.ModelForm):
     account_image=forms.ImageField(required=False)
     facebook=forms.CharField(required=False,max_length=120,widget=forms.TextInput(attrs={"placeholder":"Your facebook link"}))
@@ -230,26 +244,70 @@ class ChangeTeacherDataForm(forms.ModelForm):
         if twitter and twitter[0:20] != "https://twitter.com/":
             raise forms.ValidationError("invalid url")
         return twitter  
+    def clean_account_image(self):
+        request=get_current_request()
+        image=request.FILES.get("account_image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image
 class BlogPaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
     class Meta:
         model=Blog_Payment
         fields=["payment_image","transaction_number"]
-
+    def clean_payment_image(self):
+        request=get_current_request()
+        image=request.FILES.get("payment_image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image
 
 class CoursePaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
     class Meta:
         model=Payment
         fields=["payment_image","transaction_number"]
-
+    def clean_payment_image(self):
+        request=get_current_request()
+        image=request.FILES.get("payment_image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image
 class ConsultantPaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
     class Meta:
         model=Cosultant_Payment
         fields=["payment_image","transaction_number"]
-
+    def clean_payment_image(self):
+        request=get_current_request()
+        image=request.FILES.get("payment_image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image
 
 class CodeForm(forms.Form):
     email=forms.EmailField(required=True,widget=forms.EmailInput(attrs={"placeholder":"Enter your Email"}))
   
+class MoviesPaymentForm(forms.ModelForm):
+    payment_image=forms.ImageField(required=False)
+    class Meta:
+        model=Library_Payment
+        fields=["transaction_number","payment_image"]
+
+    def clean_payment_image(self):
+        request=get_current_request()
+        image=request.FILES.get("payment_image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image
+

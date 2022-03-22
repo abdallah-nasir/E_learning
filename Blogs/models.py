@@ -5,8 +5,11 @@ from django.template.defaultfilters import slugify
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 import random,string
+from django.shortcuts import redirect
+from django.urls import reverse
 from home import models as Home_Models
 import json,datetime
+from django.contrib import messages
 from Dashboard.models import Rejects
 from django.shortcuts import render
 from django.conf import settings
@@ -192,7 +195,21 @@ class Blog(models.Model):
 # def create_blog_viewers(sender, instance, created, **kwargs):
 #     if created:
 #         Blog_Views.objects.create(blog=instance)
-
+from crum import get_current_request   
+def check_if_payment_expired(user):
+    request=get_current_request()
+    today= datetime.date.today()
+    payment=Blog_Payment.objects.filter(user=user,expired=False,status="approved").select_related("user").last()
+    if payment.expired_at <= today:
+        payment.expired=True
+        payment.save()
+        payment.user.vip =False
+        payment.user.save()
+        messages.error(request,"your membership has expired")
+        result=True
+    else:
+        result=False
+    return result
 def get_blog_data():
     teacher=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:6]
     cat=Category.objects.filter(domain_type=1).order_by("-id")[:6]

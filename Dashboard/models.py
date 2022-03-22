@@ -52,6 +52,7 @@ REFUND_TYPE=(
     ("course_payment","course_payment"),
     ("consultant_payment","consultant_payment"),
     ("blog_payment","blog_payment"),
+    ("movie_payment","movie_payment"),
 )
 class Refunds(models.Model):
     type=models.CharField(choices=REFUND_TYPE,max_length=50)

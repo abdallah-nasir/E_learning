@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.http import HttpResponse
 from django.contrib import messages
 from .models import Refunds
+from library.models import Library_Payment,Movies
 from home.models import Events,Course,Payment
 from Blogs.models import Blog
 from Consultant.models import  Cosultant_Payment,Consultant
@@ -224,14 +225,39 @@ def check_course_refund(function):
         return function(request, *args, **kwargs)
     return wrap
 
-# def check_course_cache_email_notification(function):
-#     @wraps(function)
-#     def wrap(request, *args, **kwargs):
-#         time=cache.get(f"dashboard_email_notification_course_{request.user.email}")
-#         if time == "course":
-#             messages.error(request,"you should wait for admin approve before you can edit")
-#             return redirect(reverse("dashboard:courses"))
-#         else:
-#             cache.set(f"dashboard_email_notification_{request.user.email}","course",60*60*3)
-#             return function(request, *args, **kwargs)
-#     return wrap
+def check_movie_refund(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        movie=get_object_or_404(Movies,slug=kwargs['slug'])
+        payment=get_object_or_404(Library_Payment,id=kwargs["id"])
+        if payment.method == "Western Union":
+            messages.error(request,"You cant refund Western Union Payment")
+            return redirect(reverse("dashboard:movies_payment"))
+        today= datetime.date.today() 
+        refunds=Refunds.objects.filter(user=request.user,type="movie_payment",content_id=payment.id).exclude(status="approved")
+        if payment.status == 'refund':
+            messages.error(request,"this payment is already refunded")
+            return redirect(reverse("dashboard:movies_payment"))
+        elif payment.created_at + datetime.timedelta(days=30) <= today : 
+            messages.error(request,"you have passed 30 days returns")
+            return redirect(reverse("dashboard:movies_payment"))
+        elif refunds.exists():
+            messages.error(request,"you already have pending refund for this payment")
+            return redirect(reverse("dashboard:movies_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    return wrap
+
+
+def check_if_there_payment_edited(function):
+    def wrap(request, *args, **kwargs):
+        movie=get_object_or_404(Movies,slug=kwargs["slug"])
+        payment=Library_Payment.objects.filter(user=request.user,library_type=3,content_id=movie.id,status="approved").select_related("user")
+        if payment.exists():
+            messages.error(request,"you already have an existing payment")
+            return redirect(reverse("accounts:movies_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap

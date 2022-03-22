@@ -19,10 +19,14 @@ path("consultant/payment/",views.consultant_payment,name="consultant_payment"),
 path("courses/",views.courses,name="courses"),
 path("events/",views.events,name="events"),
 path("consultants/",views.consultants,name="consultants"),
+path("movies/payment/",views.movies_payment,name="movies_payment"),
+path("audio/payment/",views.audio_payment,name="audio_payment"),
 
 path("edit/blog/payment/<str:id>/",views.edit_blog_payment,name="edit_blog_payment"),
 path("edit/course/payment/<str:id>/",views.edit_course_payment,name="edit_course_payment"),
 path("edit/consultant/payment/<str:id>/",views.edit_consultant_payment,name="edit_consultant_payment"),
+path("edit/movies/payment/<str:slug>/<str:id>/",views.edit_movies_payment,name="edit_movies_payment"),
+
 
 #refunds
 path("refunds/consultant/<int:id>/",views.consultant_refund,name="consultant_refund"),

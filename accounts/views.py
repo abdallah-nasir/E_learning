@@ -11,6 +11,7 @@ from home.models import *
 from Blogs.models import *
 from Consultant.models import Consultant, Cosultant_Payment
 from django.core.paginator import Paginator
+from library.models import Library_Payment,Movies
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -223,6 +224,27 @@ def consultant_payment(request):
 #     context={"blogs":page_obj}
 #     return render(request,"account_blogs.html",context)
 
+
+@login_required(login_url="accounts:login")
+@redirect_teacher_movies_payment
+def movies_payment(request):
+    movies=Library_Payment.objects.filter(user=request.user,library_type=3).order_by("-id")
+    paginator = Paginator(movies, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"payments":page_obj}
+    return render(request,"account_movies_payment.html",context)
+
+@login_required(login_url="accounts:login")
+@redirect_teacher_audio_payment
+def audio_payment(request):
+    movies=Library_Payment.objects.filter(user=request.user,library_type=2).order_by("-id")
+    paginator = Paginator(movies, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"payments":page_obj}
+    return render(request,"account_audio_payment.html",context)
+
 @login_required(login_url="accounts:login")
 @check_user_is_teacher
 def courses(request):
@@ -376,6 +398,54 @@ def edit_consultant_payment(request,id):
     context={"form":form}
     return render(request,"edit_consultant_payment.html",context)
 
+
+
+@login_required(login_url="accounts:login")
+@check_user_is_teacher
+def edit_movies_payment(request,slug,id):
+    payment=get_object_or_404(Library_Payment,id=id,status="declined")
+    movie=get_object_or_404(Movies,slug=slug,status="approved")
+    if request.user == payment.user:
+        if payment.method != "Western Union":
+            messages.error(request,"You Can't Edit This Payment Method")
+            return redirect(reverse("accounts:consultant_payment"))
+        if Library_Payment.objects.filter(user=request.user,library_type=3,content_id=movie.id,status="approved").select_related("user").exists():
+            messages.success(request,"you already have a payment for this movie")
+            return redirect(reverse("accounts:movies_payment"))
+        form=MoviesPaymentForm(request.POST or None,request.FILES or None,instance=payment)
+        form.initial["payment_image"]=None
+        if request.method == "POST":
+            if form.is_valid():
+                instance=form.save(commit=False)
+                instance.status="pending"
+                image=request.FILES.get("payment_image")
+                if image:
+                    url=f"https://storage.bunnycdn.com/{storage_name}/movies-payment/{movie.slug}/{instance.user.username}/{image}"
+                    headers = {
+                        "Content-Type": "application/octet-stream",
+                        "AccessKey": Storage_Api
+                    }
+                    response = requests.put(url,data=image,headers=headers)
+                    data=response.json()
+                    try: 
+                        if data["HttpCode"] == 201:
+                            instance.payment_image = f"https://{agartha_cdn}/movies-payment/{movie.slug}/{instance.user.username}/{image}"
+                            instance.save()
+                    except:
+                        pass                 
+                instance.save()
+                body="payment edit is waiting for your approve"
+                subject="edit action"
+                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                messages.success(request,"Payment Edited Successfully")
+                return redirect(reverse("accounts:movies_payment"))
+    else:  
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("accounts:movies_payment"))
+    context={"form":form}
+    return render(request,"edit_movies_payment.html",context)
+
+
 @login_required(login_url="accounts:login")
 @check_consultant_refund
 def consultant_refund(request,id):   
@@ -403,4 +473,6 @@ def course_refund(request,slug,id):
     subject="refund payment"
     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
     return redirect(reverse("accounts:course_payment"))
+ 
+
  

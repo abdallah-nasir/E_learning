@@ -22,8 +22,9 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from taggit.models import Tag
-from library.models import *
+from library.models import Library_Payment
 from .models import *
+from .movies import accpet_paymob_movie_payment_refund
 from django.core.cache import cache 
 from django.contrib.auth.decorators import user_passes_test
 import json,requests
@@ -255,6 +256,21 @@ def course_payment(request):
     page_obj = paginator.get_page(page_number)
     context={"payments":page_obj}
     return render(request,"dashboard_course_payment.html",context)
+
+
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+def movies_payment(request):
+    if request.user.is_superuser:
+        payments=Library_Payment.objects.all().select_related("user").order_by("-id")
+    else:
+        payments=Library_Payment.objects.filter(user=request.user).select_related("user").order_by("-id")
+    paginator = Paginator(payments, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"payments":page_obj}
+    return render(request,"dashboard_movies_payment.html",context)
 
 
 @login_required(login_url="accounts:login")
@@ -523,7 +539,7 @@ def check_blog_video(request,slug):
                 response = requests.post( url,json=json_url,headers=headers)
                 data=response.json()
                 blog_data["video_guid"]=data["guid"]
-                blog.video="https://iframe.mediadelivery.net/embed/{library_id}/{data['guid']}?autoplay=false"
+                blog.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{data['guid']}?autoplay=false"
                 file=form.cleaned_data.get("video")
                 url = f"http://video.bunnycdn.com/library/{library_id}/videos/{data['guid']}"
                 headers = {
@@ -1424,7 +1440,7 @@ def approve(request):
         try:
             qs=request.GET["approve"]
             choices={"Teachers":"teacher","Blogs":"blogs","Blog Payments":"blog_payment","Consultant Payment":"consultant_payment",
-                "Course":"course","Course Payments":"payment","Events":"events"}
+                "Course":"course","Course Payments":"payment","Events":"events","movies":"movies"}
             if qs == "blogs":
                 query=Blog.objects.filter(status="pending").order_by("-id")
             elif qs == "blog_payment":  
@@ -1441,6 +1457,10 @@ def approve(request):
                 query=TeacherForms.objects.filter(status="pending").order_by("-id")
             elif qs == "add_user":
                query= AddStudentCourse.objects.filter(status="pending").order_by("-id")
+            elif qs == "movies":
+                query= Movies.objects.filter(status="pending").order_by("-id")
+            elif qs == "movie_payment":
+                query= Library_Payment.objects.filter(status="pending").order_by("-id")
             else:
                 query=False
         except:
@@ -1582,6 +1602,24 @@ def approve_content(request,id):
                 connection=PAYMENT_MAIL_CONNECTION
                 )
                 messages.success(request,"User Added Successfully")
+            elif qs == "movies":
+                query=get_object_or_404(Movies,id=id,status="pending")
+                query.status="approved"
+                messages.success(request,"Movie Approved Successfully")
+                query.save()
+            elif qs == "movie_payment":
+                query=get_object_or_404(Library_Payment,id=id,status="pending")
+                query.status="approved"
+                messages.success(request,"Payment Approved Successfully")
+                query.save()
+                send_mail(
+                'Payment Completed',
+                "Successfull Payment",
+                PAYMENT_EMAIL_USERNAME,
+                [query.user.email],
+                fail_silently=False,
+                connection=PAYMENT_MAIL_CONNECTION
+                )
         except:
             return redirect(reverse("dashboard:home"))
     else:
@@ -1638,6 +1676,17 @@ def reject(request,id):
                 content_user=query.student
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
+            elif qs == "movies":
+                query=get_object_or_404(Movies,id=id,status="pending")
+                content_user=query.user
+                mail=DASHBOARD_EMAIL_USERNAME
+                connection=DASHBOARD_MAIL_CONNECTION
+            elif qs == "movie_payment":
+                query=get_object_or_404(Library_Payment,id=id,status="pending")
+                content_user=query.user
+                mail=DASHBOARD_EMAIL_USERNAME
+                connection=DASHBOARD_MAIL_CONNECTION
+                
             form=RejectForm(request.POST or None)
             if request.method == "POST":
                 if form.is_valid():
@@ -1646,7 +1695,7 @@ def reject(request,id):
                     instance.type=qs
                     instance.user=content_user
                     instance.content_id=id
-                    instance.save()
+                    instance.save()  
                     send_mail(
                         form.cleaned_data.get("subject"),
                         form.cleaned_data.get("message"),
@@ -2259,6 +2308,8 @@ def refunds(request):
             refunds=Refunds.objects.filter(type="course_payment").order_by("-id")
         elif type == "consultant":
             refunds=Refunds.objects.filter(type="consultant_payment").order_by("-id")
+        elif type == "movies":
+            refunds=Refunds.objects.filter(type="movie_payment").order_by("-id")
         else:
             return redirect(reverse("dashboard:home"))
     except:
@@ -2580,6 +2631,9 @@ def approve_refund(request,id):
         elif refund.type == "consultant_payment":
             my_payment=Cosultant_Payment.objects.get(id=payment)
             accpet_paymob_consultant_payment_refund(request,payment=payment,refund=refund)
+        elif refund.type == "movie_payment":
+            my_payment=Library_Payment.objects.get(id=payment)
+            accpet_paymob_movie_payment_refund(request,payment=my_payment,refund=refund)
     else:
         if refund.type == "consultant_payment":
             my_payment=Cosultant_Payment.objects.get(id=payment)
@@ -2835,74 +2889,8 @@ def add_images_to_library(request,form,images,url_name):
 #     context={"form":form} 
 #     return render(request,"dashboard_add_library.html",context)
 
-def add_movies_to_library(request,slug,instance):
-    url = f"http://video.bunnycdn.com/library/{library_id}/collections"
-    data_1 = {"name":slug}
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/*+json",
-        "AccessKey": AccessKey
-    }
-    response = requests.post( url, json=data_1, headers=headers)
-    reponse_data=response.json()
-    movies_data={"collection_guid":reponse_data["guid"]}
-    instance.data=json.dumps(movies_data)
-    instance.save()
-    url = f"http://video.bunnycdn.com/library/{library_id}/videos"         
-    data_2 = {"title":slug,"collectionId":reponse_data["guid"]}
-    response = requests.post( url, json=data_2, headers=headers)
-    data_3=response.json()
-    movies_data={"video_uid":data_3["guid"]}
-    instance.data=json.dumps(movies_data)
-    instance.save()  
-    return True
-@login_required(login_url="accounts:login")
-@for_admin_only 
-def add_movies(request):
-    form =MoviesLibraryForm(request.POST or None,request.FILES or None)
-    if request.method == "POST":
-        if form.is_valid():
-            instance=form.save(commit=False)
-            images=request.FILES.getlist("image")
-            response=add_images_to_library(request,form,images,url_name="e-books")
-            if response:
-                add_movies_to_library(request,slug=instance.slug,instance=instance)
-                return redirect(reverse("dashboard:uplaod_movie_video"))
-    context={"form":form}
-    return render(request,"dashboard_add_movies.html",context)
 
-@login_required(login_url="accounts:login")
-@check_user_validation
-def uplaod_movie_video(request,slug):
-    movie=get_object_or_404(Movies,slug=slug,user=request.user)
-    form=MoviesVideoForm(request.POST or None,request.FILES or None)
-    if movie.check_movies():
-        messages.error(request,"video is already uploaded")
-        # return redirect(reverse("dashboard:movie",kwargs={"slug":video.my_course.slug}))
-    else:
-        if request.is_ajax():
-            if form.is_valid():
-                url = f"http://video.bunnycdn.com/library/{library_id}/movies/{movie.get_movies.video_uid}"
-                file=form.cleaned_data.get("video")
-                headers = {
-                    "Accept": "application/json",
-                    "Content-Type": "application/*+json",
-                    "AccessKey": AccessKey
-                }
-                response = requests.put( url, data=file, headers=headers)
-                movie_url=f"https://iframe.mediadelivery.net/embed/{library_id}/{movie.get_movies.video_uid}?autoplay=false"
-                movie_data={"video":movie_url}
-                movie.data=json.dumps(movie_data)
-                response = requests.get( url, headers=headers)
-                data=response.json()
-                movie.duration=data["length"]  
-                video.save()
-                messages.success(request,"Movie added successfully")
-                return JsonResponse({"message":"1"})
-            else:
-                return FailedJsonResponse({"message":"1"})
-    context={"form":form,"video":video.slug,"slug":video.my_course.slug}
-    return render(request,"dashboard_add_movie_video.html",context)
+
 ########## libraries
 
 @login_required(login_url="accounts:login")

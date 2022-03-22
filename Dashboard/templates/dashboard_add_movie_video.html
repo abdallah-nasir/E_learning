@@ -24,7 +24,7 @@
                         <div class="card-header py-3">
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{% url 'dashboard:complete_add_video' video %}" enctype="multipart/form-data" id="upload-form">
+                            <form method="POST" action="{% url 'dashboard:uplaod_movie_video' slug %}" enctype="multipart/form-data" id="upload-form">
                                 {% csrf_token %}
                                
                                 <div class="form-group">
@@ -97,7 +97,7 @@
                           </div>`;
                     
                         $("#result").html(html1);
-                        window.location.href = '/dashboard/videos/{{slug}}/';
+                        window.location.href = '/dashboard/library/movies/';
 
                       },
                       error:function(error){
@@ -109,7 +109,7 @@
                             </button>
                           </div>`;
                           $("#result").html(html1);
-                          window.location.href = '/dashboard/videos/{{slug}}/';
+                          window.location.href = '/dashboard/library/movies/';
 
                       },
                       cache:false,

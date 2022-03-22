@@ -1,0 +1,121 @@
+{% extends 'dashboard_base.html' %}
+{% load crispy_forms_tags %}
+{% load hosts %}
+
+
+{% block content %}
+<style>
+    .not-visible{
+        display:none;
+    }
+    </style>
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Upload Movie Video</h1>
+                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{% url 'dashboard:check_movie' slug %}" enctype="multipart/form-data" id="upload-form">
+                                {% csrf_token %}
+                               
+                                <div class="form-group">
+                                    {{form|crispy}}
+                                    <div id="progress-box" class="not-visible">progress</div>
+                                    <div id="spinner" class="not-visible" style="margin-top:10px;">
+                                    <button class="btn btn-primary " type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        Processing...
+                                      </button>
+                                    </div>
+                                </div>
+                            <div id="result">
+
+                            </div>
+                            </form>
+                          
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+
+                <script>
+                    const UploadForm=document.getElementById("upload-form")
+                    const input = document.getElementById("id_video")
+                    console.log(input)
+                    const progressBox = document.getElementById("progress-box")
+                    
+                    const Spinner = document.getElementById("spinner")
+
+                    const csrf = document.getElementsByName("csrfmiddlewaretoken")
+                input.addEventListener("change",()=>{
+                    progressBox.classList.remove("not-visible")
+
+                    const img_data = input.files[0]
+                    const fd=new FormData()
+                    fd.append("csrfmiddlewaretoken",csrf[0].value)
+                    fd.append("video",img_data)
+                  $.ajax({
+                      type:"POST",
+                      url:UploadForm.action,
+                      enctype:"multipart/form-data",
+                      data:fd,
+                      beforeSend:function(){
+                
+                      },
+                      xhr:function(){
+                        const xhr =new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", e=>{
+                           if (e.lengthComputable){
+                               const percent = e.loaded / e.total * 100
+                               console.log(percent)
+                               progressBox.innerHTML= `<div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: ${percent}%;" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">${percent.toFixed(1)}%</div>
+                              </div>`
+                        Spinner.classList.remove("not-visible")
+                           }    
+                        }) 
+                        return xhr 
+                      }, 
+                      success:function(response){
+                        $('#spinner').remove();
+                        let html1=`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Video Uploaded!</strong>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>`;
+                    
+                        $("#result").html(html1);
+                        window.location.href = '/dashboard/library/movies/';
+
+                      },
+                      error:function(error){
+                        $('#spinner').remove();
+                        let html1=`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Video Failed Uploaded</strong>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>`;
+                          $("#result").html(html1);
+                          window.location.href = '/dashboard/library/movies/';
+
+                      },
+                      cache:false,
+                      contentType:false,
+                      processData:false,
+                  })  
+                })
+                </script>
+{% endblock %}

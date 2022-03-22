@@ -35,24 +35,24 @@ def slugify(str):
     return str
 
 def get_home_data():  
-    events=Events.objects.filter(status="approved").order_by("-date")[:5]
-    courses=Course.objects.filter(status="approved").exclude(domain_type=2).order_by("-id")[0:5]
+    events=Events.objects.filter(status="approved").select_related("user").order_by("-date")[:5]
+    courses=Course.objects.filter(status="approved").exclude(domain_type=2).select_related("Instructor").order_by("-id")[0:5]
     teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:4]
     categories=Category.objects.filter(domain_type=1).order_by("?")[:6]
-    testimonial=Testimonials.objects.order_by("?")[:4]
-    blogs=blog_model.Blog.objects.filter(status="approved").exclude(domain_type=2).order_by("-id")[:4]
-    ads=Ads.objects.filter(domain_type=1)
+    testimonial=Testimonials.objects.select_related("user").order_by("?")[:4]
+    blogs=blog_model.Blog.objects.filter(status="approved").select_related("user").exclude(domain_type=2).order_by("-id")[:4]
+    ads=Ads.objects.filter(domain_type=1).select_related("course")
     context={"events":list(events),"ads":list(ads),"courses":list(courses),"teachers":list(teachers),"blogs":list(blogs),"categories":list(categories),"testimonials":list(testimonial)}
     return context
 
 def get_home_data_subdomain():
-    events=Events.objects.filter(status="approved").order_by("-date")[:5]
-    courses=Course.objects.filter(status="approved",domain_type=2).order_by("-id")[0:5]
+    events=Events.objects.filter(status="approved").select_related("user").order_by("-date")[:5]
+    courses=Course.objects.filter(status="approved",domain_type=2).select_related("Instructor").order_by("-id")[0:5]
     teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:4]
     categories=Category.objects.filter(domain_type=2).order_by("?")[:6]
-    testimonial=Testimonials.objects.order_by("?")[:4]
-    blogs=blog_model.Blog.objects.filter(status="approved",domain_type=2).order_by("-id")[:4]
-    ads=Ads.objects.filter(domain_type=2)
+    testimonial=Testimonials.objects.select_related("user").order_by("?")[:4]
+    blogs=blog_model.Blog.objects.filter(status="approved",domain_type=2).select_related("user").order_by("-id")[:4]
+    ads=Ads.objects.filter(domain_type=2).select_related("course")
     context={"events":list(events),"ads":list(ads),"courses":list(courses),"teachers":list(teachers),"blogs":list(blogs),"categories":list(categories),"testimonials":list(testimonial)}
     return context
 DOMAIN=(

@@ -1,0 +1,336 @@
+{% extends 'kemet/home/base.html' %}
+{% load hosts %}
+{% load static %}
+{% load cache %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load embed_video_tags %}
+{% block content %}
+ <style type="text/css">
+#id_payment_method{
+        display:block !important;
+     }
+iframe{
+width:100% !important;
+     }
+#paid:hover{
+    color:#ffc600;
+}
+#test {
+        overflow: hidden;
+        text-align: center;
+      }
+      
+#test:before,
+#test:after {
+        background-color: #000;
+        content: "";
+        display: inline-block;
+        height: 1px;
+        position: relative;
+        vertical-align: middle;
+        width: 50%;
+      }
+      
+#test:before {
+        right: 0.5em;
+        margin-left: -50%;
+      }
+      
+#test:after {
+        left: 0.5em;
+        margin-right: -50%;
+      }
+#black-col{
+   color:#07294d; 
+   padding-right:5px;
+}
+#yellow-col{
+    color:#ffc600;
+    
+}
+#submit-button{
+    color:#ffc600;
+     background-color:#07294d;
+}
+#submit-button:hover{
+    background-color:#ffc600;
+    color:#07294d;
+}
+#cancel{
+    color:#fff;
+    background-color:#ffc600;
+
+}
+iframe #body #video-wrapper{
+    max-width:20px !important;
+}
+.singel-course .course-teacher .name{
+  bottom: 0px !important;
+}
+</style>  
+    <!--====== PAGE BANNER PART START ======-->
+    
+    <section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-2.jpg' %})">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page-banner-cont">
+                        <h2>{{course.name.title}}</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'library:movies'  %}">{% trans 'Movies' %}</a></li>
+                                <li class="breadcrumb-item"><a href="{% url 'library:single_movie' movie.slug  %}">{{movie.name.title}}</a></li>
+
+                            </ol>
+                        </nav>
+                    </div>  <!-- page banner cont -->
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+    
+    <!--====== PAGE BANNER PART ENDS ======-->
+    
+    <!--====== COURSES SINGEl PART START ======-->
+    
+    <section id="corses-singel" class="pt-90 pb-120 gray-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="corses-singel-left mt-30">
+                        <div class="title">
+                            <h3>{{movie.name.title}}</h3>
+                        </div> <!-- title -->
+                        <div class="course-terms">
+                            <ul>
+                                <li>
+                                    <div class="teacher-name">
+                                        <div class="thum">
+                                            <img src="{{movie.user.image}}" style="max-height: 4rem;" alt="Teacher">
+                                        </div>
+                                        <div class="name">
+                                            <span>{% trans 'User' %}</span>
+                                            <h6>{{movie.user.get_full_name.title}}</h6>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="course-category">
+                                        <span>{% trans 'Category' %}</span>
+                                        <h6>{{movie.category.name}} </h6>
+                                    </div>
+                                </li>
+                                <li>
+                                   
+                                </li>
+                            </ul>
+                        </div> <!-- course terms -->
+            
+                        <div class="corses-singel-image pt-50">
+                        <iframe src="{{movie.get_demo_movie.demo_video_url}}" loading="lazy" width="1280" height="720" style="border: none;" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen="true"></iframe>     
+                        </div>
+
+                        <div class="corses-tab mt-30">
+                            <ul class="nav nav-justified" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="active" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">{% trans 'Overview' %}</a>
+                                </li>
+                                <!-- <li class="nav-item">
+                                    <a id="curriculam-tab" data-toggle="tab" href="#curriculam" role="tab" aria-controls="curriculam" aria-selected="false">{% trans 'Curriculum' %}</a>
+                                </li> -->
+                                <li class="nav-item">
+                                    <a id="instructor-tab" data-toggle="tab" href="#instructor" role="tab" aria-controls="instructor" aria-selected="false">{% trans 'Instructor' %}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">{% trans 'Reviews' %}</a>
+                                </li>
+                            </ul>
+                            
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                                    <div class="overview-description">
+                                        <div class="singel-description pt-40">
+                                            <h6>{% trans 'Movie Summery' %}</h6>
+                                            <p  style=" scrollbar-width: auto; height: 10rem; width: auto;overflow-y: scroll;">{{movie.get_movie_data.summery}}</p>
+                                        </div>
+                                        <!-- <div class="singel-description pt-40">
+                                            <h6>Requrements</h6>
+                                            <p>Lorem ipsum gravida nibh vel velit auctor aliquetn sollicitudirem quibibendum auci elit cons equat ipsutis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a sit amet mauris. Morbi accumsan ipsum velit. Nam nec tellus .</p>
+                                        </div> -->
+                                    </div> <!-- overview description -->
+                                </div>
+                             
+                                <div class="tab-pane fade" id="instructor" role="tabpanel" aria-labelledby="instructor-tab">
+                                    <div class="instructor-cont">
+                                        <div class="instructor-author">
+                                            <div class="author-thum">
+                                                <img src="{{movie.user.image}}" style="max-height:10rem;" alt="Instructor">
+                                            </div>
+                                            <div class="author-name">
+                                                <a href=""><h5>{{movie.user.first_name.title}} {{movie.user.last_name.title}}</h5></a>
+                                                <span>{{movie.user.title.title}}</span>
+                                                <ul class="social">
+                                                   <li><a href="mailto:{{movie.user.email}}"><i class="fa fa-envelope"></i></a></li> 
+                                                    {% for i in movie.user.get_user_data.social %}
+                                                        {% if i.facebook %}
+                                                    <li><a href="{{i.facebook}}"><i class="fa fa-facebook"></i></a></li>     
+                                                        {% elif i.twitter %}
+                                                       <li><a href="{{i.twitter}}"><i  class="fa fa-twitter"></i></a></li>   
+                                                        {% elif i.linkedin %}
+                                                       <li><a href="{{i.linkedin}}"><i class="fa fa-linkedin-square"></i></a></li>   
+                                                        {% endif %}
+                                            {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="instructor-description pt-25">
+                                            <p style=" scrollbar-width: auto; height: 10rem; width: auto;overflow-y: scroll;">{{movie.user.about_me}}</p>
+                                        </div>
+                                    </div> <!-- instructor cont -->
+                                </div>
+                                <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                                    <div class="reviews-cont">
+                                        <div class="title">
+                                            <h6>{% trans 'Student Reviews' %}</h6>
+                                        </div>
+                                        <ul>
+                                            {% for i in movie.comments.all %}
+                                           <li>
+                                               <div class="singel-reviews">
+                                                    <div class="reviews-author">
+                                                        <div class="author-thum">
+                                                            <img src="{{i.user.image}}" style="max-height: 5rem;" alt="Reviews">
+                                                        </div>
+                                                        <div class="author-name">
+                                                            <h6>{{i.user.first_name.title}} {{i.user.last_name.title}}</h6>
+                                                            <span>{{i.created_at|date:"M d, Y H:i"}}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="reviews-description pt-20">
+                                                        <p>{{i.comment}}</p>
+                                                       
+                                                    </div>
+                                                </div> <!-- singel reviews -->
+                                           </li>
+                                           {% endfor %}
+                                        </ul>
+                                        <div class="title pt-15">
+                                            <h6>{% trans 'Leave A Comment' %}</h6>
+                                        </div>
+                                        <div class="reviews-form">
+                                            <form id="comment-form" action="{% url 'library:create_movies_comment' movie.slug %}" method="POST">
+                                             
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                    <!-- <div class="col-md-6">
+                                                        <div class="form-singel">
+                                                            <input name="first_name" type="text" placeholder="First name" required>
+                                                        </div>
+                                                    </div> -->
+                                                    <!-- <div class="col-md-6">
+                                                        <div class="form-singel">
+                                                            <input name="rate" type="number" placeholder="Last Name">
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="col-lg-12">
+                                                        
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="form-singel">
+                                                            <textarea name="comment" placeholder="{% trans 'Comment' %}" Required></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div id="message">
+
+                                                        </div>
+                                                        <div class="form-singel">
+                                                            <button type="submit" id='post_comment' class="main-btn">{% trans 'Post Comment' %}</button>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- row -->
+                                            </form>
+                                        </div>
+                                    </div> <!-- reviews cont -->
+                                </div>
+                            </div> <!-- tab content -->
+                        </div>
+                    </div> <!-- corses singel left -->
+                    
+                </div>
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-6">
+                            <div class="course-features mt-30">
+                               <h4>{% trans 'Movie Features' %}</h4>
+                                <ul>
+                                    <li><i class="fa fa-clock-o"></i>{% trans 'Duration' %} : <span>{{movie.get_duration_model}}</span></li>
+                                </ul>
+                                <div class="price-button pt-10">                                  
+                                    <!-- <span style="margin-top: 10px;  text-decoration: line-through; ">{% trans 'Price' %} : <b>${{course.price|floatformat}}</b></span> -->
+                                    <span>Price : <b>${{movie.get_price|floatformat}}</b></span>
+                                    <a href="{% url 'library:show_movie' movie.slug %}" class="main-btn">{% trans 'Watch Now' %}</a>
+                                </div>
+                            </div> <!-- course features -->
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- row -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="releted-courses pt-95">
+                        <div class="title">
+                            <h3>{% trans 'Related Movies' %}</h3>
+                        </div>
+                        <div class="row">
+                            
+                            {% for i in movie.get_related %}
+                            <div class="col-md-6">
+                                <div class="singel-course mt-30">
+                                    <div class="thum">
+                                        <div class="image">
+                                            <img src="{{i.get_movies.image}}" alt="Course">
+                                        </div>
+                                        <div class="price">
+                                            <span>${{i.get_price|floatformat}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="cont">
+                                        <a href=""><h4>{{i.name.title}}</h4></a>
+                                        <div id="collapse-{{i.id}}">
+
+                                        </div>
+                                        <div class="course-teacher">
+                                            <div class="thum">
+                                                <a href="#"><img src="{{i.user.image}}" alt="teacher"></a>
+                                            </div>
+                                            <div class="name">
+                                                <a href="#"><h6>{{i.user.get_full_name.title}}</h6></a>
+                                            </div>
+                                            <div class="admin">
+                                             
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- singel course -->
+                            </div>
+                            {% endfor %}
+                        </div> <!-- row -->
+                    </div> <!-- releted courses -->
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section>
+
+
+    <!--====== COURSES SINGEl PART ENDS ======-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+
+   {% endblock %}

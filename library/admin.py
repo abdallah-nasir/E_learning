@@ -8,3 +8,6 @@ admin.site.register(Music)
 admin.site.register(Movies)
 admin.site.register(E_Book)
 admin.site.register(Library_Payment)
+admin.site.register(Comments)
+admin.site.register(Audio_Tracks)
+

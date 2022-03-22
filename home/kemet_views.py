@@ -17,6 +17,8 @@ from django.conf import settings
 from accounts.models import User
 from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment
 from Blogs.models import Blog_Payment,Prices
+from library.models import Audio_Tracks, Library_Payment,Movies
+
 from django.core.mail import send_mail,EmailMessage,get_connection
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
@@ -592,7 +594,7 @@ def paymob_payment(request,course):
                     "first_name": request.user.username,
                     "street": "Ethan Land",
                     "building": "8028",
-                    "phone_number": request.user.phone,
+                    "phone_number": f"{request.user.phone}",
                     "postal_code": "01898",
                     "extra_description": "8 Ram , 128 Giga",
                     "city": "Jaskolskiburgh",
@@ -631,7 +633,7 @@ def paymob_payment(request,course):
                 "first_name": request.user.username,
                 "street": "Ethan Land",
                 "building": "8028",
-                "phone_number": request.user.phone,
+                "phone_number": f"{request.user.phone}",
                 "shipping_method": "PKG",
                 "postal_code": "01898",
                 "city": "Jaskolskiburgh",
@@ -663,6 +665,7 @@ def check_paymob_course_payment(request):
         header= {"Bearer":token}
         r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
         data=r_2.json() 
+        print(data)
         descrption=data["order"]["items"][0]["description"]
         username=data["order"]["shipping_data"]["first_name"]
         transaction_number=request.GET["id"]
@@ -673,11 +676,13 @@ def check_paymob_course_payment(request):
             Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=course.get_price(),course=course,user=user,status="pending")
             next=("accounts:course_payment")
         elif descrption =="consultant": 
+            print("consultant") 
             teacher=Teacher_Time.objects.get(id=name)
             transaction_number=request.GET["id"]
             Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=teacher.price,teacher=teacher,user=user,status="pending")
             next=("accounts:consultant_payment")
         elif descrption == "blogs":
+            print("blogs")  
             prices=Prices.objects.get(id=name)
             now= date.today()
             payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=prices.price,user=user,created_at=now)
@@ -686,8 +691,24 @@ def check_paymob_course_payment(request):
             else:
                 payment.expired_at= now + datetime.timedelta(days=365)
             payment.save()
-            next=("accounts:blog_payment")
-        send_mail(
+            next=("accounts:blog_payment") 
+        elif descrption == "movies": 
+            print("movies") 
+            now= date.today()
+            library_type=int(data["order"]["items"][1]["description"])
+            movie=Movies.objects.get(id=name)
+            transaction_number=request.GET["id"]
+            Library_Payment.objects.create(method="Paymob",library_type=library_type,content_id=movie.id,transaction_number=transaction_number,amount=movie.get_price(),user=user,created_at=now)
+            next=("accounts:movies_payment")
+        elif descrption == "audios": 
+            print("audios") 
+            now= date.today()
+            library_type=int(data["order"]["items"][1]["description"])
+            track=Audio_Tracks.objects.get(id=name)
+            transaction_number=request.GET["id"]
+            Library_Payment.objects.create(method="Paymob",library_type=library_type,content_id=track.id,transaction_number=transaction_number,amount=track.get_price(),user=user,created_at=now)
+            next=("accounts:movies_payment")
+        send_mail(  
                 'Payment Completed',
                 "Successfull Payment",
                 PAYMENT_EMAIL_USERNAME,

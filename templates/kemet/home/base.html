@@ -18,7 +18,7 @@
     
     <!--====== Title ======-->
     <title>{% trans 'Agartha Academy' %} {% block title  %}{% endblock %}</title>
-    {% cache 172800 static_head %}
+    {% cache 172800 kemet_static_head %}
     <!--====== Favicon Icon ======-->
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
 
@@ -597,7 +597,7 @@
     <!--====== BACK TO TP PART ENDS ======-->
    
     
-    {% cache 172800 static_js %}
+    {% cache 172800 kemet_static_js %}
     <!--====== jquery js ======-->
     <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
@@ -631,7 +631,7 @@
     <script src="{% static 'js/ajax-contact.js' %}"></script>
     
     <!--====== Main js ======-->
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/base_main.js' %}"></script>
     
     <!--====== Map js ======-->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDC3Ip9iVC0nIxC6V14CKLQ1HZNF_65qEQ"></script>
@@ -641,7 +641,7 @@
   type="text/javascript"
   src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"
 ></script>
-{% endcache %}
+<!-- {% endcache %} -->
 </body>
 <script style="text/javascript">
    

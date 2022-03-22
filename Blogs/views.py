@@ -47,6 +47,10 @@ username=TASK_NOTIFICATION_EMAIL_USERNAME,
 password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
 use_tls=False
 )
+Storage_Api=os.environ["Storage_Api"]
+storage_name=os.environ["storage_name"]
+agartha_cdn=os.environ['agartha_cdn']
+
 def send_mail_approve(request,user,body,subject):
     msg = EmailMessage(
         subject=subject,
@@ -165,25 +169,38 @@ def pricing(request):
     return render(request,"pricing.html",{'prices':prices})
 
 @login_required(login_url="accounts:login")
-@check_user_status
-@check_blogs_payment_status
-@complete_user_data
-def payment_pricing(request,id):
+def western_payment(request,id):
     price=get_object_or_404(Prices,id=id)
     form=PaymentForm(request.POST or None,request.FILES or None)
     if request.method == 'POST':
         if form.is_valid():
-            if request.user.vip == False and not Blog_Payment.objects.filter(user=request.user,status="pending").exists():
+            if request.user.vip == True or Blog_Payment.objects.filter(user=request.user,status="pending").select_related("user").exists():
+                messages.error(request,"you already have a pending payment")
+                return redirect(reverse("accounts:blog_payment"))
+            else:
                 now= datetime.date.today()
                 image=form.cleaned_data["image"]
-                number=form.cleaned_data["number"]
+                number=form.cleaned_data["number"]               
                 payment=Blog_Payment.objects.create(user=request.user,
-                method="Western Union",payment_image=image,amount=price.price, transaction_number=number,status="pending",created_at=now)
+                method="Western Union",amount=price.price, transaction_number=number,status="pending",created_at=now)
                 if price.get_duration() == 'monthly':
                     payment.created_at = now
                     payment.expired_at= now + datetime.timedelta(days=30*6)
                 else:
                     payment.expired_at= now + datetime.timedelta(days=365)
+                url=f"https://storage.bunnycdn.com/{storage_name}/blogs-payment/{request.user.username}/{image}"
+                headers = {
+                        "Content-Type": "application/octet-stream",
+                        "AccessKey": Storage_Api
+                    }
+                response = requests.put(url,data=image,headers=headers)
+                data=response.json()
+                try: 
+                    if data["HttpCode"] == 201:
+                        payment.payment_image = f"https://{agartha_cdn}/blogs-payment/{request.user.username}/{image}"
+                        payment.save()
+                except:
+                    pass  
                 payment.save()
                 msg = EmailMessage(
                     subject="Payment completed", 
@@ -198,12 +215,18 @@ def payment_pricing(request,id):
                 subject="new payment"
                 send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
                 messages.success(request,"We Have sent an Email,Please check your Inbox")
-                return redirect(reverse("blogs:blogs"))
-            else:
-                messages.error(request,"ou have a pending request ,our team will review your request")
-                return redirect(reverse("blogs:blogs"))
+                return redirect(reverse("accounts:blog_payment"))
         else:
             messages.error(request,"invalid form")
+    return redirect(reverse("blogs:payment",kwargs={"id":price.id}))
+
+@login_required(login_url="accounts:login")
+@check_user_status
+@check_blogs_payment_status
+@complete_user_data
+def payment_pricing(request,id):
+    price=get_object_or_404(Prices,id=id)
+    form=PaymentForm(request.POST or None,request.FILES or None)
     context={'price':price,"form":form}
     return render(request,"blog_payment.html",context)
 
@@ -352,7 +375,7 @@ def paymob_payment(request,id):
                 "first_name": request.user.username,
                 "street": "Ethan Land",
                 "building": "8028",
-                "phone_number": request.user.phone,
+                "phone_number": f"{request.user.phone}",
                 "postal_code": "01898",
                 "extra_description": "8 Ram , 128 Giga",
                 "city": "Jaskolskiburgh",
@@ -390,7 +413,7 @@ def paymob_payment(request,id):
                 "first_name": request.user.username,
                 "street": "Ethan Land",
                 "building": "8028",
-                "phone_number": request.user.phone,
+                "phone_number": f"{request.user.phone}",
                 "shipping_method": "PKG",
                 "postal_code": "01898",
                 "city": "Jaskolskiburgh",
