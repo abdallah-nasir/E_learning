@@ -1,0 +1,187 @@
+{% extends 'kemet/home/base.html' %}
+{% load i18n %}
+{% load hosts %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list  for LANGUAGES as languages %}
+{% block content %}
+<!-- <link rel="stylesheet" href="{% static 'consultant/css/style.css' %}"> -->
+{% if LANGUAGE_CODE == "ar" %}
+<link rel="stylesheet" href="{% static 'css/cons-bootstrap.min-rtl.css' %}">
+<link rel="stylesheet" href="{% static 'css/cons-style-rtl.css' %}">
+{% else %}
+<link rel="stylesheet" href="{% static 'css/2019-bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/consultant-style.css' %}">
+{% endif %}
+<style type="text/css">
+.fa-check-circle{
+   color:#28a745; 
+}
+.bg-success{
+    background-color:#ffc600 !important;
+}
+body{
+    background-color:#fff !important;
+}
+.bg-light {
+  background-color: #fff !important;
+}
+#page-banner{
+    height:auto !important;
+}
+
+
+</style>
+
+
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-2.jpg' %})">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-banner-cont">
+                    <h2>{% trans 'Consultations' %}</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'consultant:home' %}">{% trans 'Consultations' %}</a></li>
+                        </ol>
+                    </nav>
+                </div>  <!-- page banner cont -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+    <!--====== Specialities PART START ======-->
+    <section class="section section-features">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-5 features-img">
+                    <img src="{% static 'images/consultations/feature.png' %}" class="img-fluid" alt="Feature">
+                </div>
+                <div class="col-md-7">
+                    <div class="section-header">
+                        <h2 class="mt-2">{% trans 'Teachers available for consultation' %}</h2>
+                        <p>{% trans 'There are times when we feel that it is the end and then discover that it is the beginning, and there are doors that we feel closed and then discover that they are the real entrance.' %}</p>
+                    </div>
+                    <div class="features-slider slider">
+                        {% for i in profiles %}
+                        <div class="feature-item text-center">
+                            <img src="{{i.image}}" class="img-fluid" alt="Feature">
+                            <p>{{i.first_name}}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--====== Specialities PART end ======-->
+    <!-- Popular Section -->
+    <section class="section section-doctor">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="section-header ">
+                        <h2>{% trans 'Book Our Teacher' %}</h2>
+                        <p>{% trans 'Meet your favorite teacher and book a counseling session in Agartha' %} </p>
+                    </div>
+                    <div class="about-content">
+                        <p>
+                            {% trans 'You can book a consultation with the preferred coach at the times available for each coach.After setting the date and booking, the reservation will be confirmed by the coach.' %}
+                        </p>
+                        <p>
+                            {% trans 'You will receive an email in case of refusal. You will receive an email to notify you of the rejection of the reservation and the reason for the rejection.In the event of confirmation, you will receive an email with a confirmation of the appointment and a link to the meeting.Appointments are chosen according to Cairo time, so be sure to choose the date accurately.' %}
+                        </p>
+                        <a href="{% url 'home:about' %}">{% trans 'Read More..' %}</a>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="doctor-slider slider">
+                      
+                        {% for i in teachers %}
+                        
+                        <div class="profile-widget">
+                            <div class="doc-img">
+                                <a href="{% url 'consultant:get_consultant' i.user.slug %}?consultant={{i.id}}">
+                                    <img class="img-fluid" alt="{{i.user.username}}" src="{{i.user.image}}">
+                                </a>
+                                <!-- <a href="javascript:void(0)" class="fav-btn">
+                                    <i class="far fa-bookmark"></i>
+                                </a> -->
+                            </div>
+                            <div class="pro-content">
+                                <h3 class="title">
+                                    <a href="{% url 'home:teacher' i.user.slug %}">{{i.user.get_full_name.title}}</a>
+                                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+
+                                </h3>
+                                <p class="speciality">{{i.user.get_user_data.title}}</p>
+                                <!-- <div class="rating">
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+
+                                    <i class="fas fa-star filled"></i>
+                                    <i class="fas fa-star filled"></i>
+                                    <i class="fas fa-star filled"></i>
+                                    <i class="fas fa-star filled"></i>
+                                    <span class="d-inline-block average-rating">(17)</span>
+                                </div> -->
+                                <ul class="available-info">
+                                    <li>
+                                        <i class="fa fa-filter" aria-hidden="true"></i>
+                                        {{i.category.name|truncatechars:20}}
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                                        Available every {{i.get_teacher_date}}
+                                        
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                        From {{i.start_time}} To {{i.end_time}}
+                                        
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-money" aria-hidden="true"></i>
+                                        ${{i.price}}
+                                        <!-- <i class="fa fa-info-circle" aria-hidden="true"></i> -->
+
+                                    </li>
+                                </ul>
+                                <div class="row row-sm">
+                                    <div class="col-6">
+                                        <a href="{% url 'consultant:get_consultant' i.user.slug %}?consultant={{i.id}}" class="btn view-btn">{% trans 'View Profile' %}</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="{% url 'consultant:checkout' i.user.slug %}?consultant={{i.id}}&date={{i.get_next_teacher_day}}" class="btn book-btn">{% trans 'Book Now' %}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            {% endfor %} 
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /Popular Section -->
+
+
+
+
+   
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+
+    <!-- Bootstrap Core JS -->
+    <script src="{% static 'js/19-popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- Slick JS -->
+    <script src="{% static 'js/slick.js' %}"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/script.js' %}"></script>
+
+  {% endblock %}

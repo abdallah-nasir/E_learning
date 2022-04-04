@@ -52,6 +52,10 @@
                                         <td>Consultant</td>
                                         {% elif i.type == "movie_payment" %}
                                         <td>Movies</td>
+                                           {% elif i.type == "music_payment" %}
+                                        <td>Music</td>
+                                        {% elif i.type == "audio_book_payment" %}
+                                        <td>Audio Book</td>
                                         {% endif %}
                                         <td>{{i.get_refund_data.data}}</td> 
                                         <td>{{i.status}}</td>                                  
@@ -68,7 +72,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Approve payment</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Refund payment</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>

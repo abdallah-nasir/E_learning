@@ -14,7 +14,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 # import django_heroku
-
+  
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -387,3 +387,5 @@ CKEDITOR_FORCE_JPEG_COMPRESSION =True
 RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
 RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ 

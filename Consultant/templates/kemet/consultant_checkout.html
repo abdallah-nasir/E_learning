@@ -1,0 +1,236 @@
+{% extends 'kemet/home/base.html' %}
+{% load i18n %}
+{% load hosts %}
+
+{% load static %}
+{% block content %}
+{% if LANGUAGE_CODE == "ar" %}
+<link rel="stylesheet" href="{% static 'css/cons-style-rtl.css' %}">
+{% else %}
+<link rel="stylesheet" href="{% static 'css/2019-bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/consultant-style.css' %}">
+{% endif %}
+
+    <link rel="stylesheet" href="{% static 'css/base-style.css' %}">
+<style type="text/css">
+.bg-success{
+background-color:#fcc401 !important;
+}
+.total-cost{
+  color:#fcc401 !important;
+}
+.booking-a:hover{
+color:#fcc401 !important;
+}
+body{
+    background-color: #fff;
+}
+.logo img {
+    width: 100%;
+  }
+
+</style>
+<div class="content">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-7 col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+
+                        <!-- Checkout Form -->
+                        <form method="POST" action="{% url 'consultant:post_payment_data' teacher.id  %}">
+                            {% csrf_token %}
+                            <input type="hidden" name='consultant' value='{{teacher.id}}'> 
+                            <input type="hidden" name='date' value='{{date}}'> 
+
+                            <!-- Personal Information -->
+                            <div class="info-widget">
+                                <h4 class="card-title">Personal Information</h4>
+                                <h6>قبل البدء، يرجى العلم بأننا نعمل فقط مع المُدربين، المستشارين، الأخصائيين، ومُقدمي الخدمات ولا نعمل مع أفراد بصفة عامة.</h6>
+                                <h6>لتبدأ الحجز عليك إتمام بيناتك و نبذة عن محور استشارتك .</h6>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group card-label">
+                                            <label>Full Name</label>
+                                            <input name="full_name" class="form-control" type="text" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group card-label">
+                                            <label>Specialization</label>
+                                            <input name="specialization" class="form-control" type="text" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group card-label">
+                                            <label>Email</label>
+                                            <input class="form-control" name="email" type="email" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group card-label">
+                                            <label>Phone</label>
+                                            <input class="form-control" name="phone" type="text" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-md-12">
+                                        <div class="form-group card-label">
+                                            <textarea class="form-control" name="topic" placeholder="Consultation topic" data-error="Please,leave us a Consultation topic." required="required"></textarea>
+                                            <div class="help-block with-errors"></div>
+                                        </div> <!-- singel form -->
+                                    </div>
+                                    <h6>سيتم مراجعة طلبك من قبل الفريق بكل شفافية ووضوح وعليه يتم قبول حجزك. ستكون هذه المكالمة على منصة الزوم</h6>
+                                </div>
+                               
+                            </div>
+                            <!-- /Personal Information -->
+
+                            <div class="payment-widget">
+                                <h4 class="card-title">Payment Method</h4>
+
+                                <!-- Credit Card Payment -->
+                                <div class="payment-list">
+                                    <label class="payment-radio credit-card-option">
+                                        <input type="radio" name="method" value="credit" checked>
+                                        <span class="checkmark"></span>
+                                        Bank Transaction
+                                    </label>
+                                    <!-- <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group card-label">
+                                                <label for="card_name">Name on Card</label>
+                                                <input class="form-control" id="card_name" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group card-label">
+                                                <label for="card_number">Card Number</label>
+                                                <input class="form-control" id="card_number" placeholder="1234  5678  9876  5432" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group card-label">
+                                                <label for="expiry_month">Expiry Month</label>
+                                                <input class="form-control" id="expiry_month" placeholder="MM" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group card-label">
+                                                <label for="expiry_year">Expiry Year</label>
+                                                <input class="form-control" id="expiry_year" placeholder="YY" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group card-label">
+                                                <label for="cvv">CVV</label>
+                                                <input class="form-control" id="cvv" type="text">
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <!-- /Credit Card Payment -->
+                                <!-- Paypal Payment -->
+                                <div class="payment-list">
+                                    <label class="payment-radio paypal-option">
+                                        <input type="radio" name="method" value="paypal">
+                                        <span class="checkmark"></span>
+                                        Paypal
+                                    </label>
+                                </div>
+                                <div class="payment-list">
+                                    <label class="payment-radio paypal-option">
+                                        <input type="radio" name="method" value="western">
+                                        <span class="checkmark"></span>
+                                       Western Union
+                                    </label>
+                                </div>
+                                <!-- /Paypal Payment -->
+                                <!-- Terms Accept -->
+                                <div class="terms-accept">
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" name="terms" id="terms_accept" required>
+                                        <label for="terms_accept">I have read and accept <a href="#">Terms &amp; Conditions</a></label>
+                                    </div>
+                                </div>
+                                <!-- /Terms Accept -->
+                                <!-- Submit Section -->
+                                <div class="submit-section mt-4">
+                                    <button type="submit" class="main-btn">Confirm and Pay</button>
+                                </div>
+                                <!-- /Submit Section -->
+
+                            </div>
+                        </form>
+                        <!-- /Checkout Form -->
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-5 col-lg-4 theiaStickySidebar">
+
+                <!-- Booking Summary -->
+                <div class="card booking-card">
+                    <div class="card-header">
+                        <h4 class="card-title">Booking Summary</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Booking Doctor Info -->
+                        <div class="booking-doc-info">
+                            <a href="{% url 'consultant:get_consultant' teacher.user.slug %}" class="booking-doc-img">
+                                <img src="{{teacher.user.image}}" alt="{{teacher.user}}">
+                            </a>
+                            <div class="booking-info">
+                                <h4><a class="booking-a" href="{% url 'consultant:get_consultant' teacher.user.slug %}">{{teacher.user.get_full_name.title}}</a></h4>
+                                <!-- <div class="rating">
+                                    <i class="fas fa-star filled"></i>
+                                    <i class="fas fa-star filled"></i>
+                                    <i class="fas fa-star filled"></i>
+                                    <i class="fas fa-star filled"></i>
+                                    <i class="fas fa-star"></i>
+                                    <span class="d-inline-block average-rating">35</span>
+                                </div> -->
+                                <div class="clinic-details">
+                                    <p class="doc-location"><i class="fa fa-filter" aria-hidden="true"></i>{{teacher.category.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Booking Doctor Info -->
+
+                        <div class="booking-summary">
+                            <div class="booking-item-wrap">
+                                <ul class="booking-date">
+                                    <li>Date <span>{{date}}</span></li>
+                                    <li>Time between <span>{{teacher.start_time}} {{teacher.end_time}}</span></li>
+                                </ul>
+                                <ul class="booking-fee">
+                                    <li>Consulting Fee <span>${{teacher.price}}</span></li>
+                                    <!-- <li>Booking Fee <span>$10</span></li>
+                                    <li>Video Call <span>$50</span></li> -->
+                                </ul>
+                                <div class="booking-total">
+                                    <ul class="booking-total-list">
+                                        <li>
+                                            <span>Total</span>
+                                            <span class="total-cost">${{teacher.price}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Booking Summary -->
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+ 
+    
+{% endblock %}

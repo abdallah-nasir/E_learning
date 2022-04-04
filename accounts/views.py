@@ -11,7 +11,7 @@ from home.models import *
 from Blogs.models import *
 from Consultant.models import Consultant, Cosultant_Payment
 from django.core.paginator import Paginator
-from library.models import Library_Payment,Movies
+from library.models import Library_Payment,Movies,Audio_Book
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -22,17 +22,8 @@ from .forms import MyCustomLoginForm,MyCustomSignupForm
 from allauth.account.views import SignupView,LoginView
 from Dashboard import models as dahboard_models
 from django.core.mail import EmailMessage,get_connection
-TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
-TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
-TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
-TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
-TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= TASK_NOTIFICATION_EMAIL_HOST, 
-port=TASK_NOTIFICATION_EMAIL_PORT, 
-username=TASK_NOTIFICATION_EMAIL_USERNAME, 
-password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
-use_tls=False
-)
+from E_learning.all_email import *
+
 # from allauth.account.forms import LoginForm,SignupForm
 Storage_Api=os.environ["Storage_Api"]
 storage_name=os.environ["storage_name"]
@@ -85,18 +76,6 @@ from django.contrib.sites.models import Site
 def random_string_generator(size=7, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
-def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
-        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
-        reply_to=[user],
-        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
-        )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-    return True
 
 @login_required(login_url="accounts:login")
 @check_user_is_student
@@ -246,6 +225,15 @@ def audio_payment(request):
     return render(request,"account_audio_payment.html",context)
 
 @login_required(login_url="accounts:login")
+@redirect_audio_book_payment
+def audio_book_payment(request):
+    movies=Library_Payment.objects.filter(user=request.user,library_type=1).order_by("-id")
+    paginator = Paginator(movies, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"payments":page_obj}
+    return render(request,"account_audio_book_payment.html",context)
+@login_required(login_url="accounts:login")
 @check_user_is_teacher
 def courses(request):
     courses=Course.objects.filter(students=request.user).order_by("-id")
@@ -277,124 +265,121 @@ def consultants(request):
 
 @login_required(login_url="accounts:login")
 @check_user_is_teacher
+@check_edit_blog_pyment
 def edit_blog_payment(request,id):
     payment=get_object_or_404(Blog_Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method != "Western Union":
-            messages.error(request,"You Can't Edit This Payment Method")
+        if payment.method == "Western Union" or payment.method  == "bank":
+            form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/blog-payment/{instance.user.slug}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/blog-payment/{instance.user.slug}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:blog_payment"))
+        else:
+            messages.error(request,"You Don't Have Permission")
             return redirect(reverse("accounts:blog_payment"))
-        form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
-        form.initial["payment_image"]=None
-        if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.status="pending"
-                image=request.FILES.get("payment_image")
-                if image:
-                    url=f"https://storage.bunnycdn.com/{storage_name}/blog-payment/{instance.user.slug}/{image}"
-                    headers = {
-                        "Content-Type": "application/octet-stream",
-                        "AccessKey": Storage_Api
-                    }
-                    response = requests.put(url,data=image,headers=headers)
-                    data=response.json()
-                    try: 
-                        if data["HttpCode"] == 201:
-                            instance.payment_image = f"https://{agartha_cdn}/blog-payment/{instance.user.slug}/{image}"
-                            instance.save()
-                    except:
-                        pass                 
-                instance.save()
-                body="payment edit is waiting for your approve"
-                subject="edit action"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                messages.success(request,"Payment Edited Successfully")
-                return redirect(reverse("accounts:blog_payment"))
-    else:
-        messages.error(request,"You Don't Have Permission")
-        return redirect(reverse("accounts:blog_payment"))
     context={"form":form}
     return render(request,"edit_blog_payment.html",context)
 
 @login_required(login_url="accounts:login")
-@check_user_is_teacher
+@check_user_is_teacher 
+@check_edit_course_pyment
 def edit_course_payment(request,id):
     payment=get_object_or_404(Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method != "Western Union":
-            messages.error(request,"You Can't Edit This Payment Method")
+        if payment.method == "Western Union" or payment.method == "bank":
+            form=CoursePaymentFom(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{instance.course.slug}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/course-payment/{instance.course.slug}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:course_payment"))
+        else:
+            messages.error(request,"You Don't Have Permission")
             return redirect(reverse("accounts:course_payment"))
-        form=CoursePaymentFom(request.POST or None,request.FILES or None,instance=payment)
-        form.initial["payment_image"]=None
-        if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.status="pending"
-                image=request.FILES.get("payment_image")
-                if image:
-                    url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{instance.course.slug}/{image}"
-                    headers = {
-                        "Content-Type": "application/octet-stream",
-                        "AccessKey": Storage_Api
-                    }
-                    response = requests.put(url,data=image,headers=headers)
-                    data=response.json()
-                    try: 
-                        if data["HttpCode"] == 201:
-                            instance.payment_image = f"https://{agartha_cdn}/course-payment/{instance.course.slug}/{image}"
-                            instance.save()
-                    except:
-                        pass                 
-                instance.save()
-                body="payment edit is waiting for your approve"
-                subject="edit action"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                messages.success(request,"Payment Edited Successfully")
-                return redirect(reverse("accounts:course_payment"))
-    else:
-        messages.error(request,"You Don't Have Permission")
-        return redirect(reverse("accounts:course_payment"))
     context={"form":form,"payment":payment} 
     return render(request,"edit_course_payment.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_is_teacher
+@check_edit_consultant_pyment
 def edit_consultant_payment(request,id):
     payment=get_object_or_404(Cosultant_Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method != "Western Union":
-            messages.error(request,"You Can't Edit This Payment Method")
+        if payment.method == "Western Union" or payment.method == "bank":
+            form=ConsultantPaymentFom(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:consultant_payment"))
+        else:  
+            messages.error(request,"You Don't Have Permission")
             return redirect(reverse("accounts:consultant_payment"))
-        form=ConsultantPaymentFom(request.POST or None,request.FILES or None,instance=payment)
-        form.initial["payment_image"]=None
-        if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.status="pending"
-                image=request.FILES.get("payment_image")
-                if image:
-                    url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
-                    headers = {
-                        "Content-Type": "application/octet-stream",
-                        "AccessKey": Storage_Api
-                    }
-                    response = requests.put(url,data=image,headers=headers)
-                    data=response.json()
-                    try: 
-                        if data["HttpCode"] == 201:
-                            instance.payment_image = f"https://{agartha_cdn}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
-                            instance.save()
-                    except:
-                        pass                 
-                instance.save()
-                body="payment edit is waiting for your approve"
-                subject="edit action"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                messages.success(request,"Payment Edited Successfully")
-                return redirect(reverse("accounts:consultant_payment"))
-    else:  
-        messages.error(request,"You Don't Have Permission")
-        return redirect(reverse("accounts:consultant_payment"))
     context={"form":form}
     return render(request,"edit_consultant_payment.html",context)
 
@@ -404,46 +389,132 @@ def edit_consultant_payment(request,id):
 @check_user_is_teacher
 def edit_movies_payment(request,slug,id):
     payment=get_object_or_404(Library_Payment,id=id,status="declined")
-    movie=get_object_or_404(Movies,slug=slug,status="approved")
+    movie=get_object_or_404(Movies,slug=slug)
     if request.user == payment.user:
-        if payment.method != "Western Union":
-            messages.error(request,"You Can't Edit This Payment Method")
-            return redirect(reverse("accounts:consultant_payment"))
-        if Library_Payment.objects.filter(user=request.user,library_type=3,content_id=movie.id,status="approved").select_related("user").exists():
-            messages.success(request,"you already have a payment for this movie")
-            return redirect(reverse("accounts:movies_payment"))
-        form=MoviesPaymentForm(request.POST or None,request.FILES or None,instance=payment)
-        form.initial["payment_image"]=None
-        if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.status="pending"
-                image=request.FILES.get("payment_image")
-                if image:
-                    url=f"https://storage.bunnycdn.com/{storage_name}/movies-payment/{movie.slug}/{instance.user.username}/{image}"
-                    headers = {
-                        "Content-Type": "application/octet-stream",
-                        "AccessKey": Storage_Api
-                    }
-                    response = requests.put(url,data=image,headers=headers)
-                    data=response.json()
-                    try: 
-                        if data["HttpCode"] == 201:
-                            instance.payment_image = f"https://{agartha_cdn}/movies-payment/{movie.slug}/{instance.user.username}/{image}"
-                            instance.save()
-                    except:
-                        pass                 
-                instance.save()
-                body="payment edit is waiting for your approve"
-                subject="edit action"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                messages.success(request,"Payment Edited Successfully")
+        if payment.method == "Western Union" or payment.method == "bank":
+            if Library_Payment.objects.filter(user=request.user,library_type=3,content_id=movie.id,status="approved").select_related("user").exists():
+                messages.success(request,"you already have a payment for this movie")
                 return redirect(reverse("accounts:movies_payment"))
-    else:  
-        messages.error(request,"You Don't Have Permission")
-        return redirect(reverse("accounts:movies_payment"))
+            form=MoviesPaymentForm(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/movies-payment/{movie.slug}/{instance.user.username}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/movies-payment/{movie.slug}/{instance.user.username}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:movies_payment"))
+        else:  
+            messages.error(request,"You Don't Have Permission")
+            return redirect(reverse("accounts:movies_payment"))
     context={"form":form}
     return render(request,"edit_movies_payment.html",context)
+
+
+@login_required(login_url="accounts:login")
+@check_user_is_teacher
+def edit_audio_book_payment(request,slug,id):
+    payment=get_object_or_404(Library_Payment,id=id,status="declined")
+    track=get_object_or_404(Audio_Book_Tracks,slug=slug)
+    if request.user == payment.user:
+        if payment.method == "Western Union" or payment.method == "bank":
+            if Library_Payment.objects.filter(user=request.user,library_type=1,content_id=track.id,status="approved").select_related("user").exists():
+                messages.success(request,"you already have a payment for this movie")
+                return redirect(reverse("accounts:audio_book_payment"))
+            form=MoviesPaymentForm(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/audio-book-payment/{track.slug}/{payment.user.username}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/audio-book-payment/{audio_book.track.slug}/{payment.user.username}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:audio_book_payment"))
+        else:  
+            messages.error(request,"You Don't Have Permission")
+            return redirect(reverse("accounts:audio_book_payment"))
+    context={"form":form}
+    return render(request,"edit_audio_book_payment.html",context)
+
+
+@login_required(login_url="accounts:login")
+@check_user_is_teacher
+def edit_audio_payment(request,slug,id):
+    payment=get_object_or_404(Library_Payment,id=id,status="declined")
+    track=get_object_or_404(Audio_Tracks,slug=slug)
+    if request.user == payment.user:
+        if payment.method == "Western Union" or payment.method == "bank":
+            if Library_Payment.objects.filter(user=request.user,library_type=2,content_id=track.id,status="approved").select_related("user").exists():
+                messages.success(request,"you already have a payment for this movie")
+                return redirect(reverse("accounts:audio_payment"))
+            form=MoviesPaymentForm(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/music-payment/{track.slug}/{payment.user.username}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/music-payment/{track.slug}/{payment.user.username}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:audio_payment"))
+        else:  
+            messages.error(request,"You Don't Have Permission")
+            return redirect(reverse("accounts:audio_payment"))
+    context={"form":form}
+    return render(request,"edit_audio_payment.html",context)
 
 
 @login_required(login_url="accounts:login")
@@ -474,5 +545,48 @@ def course_refund(request,slug,id):
     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
     return redirect(reverse("accounts:course_payment"))
  
+@login_required(login_url="accounts:login")
+@check_movies_refund
+def movies_refund(request,slug,id):   
+    payment=get_object_or_404(Library_Payment,id=id)
+    refund=Refunds.objects.create(type="movie_payment",content_id=id,user=request.user,transaction_number=payment.transaction_number)
+    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","movies":payment.get_movies().name}]}
+    refund.data=json.dumps(my_data)
+    refund.save()
+    messages.success(request,"Your Refund is Being Review By Admin")
+    body=f"refund from {request.user.email}"
+    subject="refund payment"
+    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+    return redirect(reverse("accounts:movies_payment"))
+ 
+@login_required(login_url="accounts:login")
+@check_music_refund
+def music_refund(request,slug,id):   
+    payment=get_object_or_404(Library_Payment,id=id)
+    refund=Refunds.objects.create(type="music_payment",content_id=id,user=request.user,transaction_number=payment.transaction_number)
+    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","music":payment.get_music().name}]}
+    refund.data=json.dumps(my_data)
+    refund.save()
+    messages.success(request,"Your Refund is Being Review By Admin")
+    body=f"refund from {request.user.email}"
+    subject="refund payment"
+    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+    return redirect(reverse("accounts:audio_payment"))
+ 
 
  
+@login_required(login_url="accounts:login")
+@check_audio_book_refund
+def audio_book_refund(request,slug,id):   
+    payment=get_object_or_404(Library_Payment,id=id,library_type=1)
+    refund=Refunds.objects.create(type="audio_book_payment",content_id=id,user=request.user,transaction_number=payment.transaction_number)
+    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","Book":payment.get_audio_book().name}]}
+    refund.data=json.dumps(my_data)
+    refund.save()
+    body=f"a new refund from user {request.user.email}"
+    subject="new refund"
+    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+    messages.success(request,"Your Refund is Being Review By Admin")
+    return redirect(reverse("accounts:audio_book_payment"))
+
+

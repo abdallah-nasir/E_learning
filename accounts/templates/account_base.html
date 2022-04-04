@@ -88,6 +88,8 @@
                         <a class="collapse-item" href="{% url 'accounts:consultant_payment' %}">{% trans 'Consultant Payments' %}</a>
                         <a class="collapse-item" href="{% url 'accounts:course_payment' %}">{% trans 'Course Payments' %}</a>
                         <a class="collapse-item" href="{% url 'accounts:movies_payment' %}">{% trans 'Movies Payments' %}</a>
+                        <a class="collapse-item" href="{% url 'accounts:audio_payment' %}">{% trans 'Music Payments' %}</a>
+                        <a class="collapse-item" href="{% url 'accounts:audio_book_payment' %}">{% trans 'Audio Book Payments' %}</a>
 
                     </div>
                 </div>
@@ -140,6 +142,22 @@
                     </div>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsesix"
+                    aria-expanded="true" aria-controls="collapsesix">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>{% trans 'Join our Teachers' %}</span>
+                </a>
+                <div id="collapsesix" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">{% trans 'Join our Teachers' %}:</h6>
+                        <a class="collapse-item" href="{% url 'accounts:validate_teacher' %}">{% trans 'Become Teacher' %}</a>
+                        <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
+                        <a class="collapse-item" href="cards.html">Course Payments</a> -->
+                    </div>
+                </div>
+            </li>
+      
       
             <!-- Divider -->
             <hr class="sidebar-divider">

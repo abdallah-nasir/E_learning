@@ -147,7 +147,6 @@ class Teacher_Time(models.Model):
         else:  
             difference = date - iso
             next= now + datetime.timedelta(days=difference)
-            print(next)
             for i in range(0,4):
                 all_days=next + datetime.timedelta(weeks=i)
                 list_days.append(all_days.strftime("%m/%d/%Y"))
@@ -182,7 +181,7 @@ class Teacher_Time(models.Model):
         url=reverse("consultant:get_consultant",kwargs={"slug":self.user.slug})
         return url
 PAYMENTS=(
-    ("Paymob","Paymob"),
+    ("bank","bank"),
     ("Western Union","Western Union"),
     ("Paypal","Paypal")
 )
@@ -259,7 +258,24 @@ class Cosultant_Payment(models.Model):
     def check_if_rejected(self):
         rejects=Rejects.objects.filter(type="consultant_payment",content_id=self.id,user=self.user).delete()
         return rejects
+    def check_payment(self):
+        if self.status == "declined":
+           
+            if self.method == "Western Union" or self.method == "bank":
+                return True
+            else:
+                return False
+        else:
+            return False
 
+    def check_refund(self): 
+        if self.status != "refund":
+            if self.method == "Western Union":
+                return False
+            else:
+                return True
+        else:
+            return False 
 class UserDataForm(models.Model):
     teacher=models.ForeignKey(Teacher_Time,on_delete=models.CASCADE)
     data=models.TextField()

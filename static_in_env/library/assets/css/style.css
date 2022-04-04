@@ -2,7 +2,7 @@ html, body {
     width: 100%;
     overflow-x: hidden;
 }
-body {
+/*body {
     height:100%;
     font-family: 'Open Sans', sans-serif; 
     font-weight: 300;
@@ -13,7 +13,7 @@ body {
     color: #777; 
     background: #fff; 
     position: relative;
-}
+}*/
 /*           Font Smoothing      */
 
 h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6, p, .navbar, .brand, .btn-simple{
@@ -65,10 +65,10 @@ h1 .subtitle{
     line-height: 40px;
     margin: 15px 0 30px;
 }
-p { 
+/*p { 
     padding: 0px 0px 1em;
     margin:0;
-}
+}*/
 a {
     color: #d27e04;
     outline: 0;
@@ -86,12 +86,12 @@ a:focus {
     color: #999696;
     text-decoration: none;
 }
-img {
+/*img {
     height: auto;
     max-width: 100%;
     vertical-align: middle;
     border: 0px none; 
-}
+}*/
 
 input {
     outline: 0;

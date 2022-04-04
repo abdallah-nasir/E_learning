@@ -17,7 +17,7 @@ path("teacher/<str:slug>/",views.teacher_single,name="teacher"),
 path("about-us/",views.about,name="about"),
 path("terms/",views.terms,name="terms"),
 path("privacy/",views.privacy,name="privacy"),
-path("google697fc55b8370db52.html/",views.test,name="test"),
+path("test/",views.test,name="test"),
 
 path("faqs/",views.faqs,name="faqs"),
 # path("shop/",views.shop,name="shop"),
@@ -28,10 +28,11 @@ path("wishlist-add/",views.wishlist_add,name="wishlist_add"),
 path("wishlist-remove/",views.wishlist_remove,name="wishlist_remove"),
 #checkout
 path("checkout/courses/<str:course>/",views.checkout,name="checkout"),
+path("western/<str:course>/",views.western_payment,name="western_payment"),
+
 path("payment/success/",views.success,name="success"),
 path("payment/failed/",views.failed,name="failed"),   
-path("ajax/paymob/<str:course>/",views.paymob_payment,name="paymob_payment"),
-path("check/course/payment/",views.check_paymob_course_payment,name="check_course_payment"),
+path("bank/<str:course>/",views.bank_payment,name="bank_payment"),
 path("create/<str:course>/",views.create,name="create"),
 path("capture/<str:order_id>/<str:course>/",views.capture,name="capture"),
 

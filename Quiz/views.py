@@ -10,40 +10,8 @@ from django.contrib import messages
 from .decorators import check_course_status,check_if_payment_has_expired
 from django.core.mail import EmailMessage,get_connection
 import os
-PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
-PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
-PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
-SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
-PAYMENT_MAIL_CONNECTION = get_connection(
-host= SUPPORT_EMAIL_HOST, 
-port=PAYMENT_EMAIL_PORT, 
-username=PAYMENT_EMAIL_USERNAME, 
-password=PAYMENT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
-TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
-TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
-TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
-TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= TASK_NOTIFICATION_EMAIL_HOST, 
-port=TASK_NOTIFICATION_EMAIL_PORT, 
-username=TASK_NOTIFICATION_EMAIL_USERNAME, 
-password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
-use_tls=False
-)
-def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
-        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
-        reply_to=[user],
-        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
-        )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-    return True
+from E_learning.all_email import *
+
 # Create your views here.
 
 @login_required(login_url="accounts:login")

@@ -1,0 +1,669 @@
+{% extends 'kemet/home/base.html' %}
+{% load i18n %}
+{% load hosts %}
+
+{% load static %}
+{% block content %}
+{% if LANGUAGE_CODE == "ar" %}
+<link rel="stylesheet" href="{% static 'css/cons-style-rtl.css' %}">
+{% else %}
+<link rel="stylesheet" href="{% static 'css/2019-bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/consultant-style.css' %}">
+{% endif %}
+<!-- <link rel="stylesheet" href="{% static 'plugins/fontawesome/css/fontawesome.min.css' %}">
+<link rel="stylesheet" href="{% static 'plugins/fontawesome/css/all.min.css' %}"> -->
+<style type="text/css">
+.teachers-right .nav .nav-item a.active, .teachers-right .nav .nav-item a:hover {
+background-color: #315377;
+color: #fff;
+}
+a.btn{
+    font-size:12px !important;
+    background-color: #ffc600 !important;
+    border:none;
+
+}
+.bg-success, .badge-success {
+  background-color: #ffc600 !important;
+}
+.select_time{
+    cursor:pointer;
+}
+.select_time:hover{
+background-color: #ffc600 !important;
+color:#fff;
+}
+body{
+  background-color:#fff !important;
+}
+.bg-light {
+  background-color: #fff !important;
+}
+#page-banner{
+    height:auto !important;
+}
+.logo img {
+  width: 100%;
+} 
+.modal{
+width:100% !important;
+}
+</style>
+
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-2.jpg' %})">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-12">
+              <div class="page-banner-cont">
+                  <h2>{% trans 'Consultations' %}</h2>
+                  <nav aria-label="breadcrumb">
+                      <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a href="{% url 'home:home' %}">{% trans 'Home' %}</a></li>
+                          <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'consultant:home' %}">{% trans 'Consultations' %}</a></li>
+                          <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'consultant:get_consultant' teacher.user.slug %}?consultant={{teacher.id}}">{{teacher.user.get_full_name.title}}</a></li>
+
+                      </ol>
+                  </nav>
+              </div>  <!-- page banner cont -->
+          </div>
+      </div> <!-- row -->
+  </div> <!-- container -->
+</section>
+    <!-- Page Content -->
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="booking-doc-info">
+                                <a href="{% url 'home:teacher' teacher.user.slug %}" class="booking-doc-img">
+                                    <img src="{{teacher.user.image}}" alt="{{teacher.user.username}}">
+                                </a>
+                                <div class="booking-info">
+                                    <h4><a href="{% url 'home:teacher' teacher.user.slug %}">{{teacher.user.get_full_name.title}}</a></h4>
+                                    <!-- <div class="rating">
+                                        <i class="fas fa-star filled"></i>
+                                        <i class="fas fa-star filled"></i>
+                                        <i class="fas fa-star filled"></i>
+                                        <i class="fas fa-star filled"></i>
+                                        <i class="fas fa-star"></i>
+                                        <span class="d-inline-block average-rating">35</span>
+                                    </div> -->
+                                    <p class="text-muted mb-0"><i class="fa fa-filter" aria-hidden="true"></i>
+                                        {{teacher.category.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Widget -->
+                    <div class="card booking-schedule schedule-widget">
+
+                        <!-- Schedule Header -->
+                        <div class="schedule-header ">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <!-- Day Slot -->
+                                    <div class="day-slot">
+                                        <ul>
+                                            <!-- <li class="left-arrow">
+                                                <a href="#">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                </a>
+                                            </li> -->
+                                            
+                                            <li>
+                                                <span>{% trans 'Mon' %}</span>
+                                                <!-- <span class="slot-date">11 Nov <small class="slot-year">2019</small></span> -->
+                                            </li>
+                                            
+                                            <li>
+                                                <span>{% trans 'Tue' %}</span>
+                                                <!-- <span class="slot-date">12 Nov <small class="slot-year">2019</small></span> -->
+                                            </li>
+                                            <li>
+                                                <span>{% trans 'Wed' %}</span>
+                                                <!-- <span class="slot-date">13 Nov <small class="slot-year">2019</small></span> -->
+                                            </li>
+                                            <li>
+                                                <span>{% trans 'Thu' %}</span>
+                                                <!-- <span class="slot-date">14 Nov <small class="slot-year">2019</small></span> -->
+                                            </li>
+                                            <li>
+                                                <span>{% trans 'Fri' %}</span>
+                                                <!-- <span class="slot-date">15 Nov <small class="slot-year">2019</small></span> -->
+                                            </li>
+                                            <li>
+                                                <span>{% trans 'Sat' %}</span>
+                                                <!-- <span class="slot-date">16 Nov <small class="slot-year">2019</small></span> -->
+                                            </li>
+                                            <li>
+                                                <span>{% trans 'Sun' %}</span>
+                                                <!-- <span class="slot-date">17 Nov <small class="slot-year">2019</small></span> -->
+                                            </li>
+                                            <!-- <li class="right-arrow">
+                                                <a href="#">
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </a>
+                                            </li> -->
+                                        </ul>
+                                    </div>
+                                    <!-- /Day Slot -->
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Schedule Header -->
+                        <!-- Schedule Content -->
+                        <div class="schedule-cont">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <!-- Time Slot -->
+                                    <div class="time-slot">
+                                        <ul class="clearfix">
+                                          
+                                            <li>
+                                                {% if teacher.get_available_day.mon %}
+                                                {% for i in teacher.get_available_day.mon %}
+                                                <a class="timing select_time" data-toggle="modal" data-target="#mon_{{i.id}}">
+                                                    <span >{{i.start_time}} {{i.end_time}}</span>
+                                                </a>      
+                                                {% endfor %}
+                                                {% else %}
+                                                <a class="timing" href="#">
+                                                    <span>Empty</span>
+                                                </a>  
+                                                {% endif %}
+                                     
+                                            </li>
+                                           
+                                            <li>
+                                                {% if teacher.get_available_day.tue %}
+                                                        {% for i in teacher.get_available_day.tue %}
+                                                        <a class="timing select_time" data-toggle="modal" data-target="#tue_{{i.id}}">
+                                            <span >{{i.start_time}} {{i.end_time}}</span>
+                                                            
+                                         
+                                                        </a>      
+                                                        {% endfor %}
+                                                        {% else %}
+                                                        <a class="timing">
+                                                            <span>Empty</span>
+                                                        </a>  
+                                                        {% endif %}
+                                           
+                                    </li>
+                                    <li>
+                                        {% if teacher.get_available_day.wed %}
+                                                {% for i in teacher.get_available_day.wed %}
+                                                <a class="timing select_time" data-toggle="modal" data-target="#wed_{{i.id}}">
+                                                    <span >{{i.start_time}} {{i.end_time}}</span>
+                                                </a>      
+                                                {% endfor %}    
+                                                {% else %}
+                                                <a class="timing">
+                                                    <span>Empty</span>
+                                                </a>  
+                                                {% endif %}
+                                    </li>
+
+                                    <li>
+                                        {% if teacher.get_available_day.thu %}
+                                                {% for i in teacher.get_available_day.thu %}
+                                                <a class="timing select_time" data-toggle="modal" data-target="#thu_{{i.id}}">
+                                                    <span >{{i.start_time}} {{i.end_time}}</span>
+                                                </a>      
+                                                {% endfor %}
+                                                {% else %}
+                                                <a class="timing" >
+                                                    <span>Empty</span>
+                                                </a>  
+                                                {% endif %}
+                                        </li>
+                                        <li>
+                                            {% if teacher.get_available_day.fri %}
+                                                    {% for i in teacher.get_available_day.fri %}
+                                                    <a class="timing select_time" data-toggle="modal" data-target="#fri_{{i.id}}">
+                                                        <span >{{i.start_time}} {{i.end_time}}</span>
+                                                    </a>      
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <a class="timing">
+                                                        <span>Empty</span>
+                                                    </a>  
+                                                    {% endif %}
+                                    </li>
+                                    <li>
+                                        {% if teacher.get_available_day.sat %}
+                                                {% for i in teacher.get_available_day.sat %}
+                                                <a class="timing select_time" data-toggle="modal" data-target="#sat_{{i.id}}">
+                                                    <span >{{i.start_time}} {{i.end_time}}</span>
+                                                </a>      
+                                                {% endfor %}
+                                                {% else %}
+                                                <a class="timing">
+                                                    <span>Empty</span>
+                                                </a>  
+                                                {% endif %}
+                                </li>
+                                <li>
+                                    {% if teacher.get_available_day.sun %}
+                                            {% for i in teacher.get_available_day.sun %}
+                                            <a class="timing select_time" data-toggle="modal" data-target="#sun_{{i.id}}">
+                                                <span >{{i.start_time}} {{i.end_time}}</span>
+                                            </a>      
+                                            {% endfor %}
+                                            {% else %}
+                                            <a class="timing">
+                                                <span>Empty</span>
+                                            </a>  
+                                            {% endif %}
+                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- /Time Slot -->
+
+                                </div>
+                            </div>
+                        </div>
+                  
+                        {% for i in teacher.get_available_day.mon %}
+                        <div class="modal fade" id="mon_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">{% trans 'Available Time For Teacher' %} {{teacher.user.first_name.title}}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table">
+                                        <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Day</th>
+                                            <th scope="col">From</th>
+                                            <th scope="col">To</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                          {% for b in teacher.get_available_day.mon_days.days %}
+                                            
+                                          <tr>
+                                            <th scope="row">{{forloop.counter}}</th>
+                                            <td>{{b.day}}</td>
+                                            <td>{{b.date}}</td>
+                                            <td>{{i.start_time}}</td>
+                                            <td>{{i.end_time}}</td>
+                                            <td><a class="btn btn-primary" href="{% url 'consultant:checkout' teacher.user.slug %}?consultant={{i.id}}&date={{b.day}}">Proceed to Pay</a></td>
+                                          </tr>
+                                                {% endfor %} 
+                                        </tbody>
+                                      </table>
+                                      
+                                    
+                                    
+                                </div>
+                                <div class="modal-footer">
+                                  <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary">Save changes</button> -->
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                     {% endfor %}
+
+                     {% for i in teacher.get_available_day.tue %}
+                     <div class="modal fade" id="tue_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">{% trans 'Available Time For Teacher' %} {{teacher.user.first_name.title}}</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Day</th>
+                                        <th scope="col">From</th>
+                                        <th scope="col">To</th>
+                                                <th scope="col">Action</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                      {% for b in teacher.get_available_day.tue_days.days %}
+                                        
+                                      <tr>
+                                        <th scope="row">{{forloop.counter}}</th>
+                                        <td>{{b.day}}</td>
+                                        <td>{{b.date}}</td>
+                                        <td>{{i.start_time}}</td>
+                                        <td>{{i.end_time}}</td>
+                                            <td><a class="btn btn-primary" href="{% url 'consultant:checkout' teacher.user.slug %}?consultant={{i.id}}&date={{b.day}}">Proceed to Pay</a></td>
+
+                                      </tr>
+                                            {% endfor %} 
+                                    </tbody>
+                                  </table>
+                                  
+                            </div>
+                            <!-- <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary">Save changes</button>
+                            </div> -->
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+
+
+
+                      {% for i in teacher.get_available_day.wed %}
+                      <div class="modal fade" id="wed_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                         <div class="modal-dialog">
+                           <div class="modal-content">
+                             <div class="modal-header">
+                               <h5 class="modal-title" id="exampleModalLabel">{% trans 'Available Time For Teacher' %} {{teacher.user.first_name.title}}</h5>
+                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                 <span aria-hidden="true">&times;</span>
+                               </button>
+                             </div>
+                             <div class="modal-body">
+                               <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                  <thead class="thead-dark">
+                                     <tr>
+                                         <th scope="col">#</th>
+                                        <th scope="col">Day</th>
+                                         <th scope="col">Day</th>
+                                         <th scope="col">From</th>
+                                         <th scope="col">To</th>
+                                        <th scope="col">Action</th>
+
+                                     </tr>
+                                     </thead>
+                                     <tbody>
+                                       {% for b in teacher.get_available_day.wed_days.days %}
+                                         
+                                       <tr>
+                                         <th scope="row">{{forloop.counter}}</th>
+                                         <td>{{b.day}}</td>
+                                         <td>{{b.date}}</td>
+                                         <td>{{i.start_time}}</td>
+                                         <td>{{i.end_time}}</td>
+                                        <td><a class="btn btn-primary" href="{% url 'consultant:checkout' teacher.user.slug %}?consultant={{i.id}}&date={{b.day}}">Proceed to Pay</a></td>
+
+                                       </tr>
+                                             {% endfor %} 
+                                     </tbody>
+                                   </table>
+                                   
+                                  </div>
+                             </div>
+                             <!-- <div class="modal-footer">
+                               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                               <button type="button" class="btn btn-primary">Save changes</button>
+                             </div> -->
+                           </div>
+                         </div>
+                       </div>
+                       {% endfor %}
+
+
+
+                       {% for i in teacher.get_available_day.thu %}
+                       <div class="modal fade" id="thu_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">{% trans 'Available Time For Teacher' %} {{teacher.user.first_name.title}}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                  <table class="table">
+                                      <thead class="thead-dark">
+                                      <tr>
+                                          <th scope="col">#</th>
+                                           <th scope="col">Date</th>
+                                          <th scope="col">Day</th>
+                                          <th scope="col">From</th>
+                                          <th scope="col">To</th>
+                                    <th scope="col">Action</th>
+
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                        {% for b in teacher.get_available_day.thu_days.days %}
+                                          
+                                        <tr>
+                                          <th scope="row">{{forloop.counter}}</th>
+                                          <td>{{b.day}}</td>
+                                          <td>{{b.date}}</td>
+                                          <td>{{i.start_time}}</td>
+                                          <td>{{i.end_time}}</td>
+                                    <td><a class="btn btn-primary" href="{% url 'consultant:checkout' teacher.user.slug %}?consultant={{i.id}}&date={{b.day}}">Proceed to Pay</a></td>
+
+                                        </tr>
+                                              {% endfor %} 
+                                      </tbody>
+                                    </table>
+                                    
+                              </div>
+                              <!-- <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                              </div> -->
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+
+
+
+
+                        {% for i in teacher.get_available_day.fri %}
+                        <div class="modal fade" id="fri_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                           <div class="modal-dialog">
+                             <div class="modal-content">
+                               <div class="modal-header">
+                                 <h5 class="modal-title" id="exampleModalLabel">{% trans 'Available Time For Teacher' %} {{teacher.user.first_name.title}}</h5>
+                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                   <span aria-hidden="true">&times;</span>
+                                 </button>
+                               </div>
+                               <div class="modal-body">
+                                   <table class="table">
+                                       <thead class="thead-dark">
+                                       <tr>
+                                           <th scope="col">#</th>
+                                           <th scope="col">Date</th>
+                                           <th scope="col">Day</th>
+                                           <th scope="col">From</th>
+                                           <th scope="col">To</th>
+                                    <th scope="col">Action</th>
+
+                                       </tr>
+                                       </thead>
+                                       <tbody>
+                                         {% for b in teacher.get_available_day.fri_days.days %}
+                                           
+                                         <tr>
+                                           <th scope="row">{{forloop.counter}}</th>
+                                           <td>{{b.day}}</td>
+                                           <td>{{b.date}}</td>
+                                           <td>{{i.start_time}}</td>
+                                           <td>{{i.end_time}}</td>
+                                    <td><a class="btn btn-primary" href="{% url 'consultant:checkout' teacher.user.slug %}?consultant={{i.id}}&date={{b.day}}">Proceed to Pay</a></td>
+
+                                         </tr>
+                                               {% endfor %} 
+                                       </tbody>
+                                     </table>
+                                     
+                               </div>
+                               <!-- <div class="modal-footer">
+                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                 <button type="button" class="btn btn-primary">Save changes</button>
+                               </div> -->
+                             </div>
+                           </div>
+                         </div>
+                         {% endfor %}
+
+
+
+                         {% for i in teacher.get_available_day.sat %}
+                         <div class="modal fade" id="sat_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">{% trans 'Available Time For Teacher' %} {{teacher.user.first_name.title}}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table">
+                                        <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Day</th>
+                                            <th scope="col">From</th>
+                                            <th scope="col">To</th>
+                                        <th scope="col">Action</th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                          {% for b in teacher.get_available_day.sat_days.days %}
+                                            
+                                          <tr>
+                                            <th scope="row">{{forloop.counter}}</th>
+                                            <td>{{b.day}}</td>
+                                            <td>{{b.date}}</td>
+                                            <td>{{i.start_time}}</td>
+                                            <td>{{i.end_time}}</td>
+                                        <td><a class="btn btn-primary" href="{% url 'consultant:checkout' teacher.user.slug %}?consultant={{i.id}}&date={{b.day}}">Proceed to Pay</a></td>
+
+                                          </tr>
+                                                {% endfor %} 
+                                        </tbody>
+                                      </table>
+                                      
+                                    
+                                </div>
+                                <!-- <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary">Save changes</button>
+                                </div> -->
+                              </div>
+                            </div>
+                          </div>
+                          {% endfor %}
+
+
+
+                          {% for i in teacher.get_available_day.sun %}
+                          <div class="modal fade" id="sun_{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                             <div class="modal-dialog">
+                               <div class="modal-content">
+                                 <div class="modal-header">
+                                   <h5 class="modal-title" id="exampleModalLabel">{% trans 'Available Time For Teacher' %} {{teacher.user.first_name.title}}</h5>
+                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                     <span aria-hidden="true">&times;</span>
+                                   </button>
+                                 </div>
+                                 <div class="modal-body">
+                                     <table class="table">
+                                         <thead class="thead-dark">
+                                         <tr>
+                                             <th scope="col">#</th>
+                                             <th scope="col">Date</th>
+                                             <th scope="col">Day</th>
+                                             <th scope="col">From</th>
+                                             <th scope="col">To</th>
+                                        <th scope="col">Action</th>
+
+                                         </tr>
+                                         </thead>
+                                         <tbody>
+                                           {% for b in teacher.get_available_day.sun_days.days %}
+                                             
+                                           <tr>
+                                             <th scope="row">{{forloop.counter}}</th>
+                                             <td>{{b.day}}</td>
+                                             <td>{{b.date}}</td>
+                                             <td>{{i.start_time}}</td>
+                                             <td>{{i.end_time}}</td>
+                                        <td><a class="btn btn-primary" href="{% url 'consultant:checkout' teacher.user.slug %}?consultant={{i.id}}&date={{b.day}}">Proceed to Pay</a></td>
+
+                                           </tr>
+                                                 {% endfor %} 
+                                         </tbody>
+                                       </table>
+                                       
+
+                                 </div>
+                                 <!-- <div class="modal-footer">
+                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                   <button type="button" class="btn btn-primary">Save changes</button>
+                                 </div> -->
+                               </div>
+                             </div>
+                           </div>
+                           {% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+              
+
+                </div>
+            </div>
+        </div>
+      
+        </div>
+       
+    
+{% endblock %}

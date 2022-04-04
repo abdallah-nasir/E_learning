@@ -1,0 +1,115 @@
+{% extends 'dashboard_base.html' %}
+{% load hosts %}
+
+
+
+{% block content %}
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">{{track.name}}</h1>
+                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <!-- <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> -->
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Name</th>
+                                            <th>Date</th>
+                                            <th>Book</th>
+                                            <th>Duration</th>
+                                            <th>Action</th>
+
+                                            <!-- <th>Action</th> -->
+                                        </tr>
+                                    </thead>
+                                   
+                                   <tbody>
+                                       {% for i in music %}
+                                    <tr>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.name}}</td>
+                                        <td>{{i.created_at}}</td>
+                                        <td><a href="{{i.get_music}}" target="__blank">Music</a></td>
+                                        <td>{{i.get_duration_model}}</td>
+                                        <td>
+                                          {% if i.is_play %}
+                                          <a class="btn btn-danger" href="{% url 'dashboard:audio_book_urls:is_play_music' i.slug %}">Off Play</a>
+                                          {% else %}
+                                        <a class="btn btn-success" href="{% url 'dashboard:audio_book_urls:is_play_music' i.slug %}">On Play</a>
+
+                                          {% endif %}
+                <button class="btn btn-danger" data-toggle="modal" data-target="#music-{{i.id}}">Delete</button>
+                                          {% if i.check_music == False or i.duration == None %}
+                                          <a href="{% url 'dashboard:audio_book_urls:check_audio' i.slug %}" class="btn btn-info">check Music</a>
+                                          {% endif %}
+                                        </td>
+
+                                            </tr>
+<!-- Modal -->
+<div class="modal fade" id="music-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete Music</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you Sure ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="{% url 'dashboard:audios:delete_audio' i.slug %}" type="button" class="btn btn-danger">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% if music.has_other_pages %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        {% if music.has_previous  %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ music.previous_page_number }}">Previous</a></li>
+                                      {% endif %}
+                                      {% for i in  music.paginator.page_range %}
+                                      {% if music.number == i %}
+                                      <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% else %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% endif %}
+                                      {% endfor %}
+                                      {% if music.has_next %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ music.next_page_number }}">Next</a></li>
+                                      {% endif %}
+                                    </ul>
+                                  </nav>
+                                  {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+{% endblock %}

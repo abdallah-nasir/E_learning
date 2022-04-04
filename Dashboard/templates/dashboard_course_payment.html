@@ -48,10 +48,10 @@
 
                                         <td>
                                       
-                                        {% if i.status == 'declined' and i.method == "Western Union" %}
-                                      <a href="{% url 'dashboard:edit_course_payment' i.id %}" class="btn btn-info">Edit</a>
+                                          {% if i.check_payment %}
+                                          <a href="{% url 'dashboard:edit_course_payment' i.id %}" class="btn btn-info">Edit</a>
                                       {% endif %}
-                                  {% if i.status != "refund" and i.method != "Western Union" %}
+                                  {% if i.check_refund %}
                                   <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">Refund</button>
 
                                       

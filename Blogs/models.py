@@ -257,14 +257,43 @@ def recent_kemet_blogs():
 #         return self.blog.name
 
 PAYMENTS=(
-    ("Paymob","Paymob"),
+    ("bank","bank"),
     ("Western Union","Western Union"),
     ("Paypal","Paypal")
 )
 def upload_blog_payment(instance,filename):
     return (f"payment/blogs/{instance.user.username}/{filename}")
+PRICE_TYPE=(
+    (1,"agartha"),
+    (2,"kemet")
+)
 
 
+class Prices(models.Model):
+    name=models.CharField(max_length=50)
+    price=models.FloatField(default=0)
+    type=models.IntegerField(choices=PRICE_TYPE,default=1)
+    data=RichTextField()
+    def __str__(self):
+        return self.name
+    def get_type(self):
+        type=None
+        for i in PRICE_TYPE:
+            while i[0] == self.type:
+                type = PRICE_TYPE[self.type-1][1] 
+                break
+        return type
+    def get_duration(self):
+        data=json.loads(self.data)
+        duration=data["duration"]
+        return duration
+    def __str__(self):
+        return self.name
+        
+    def get_details(self):
+        data=json.loads(self.data)
+        details=data["details"]
+        return details
 
 PAYMENT_CHOICES=(
     ("pending","pending"),
@@ -281,6 +310,8 @@ class Blog_Payment(models.Model):
     amount=models.PositiveIntegerField(default=0)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
+    data=models.TextField(blank=True,null=True)
+    type=models.IntegerField(choices=PRICE_TYPE,default=1)
     created_at=models.DateField()
     expired_at=models.DateField(blank=True,null=True)
     expired=models.BooleanField(default=False)
@@ -288,29 +319,55 @@ class Blog_Payment(models.Model):
     def __str__(self):    
         return self.method
 
+    def check_payment(self):
+        if self.status == "declined":
+           
+            if self.method == "Western Union" or self.method == "bank":
+                return True
+            else:
+                return False
+        else:
+            return False
+    def check_refund(self): 
+        if self.status != "refund":
+            if self.method == "Western Union":
+                return False
+            else:
+                return True
+        else:
+            return False 
     def add_time_expired_to_related_course(self):
-        payments=Home_Models.Payment.objects.filter(user=self.user,status="approved",expired=False).select_related("user")
-        today=datetime.date.today()
-        difference=self.expired_at - today
-        for i in payments:
-            i.expired_at +=difference
-            i.save()
+        payments=Home_Models.Payment.objects.filter(user=self.user,course__domain_type=1,status="approved",expired=False).select_related("user")
+        # today=datetime.date.today()
+        # difference=self.expired_at - today
+        if payments.exists():
+            data=json.loads(self.data)
+            duration=data["duration"] 
+            if duration == 12:
+                time_duration=365
+            if duration == 6: 
+                time_duration=30*6
+            if duration == 3:
+                time_duration=30*3
+            for i in payments:
+                i.expired_at += datetime.timedelta(days=time_duration)
+                i.save()
         return True
-class Prices(models.Model):
-    name=models.CharField(max_length=50)
-    price=models.FloatField(default=0)
-    data=RichTextField()
-    def __str__(self):
-        return self.name
-    
-    def get_duration(self):
-        data=json.loads(self.data)
-        duration=data["duration"]
-        return duration
-    def __str__(self):
-        return self.name
-        
-    def get_details(self):
-        data=json.loads(self.data)
-        details=data["details"]
-        return details
+
+    def add_time_expired_to_related_course_kemet(self):
+        payments=Home_Models.Payment.objects.filter(user=self.user,course__domain_type=2,status="approved",expired=False).select_related("user")
+        # today=datetime.date.today()
+        # difference=self.expired_at - today
+        if payments.exists():
+            data=json.loads(self.data)
+            duration=data["duration"] 
+            if duration == 12:
+                time_duration=365
+            if duration == 6: 
+                time_duration=30*6
+            if duration == 3:
+                time_duration=30*3
+            for i in payments:
+                i.expired_at += datetime.timedelta(days=time_duration)
+                i.save()
+        return True

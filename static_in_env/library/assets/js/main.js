@@ -33,7 +33,9 @@ $(document).ready(function () {
 
 });
 $(document).ready(function () {
+    debugger;
     $("#bg-slider").owlCarousel({
+      
         navigation: false, // Show next and prev buttons
         slideSpeed: 100,
         autoPlay: 5000,

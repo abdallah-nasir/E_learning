@@ -25,44 +25,12 @@ import requests,string
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]  # PAYMOB
 PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
 PAYMOB_BLOG_INT=os.environ['PAYMOB_BLOG_INT']
-PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
-PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
-PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
-SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
-PAYMENT_MAIL_CONNECTION = get_connection(
-host= SUPPORT_EMAIL_HOST, 
-port=PAYMENT_EMAIL_PORT, 
-username=PAYMENT_EMAIL_USERNAME, 
-password=PAYMENT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
-TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
-TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
-TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
-TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= TASK_NOTIFICATION_EMAIL_HOST, 
-port=TASK_NOTIFICATION_EMAIL_PORT, 
-username=TASK_NOTIFICATION_EMAIL_USERNAME, 
-password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
-use_tls=False
-)
+from E_learning.all_email import *
+
 Storage_Api=os.environ["Storage_Api"]
 storage_name=os.environ["storage_name"]
 agartha_cdn=os.environ['agartha_cdn']
 
-def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
-        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
-        reply_to=[user],
-        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
-        )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-    return True
 @login_required(login_url="accounts:login")
 def home(request):
     blog_data=cache.get("blog_data")
@@ -159,71 +127,132 @@ def blog_comment_reply(request,id,reply):
             form=CommentForm()
             messages.success(request,"Thank You For Your Comment")
 
-    else:
+    else: 
         messages.error(request,"You Should Sign in First")
     return redirect(reverse("blogs:blog",kwargs={"slug":instance.blog.slug}))
 import datetime
 @login_required(login_url="accounts:login")
 def pricing(request):
-    prices=Prices.objects.all()
+    prices=Prices.objects.filter(type=1)
     return render(request,"pricing.html",{'prices':prices})
 
 @login_required(login_url="accounts:login")
+@complete_user_data
+@check_blogs_payment_western_status
 def western_payment(request,id):
     price=get_object_or_404(Prices,id=id)
     form=PaymentForm(request.POST or None,request.FILES or None)
     if request.method == 'POST':
         if form.is_valid():
-            if request.user.vip == True or Blog_Payment.objects.filter(user=request.user,status="pending").select_related("user").exists():
-                messages.error(request,"you already have a pending payment")
-                return redirect(reverse("accounts:blog_payment"))
-            else:
-                now= datetime.date.today()
-                image=form.cleaned_data["image"]
-                number=form.cleaned_data["number"]               
-                payment=Blog_Payment.objects.create(user=request.user,
-                method="Western Union",amount=price.price, transaction_number=number,status="pending",created_at=now)
-                if price.get_duration() == 'monthly':
-                    payment.created_at = now
-                    payment.expired_at= now + datetime.timedelta(days=30*6)
-                else:
-                    payment.expired_at= now + datetime.timedelta(days=365)
-                url=f"https://storage.bunnycdn.com/{storage_name}/blogs-payment/{request.user.username}/{image}"
-                headers = {
-                        "Content-Type": "application/octet-stream",
-                        "AccessKey": Storage_Api
-                    }
-                response = requests.put(url,data=image,headers=headers)
-                data=response.json()
-                try: 
-                    if data["HttpCode"] == 201:
-                        payment.payment_image = f"https://{agartha_cdn}/blogs-payment/{request.user.username}/{image}"
-                        payment.save()
-                except:
-                    pass  
-                payment.save()
-                msg = EmailMessage(
-                    subject="Payment completed", 
-                    body="thank you for your payment",
-                    from_email=PAYMENT_EMAIL_USERNAME,
-                    to=[payment.user.email],
-                    connection=PAYMENT_MAIL_CONNECTION
-                    )
-                msg.content_subtype = "html"  # Main content is now text/html
-                msg.send()
-                body="new payment is waiting for your approve"
-                subject="new payment"
-                send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
-                messages.success(request,"We Have sent an Email,Please check your Inbox")
-                return redirect(reverse("accounts:blog_payment"))
+            now= datetime.date.today()
+            image=form.cleaned_data["image"]
+            number=form.cleaned_data["number"]               
+            payment=Blog_Payment.objects.create(user=request.user,
+            method="Western Union",amount=price.price,type=1,transaction_number=number,status="pending",created_at=now)
+            if price.get_duration() == '3 month':
+                payment.expired_at= now + datetime.timedelta(days=30*3)
+                price_data={"duration":3,"type":"agartha"}
+                payment.data= now + datetime.timedelta(days=30*3)
+            if price.get_duration() == '6 month':
+                price_data={"duration":6,"type":"agartha"}
+                payment.expired_at= now + datetime.timedelta(days=30*6)
+            if price.get_duration() == '12 month':
+                price_data={"duration":12,"type":"agartha"}
+                payment.expired_at= now + datetime.timedelta(days=365)
+            url=f"https://storage.bunnycdn.com/{storage_name}/blogs-payment/{request.user.username}/{image}"
+            headers = {
+                    "Content-Type": "application/octet-stream",
+                    "AccessKey": Storage_Api
+                }
+            response = requests.put(url,data=image,headers=headers)
+            data=response.json()
+            try: 
+                if data["HttpCode"] == 201:
+                    payment.payment_image = f"https://{agartha_cdn}/blogs-payment/{request.user.username}/{image}"
+                    payment.save()
+            except:
+                pass  
+            payment.data=json.dumps(price_data)
+            payment.save()
+            msg = EmailMessage(
+                subject="Payment completed", 
+                body="thank you for your payment",
+                from_email=PAYMENT_EMAIL_USERNAME,
+                to=[payment.user.email],
+                connection=PAYMENT_MAIL_CONNECTION
+                )
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
+            body="new payment is waiting for your approve"
+            subject="new payment"
+            send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
+            messages.success(request,"We Have sent an Email,Please check your Inbox")
+            return redirect(reverse("accounts:blog_payment"))
+        else:
+            messages.error(request,"invalid form")
+    return redirect(reverse("blogs:payment",kwargs={"id":price.id}))
+
+
+
+@login_required(login_url="accounts:login")
+@complete_user_data
+@check_blogs_payment_bank_status
+def bank_payment(request,id):
+    price=get_object_or_404(Prices,id=id)
+    form=PaymentForm(request.POST or None,request.FILES or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            now= datetime.date.today()
+            image=form.cleaned_data["image"]
+            number=form.cleaned_data["number"]               
+            payment=Blog_Payment.objects.create(user=request.user,
+            method="bank",amount=price.price,type=1,transaction_number=number,status="pending",created_at=now)
+            if price.get_duration() == '3 month': 
+                payment.expired_at= now + datetime.timedelta(days=30*3)
+                price_data={"duration":3,"type":"agartha"}
+                payment.data= now + datetime.timedelta(days=30*3)
+            if price.get_duration() == '6 month':
+                price_data={"duration":6,"type":"agartha"}
+                payment.expired_at= now + datetime.timedelta(days=30*6)
+            if price.get_duration() == '12 month':
+                price_data={"duration":12,"type":"agartha"}
+                payment.expired_at= now + datetime.timedelta(days=365)
+            url=f"https://storage.bunnycdn.com/{storage_name}/blogs-payment/{request.user.username}/{image}"
+            headers = {
+                    "Content-Type": "application/octet-stream",
+                    "AccessKey": Storage_Api
+                }
+            response = requests.put(url,data=image,headers=headers)
+            data=response.json()
+            try: 
+                if data["HttpCode"] == 201:
+                    payment.payment_image = f"https://{agartha_cdn}/blogs-payment/{request.user.username}/{image}"
+                    payment.save()
+            except:
+                pass  
+            payment.data=json.dumps(price_data)
+            payment.save()
+            msg = EmailMessage(
+                subject="Payment completed", 
+                body="thank you for your payment",
+                from_email=PAYMENT_EMAIL_USERNAME,
+                to=[payment.user.email],
+                connection=PAYMENT_MAIL_CONNECTION
+                )
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
+            body="new payment is waiting for your approve"
+            subject="new payment"
+            send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
+            messages.success(request,"We Have sent an Email,Please check your Inbox")
+            return redirect(reverse("accounts:blog_payment"))
         else:
             messages.error(request,"invalid form")
     return redirect(reverse("blogs:payment",kwargs={"id":price.id}))
 
 @login_required(login_url="accounts:login")
-@check_user_status
-@check_blogs_payment_status
 @complete_user_data
+@check_user_status
 def payment_pricing(request,id):
     price=get_object_or_404(Prices,id=id)
     form=PaymentForm(request.POST or None,request.FILES or None)
@@ -240,7 +269,6 @@ CLIENT_SECRET=os.environ["CLIENT_SECRET"] # paypl
 
 @login_required(login_url="accounts:login")
 @check_user_status
-@check_blogs_payment_status
 @complete_user_data
 def paypal_create(request,id):
     if request.method =="POST":
@@ -301,11 +329,17 @@ def paypal_capture(request,order_id,price_id):
                         transaction=b["id"]
                 now= datetime.date.today()
                 payment=Blog_Payment.objects.create(method="Paypal",
-                transaction_number=transaction,amount=price.price,status="pending",user=request.user,created_at=now)
-                if price.get_duration() == 'monthly':
+                transaction_number=transaction,type=1,amount=price.price,status="pending",user=request.user,created_at=now)
+                if price.get_duration() == '3 month':
+                    price_data={"duration":3,"type":"agartha"}
+                    payment.expired_at= now + datetime.timedelta(days=30*3)
+                if price.get_duration() == '6 month':
+                    price_data={"duration":6,"type":"agartha"}
                     payment.expired_at= now + datetime.timedelta(days=30*6)
-                else:
+                if price.get_duration() == '12 month':
+                    price_data={"duration":12,"type":"agartha"}
                     payment.expired_at= now + datetime.timedelta(days=365)
+                payment.data=json.dumps(price_data)
                 payment.save()
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
@@ -339,98 +373,4 @@ def blogs_type(request,type):
 
 def random_integer_generator(size = 8, chars = string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
-@login_required(login_url="accounts:login")
-@check_user_status
-@complete_user_data
-def paymob_payment(request,id):
-    if request.is_ajax():     
-        # return JsonResponse({"frame":PAYMOB_FRAME,"token":123})
-        prices=Prices.objects.get(id=id)
-        merchant_order_id=request.user.id + int(random_integer_generator())
-        url_1 = "https://accept.paymob.com/api/auth/tokens"
-        data_1 = {"api_key": PAYMOB_API_KEY}
-        r_1 = requests.post(url_1, json=data_1)
-        token = r_1.json().get("token")
-        data_2 = {
-        "auth_token": token,
-        "delivery_needed": "false",
-            "amount_cents":prices.price * 100,
-            "currency": "EGP",
-            "merchant_order_id": merchant_order_id,  # 81
-
-            "items": [
-    {
-        "name": prices.id,
-        "amount_cents": prices.price * 100,
-        "description": "blogs",
-        "quantity": "1"
-    },
-
-    ],
-            "shipping_data": {
-                "apartment": "803",
-                "email": request.user.email,
-                "floor": "42",
-                "first_name": request.user.username,
-                "street": "Ethan Land",
-                "building": "8028",
-                "phone_number": f"{request.user.phone}",
-                "postal_code": "01898",
-                "extra_description": "8 Ram , 128 Giga",
-                "city": "Jaskolskiburgh",
-                "country": "CR",
-                "last_name": request.user.last_name,
-                "state": "Utah"
-            },
-            "shipping_details": {
-                "notes": " test",
-                "number_of_packages": 1,
-                "weight": 1,
-                "weight_unit": "Kilogram",
-                "length": 1,
-                "width": 1,
-                "height": 1,
-                "contents": "product of some sorts"
-            }
-        }
-        url_2 = "https://accept.paymob.com/api/ecommerce/orders"
-        r_2 = requests.post(url_2, json=data_2)
-        my_id = r_2.json().get("id")
-        if my_id == None:
-            r_2 = requests.get(url_2, json=data_2)
-            my_id = r_2.json().get("results")[0]["id"]
-
-        data_3 = {
-            "auth_token": token,
-            "amount_cents": prices.price * 100,
-            "expiration": 15*60,
-            "order_id": my_id,
-            "billing_data": {
-                "apartment": "803",
-                "email": request.user.email,
-                "floor": "42",
-                "first_name": request.user.username,
-                "street": "Ethan Land",
-                "building": "8028",
-                "phone_number": f"{request.user.phone}",
-                "shipping_method": "PKG",
-                "postal_code": "01898",
-                "city": "Jaskolskiburgh",
-                "country": "CR",
-                "last_name": request.user.last_name,
-                "state": "Utah"
-            },
-            "currency": "EGP",
-            "integration_id": PAYMOB_BLOG_INT,
-            "lock_order_when_paid": "true"
-        }
-        url_3 = "https://accept.paymob.com/api/acceptance/payment_keys"
-        r_3 = requests.post(url_3, json=data_3)
-        payment_token = (r_3.json().get("token"))
-        if payment_token == None:
-            success=0
-        else:
-            success=1
-        return JsonResponse({"success":success,"frame":PAYMOB_FRAME,"token":payment_token})
 

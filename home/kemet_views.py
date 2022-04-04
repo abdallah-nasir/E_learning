@@ -15,7 +15,7 @@ from django.db.models import Q
 from itertools import chain
 from django.conf import settings
 from accounts.models import User
-from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment
+from Consultant.models import Teacher_Time,Consultant,Cosultant_Payment,UserDataForm
 from Blogs.models import Blog_Payment,Prices
 from library.models import Audio_Tracks, Library_Payment,Movies
 
@@ -28,6 +28,8 @@ from django.forms import ValidationError
 from django.core.cache import cache
 import requests
 from django.views.decorators.csrf import csrf_exempt
+from E_learning.all_email import *
+
 # Create your views here.
 AccessKey=os.environ["AccessKey"]
 Storage_Api=os.environ["Storage_Api"]
@@ -37,50 +39,7 @@ agartha_cdn=os.environ['agartha_cdn']
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
 PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
 PAYMOB_COURSE_INT=os.environ["PAYMOB_COURSE_INT"]
-SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
-SUPPORT_EMAIL_USERNAME = os.environ['SUPPORT_EMAIL_USERNAME']
-SUPPORT_EMAIL_PASSWORD = os.environ['SUPPORT_EMAIL_PASSWORD']
-SUPPORT_EMAIL_PORT = os.environ['SUPPORT_EMAIL_PORT']
-SUPPORT_MAIL_CONNECTION = get_connection(
-host= SUPPORT_EMAIL_HOST, 
-port=SUPPORT_EMAIL_PORT, 
-username=SUPPORT_EMAIL_USERNAME, 
-password=SUPPORT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
-PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
-PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
-PAYMENT_MAIL_CONNECTION = get_connection(
-host= SUPPORT_EMAIL_HOST, 
-port=PAYMENT_EMAIL_PORT,  
-username=PAYMENT_EMAIL_USERNAME, 
-password=PAYMENT_EMAIL_PASSWORD, 
-use_tls=False    
-) 
-TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
-TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
-TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
-TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
-TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= TASK_NOTIFICATION_EMAIL_HOST, 
-port=TASK_NOTIFICATION_EMAIL_PORT, 
-username=TASK_NOTIFICATION_EMAIL_USERNAME, 
-password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
-use_tls=False
-)
-def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
-        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
-        reply_to=[user],
-        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
-        )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-    return True
+
 class FailedJsonResponse(JsonResponse):
     def __init__(self, data):
         super().__init__(data)
@@ -391,55 +350,104 @@ def random_integer_generator(size = 8, chars = string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 @login_required(login_url="accounts:login")
-@check_if_user_in_course
-@check_if_user_in_pending_payment
 @check_if_user_data_complete
-def checkout(request,course):
-    form=CashForm(request.POST or None,request.FILES or None)
+@check_if_user_in_course
+@check_if_user_in_pending_payment_western
+def western_payment(request,course):
+    form=PaymentMethodForm(request.POST or None,request.FILES or None)
+    my_course=get_object_or_404(Course,slug=course,domain_type=2)
+    if request.method == "POST":
+        methods=["Bank Transaction","Western Union","Vodafone Cash"]
+        if form.is_valid():
+            image=request.FILES["image"]
+            number=form.cleaned_data["number"]
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{my_course.slug}/{image}"
+            headers = {
+                    "AccessKey": Storage_Api,
+                    "Content-Type": "application/octet-stream",
+                    }
+            response = requests.put(image_url,data=image,headers=headers)
+            data=response.json()
+            payment=Payment.objects.create(user=request.user,amount=my_course.get_price(),method="Western Union",transaction_number=number,course=my_course,       
+                status="pending")
+            try:
+                if data["HttpCode"] == 201:
+                    payment.payment_image = f"https://{agartha_cdn}/course-payment/{my_course.slug}/{image}"
+                    payment.save()
+            except:
+                pass
+            msg = EmailMessage(
+            subject="order confirm", 
+            body="thank you for your payment",
+            from_email=PAYMENT_EMAIL_USERNAME,
+            to=[request.user.email],
+            connection=PAYMENT_MAIL_CONNECTION
+            )  
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
+            body="new payment is waiting for your approve"
+            subject="new payment"
+            send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+            messages.success(request,"We Have sent an Email, Please check your Inbox")
+            return redirect(reverse("accounts:course_payment"))
+    return redirect(reverse("home:checkout",kwargs={"course":course}))
+
+
+
+
+@login_required(login_url="accounts:login")
+@check_if_user_data_complete
+@check_if_user_in_course
+@check_if_user_in_pending_payment_western
+def bank_payment(request,course):
+    form=PaymentMethodForm(request.POST or None,request.FILES or None)
     my_course=get_object_or_404(Course,slug=course)
     if request.method == "POST":
         methods=["Bank Transaction","Western Union","Vodafone Cash"]
         if form.is_valid():
-            try:            
-                image=request.FILES["payment_image"]
-                number=form.cleaned_data["number"]
-                image_url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{my_course.slug}/{image}"
-                headers = {
+            image=request.FILES["image"]
+            number=form.cleaned_data["number"]
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{my_course.slug}/{image}"
+            headers = {
                     "AccessKey": Storage_Api,
                     "Content-Type": "application/octet-stream",
                     }
-                response = requests.put(image_url,data=image,headers=headers)
-                data=response.json()
-                print(data)
-
-                payment=Payment.objects.create(user=request.user,amount=my_course.get_price(),method="Western Union",transaction_number=number,course=my_course,       
-                    status="pending")
-                try:
-                    if data["HttpCode"] == 201:
-                        payment.payment_image = f"https://{agartha_cdn}/course-payment/{my_course.slug}/{image}"
-                        payment.save()
-                except:
-                    pass
-                msg = EmailMessage(
-                subject="order confirm", 
-                body="thank you for your payment",
-                from_email=PAYMENT_EMAIL_USERNAME,
-                to=[request.user.email],
-                connection=PAYMENT_MAIL_CONNECTION
-                )  
-                msg.content_subtype = "html"  # Main content is now text/html
-                msg.send()
-                body="new payment is waiting for your approve"
-                subject="new payment"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                messages.success(request,"We Have sent an Email, Please check your Inbox")
-                return redirect(reverse("accounts:course_payment"))
-            
+            response = requests.put(image_url,data=image,headers=headers)
+            data=response.json()
+            payment=Payment.objects.create(user=request.user,amount=my_course.get_price(),method="Bank",transaction_number=number,course=my_course,       
+                status="pending")
+            try:
+                if data["HttpCode"] == 201:
+                    payment.payment_image = f"https://{agartha_cdn}/course-payment/{my_course.slug}/{image}"
+                    payment.save()
             except:
-                return redirect(reverse("home:home"))
+                pass
+            msg = EmailMessage(
+            subject="order confirm", 
+            body="thank you for your payment",
+            from_email=PAYMENT_EMAIL_USERNAME,
+            to=[request.user.email],
+            connection=PAYMENT_MAIL_CONNECTION
+            )  
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
+            body="new payment is waiting for your approve"
+            subject="new payment"
+            send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+            messages.success(request,"We Have sent an Email, Please check your Inbox")
+            return redirect(reverse("accounts:course_payment"))
+    return redirect(reverse("home:checkout",kwargs={"course":course}))
 
+
+@login_required(login_url="accounts:login")
+@check_if_user_in_course
+@check_if_user_in_pending_payment
+@check_if_user_data_complete
+def checkout(request,course):
+    form=PaymentMethodForm(request.POST or None,request.FILES or None)
+    my_course=get_object_or_404(Course,slug=course,domain_type=2)
     context={"form":form,"course":my_course,"frame": PAYMOB_FRAME, "payment_token": 11}
-    return render(request,"kemet/home/checkout.html",context)        
+    return render(request,"checkout.html",context)        
  
 def payment_method_ajax(request):
     course_id=request.POST.get("ajax_course")
@@ -555,176 +563,7 @@ def capture(request,order_id,course):
 # #paymob
 
 
-@login_required(login_url="accounts:login")
-@check_if_user_in_course
-@check_if_user_in_pending_payment
-@check_if_user_data_complete
-def paymob_payment(request,course):
-    if request.is_ajax():     
-        
-        # return JsonResponse({"frame":PAYMOB_FRAME,"token":123})
 
-        my_course=get_object_or_404(Course,slug=course)
-        merchant_order_id=request.user.id + int(random_integer_generator())
-        url_1 = "https://accept.paymob.com/api/auth/tokens"
-        data_1 = {"api_key": PAYMOB_API_KEY}
-        r_1 = requests.post(url_1, json=data_1)
-        token = r_1.json().get("token")
-        print(token)
-        data_2 = {
-            "auth_token": token,
-            "delivery_needed": "false",
-                "amount_cents":my_course.get_price() * 100,
-                "currency": "EGP",
-                "merchant_order_id": merchant_order_id,  # 81
-
-                "items": [
-        {
-            "name": my_course.slug,
-            "amount_cents": my_course.get_price() * 100,
-            "description": "course",
-            "quantity": "1"
-        },
-    
-        ],
-                "shipping_data": {
-                    "apartment": "803",
-                    "email": request.user.email,
-                    "floor": "42",
-                    "first_name": request.user.username,
-                    "street": "Ethan Land",
-                    "building": "8028",
-                    "phone_number": f"{request.user.phone}",
-                    "postal_code": "01898",
-                    "extra_description": "8 Ram , 128 Giga",
-                    "city": "Jaskolskiburgh",
-                    "country": "CR",
-                    "last_name": request.user.last_name,
-                    "state": "Utah"
-                },
-                "shipping_details": {
-                    "notes": " test",
-                    "number_of_packages": 1,
-                    "weight": 1,
-                    "weight_unit": "Kilogram",
-                    "length": 1,
-                    "width": 1,
-                    "height": 1,
-                    "contents": "product of some sorts"
-                }
-            }
-        url_2 = "https://accept.paymob.com/api/ecommerce/orders"
-        r_2 = requests.post(url_2, json=data_2)
-        my_id = r_2.json().get("id")
-        if my_id == None:
-            print("none")
-            r_2 = requests.get(url_2, json=data_2)
-            my_id = r_2.json().get("results")[0]["id"]
-
-        data_3 = {
-            "auth_token": token,
-            "amount_cents": my_course.get_price() * 100,
-            "expiration": 15*60,
-            "order_id": my_id,
-            "billing_data": {
-                "apartment": "803",
-                "email": request.user.email,
-                "floor": "42",
-                "first_name": request.user.username,
-                "street": "Ethan Land",
-                "building": "8028",
-                "phone_number": f"{request.user.phone}",
-                "shipping_method": "PKG",
-                "postal_code": "01898",
-                "city": "Jaskolskiburgh",
-                "country": "CR",
-                "last_name": request.user.last_name,
-                "state": "Utah"
-            },
-            "currency": "EGP",
-            "integration_id": PAYMOB_COURSE_INT,
-            "lock_order_when_paid": "true"
-        }
-        url_3 = "https://accept.paymob.com/api/acceptance/payment_keys"
-        r_3 = requests.post(url_3, json=data_3)
-        payment_token = (r_3.json().get("token"))
-        if payment_token == None:
-            success=0
-        else:
-            success=1
-        return JsonResponse({"success":success,"frame":PAYMOB_FRAME,"token":payment_token})
-
-def check_paymob_course_payment(request):
-    try:
-        id=request.GET["id"]
-        url_1 = "https://accept.paymob.com/api/auth/tokens"
-        data_1 = {"api_key": PAYMOB_API_KEY}
-        r_1 = requests.post(url_1, json=data_1)
-        token = r_1.json().get("token")
-        url_2=f"https://accept.paymob.com/api/acceptance/transactions/{id}"
-        header= {"Bearer":token}
-        r_2= requests.get(url_2,  headers={'Authorization': f'{token}'})    
-        data=r_2.json() 
-        print(data)
-        descrption=data["order"]["items"][0]["description"]
-        username=data["order"]["shipping_data"]["first_name"]
-        transaction_number=request.GET["id"]
-        name=data['order']["items"][0]["name"]
-        user=User.objects.get(username=username)
-        if descrption == "course":
-            course=Course.objects.get(slug=name)
-            Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=course.get_price(),course=course,user=user,status="pending")
-            next=("accounts:course_payment")
-        elif descrption =="consultant": 
-            print("consultant") 
-            teacher=Teacher_Time.objects.get(id=name)
-            transaction_number=request.GET["id"]
-            Cosultant_Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=teacher.price,teacher=teacher,user=user,status="pending")
-            next=("accounts:consultant_payment")
-        elif descrption == "blogs":
-            print("blogs")  
-            prices=Prices.objects.get(id=name)
-            now= date.today()
-            payment=Blog_Payment.objects.create(method="Paymob",transaction_number=transaction_number,amount=prices.price,user=user,created_at=now)
-            if prices.get_duration() == 'monthly':
-                payment.expired_at= now + datetime.timedelta(days=30*6)
-            else:
-                payment.expired_at= now + datetime.timedelta(days=365)
-            payment.save()
-            next=("accounts:blog_payment") 
-        elif descrption == "movies": 
-            print("movies") 
-            now= date.today()
-            library_type=int(data["order"]["items"][1]["description"])
-            movie=Movies.objects.get(id=name)
-            transaction_number=request.GET["id"]
-            Library_Payment.objects.create(method="Paymob",library_type=library_type,content_id=movie.id,transaction_number=transaction_number,amount=movie.get_price(),user=user,created_at=now)
-            next=("accounts:movies_payment")
-        elif descrption == "audios": 
-            print("audios") 
-            now= date.today()
-            library_type=int(data["order"]["items"][1]["description"])
-            track=Audio_Tracks.objects.get(id=name)
-            transaction_number=request.GET["id"]
-            Library_Payment.objects.create(method="Paymob",library_type=library_type,content_id=track.id,transaction_number=transaction_number,amount=track.get_price(),user=user,created_at=now)
-            next=("accounts:movies_payment")
-        send_mail(  
-                'Payment Completed',
-                "Successfull Payment",
-                PAYMENT_EMAIL_USERNAME,
-                [user.email],
-                fail_silently=False,
-                connection=PAYMENT_MAIL_CONNECTION
-                )
-        body="new payment is waiting for your approve"
-        subject="new payment"
-        send_mail_approve(request,user=user.email,subject=subject,body=body)
-        messages.success(request,"your request is being review by admin")
-    except:
-        next=("home:home")
-        pass
-    return redirect(reverse(next))
-#######################################
 #payment
 
 def success(request):   

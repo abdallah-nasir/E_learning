@@ -69,13 +69,9 @@ margin-bottom: auto;
             {% csrf_token %}
             {{form|crispy}}
        
-             <!-- <div class="form-group">
-                <p class="text-center">Don't Have an Account? <a href="{% url 'account_signup' %}" id="signup">Signup here</a></p>
-             </div>  -->
+            
                 
-             <!-- <div class="form-group">
-               <p class="text-center">Forgot Your Password? <a href="{% url 'account_reset_password' %}" id="signup">Reset Password here</a></p>
-            </div> -->
+            
             <br>
             <button onclick="this.disabled=true,this.form.submit();" type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">submit</button>
           

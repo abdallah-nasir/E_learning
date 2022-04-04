@@ -39,7 +39,7 @@ body{
                     <div class="card-body">
 
                         <!-- Checkout Form -->
-                        <form method="POST">
+                        <form method="POST" action="{% url 'consultant:post_payment_data' teacher.id  %}">
                             {% csrf_token %}
                             <input type="hidden" name='consultant' value='{{teacher.id}}'> 
                             <input type="hidden" name='date' value='{{date}}'> 
@@ -94,7 +94,7 @@ body{
                                     <label class="payment-radio credit-card-option">
                                         <input type="radio" name="method" value="credit" checked>
                                         <span class="checkmark"></span>
-                                        Credit card
+                                        Bank Transaction
                                     </label>
                                     <!-- <div class="row">
                                         <div class="col-md-6">

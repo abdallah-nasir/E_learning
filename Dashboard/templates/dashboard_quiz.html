@@ -128,7 +128,7 @@
                                         <td>{{i.answer|truncatechars:20}}</td>
                                         <td>{{i.correct}}</td>
                                         <td>
-                                    <a class="btn btn-success" href="{% url 'dashboard:edit_answer' course.slug i.id %}">Edit</a>
+                                    <a class="btn btn-success" href="{% url 'dashboard:edit_answer' course=course.slug id=i.id %}">Edit</a>
                                     <a class="btn btn-danger" data-toggle="modal" data-target="#answer-{{i.id}}" >Delete</a>
 
                                 </td>

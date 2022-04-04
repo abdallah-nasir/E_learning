@@ -52,11 +52,13 @@ def validate_checkout(function):
     def wrap(request, *args, **kwargs):
         try:
             id=request.GET["consultant"]
-            date=request.GET["date"]
+            date=request.GET["date"] 
+            print(date)
             teacher=get_object_or_404(Teacher_Time,id=id,user__slug=kwargs["slug"])
             if date in teacher.check_teacher_day(): 
                 return function(request, *args, **kwargs)
             else:
+                print("not here")
                 messages.error(request,"invalid date")
                 return redirect(reverse("consultant:home"))
         except:
@@ -68,14 +70,14 @@ def validate_checkout(function):
 def validate_post_checkout(function):
     def wrap(request, *args, **kwargs):
         try:
-            id=request.GET["consultant"]
+            id=request.POST["consultant"]
             if Cosultant_Payment.objects.filter(user=request.user,teacher_id=id).exclude(Q(status="approved") | Q(status="refund")).exists():
                 messages.error(request,"you already have a pending consultant")
                 return redirect(reverse("accounts:consultant_payment"))
-            date=request.GET["date"]
+            date=request.POST["date"]
             teacher=get_object_or_404(Teacher_Time,id=id)
             if date in teacher.check_teacher_day(): 
-                return function(request, *args, **kwargs)
+                return function(request, *args, **kwargs) 
             else:
                 messages.error(request,"invalid date")
                 return redirect(reverse("consultant:home"))

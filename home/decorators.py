@@ -10,12 +10,18 @@ from django.shortcuts import get_object_or_404
 def check_if_user_in_course(function):
     def wrap(request, *args, **kwargs):
         course =get_object_or_404(Course,slug=kwargs["course"])
-        last_payment=Payment.objects.filter(user=request.user,expired=False,course=course,status="approved").last()
         today=  datetime.date.today()
-        if course.students.filter(username=request.user).exists():
+        if course.students.filter(username=request.user.username).exists():
+            last_payment=Payment.objects.filter(user=request.user,expired=False,course=course,status="approved").last()
             if last_payment.expired_at <= today:  
                 last_payment.expired=True
                 course.students.remove(last_payment.user)
+                try:
+                    for i in course.videos.all():
+                        i.watched_users.remove(last_payment.user)
+                        i.save()
+                except:
+                    pass
                 course.save()
                 last_payment.save()
                 messages.error(request,"payment has been expired for this course")
@@ -25,6 +31,7 @@ def check_if_user_in_course(function):
                 return redirect(reverse("home:course",kwargs={"slug":course.slug}))
         else:
             return function(request, *args, **kwargs)
+        
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
@@ -32,7 +39,19 @@ def check_if_user_in_course(function):
 def check_if_user_in_pending_payment(function):
     def wrap(request, *args, **kwargs):
         course =get_object_or_404(Course,slug=kwargs["course"])
-        if Payment.objects.filter(Q(user=request.user,course=course,status="pending") | Q(user=request.user,course=course,status="declined")).exists():
+        if Payment.objects.filter(user=request.user,course=course,status="pending").exists():
+            messages.error(request,"you already have a pending payment")
+            return redirect(reverse("accounts:course_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+def check_if_user_in_pending_payment_western(function):
+    def wrap(request, *args, **kwargs):
+        course =get_object_or_404(Course,slug=kwargs["course"])
+        if Payment.objects.filter(user=request.user,course=course).exclude(status="approved").exists():
             messages.error(request,"you already have a pending payment")
             return redirect(reverse("accounts:course_payment"))
         else:

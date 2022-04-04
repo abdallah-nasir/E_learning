@@ -53,14 +53,16 @@ REFUND_TYPE=(
     ("consultant_payment","consultant_payment"),
     ("blog_payment","blog_payment"),
     ("movie_payment","movie_payment"),
+    ("music_payment","music_payment"),
+    ("audio_book_payment","audio_book_payment"),
 )
-class Refunds(models.Model):
+class Refunds(models.Model): 
     type=models.CharField(choices=REFUND_TYPE,max_length=50)
     content_id=models.PositiveIntegerField(default=0)
     transaction_number = models.CharField(max_length=200)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     status=models.CharField(max_length=50,choices=status,default="pending")
-    data=models.TextField()
+    data=models.TextField() 
     def __str__(self):
         return self.type
 

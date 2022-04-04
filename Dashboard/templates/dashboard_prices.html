@@ -27,7 +27,7 @@
                                         <tr>
                                             <th>Name</th>
                                             <th>Price</th>
-                                         
+                                            <th>Type</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -37,6 +37,7 @@
                                     <tr>
                                         <td>{{i.name}}</td>
                                         <td>{{i.price}}</td>
+                                        <td>{{i.get_type}}</td>
                                         <td>
                                 <a href="{% url 'dashboard:edit_price' i.id %}" class="btn btn-success">Edit</a>
                                    

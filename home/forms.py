@@ -2,6 +2,7 @@ from django import forms
 from django.forms.widgets import Widget
 from .models import *
 import os
+IMAGE_EXTENSIONS=[".webp",".gif",".png",".jpg",".jpeg"]
 
 class ReviewForm(forms.ModelForm):
     rate=forms.IntegerField()
@@ -22,7 +23,7 @@ PAYMENTS=(
   
 )
 class PaymentMethodForm(forms.Form):
-    image=forms.ImageField(label="Transaction Screenshot")
+    image=forms.ImageField(required=True,label="Transaction Screenshot")
     number=forms.CharField(widget=forms.TextInput(attrs={"placeholder":"Your Transaction Number ID"}),label="Transaction Number")
 
     def clean(self):
@@ -31,12 +32,10 @@ class PaymentMethodForm(forms.Form):
         if image:
             size=image.size / (1024 * 1024)
             type=os.path.splitext(image.name)[1].lower()
-            print(type)
-            list_type=[".jpg",".jpeg",".png"]
             if size > 2:
                 raise forms.ValidationError("image size is more 2 MB")
-            elif type not in list_type:   
-                raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
+            elif type not in IMAGE_EXTENSIONS:   
+                raise forms.ValidationError(f"image Extension is not valid")
         else:
             raise forms.ValidationError("invalid image")
 class CashForm(forms.Form):

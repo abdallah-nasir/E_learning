@@ -1,0 +1,231 @@
+{% extends 'kemet/home/base.html' %}
+{% load static %}
+{% load hosts %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'payment/css/style.css' %}">
+
+<title>{% block title %}|Payment{% endblock %}</title>
+
+<section id="tabs" class="project-tab">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <nav>
+                  <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                      <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Western Union</a>
+                      <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Bank Transaction</a>
+                      <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Paypal</a>
+                  </div>
+              </nav>
+              <div class="tab-content" id="nav-tabContent">
+                  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <table class="table">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th scope="col">Name Recived</th>
+                          <th scope="col">Country</th>
+                          <th scope="col">Mobil Number</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>نبيل كمال محمد</td>
+                          <td>Egypt</td>
+                          <td>00201011609810</td>
+                        </tr>
+                       
+                       
+                      </tbody>
+                    </table>
+                    
+                    <form method="POST" action="{% url 'home:bank_payment' teacher.id %}" enctype="multipart/form-data">
+                      {{ form.non_field_errors }}
+                      {% csrf_token %}
+                      <div class="form-group">
+                        {{ form.number.errors }}
+                        <label for="exampleInputEmail1">Transaction ID</label>
+                        <input type="text" name="number"  class="form-control number" required="true" placeholder="MTCN" id="number" >
+                      </div>
+                      <div class="form-group">
+                        {{ form.payment_image.errors }}
+                            <label for="exampleInputEmail1">Image receip</label>
+                        <input type="file" name="image" accept="image/*" class="form-control" required="true" id="exampleInputEmail1" >
+                      </div>
+                      <br>
+                      <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1"><a href="{% url 'home:terms' %}">Terms & Privacy</a></label>
+                      </div>
+                      <br>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div class="table-responsive">
+                    <table class="table">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th scope="col">Bank name</th>
+                          <th scope="col">IBan</th>
+                          <th scope="col">Riceve Name</th>
+                          <th scope="col">Branch</th>
+                          <th scope="col">Swift Code</th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Mark</td>
+                          <td>EG260017001801820017420650101</td>
+                          <td>Nabil Kamal Mohamed</td>
+                          <td>Al AHRAR BRANCH</td>
+                          <td>SUCAEGCXXXX</td>
+                        </tr>
+                     
+                      </tbody>
+                    </table>
+                  </div>
+                    <form method="POST" action="{% url 'blogs:western_payment' teacher.id %}" enctype="multipart/form-data">
+                      {{ form.non_field_errors }}
+                      {% csrf_token %}
+                      <div class="form-group">
+                        {{ form.number.errors }}
+                        <label for="exampleInputEmail1">Transaction ID</label>
+                        <input type="text" name="number"  class="form-control number" required="true" placeholder="Transaction Number"  >
+                      </div>
+                      <div class="form-group">
+                        {{ form.payment_image.errors }}
+                            <label for="exampleInputEmail1">Image receip</label>
+                        <input type="file" name="image" accept="image/*" class="form-control" required="true" placeholder="MTCN" >
+                      </div>
+                      <br>
+                      <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1"><a href="{% url 'home:terms' %}">Terms & Privacy</a></label>
+                      </div>
+                      <br>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                    <div class="col offset-lg-2">
+                      <div id="paypal-button-container"></div>
+
+                    </div>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+
+  <script type="text/javascript">
+
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Render the PayPal button into #paypal-button-container
+    paypal.Buttons({
+
+        style: {
+            color:  'blue',
+            shape:  'pill',
+            label:  'pay',
+            height: 40
+        },
+                           // Call your server to set up the transaction
+                           createOrder: function(data, actions) {
+                            return fetch('{% url "consultant:paypal_create" teacher.id %}', {
+                                method: 'post',
+                                headers: {"X-CSRFToken": csrftoken}
+                            }).then(function(res) {
+                                return res.json();
+                            }).then(function(orderData) {
+                                return orderData.id;
+                            });
+                        },
+              
+                        // Call your server to finalize the transaction
+                        onApprove: function(data, actions) {
+                    
+                          return fetch("/consultant/paypal/capture/{{teacher.id}}/"+data.orderID+"/{{request.user.id}}/{{user_data.id}}/",{
+                                method: 'post',
+                                headers: {"X-CSRFToken": csrftoken}
+                            }).then(function(res) {
+                               
+                                window.location.href = '{% url "accounts:consultant_payment" %}';                                
+                                return res.json();
+                            }).then(function(orderData) {
+                             
+                                // Three cases to handle:
+                                //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                                //   (2) Other non-recoverable errors -> Show a failure message
+                                //   (3) Successful transaction -> Show a success / thank you message
+              
+                                // Your server defines the structure of 'orderData', which may differ
+                                var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
+              
+                                if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
+                                    // Recoverable state, see: "Handle Funding Failures"
+                                    // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
+                                    return actions.restart();
+                                }
+              
+                                if (errorDetail) {
+                                    var msg = 'Sorry, your transaction could not be processed.';
+                                    if (errorDetail.description) msg += '\n\n' + errorDetail.description;
+                                    if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
+                                    // Show a failure message
+                                    return alert(msg);
+                                }
+              
+                                // Show a success message to the buyer
+                               
+                            });
+                        },
+                        onCancel: function (data, actions) {
+                            return fetch('{% url "accounts:consultant_payment" %}',{
+                                method: 'post',
+                                headers: {"X-CSRFToken": csrftoken}
+                            }).then(function(res){
+                                window.location.href = '{% url "accounts:consultant_payment" %}';
+                                return res.json();
+                            })
+                            // Show a cancel page or return to cart
+                           
+                          },
+              
+                          
+
+    }).render('#paypal-button-container');
+
+    $(document).ready(function() {
+      $("#number").keydown(function(event) {
+          // Allow: backspace, delete, tab, escape, and enter
+          if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+              // Allow: Ctrl+A
+              (event.keyCode == 65 && event.ctrlKey === true) ||
+              // Allow: home, end, left, right
+              (event.keyCode >= 35 && event.keyCode <= 39)) {
+              // let it happen, don't do anything
+              return;
+          } else {
+              // Ensure that it is a number and stop the keypress
+              if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                  event.preventDefault();
+              }
+          }
+      });
+  });
+$(document).ready(function () {
+  $('#horizontalTab').easyResponsiveTabs({
+    type: 'default', //Types: default, vertical, accordion           
+    width: 'auto', //auto or any width like 600px
+    fit: true   // 100% fit in a container
+  });
+});
+
+  
+  </script>
+{% endblock %}

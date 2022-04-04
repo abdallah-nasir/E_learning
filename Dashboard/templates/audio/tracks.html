@@ -30,6 +30,7 @@
                                             <th>Music</th>
                                             <th>Image</th>
                                             <th>All Music</th>
+                                            <th>Action</th>
 
                                         </tr>
                                     </thead>
@@ -42,7 +43,11 @@
                                           <td>{{i.music.count}}</td>
                                           <td><a target="__blank" href="{{i.image}}" >Image</a></td>
                                           <td><a class="btn btn-info" href="{% url 'dashboard:audios:single_track' i.slug  %}">Track Music</a></td>
-
+                                        <td>
+                                            
+                                              <a class="btn btn-info" href="{% url 'dashboard:audios:edit_audio' i.slug  %}">Edit</a>
+                                       
+                                    </td>
                                     </tr>
 
                                     

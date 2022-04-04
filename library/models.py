@@ -43,10 +43,10 @@ STATUS=(
 ) 
 LIBRARY_TYPE=(
     (1,"audio_book"),
-    (2,"music"),
+    (2,"music"), 
     (3,"movies"),
     (4,"e_book")
-) 
+)  
 class Comments(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     library=models.IntegerField(choices=LIBRARY_TYPE,default=1)
@@ -55,17 +55,67 @@ class Comments(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.user.username
-
+     
+class Audio_Book_Tracks(models.Model): 
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    name=models.CharField(max_length=100)
+    image=models.ImageField()
+    book=models.ManyToManyField("Audio_Book",blank=True)
+    category=models.ForeignKey(Category,on_delete=models.CASCADE)
+    price=models.FloatField(null=True)
+    buyers=models.ManyToManyField(User,related_name="audio_book_user",blank=True)
+    comments=models.ManyToManyField(Comments,blank=True)
+    data=models.TextField() 
+    status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
+    slug=models.SlugField(unique=True,blank=True,max_length=100)
+    
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+            if Audio_Book_Tracks.objects.filter(slug=self.slug).exists():
+                slug=slugify(self.name)
+                self.slug =f"{slug}-{random_string_generator()}"
+        super(Audio_Book_Tracks, self).save()
+    def get_total_duration(self):
+        duration=0
+        for i in self.book.all():
+            duration +=i.duration
+        total_time=time.strftime('%H:%M:%S',  time.gmtime(duration))
+        return total_time
+    def get_price(self):
+        try:
+            data=json.loads(self.data)
+            if data["discount"]:
+                price=data["discount"]
+            else:
+                price=self.price
+        except:
+            if self.price:
+                price= self.price
+            else: 
+                price=0
+        return price
+    def get_cache_data(self):
+        same=Audio_Book_Tracks.objects.filter(status="approved",category=self.category).exclude(id=self.id).select_related("user")[:4]
+        context={"same":same}
+        return context
+    def check_user_in(self,user_id):
+        if self.buyers.filter(id=user_id).exists():
+            return True
+        else:
+            return False
 class Audio_Book(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=150)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    category=models.ForeignKey(Category,on_delete=models.CASCADE)
     data=models.TextField()
+    track=models.ForeignKey(Audio_Book_Tracks,related_name="audio_book_track",null=True,on_delete=models.CASCADE)
     duration=models.PositiveIntegerField(null=True)
-    price=models.FloatField(null=True)
-    status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
+    is_play=models.BooleanField(default=False)
     slug=models.SlugField(unique=True,blank=True,max_length=100)
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -75,17 +125,27 @@ class Audio_Book(models.Model):
                 self.slug =f"{slug}-{random_string_generator()}"
         super(Audio_Book, self).save()
         
-    def get_price(self):
+
+    def get_music(self):
         try:
             data=json.loads(self.data)
-            if data["discount"]:
-                price=data["discount"]
-            else:
-                price=self.price
+            music=data["audio_url"]
         except:
-            price= self.price
-        return price
+            music=None
+        return music
 
+    def check_music(self):
+        try:
+            data=json.loads(self.data)
+            if data["audio_url"]:
+                return True
+            else:
+                return False
+        except:
+            return False
+    def get_duration_model(self):
+        total_time=time.strftime('%H:%M:%S',  time.gmtime(self.duration))
+        return total_time
 class Audio_Tracks(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=100)
@@ -93,8 +153,9 @@ class Audio_Tracks(models.Model):
     music=models.ManyToManyField("Music",blank=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     price=models.FloatField(null=True)
+    buyers=models.ManyToManyField(User,related_name="exist_user",blank=True)
     comments=models.ManyToManyField(Comments,blank=True)
-    data=models.TextField()
+    data=models.TextField() 
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
     slug=models.SlugField(unique=True,blank=True,max_length=100)
     
@@ -134,6 +195,12 @@ class Audio_Tracks(models.Model):
         same=Audio_Tracks.objects.filter(status="approved",category=self.category).exclude(id=self.id).select_related("user")[:4]
         context={"same":same}
         return context
+     
+    def check_user_in(self,user_id):
+        if self.buyers.filter(id=user_id).exists():
+            return True
+        else:
+            return False
 class Music(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=150)
@@ -181,6 +248,7 @@ class Movies(models.Model):
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     data=models.TextField()
     duration=models.PositiveIntegerField(null=True)
+    buyers=models.ManyToManyField(User,blank=True,related_name="movies_user")
     price=models.FloatField(null=True)
     comments=models.ManyToManyField(Comments,blank=True)
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
@@ -313,6 +381,13 @@ class Artist(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     status=models.CharField(choices=ACTION_CHOICES,default="pending",max_length=10)
     data=models.TextField()
+    
+    def get_tracks(self):
+        tracks=Audio_Tracks.objects.filter(user=self.user,status="approved").select_related("user").order_by("-id")
+        return tracks
+    def get_music(self):
+        music=Music.objects.filter(user=self.user).select_related("user").order_by("-id")
+        return music
 PAYMENT_CHOICES=(
     ("pending","pending"),
     ("approved","approved"),
@@ -321,10 +396,10 @@ PAYMENT_CHOICES=(
     )
 
 PAYMENTS=(
-    ("Paymob","Paymob"),
+    ("bank","bank"),
     ("Western Union","Western Union"),
     ("Paypal","Paypal")
-)
+) 
 class Library_Payment(models.Model):
     method=models.CharField(choices=PAYMENTS,max_length=100)
     library_type=models.IntegerField(choices=LIBRARY_TYPE,default=3)
@@ -345,3 +420,29 @@ class Library_Payment(models.Model):
             movies=Movies.objects.get(id=self.content_id)
             print(movies)
         return movies
+    def get_music(self):
+        if self.library_type == 2:
+            track=Audio_Tracks.objects.get(id=self.content_id)
+        return track
+    def check_payment(self):
+        if self.status == "declined":
+           
+            if self.method == "Western Union" or self.method == "bank":
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def get_audio_book(self):
+        if self.library_type == 1:
+            track=Audio_Book_Tracks.objects.get(id=self.content_id)
+        return track
+    def check_refund(self): 
+        if self.status != "refund":
+            if self.method == "Western Union":
+                return False
+            else:
+                return True
+        else:
+            return False 

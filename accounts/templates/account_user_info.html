@@ -24,7 +24,6 @@
                 <button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
               </form>
               {% if request.user.account_type == 'student' %}
-            <p>{% trans 'Join our Teachers ?' %} <a href="{% url 'accounts:validate_teacher' %}">{% trans 'click here' %}</a></p> 
             {% endif %}
         </div>
         

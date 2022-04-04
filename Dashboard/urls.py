@@ -10,7 +10,7 @@ path("",views.home,name="home"),
 path("blog/payment/",views.blog_payment,name="blog_payment"),
 path("course/payment/",views.course_payment,name="course_payment"),
 path("consultant/payment/",views.consultant_payment,name="consultant_payment"),
-path("movies/payment/",views.movies_payment,name="movies_payment"),
+path("movies/payment/",movies.movies_payment,name="movies_payment"),
 
 # edits
 path("blog/payment/edit/<int:id>/",views.edit_blog_payment,name="edit_blog_payment"),
@@ -25,6 +25,9 @@ path("demo/blog/<str:slug>/",views.show_demo_blog,name="show_demo_blog"),
 
 path("add/blogs/",views.add_blog,name="add_blog"),
 path("edit/blogs/<str:slug>/",views.edit_blog,name="edit_blog"),
+path("edit/audio/blog/<str:slug>/",views.edit_audio_blog,name="edit_audio_blog"),
+path("edit/video-blog/<str:slug>/",views.edit_video_blog,name="edit_video_blog"),
+
 path("delete/blogs/<str:slug>/",views.delete_blog,name="delete_blog"),
 path("delete/image/blogs/<str:id>/",views.delete_blog_image,name="delete_blog_image"),
 path("delete/videos/blogs/<str:id>/",views.delete_blog_video,name="delete_blog_video"),
@@ -66,7 +69,7 @@ path("edit/question/<str:course>/<str:slug>/",views.edit_quiestions,name="edit_q
 path("delete/question/<str:slug>/<str:id>/",views.delete_question,name="delete_question"),
 # #quiz Answers
 path("add/answer/<str:course>/<str:slug>/",views.add_answer,name="add_answer"),
-path("edit/answer/<str:course>/<str:slug>/",views.edit_answer,name="edit_answer"),
+path("edit/answer/<str:course>/<int:id>/",views.edit_answer,name="edit_answer"),
 path("delete/answer/<str:slug>/<str:id>/",views.delete_answer,name="delete_answer"),
 # teachers
 path("teachers/",views.teachers,name="teachers"),
@@ -152,7 +155,8 @@ path("library/movies/demo/check/<str:slug>/",movies.check_demo_movie,name="check
 path("library/movies/add/",movies.add_movies,name="add_movies"), 
 path("library/movies/video/<str:slug>/",movies.uplaod_movie_video,name="uplaod_movie_video"), 
 path("library/audio/",include("Dashboard.audio_urls",namespace="audios")), 
-  
+path("library/audio-book/",include("Dashboard.audio_book_urls",namespace="audio_book_urls")), 
+
 ####### ads   
 path("ads/<str:slug>/",views.ads,name="ads"),
 path("search-ads/",views.search_ads,name="search_ads"), 

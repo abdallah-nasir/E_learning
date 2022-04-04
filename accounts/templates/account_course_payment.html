@@ -53,10 +53,10 @@
                                             {% endif %}
                                         <td>{{i.status}}</td>
                                         <td>
-                                        {% if i.status == "declined" and i.method == "Western Union" %}
-                                        <a href="{% url 'accounts:edit_course_payment' i.id %}" class="btn btn-info">{% trans 'Edit' %}</a></td>
+                                        {% if i.check_payment %}
+                                        <a href="{% url 'accounts:edit_course_payment' i.id %}" class="btn btn-info">{% trans 'Edit' %}</a>
                                         {% endif %}
-                                        {% if i.status != "refund" and i.method != "Western Union" %}
+                                        {% if i.check_refund %}
                                         <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">{% trans 'Refund' %}</button>
 
                                     {% endif %}
@@ -77,7 +77,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
-          <a href="{% url 'accounts:course_refund' i.id %}" type="button" class="btn btn-danger">{% trans 'Refund' %}</a>
+          <a href="{% url 'accounts:course_refund' id=i.id slug=i.course.slug %}" type="button" class="btn btn-danger">{% trans 'Refund' %}</a>
         </div>
       </div>
     </div>

@@ -4,9 +4,9 @@ from django.urls import reverse
 from django.http import HttpResponse
 from django.contrib import messages
 from .models import Refunds
-from library.models import Library_Payment,Movies
+from library.models import Audio_Tracks, Library_Payment,Movies,Audio_Book_Tracks
 from home.models import Events,Course,Payment
-from Blogs.models import Blog
+from Blogs.models import Blog,Blog_Payment
 from Consultant.models import  Cosultant_Payment,Consultant
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
@@ -151,7 +151,7 @@ def check_blog_audio(function):
         # elif blog.status == "approved":
         #     messages.error(request,"please edit blog first")
         #     return redirect(reverse("dashboard:blogs"))
-        elif blog.video :
+        elif blog.video:
             messages.error(request,"please edit blog first,you already have an audio")
             return redirect(reverse("dashboard:blogs"))
         else:
@@ -248,6 +248,52 @@ def check_movie_refund(function):
             return function(request, *args, **kwargs)
     return wrap
 
+def check_music_refund(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(Audio_Tracks,slug=kwargs['slug'])
+        payment=get_object_or_404(Library_Payment,id=kwargs["id"])
+        if payment.method == "Western Union":
+            messages.error(request,"You cant refund Western Union Payment")
+            return redirect(reverse("dashboard:audios:audio_payment"))
+        today= datetime.date.today() 
+        refunds=Refunds.objects.filter(user=request.user,type="music_payment",content_id=payment.id).exclude(status="approved")
+        if payment.status == 'refund':
+            messages.error(request,"this payment is already refunded")
+            return redirect(reverse("dashboard:audios:audio_payment"))
+        elif payment.created_at + datetime.timedelta(days=30) <= today : 
+            messages.error(request,"you have passed 30 days returns")
+            return redirect(reverse("dashboard:audios:audio_payment"))
+        elif refunds.exists():
+            messages.error(request,"you already have pending refund for this payment")
+            return redirect(reverse("dashboard:audios:audio_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    return wrap
+
+def check_audio_book_refund(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(Audio_Book_Tracks,slug=kwargs['slug'])
+        payment=get_object_or_404(Library_Payment,id=kwargs["id"])
+        if payment.method == "Western Union":
+            messages.error(request,"You cant refund Western Union Payment")
+            return redirect(reverse("dashboard:audio_book_urls:audio_payment"))
+        today= datetime.date.today() 
+        refunds=Refunds.objects.filter(user=request.user,type="audio_book_payment",content_id=payment.id).exclude(status="approved")
+        if payment.status == 'refund':
+            messages.error(request,"this payment is already refunded")
+            return redirect(reverse("dashboard:audio_book_urls:audio_payment"))
+        elif payment.created_at + datetime.timedelta(days=30) <= today : 
+            messages.error(request,"you have passed 30 days returns")
+            return redirect(reverse("dashboard:audio_book_urls:audio_payment"))
+        elif refunds.exists():
+            messages.error(request,"you already have pending refund for this payment")
+            return redirect(reverse("dashboard:audio_book_urls:audio_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    return wrap
+  
 
 def check_if_there_payment_edited(function):
     def wrap(request, *args, **kwargs):
@@ -256,6 +302,54 @@ def check_if_there_payment_edited(function):
         if payment.exists():
             messages.error(request,"you already have an existing payment")
             return redirect(reverse("accounts:movies_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+
+
+
+def check_edit_blog_pyment(function):
+    def wrap(request, *args, **kwargs):
+        payment=get_object_or_404(Blog_Payment,id=kwargs["id"])
+        another_payment=Blog_Payment.objects.filter(user=request.user,type=1,expired=False).exclude(id=payment.id).select_related("user")
+        if request.user.vip:
+            messages.error(request,"you are already a member")
+            return redirect(reverse("accounts:blog_payment"))
+        for i in another_payment:
+            while i.status == "approved" or i.status == "pending":
+                messages.error(request,"you are already have another payment")
+                return redirect(reverse("accounts:blog_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+
+def check_edit_course_pyment(function):
+    def wrap(request, *args, **kwargs):
+        payment=get_object_or_404(Payment,id=kwargs["id"])
+        another_payment=Payment.objects.filter(user=request.user,course=payment.course,expired=False).exclude(id=payment.id).select_related("user")
+        for i in another_payment:
+            while i.status == "approved" or i.status == "pending":
+                messages.error(request,"you are already have another payment")
+                return redirect(reverse("accounts:course_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+def check_edit_consultant_pyment(function):
+    def wrap(request, *args, **kwargs):
+        payment=get_object_or_404(Cosultant_Payment,id=kwargs["id"])
+        another_payment=Cosultant_Payment.objects.filter(user=request.user,teacher=payment.teacher).exclude(id=payment.id).select_related("user")
+        for i in another_payment:
+            while i.status == "approved" or i.status == "pending": 
+                messages.error(request,"you are already have another payment")
+                return redirect(reverse("accounts:consultant_payment"))
         else:
             return function(request, *args, **kwargs)
     wrap.__doc__ = function.__doc__

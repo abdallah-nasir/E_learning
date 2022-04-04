@@ -102,6 +102,9 @@
                         <a class="collapse-item" href="{% url 'dashboard:consultant_payment' %}">Consultant Payments</a>
                         <a class="collapse-item" href="{% url 'dashboard:course_payment' %}">Course Payments</a>
                         <a class="collapse-item" href="{% url 'dashboard:movies_payment' %}">Movies Payments</a>
+                        <a class="collapse-item" href="{% url 'dashboard:audios:audio_payment' %}">Audio Payments</a>
+                        <a class="collapse-item" href="{% url 'dashboard:audio_book_urls:audio_payment' %}">Audio Book Payments</a>
+
 
                         
                     </div>
@@ -163,22 +166,18 @@
             </li>
             {% if request.user.is_superuser %}
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapselibrary"
-                    aria-expanded="true" aria-controls="collapselibrary">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseads"
+                    aria-expanded="true" aria-controls="collapseads">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>Library</span>
+                    <span>Ads</span>
                 </a>
-                <div id="collapselibrary" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div id="collapseads" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">All Library:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:movies' %}">Movies</a>
-                        <a class="collapse-item" href="{% url 'dashboard:library' %}?type=audio">Audio</a>
-                        <a class="collapse-item" href="{% url 'dashboard:library' %}?type=audio-book">Audio Book</a>
-                        <a class="collapse-item" href="{% url 'dashboard:library' %}?type=e-book">E-Book</a>
-                        <a class="collapse-item" href="{% url 'dashboard:add_movies' %}">Add Movies</a>
+                        <h6 class="collapse-header">All Ads:</h6>
+                        <a class="collapse-item" href="{% url 'dashboard:ads' slug='agartha' %}">Agartha</a>
+                        <a class="collapse-item" href="{% url 'dashboard:ads' slug='kemet'  %}">Kemet</a>
+                        <a class="collapse-item" href="{% url 'dashboard:search_ads'  %}">Add Ads</a>
 
-                        <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
-                        <a class="collapse-item" href="cards.html">Course Payments</a> -->
                     </div>
                 </div>
             </li>
@@ -195,29 +194,51 @@
                         <a class="collapse-item" href="{% url 'dashboard:audios:add_track' %}">Add Track</a>
                         <a class="collapse-item" href="{% url 'dashboard:audios:add_audio' %}">Add Music</a>
 
-
+                        
                         <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
                         <a class="collapse-item" href="cards.html">Course Payments</a> -->
                     </div>
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseads"
-                    aria-expanded="true" aria-controls="collapseads">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapselibrarymovies"
+                    aria-expanded="true" aria-controls="collapselibrarymovies">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>Ads</span>
+                    <span>Library Movies</span>
                 </a>
-                <div id="collapseads" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div id="collapselibrarymovies" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">All Ads:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:ads' slug='agartha' %}">Agartha</a>
-                        <a class="collapse-item" href="{% url 'dashboard:ads' slug='kemet'  %}">Kemet</a>
-                        <a class="collapse-item" href="{% url 'dashboard:search_ads'  %}">Add Ads</a>
+                        <h6 class="collapse-header">All Audios:</h6>
+                            <a class="collapse-item" href="{% url 'dashboard:movies' %}">Movies</a>
+                        <a class="collapse-item" href="{% url 'dashboard:add_movies' %}">Add Movie</a>
 
+                        
+                        <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
+                        <a class="collapse-item" href="cards.html">Course Payments</a> -->
                     </div>
                 </div>
             </li>
+           
             {% endif %}
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapselibraryaudiobook"
+                    aria-expanded="true" aria-controls="collapselibraryaudio">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Library Audio Book</span>
+                </a>
+                <div id="collapselibraryaudiobook" class="collapse" aria-labelledby="headingTwo" data-parent="#collapselibraryaudiobook">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">All Audio Books:</h6>
+                            <a class="collapse-item" href="{% url 'dashboard:audio_book_urls:tracks' %}">Tracks</a>
+                        <a class="collapse-item" href="{% url 'dashboard:audio_book_urls:add_track' %}">Add Track</a>
+                        <a class="collapse-item" href="{% url 'dashboard:audio_book_urls:add_audio' %}">Add To Book</a>
+
+                        
+                        <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
+                        <a class="collapse-item" href="cards.html">Course Payments</a> -->
+                    </div>
+                </div>
+            </li>
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapconsaltant"
                 aria-expanded="true" aria-controls="collapconsaltant">
@@ -275,6 +296,26 @@
          </div>
 
      </li>
+     <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseuserartist"
+            aria-expanded="true" aria-controls="collapseuserdircollapseuserartistector">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Add User To Artist</span>
+        </a>
+        <div id="collapseuserartist" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Add User:</h6>
+                <a class="collapse-item" href="{% url 'dashboard:audios:artist_add' %}">Add User</a>
+                <!-- <a class="collapse-item" href="register.html"></a>
+                <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                <div class="collapse-divider"></div>
+                <h6 class="collapse-header">Other Pages:</h6>
+                <a class="collapse-item" href="404.html">404 Page</a>
+                <a class="collapse-item" href="blank.html">Blank Page</a> -->
+            </div>
+        </div>
+
+    </li>
 {% endif %}  
         {% if request.user.is_superuser or request.user.is_director %}
                    <!-- Nav Item - Pages Collapse Menu -->
@@ -439,6 +480,10 @@
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=add_user">User Course</a>
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=movies">Movies</a>
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=movie_payment">Movies Payment</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audios">Audios</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audio_payment">Audio Payments</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audio_book_payment">Audio Book Payments</a>
+
 
                         <!-- <a class="collapse-item" href="register.html"></a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
@@ -463,6 +508,9 @@
                         <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=course">Course Refund</a>
                         <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=consultant">Consultant Refund</a>
                         <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=movies">Movies Refund</a>
+                        <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=music">Music Refund</a>
+                        <a class="collapse-item" href="{% url 'dashboard:refunds' %}?type=audio_book">Audio Book Refund</a>
+
                         <a class="collapse-item" href="{% url 'dashboard:search_refunds' %}">Add Refund</a>
 
                       

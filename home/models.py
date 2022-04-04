@@ -389,7 +389,7 @@ def upload_payment_images(instance,filename):
     return place  
 
 PAYMENTS=(
-    ("Paymob","Paymob"),
+    ("bank","bank"),
     ("Western Union","Western Union"),
     ("Paypal","Paypal")
 )
@@ -424,7 +424,22 @@ class Payment(models.Model):
     expired=models.BooleanField(default=False)
     def __str__(self):
         return self.method
-
+    def check_payment(self): 
+        if self.status == "declined":
+            if self.method == "Western Union" or self.method == "bank":
+                return True
+            else:
+                return False
+        else:
+            return False
+    def check_refund(self): 
+        if self.status != "refund":
+            if self.method == "Western Union":
+                return False
+            else:
+                return True
+        else:
+            return False         
     def check_if_rejected(self):
         rejects=Rejects.objects.filter(type="payment",content_id=self.id,user=self.user).delete()
         return rejects
@@ -439,7 +454,17 @@ class Payment(models.Model):
             self.expired_at +=datetime.timedelta(days=365)
             self.save()
         return True
-
+    def add_expire_time_for_kemet(self):
+        if self.user.is_kemet_vip == True:
+            today= datetime.date.today()
+            payment=blog_model.Blog_Payment.objects.filter(user=self.user,expired=False,status="approved").last()
+            difference=payment.expired_at-today
+            self.expired_at +=datetime.timedelta(days=365) + difference
+            self.save()
+        else:
+            self.expired_at +=datetime.timedelta(days=365)
+            self.save()
+        return True
 class News(models.Model):
     name=models.CharField(max_length=200)
     link=models.CharField(blank=True,null=True,default="#",max_length=200)

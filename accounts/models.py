@@ -49,6 +49,7 @@ class User(AbstractUser):
     code=models.CharField(max_length=50,blank=True,null=True)
     slug=models.SlugField(unique=True,blank=True,null=True)
     vip =models.BooleanField(default=False)
+    is_kemet_vip=models.BooleanField(default=False)
     is_director=models.BooleanField(default=False)
     terms_privacy=models.BooleanField(default=True,blank=False)
 

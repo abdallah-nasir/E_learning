@@ -1,0 +1,87 @@
+{% extends 'dashboard_base.html' %}
+{% load hosts %}
+
+
+
+{% block content %}
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Tracks</h1>
+                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <!-- <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> -->
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>User</th>
+                                            <th>Books</th>
+                                            <th>Image</th>
+                                            <th>All Music</th>
+                                            <th>Action</th>
+
+                                        </tr>
+                                    </thead>
+                                   
+                                   <tbody>
+                                       {% for i in tracks %}
+                    <tr>
+                                        <td>{{i.name|truncatewords:10}}</td>
+                                        <td>{{i.user.username}}</td>
+                                          <td>{{i.book.count}}</td>
+                                          <td><a target="__blank" href="{{i.image}}" >Image</a></td>
+                                          <td><a class="btn btn-info" href="{% url 'dashboard:audio_book_urls:single_track' i.slug  %}">Track Books</a></td>
+                                        <td>
+                                            
+                                              <a class="btn btn-info" href="{% url 'dashboard:audio_book_urls:edit_audio' i.slug  %}">Edit</a>
+                                       
+                                    </td>
+                                    </tr>
+
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% if tracks.has_other_pages %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        {% if tracks.has_previous  %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ tracks.previous_page_number }}">Previous</a></li>
+                                      {% endif %}
+                                      {% for i in  tracks.paginator.page_range %}
+                                      {% if tracks.number == i %}
+                                      <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% else %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% endif %}
+                                      {% endfor %}
+                                      {% if tracks.has_next %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ tracks.next_page_number }}">Next</a></li>
+                                      {% endif %}
+                                    </ul>
+                                  </nav>
+                                  {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+{% endblock %}

@@ -1,282 +1,234 @@
-
+{% extends 'blog_base.html' %}
 {% load static %}
 {% load hosts %}
-{% load crispy_forms_tags %}
-<!DOCTYPE html>
-<html>
-<head>
-<title>Payment Form</title>
-<!-- for-mobile-apps -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="Payment Form Widget Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
-		function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- //for-mobile-apps -->
-<link href="{% static 'payment/css/style.css' %}" rel="stylesheet" type="text/css" media="all" />
-<!-- <link href='{% static "payment/fonts.googleapis.com/css?family=Fugaz+One" %}' rel='stylesheet' type='text/css'> -->
-<link href='fonts.googleapis.com/css?family=Alegreya+Sans:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,800,800italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+{% block content %}
+<link rel="stylesheet" href="{% static 'payment/css/style.css' %}">
 <style type="text/css">
-li.resp-tab-item span .pic1{
-  background: url(https://a57.foxnews.com/static.foxbusiness.com/foxbusiness.com/content/uploads/2020/01/931/506/Credible-Mastercard-Visa-iStock-458551149.jpg?ve=1&tl=1) repeat round !important;
+.form-check-label {
+  padding-left: 15px;
 }
+  </style>
+<title>{% block title %}|Payment{% endblock %}</title>
 
-</style>
-
-</head>
-<body>
-	<div class="main"> 
-		<h1>Payment Form</h1>
-		<div class="content">
-			
-	
-						<div class="sap_tabs">
-							<div id="horizontalTab" style="display: block; width: 100%; margin: 0px;">
-								<div class="pay-tabs">
-									<h2>Select Payment Method</h2>
-               
-									  <ul class="resp-tabs-list">
-										<li class="resp-tab-item" aria-controls="tab_item-0" role="tab"><span><label  style="height: 70px;" class="pic1"></label>Visa / Credit Card</span></li> 
-										  <li class="resp-tab-item" aria-controls="tab_item-3" role="tab"><span><label style="height: 70px;" class="pic2"></label>Wester Union</span></li> 
-										  <li class="resp-tab-item" aria-controls="tab_item-2" role="tab"><span><label style="height: 70px;" class="pic4"></label>PayPal</span></li>
-										  <div class="clear"></div>
-									  </ul>	
-								</div>
-								<div class="resp-tabs-container" style="padding:none !important;">
-									<div class="tab-1 resp-tab-content" aria-labelledby="tab_item-0">
-										<div class="payment-info">
-											<button id='card-data' type="button" style="align-items: center;" class="btn btn-primary">insert your card info</button>
-                     
-                       <div class="col">
-                        <div  id="card">
-
-                        </div>
-                
-                       </div>
-                   
+<section id="tabs" class="project-tab">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <nav>
+                  <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                      <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Western Union</a>
+                      <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Bank Transaction</a>
+                      <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Paypal</a>
+                  </div>
+              </nav>
+              <div class="tab-content" id="nav-tabContent">
+                  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <table class="table">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th scope="col">Name Recived</th>
+                          <th scope="col">Country</th>
+                          <th scope="col">Mobil Number</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>نبيل كمال محمد</td>
+                          <td>Egypt</td>
+                          <td>00201011609810</td>
+                        </tr>
                        
-
-											<!-- <div class="single-bottom">
-													<ul>
-														<li>
-															<input type="checkbox"  id="brand" value="">
-															<label for="brand"><span></span>By checking this box, I agree to the Terms & Conditions & Privacy Policy.</label>
-														</li>
-													</ul>
-											</div> -->
-										</div>
-									</div>
-                  <div class="tab-1 resp-tab-content" aria-labelledby="tab_item-3">	
-										<div class="payment-info">
-											
-											<h3 class="pay-title">Western Union Info</h3>
-										
-												<div class="tab-for">
-													<table>
-														<tr>
-															<th colspan="3"> <h5>  التحويل عبر الويسترن باسم</h5></th>
-														</tr>
-														<tr>
-															<td>Name Recive: </td>
-															<td><h5> Nabil Kamal Mohamed </h5> </td>
-														</tr>
-														<tr>
-															<td>اسم المستلم </td>
-															<td>نبيل كمال محمد </td>
-														</tr>
-														<tr>
-															<td> Country:</td>
-															<td> Egypt</td>
-														</tr>
-														<tr>
-															<td>Mobil Number:</td>
-															<td>00201011609810</td>
-														</tr>
-													</table>
-													<h4 style="color:red">
-														الرجاء استخدام رقم طلبك كمرجع لعملية الدفع
-													</h4>
-												</div>
-                        <form method="POST" action="{% url 'blogs:western_payment' price.id %}" enctype="multipart/form-data">
-                          {{ form.non_field_errors }}
-                          {% csrf_token %}
-                        
-                          <div class="tab-for">
-                            <h5>Phone Number</h5>
-                            {{ form.number.errors }}
-                            <input type="text" name="number" id="number" required="true">
-                            <h5>Image receipt</h5>
-                            {{ form.payment_image.errors }}
-                            <input type="file" name="payment_image" accept="image/*" required="true">
-                          </div>
-                          <br /><br />
-                          <input type="hidden" name="payment"  value="Western Union">
-                          <input type="submit"  value="submit">
-                        </form>
-											
-											<div class="single-bottom">
-													<ul>
-														<!-- <li>
-															<input type="checkbox"  id="brand" value="">
-															<label for="brand"><span></span>By checking this box, I agree to the Terms & Conditions & Privacy Policy.</label>
-														</li> -->
-													</ul>
-											</div>
-										</div>	
-									</div>
-									<div class="tab-1 resp-tab-content" aria-labelledby="tab_item-2">
-										<div class="payment-info">
-											<h3>PayPal</h3>
-											<h4>Already Have A PayPal Account?</h4>
-                          </div>
-                          <div id="paypal-button-container"></div>
-									</div>
-								
-								</div>	
-							</div>
-						</div>	
-            
-		</div>
-	</div>
-  <script type="text/javascript" src="{% static 'payment/js/jquery.min.js' %}"></script>
-  <script src="{% static 'payment/js/easyResponsiveTabs.js' %}" type="text/javascript"></script>
-
-    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
-  <script type="text/javascript">
-
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    // Render the PayPal button into #paypal-button-container
-    paypal.Buttons({
-
-        style: {
-            color:  'blue',
-            shape:  'pill',
-            label:  'pay',
-            height: 40
-        },
-                           // Call your server to set up the transaction
-                           createOrder: function(data, actions) {
-                            return fetch('{% url "blogs:paypal_create" price.id %}', {
-                                method: 'post',
-                                headers: {"X-CSRFToken": csrftoken}
-                            }).then(function(res) {
-                                return res.json();
-                            }).then(function(orderData) {
-                                return orderData.id;
-                            });
-                        },
-              
-                        // Call your server to finalize the transaction
-                        onApprove: function(data, actions) {
+                       
+                      </tbody>
+                    </table>
                     
-                            return fetch('/blogs/paypal/capture/' + data.orderID +'/{{price.id}}/',{                                method: 'post',
-                                headers: {"X-CSRFToken": csrftoken}
-                            }).then(function(res) {
-                               
-                                window.location.href = '{% url "accounts:blog_payment" %}';                                
-                                return res.json();
-                            }).then(function(orderData) {
+                    <form method="POST" action="{% url 'home:bank_payment' price.id %}" enctype="multipart/form-data">
+                      {{ form.non_field_errors }}
+                      {% csrf_token %}
+                      <div class="form-group">
+                        {{ form.number.errors }}
+                        <label for="exampleInputEmail1">Transaction ID</label>
+                        <input type="text" name="number"  class="form-control number" required="true" placeholder="MTCN" id="number" >
+                      </div>
+                      <div class="form-group">
+                        {{ form.payment_image.errors }}
+                            <label for="exampleInputEmail1">Image receip</label>
+                        <input type="file" name="image" accept="image/*" class="form-control" required="true" id="exampleInputEmail1" >
+                      </div>
+                      <br>
+                      <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1"><a href="{% url 'home:terms' %}">Terms & Privacy</a></label>
+                      </div>
+                      <br>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div class="table-responsive">
+                    <table class="table">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th scope="col">Bank name</th>
+                          <th scope="col">IBan</th>
+                          <th scope="col">Riceve Name</th>
+                          <th scope="col">Branch</th>
+                          <th scope="col">Swift Code</th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Mark</td>
+                          <td>EG260017001801820017420650101</td>
+                          <td>Nabil Kamal Mohamed</td>
+                          <td>Al AHRAR BRANCH</td>
+                          <td>SUCAEGCXXXX</td>
+                        </tr>
+                     
+                      </tbody>
+                    </table>
+                  </div>
+                    <form method="POST" action="{% url 'blogs:western_payment' price.id %}" enctype="multipart/form-data">
+                      {{ form.non_field_errors }}
+                      {% csrf_token %}
+                      <div class="form-group">
+                        {{ form.number.errors }}
+                        <label for="exampleInputEmail1">Transaction ID</label>
+                        <input type="text" name="number"  class="form-control number" required="true" placeholder="Transaction Number"  >
+                      </div>
+                      <div class="form-group">
+                        {{ form.payment_image.errors }}
+                            <label for="exampleInputEmail1">Image receip</label>
+                        <input type="file" name="image" accept="image/*" class="form-control" required="true" placeholder="MTCN" >
+                      </div>
+                      <br>
+                      <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1"><a href="{% url 'home:terms' %}">Terms & Privacy</a></label>
+                      </div>
+                      <br>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                    <div class="col offset-lg-2">
+                      <div id="paypal-button-container"></div>
+
+                    </div>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+
+<script type="text/javascript">
+
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  // Render the PayPal button into #paypal-button-container
+  paypal.Buttons({
+
+      style: {
+          color:  'blue',
+          shape:  'pill',
+          label:  'pay',
+          height: 40
+      },
+                         // Call your server to set up the transaction
+                         createOrder: function(data, actions) {
+                          return fetch('{% url "blogs:paypal_create" price.id %}', {
+                              method: 'post',
+                              headers: {"X-CSRFToken": csrftoken}
+                          }).then(function(res) {
+                              return res.json();
+                          }).then(function(orderData) {
+                              return orderData.id;
+                          });
+                      },
+            
+                      // Call your server to finalize the transaction
+                      onApprove: function(data, actions) {
+                  
+                          return fetch('/blogs/paypal/capture/' + data.orderID +'/{{price.id}}/',{                                method: 'post',
+                              headers: {"X-CSRFToken": csrftoken}
+                          }).then(function(res) {
                              
-                                // Three cases to handle:
-                                //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-                                //   (2) Other non-recoverable errors -> Show a failure message
-                                //   (3) Successful transaction -> Show a success / thank you message
-              
-                                // Your server defines the structure of 'orderData', which may differ
-                                var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
-              
-                                if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
-                                    // Recoverable state, see: "Handle Funding Failures"
-                                    // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
-                                    return actions.restart();
-                                }
-              
-                                if (errorDetail) {
-                                    var msg = 'Sorry, your transaction could not be processed.';
-                                    if (errorDetail.description) msg += '\n\n' + errorDetail.description;
-                                    if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
-                                    // Show a failure message
-                                    return alert(msg);
-                                }
-              
-                                // Show a success message to the buyer
-                               
-                            });
-                        },
-                        onCancel: function (data, actions) {
-                            return fetch('{% url "accounts:blog_payment" %}',{
-                                method: 'post',
-                                headers: {"X-CSRFToken": csrftoken}
-                            }).then(function(res){
-                                window.location.href = '{% url "accounts:blog_payment" %}';
-                                return res.json();
-                            })
-                            // Show a cancel page or return to cart
+                              window.location.href = '{% url "accounts:blog_payment" %}';                                
+                              return res.json();
+                          }).then(function(orderData) {
                            
-                          },
-              
-                          
+                              // Three cases to handle:
+                              //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                              //   (2) Other non-recoverable errors -> Show a failure message
+                              //   (3) Successful transaction -> Show a success / thank you message
+            
+                              // Your server defines the structure of 'orderData', which may differ
+                              var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
+            
+                              if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
+                                  // Recoverable state, see: "Handle Funding Failures"
+                                  // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
+                                  return actions.restart();
+                              }
+            
+                              if (errorDetail) {
+                                  var msg = 'Sorry, your transaction could not be processed.';
+                                  if (errorDetail.description) msg += '\n\n' + errorDetail.description;
+                                  if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
+                                  // Show a failure message
+                                  return alert(msg);
+                              }
+            
+                              // Show a success message to the buyer
+                             
+                          });
+                      },
+                      onCancel: function (data, actions) {
+                          return fetch('{% url "accounts:blog_payment" %}',{
+                              method: 'post',
+                              headers: {"X-CSRFToken": csrftoken}
+                          }).then(function(res){
+                              window.location.href = '{% url "accounts:blog_payment" %}';
+                              return res.json();
+                          })
+                          // Show a cancel page or return to cart
+                         
+                        },
+            
+                        
 
-    }).render('#paypal-button-container');
+  }).render('#paypal-button-container');
 
-    $(document).ready(function() {
-      $("#number").keydown(function(event) {
-          // Allow: backspace, delete, tab, escape, and enter
-          if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
-              // Allow: Ctrl+A
-              (event.keyCode == 65 && event.ctrlKey === true) ||
-              // Allow: home, end, left, right
-              (event.keyCode >= 35 && event.keyCode <= 39)) {
-              // let it happen, don't do anything
-              return;
-          } else {
-              // Ensure that it is a number and stop the keypress
-              if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
-                  event.preventDefault();
-              }
-          }
-      });
-  });
+  $(document).ready(function() {
+    $("#number").keydown(function(event) {
+        // Allow: backspace, delete, tab, escape, and enter
+        if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+            // Allow: Ctrl+A
+            (event.keyCode == 65 && event.ctrlKey === true) ||
+            // Allow: home, end, left, right
+            (event.keyCode >= 35 && event.keyCode <= 39)) {
+            // let it happen, don't do anything
+            return;
+        } else {
+            // Ensure that it is a number and stop the keypress
+            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                event.preventDefault();
+            }
+        }
+    });
+});
 $(document).ready(function () {
-  $('#horizontalTab').easyResponsiveTabs({
-    type: 'default', //Types: default, vertical, accordion           
-    width: 'auto', //auto or any width like 600px
-    fit: true   // 100% fit in a container
-  });
+$('#horizontalTab').easyResponsiveTabs({
+  type: 'default', //Types: default, vertical, accordion           
+  width: 'auto', //auto or any width like 600px
+  fit: true   // 100% fit in a container
+});
 });
 
-$(document).on('click',"#card-data",function(){
-  var _vm=$(this);
-
-  // Ajax
-  $.ajax({
-    type:"GET",
-    url:"{% url 'blogs:paymob_payment' price.id %}",
-      success:function(res){
-        if (res.success == 1){
-          $("#card-data").remove();
-          let html=` <iframe style=" display: block  !important;      
-                            border: none  !important;         
-                          height: 100vh  !important;        
-                         
-                         
-                          text-align:center  !important;
-                          align-items:center  !important;" width=100% src="https://accept.paymob.com/api/acceptance/iframes/${res.frame}?payment_token=${res.token}" ></iframe>`
-          $("#card").html(html);
-                    }
-            else{
-              window.location.href="/blogs/payment/{{price.id}}/";
-            }
-                  },
-          
-  
-                  });
-                  // End
-              });      
-  </script>
-</body>
-</html>
+   
+</script>
+{% endblock %}

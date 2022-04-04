@@ -28,11 +28,8 @@
                                             <th>User</th>
                                             <th>Name</th>
                                             <th>Date</th>
-                                            <th>Category</th>
                                             <th>Music</th>
                                             <th>Duration</th>
-                                            <th>Price</th>
-                                            <th>Status</th>
                                             <th>Action</th>
 
                                             <!-- <th>Action</th> -->
@@ -45,12 +42,15 @@
                                         <td>{{i.user.username}}</td>
                                         <td>{{i.name}}</td>
                                         <td>{{i.created_at}}</td>
-                                        <td>{{i.category.name}}</td>
                                         <td><a href="{{i.get_music}}" target="__blank">Music</a></td>
                                         <td>{{i.get_duration_model}}</td>
-                                        <td>{{i.price}}</td>
-                                        <td>{{i.status}}</td>
                                         <td>
+                                          {% if i.is_play %}
+                                          <a class="btn btn-danger" href="{% url 'dashboard:audios:is_play_music' i.slug %}">Off Play</a>
+                                          {% else %}
+                                        <a class="btn btn-success" href="{% url 'dashboard:audios:is_play_music' i.slug %}">On Play</a>
+
+                                          {% endif %}
                 <button class="btn btn-danger" data-toggle="modal" data-target="#music-{{i.id}}">Delete</button>
                                           {% if i.check_music == False or i.duration == None %}
                                           <a href="{% url 'dashboard:audios:check_audio' i.slug %}" class="btn btn-info">check Music</a>

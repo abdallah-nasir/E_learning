@@ -194,14 +194,15 @@ from django.contrib.auth import get_user_model
 User=get_user_model()
 class ChangeUserDataForm(forms.ModelForm):
     account_image=forms.ImageField(required=False)
-    phone=PhoneNumberField(required=True)
+    phone=PhoneNumberField(required=True,max_length=14)
     class Meta:
         model=User
         fields=["account_image","first_name","last_name","phone",]
 
     def clean_phone(self):
+        request=get_current_request()
         phone=self.cleaned_data.get("phone")
-        if User.objects.filter(phone=phone).exists():
+        if User.objects.filter(phone=phone).exclude(id=request.user.id).exists():
             raise forms.ValidationError("User with that phone number is already exists")
         return phone
     def clean_account_image(self):
@@ -211,6 +212,9 @@ class ChangeUserDataForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"profile{image_extension}"
+                image.name=image_name
         return image
 class ChangeTeacherDataForm(forms.ModelForm):
     account_image=forms.ImageField(required=False)
@@ -219,7 +223,7 @@ class ChangeTeacherDataForm(forms.ModelForm):
     twitter=forms.CharField(required=False,max_length=120,widget=forms.TextInput(attrs={"placeholder":"Your twitter link"}))
     about_me=forms.CharField(widget=forms.Textarea())
     title=forms.CharField(max_length=120)
-    phone=PhoneNumberField(required=True)
+    phone=PhoneNumberField(required=True,max_length=14)
     class Meta:
         model=User
         fields=["account_image","first_name","last_name","phone","facebook","twitter","linkedin","title","about_me"]
@@ -251,7 +255,16 @@ class ChangeTeacherDataForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"profile{image_extension}"
+                image.name=image_name
         return image
+    def clean_phone(self):
+        request=get_current_request()
+        phone=self.cleaned_data.get("phone")
+        if User.objects.filter(phone=phone).exclude(id=request.user.id).exists():
+            raise forms.ValidationError("User with that phone number is already exists")
+        return phone
 class BlogPaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
     class Meta:

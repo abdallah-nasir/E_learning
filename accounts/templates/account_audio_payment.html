@@ -51,10 +51,10 @@
                                             {% endif %}
                                         <td>{{i.status}}</td>
                                         <td>
-                                            {% if i.status == "declined" and i.method == "Western Union" %}
-                                            <a href="{% url 'accounts:edit_movies_payment' slug=i.get_movies.slug id=i.id %}" class="btn btn-info">{% trans 'Edit' %}</a>
+                                            {% if i.check_payment %}
+                                            <a href="{% url 'accounts:edit_audio_payment' slug=i.get_music.slug id=i.id %}" class="btn btn-info">{% trans 'Edit' %}</a>
                                         {% endif %}
-                                            {% if i.status != "refund" and i.method != "Western Union" %}
+                                            {% if i.check_refund %}
                                             <button class="btn btn-danger" data-toggle="modal" data-target="#refund-{{i.id}}">{% trans 'Refund' %}</button>
                                         {% endif %}
                                     </td>
@@ -74,7 +74,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
-          <a href="{% url 'accounts:consultant_refund' i.id %}" type="button" class="btn btn-danger">{% trans 'Refund' %}</a>
+          <a href="{% url 'accounts:music_refund' id=i.id slug=i.get_music.slug %}" type="button" class="btn btn-danger">{% trans 'Refund' %}</a>
         </div>
       </div>
     </div>

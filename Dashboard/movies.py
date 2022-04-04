@@ -31,50 +31,9 @@ import datetime as today_datetime
 from os.path import splitext
 from datetime import datetime
 from django.contrib.auth import get_user_model
+from E_learning.all_email import *
 User=get_user_model()
-DASHBOARD_EMAIL_HOST = os.environ['DASHBOARD_EMAIL_HOST']
-DASHBOARD_EMAIL_USERNAME = os.environ['DASHBOARD_EMAIL_USERNAME']
-DASHBOARD_EMAIL_PASSWORD = os.environ['DASHBOARD_EMAIL_PASSWORD']
-DASHBOARD_EMAIL_PORT = os.environ['DASHBOARD_EMAIL_PORT']
-DASHBOARD_MAIL_CONNECTION = get_connection(
-host= DASHBOARD_EMAIL_HOST, 
-port=DASHBOARD_EMAIL_PORT, 
-username=DASHBOARD_EMAIL_USERNAME, 
-password=DASHBOARD_EMAIL_PASSWORD, 
-use_tls=False
-)  
-PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
-PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
-PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
-PAYMENT_MAIL_CONNECTION = get_connection(
-host= DASHBOARD_EMAIL_HOST, 
-port=PAYMENT_EMAIL_PORT, 
-username=PAYMENT_EMAIL_USERNAME, 
-password=PAYMENT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
-SUPPORT_EMAIL_USERNAME = os.environ['SUPPORT_EMAIL_USERNAME']
-SUPPORT_EMAIL_PASSWORD = os.environ['SUPPORT_EMAIL_PASSWORD']
-SUPPORT_EMAIL_PORT = os.environ['SUPPORT_EMAIL_PORT']
-SUPPORT_MAIL_CONNECTION = get_connection(
-host= SUPPORT_EMAIL_HOST, 
-port=SUPPORT_EMAIL_PORT, 
-username=SUPPORT_EMAIL_USERNAME, 
-password=SUPPORT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
-TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
-TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
-TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
-TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= TASK_NOTIFICATION_EMAIL_HOST, 
-port=TASK_NOTIFICATION_EMAIL_PORT, 
-username=TASK_NOTIFICATION_EMAIL_USERNAME, 
-password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
-use_tls=False
-)
+
 # Create your views here.
 AccessKey=os.environ['AccessKey']
 Storage_Api=os.environ['Storage_Api']
@@ -84,18 +43,6 @@ agartha_cdn=os.environ['agartha_cdn']
 BLOGS_FOLDER_COLLECTIONID= os.environ["BLOGS_FOLDER_COLLECTIONID"]
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
 
-def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
-        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
-        reply_to=[user],
-        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
-        )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-    return True  
 
 def change_cache_value(request,name,data_check,action,number=0,domain=None):
     if domain == None: 
@@ -631,3 +578,52 @@ def edit_movies_payment(request,slug,id):
                     return redirect(reverse("accounts:movies_payment"))
     context={"form":form}
     return render(request,"dashboard_edit_movies_payment.html",context)
+
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+def movies_payment(request):
+    if request.user.is_superuser:
+        payments=Library_Payment.objects.filter(library_type=3).select_related("user").order_by("-id")
+    else:
+        payments=Library_Payment.objects.filter(user=request.user,library_type=3).select_related("user").order_by("-id")
+    paginator = Paginator(payments, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"payments":page_obj}
+    return render(request,"dashboard_movies_payment.html",context)
+
+
+@login_required(login_url="accounts:login")
+@for_admin_only  
+def paymob_movie_payment_refund(request,payment):
+    url_1 = "https://accept.paymob.com/api/auth/tokens"
+    data_1 = {"api_key": PAYMOB_API_KEY}
+    r_1 = requests.post(url_1, json=data_1)
+    token = r_1.json().get("token")
+    body={
+            "auth_token": token,
+            "transaction_id": payment.transaction_number,
+            "amount_cents": payment.amount * 100
+            }
+    url = "https://accept.paymob.com/api/acceptance/void_refund/refund"
+    r_1=requests.post(url=url,json=body)
+    try:
+        r_2=r_1.json()
+        if r_2["success"] == True:
+            payment.status ="refund"
+            try:
+                payment.get_movies().buyers.remove(payment.user)
+                payment.get_movies().save()
+            except:
+                pass
+            payment.save()
+            refund=Refunds.objects.create(type="movie_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
+            my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","movie":payment.get_movies().name}]}
+            refund.data=json.dumps(my_data)
+            refund.save()
+            messages.success(request,"Payment Refunded")
+        else:
+            messages.error(request,"invalid payment refund")
+    except:
+        messages.error(request,"invalid payment refund")

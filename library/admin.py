@@ -10,4 +10,7 @@ admin.site.register(E_Book)
 admin.site.register(Library_Payment)
 admin.site.register(Comments)
 admin.site.register(Audio_Tracks)
+admin.site.register(Artist)
+admin.site.register(Audio_Book_Tracks)
+
 

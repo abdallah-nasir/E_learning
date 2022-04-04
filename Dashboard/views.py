@@ -22,9 +22,10 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from taggit.models import Tag
-from library.models import Library_Payment
+from library.models import Library_Payment,Audio_Tracks
 from .models import *
-from .movies import accpet_paymob_movie_payment_refund
+from .movies import accpet_paymob_movie_payment_refund,paymob_movie_payment_refund
+from .audios import accpet_paymob_music_payment_refund,paymob_music_payment_refund
 from django.core.cache import cache 
 from django.contrib.auth.decorators import user_passes_test
 import json,requests
@@ -33,49 +34,7 @@ from os.path import splitext
 from datetime import datetime
 from django.contrib.auth import get_user_model
 User=get_user_model()
-DASHBOARD_EMAIL_HOST = os.environ['DASHBOARD_EMAIL_HOST']
-DASHBOARD_EMAIL_USERNAME = os.environ['DASHBOARD_EMAIL_USERNAME']
-DASHBOARD_EMAIL_PASSWORD = os.environ['DASHBOARD_EMAIL_PASSWORD']
-DASHBOARD_EMAIL_PORT = os.environ['DASHBOARD_EMAIL_PORT']
-DASHBOARD_MAIL_CONNECTION = get_connection(
-host= DASHBOARD_EMAIL_HOST, 
-port=DASHBOARD_EMAIL_PORT, 
-username=DASHBOARD_EMAIL_USERNAME, 
-password=DASHBOARD_EMAIL_PASSWORD, 
-use_tls=False
-)  
-PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
-PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
-PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
-PAYMENT_MAIL_CONNECTION = get_connection(
-host= DASHBOARD_EMAIL_HOST, 
-port=PAYMENT_EMAIL_PORT, 
-username=PAYMENT_EMAIL_USERNAME, 
-password=PAYMENT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
-SUPPORT_EMAIL_USERNAME = os.environ['SUPPORT_EMAIL_USERNAME']
-SUPPORT_EMAIL_PASSWORD = os.environ['SUPPORT_EMAIL_PASSWORD']
-SUPPORT_EMAIL_PORT = os.environ['SUPPORT_EMAIL_PORT']
-SUPPORT_MAIL_CONNECTION = get_connection(
-host= SUPPORT_EMAIL_HOST, 
-port=SUPPORT_EMAIL_PORT, 
-username=SUPPORT_EMAIL_USERNAME, 
-password=SUPPORT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
-TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
-TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
-TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
-TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= TASK_NOTIFICATION_EMAIL_HOST, 
-port=TASK_NOTIFICATION_EMAIL_PORT, 
-username=TASK_NOTIFICATION_EMAIL_USERNAME, 
-password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
-use_tls=False
-)
+from E_learning.all_email import *
 # Create your views here.
 AccessKey=os.environ['AccessKey']
 Storage_Api=os.environ['Storage_Api']
@@ -84,19 +43,7 @@ storage_name=os.environ['storage_name']
 agartha_cdn=os.environ['agartha_cdn']
 BLOGS_FOLDER_COLLECTIONID= os.environ["BLOGS_FOLDER_COLLECTIONID"]
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]
-
-def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
-        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
-        reply_to=[user],
-        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
-        )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-    return True  
+  
 
 def change_cache_value(request,name,data_check,action,number=0,domain=None):
     if domain == None: 
@@ -261,20 +208,6 @@ def course_payment(request):
 
 @login_required(login_url="accounts:login")
 @check_user_validation
-def movies_payment(request):
-    if request.user.is_superuser:
-        payments=Library_Payment.objects.all().select_related("user").order_by("-id")
-    else:
-        payments=Library_Payment.objects.filter(user=request.user).select_related("user").order_by("-id")
-    paginator = Paginator(payments, 10) # Show 25 contacts per page.
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    context={"payments":page_obj}
-    return render(request,"dashboard_movies_payment.html",context)
-
-
-@login_required(login_url="accounts:login")
-@check_user_validation
 def consultant_payment(request):
     if request.user.is_superuser:
         consultant=Cosultant_Payment.objects.all().order_by("-id")
@@ -400,14 +333,11 @@ def add_blog(request):
 
 @login_required(login_url="accounts:login")
 @check_user_validation
-@check_blog_video
-def add_video_blog(request,slug):
+def edit_video_blog(request,slug):
     blog=get_object_or_404(Blog,slug=slug)
     form=BlogVideoForm(request.POST or None,request.FILES or None)
     if request.is_ajax():
         if form.is_valid():
-            print("valid")
-            # instance=form.save(commit=False)
             my_blog_data=json.loads(blog.data)
             video_guid=my_blog_data["video_guid"]
             print(video_guid)
@@ -419,22 +349,23 @@ def add_video_blog(request,slug):
                 "Content-Type": "application/*+json",
                 "AccessKey": AccessKey
             }
-            response = requests.put( url, data=file, headers=headers)
+            response = requests.put(url,data=file, headers=headers)
             blog.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{video_guid}?autoplay=false"
             response = requests.get( url, headers=headers)
             data=response.json()
-            my_blog_data["video_length"]=data["length"]  
+            my_blog_data["video_length"]=0
             blog.data=json.dumps(my_blog_data)
             blog.save()
-            body=f"new blog from user {request.user.email}"
-            subject="new blog"
+            body=f"edit blog from user {request.user.email}"
+            subject="edit blog"
             send_mail_approve(request,user=request.user.email,subject=subject,body=body)
             messages.success(request,"Video added successfully")
             return JsonResponse({"message":"1"})
         else:
+            print(form.errors)
             return FailedJsonResponse({"message":"1"})
     context={"form":form,"blog":blog}
-    return render(request,"dashboard_add_video_blog.html",context)
+    return render(request,"dashboard_edit_video_blog.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_validation
@@ -470,6 +401,44 @@ def add_audio_blog(request,slug):
             return FailedJsonResponse({"message":"1"})
     context={"form":form,"blog":blog}
     return render(request,"dashboard_add_audio_blog.html",context)
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+@check_blog_video
+def add_video_blog(request,slug):
+    blog=get_object_or_404(Blog,slug=slug)
+    form=BlogVideoForm(request.POST or None,request.FILES or None)
+    if request.is_ajax():
+        if form.is_valid():
+            print("valid")
+            # instance=form.save(commit=False)
+            my_blog_data=json.loads(blog.data)
+            video_guid=my_blog_data["video_guid"]
+            print(video_guid)
+            url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video_guid}"
+            file=form.cleaned_data.get("video")
+            print(file)
+            headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/*+json",
+                "AccessKey": AccessKey
+            }
+            response = requests.put( url, data=file, headers=headers)
+            blog.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{video_guid}?autoplay=false"
+            response = requests.get( url, headers=headers)
+            data=response.json()
+            my_blog_data["video_length"]=0
+            blog.data=json.dumps(my_blog_data)
+            blog.save()
+            body=f"new blog from user {request.user.email}"
+            subject="new blog"
+            send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+            messages.success(request,"Video added successfully")
+            return JsonResponse({"message":"1"})
+        else:
+            return FailedJsonResponse({"message":"1"})
+    context={"form":form,"blog":blog}
+    return render(request,"dashboard_add_video_blog.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_validation
@@ -646,6 +615,10 @@ def edit_blog(request,slug):
                             pass
             instance.status="pending"
             instance.save()
+            if instance.blog_type == "audio":
+                return redirect(reverse("dashboard:edit_audio_blog",kwargs={"slug":slug}))
+            elif instance.blog_type == "video":
+                return redirect(reverse("dashboard:edit_video_blog",kwargs={"slug":slug}))
             time=cache.get(f"dashoard_blog_email_{request.user}")
             if time and time == True:
                 pass
@@ -664,6 +637,45 @@ def edit_blog(request,slug):
             return redirect(reverse("dashboard:blogs"))
     context={"blog":blog,"form":form}
     return render(request,"dashboard_edit_blog.html",context)
+
+
+@login_required(login_url="accounts:login")
+@check_user_validation
+def edit_audio_blog(request,slug):
+    blog=get_object_or_404(Blog,slug=slug,user=request.user,status="pending")
+    form=BlogAudioForm(request.POST or None,request.FILES or None)
+    if request.is_ajax():
+        if form.is_valid():
+            file=form.cleaned_data.get("video")
+            print(file)
+            url=f"https://storage.bunnycdn.com/{storage_name}/blogs-audio/{blog.slug}/{file}"
+            headers = {
+                    "Content-Type": "application/octet-stream",
+                    "AccessKey": Storage_Api
+                }
+            response = requests.put(url,data=file,headers=headers)
+            data=response.json()
+            print(data)
+            blog.status="pending"
+            blog.save()
+            try: 
+                if data["HttpCode"] == 201:
+                    blog.video = f"https://{agartha_cdn}/blogs-audio/{blog.slug}/{file}"
+                    blog.save()
+            except:
+                pass
+            
+            body=f"edit blog from user {request.user.email}"
+            subject="edit blog"
+            send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+            messages.success(request,"Audio added successfully")
+            return JsonResponse({"message":"1","url":"/dashoard/blogs/"})
+        else:
+            messages.error(request,"invalid audio extensions")
+            print(form.errors)
+            return FailedJsonResponse({"message":"1"})
+    context={"form":form,"blog":blog}
+    return render(request,"dashboard_edit_audio_blog.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_validation
@@ -1393,7 +1405,7 @@ def edit_answer(request,course,id):
                 course.save()
                 instance.save() 
                 messages.success(request,"Answer Edited successfully")
-                return redirect("dashboard:quiz",kwargs={"slug":course.slug})
+                return redirect(reverse("dashboard:quiz",kwargs={"slug":course.slug}))
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("dashboard:courses"))
@@ -1459,8 +1471,14 @@ def approve(request):
                query= AddStudentCourse.objects.filter(status="pending").order_by("-id")
             elif qs == "movies":
                 query= Movies.objects.filter(status="pending").order_by("-id")
+            elif qs == "audios":
+                query= Audio_Tracks.objects.filter(status="pending").order_by("-id")
             elif qs == "movie_payment":
-                query= Library_Payment.objects.filter(status="pending").order_by("-id")
+                query= Library_Payment.objects.filter(status="pending",library_type=3).order_by("-id")
+            elif qs == "audio_payment":
+                query= Library_Payment.objects.filter(status="pending",library_type=2).order_by("-id")
+            elif qs == "audio_book_payment":
+                query= Library_Payment.objects.filter(status="pending",library_type=1).order_by("-id")
             else:
                 query=False
         except:
@@ -1489,7 +1507,6 @@ def approve_content(request,id):
     if request.user.is_superuser:
         try:
             qs=request.GET["approve"]
-
             if qs == "blogs":
                 query=get_object_or_404(Blog,id=id,status="pending")
                 query.status="approved"
@@ -1501,23 +1518,32 @@ def approve_content(request,id):
                     change_cache_value(request,name="blogs",data_check=query,action="add",number=4)
                     change_blog_cache(request,data_check=query,action="add")   
                 messages.success(request,"Blog Approved Successfully")
-            elif qs == "blog_payment":
+            if qs == "blog_payment":
                 query=get_object_or_404(Blog_Payment,id=id,status="pending")
-                query.add_time_expired_to_related_course()
+                query.created_at= today_datetime.date.today()
+                data=json.loads(query.data)
+                if data["type"] == "agartha":
+                    query.add_time_expired_to_related_course()
+                elif data["type"] == "kemet":
+                    query.add_time_expired_to_related_course_kemet()
                 query.status="approved"
                 query.save()
-                query.user.vip = True
+                
+                if data["type"] == "agartha":
+                    query.user.vip = True
+                if data["type"] == "kemet":
+                    query.user.is_kemet_vip=True
                 query.user.save()
                 send_mail(
                 'Payment Completed',
                 "Successfull Payment",
                 PAYMENT_EMAIL_USERNAME,
-                [query.user.email],
+                [query.user.email,FINANCE_EMAIL_USERNAME],
                 fail_silently=False,
                 connection=PAYMENT_MAIL_CONNECTION
                 )
                 messages.success(request,"Payment Approved Successfully")
-            elif qs == "consultant_payment":
+            if qs == "consultant_payment":
                 query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
                 query.status="approved"
                 consult=Consultant.objects.create(user=query.user,teacher=query.teacher,status="pending")
@@ -1532,15 +1558,15 @@ def approve_content(request,id):
                 consult.save()
                 query.save()
                 send_mail(
-                'Payment Completed',
-                "Successfull Payment",
-                PAYMENT_EMAIL_USERNAME,
-                [query.user.email],
-                fail_silently=False,
-                connection=PAYMENT_MAIL_CONNECTION
-                )
+                    'Payment Completed',
+                    f"Successfull Payment of consultant with user {query.user.first_name}",
+                    PAYMENT_EMAIL_USERNAME,
+                    [query.user.email,consult.teacher.user.email,FINANCE_EMAIL_USERNAME],
+                    fail_silently=False,
+                    connection=PAYMENT_MAIL_CONNECTION
+                    )
                 messages.success(request,"Payment Approved Successfully")
-            elif qs == "course":
+            if qs == "course":
                 query=get_object_or_404(Course,id=id,status="pending")
                 query.status="approved"
                 query.save()
@@ -1549,31 +1575,44 @@ def approve_content(request,id):
                 else:
                     change_cache_value(request,name="courses",data_check=query,action="add",number=5)
                 messages.success(request,"Course Approved Successfully")
-            elif qs == "events":   
+            if qs == "events":   
                 query=get_object_or_404(Events,id=id,status="pending")
                 query.status="approved"
                 query.save()
                 change_cache_value(request,name="events",data_check=query,action="add",number=5)
                 messages.success(request,"Event Approved Successfully")
-            elif qs == "payment":
+                send_mail(
+                f'Event {query.name.title}',
+                f"Event {query.name.title} Approved Successfully",
+                DASHBOARD_EMAIL_USERNAME,
+                [query.user.email],
+                fail_silently=False,
+                connection=DASHBOARD_MAIL_CONNECTION
+                )
+            if qs == "payment":
                 query=get_object_or_404(Payment,id=id,status="pending")
-                query.add_expire_time()
+                query.created_at= today_datetime.date.today()
+                if query.course.domain_type == 1:
+                    query.add_expire_time()
+                if query.course.domain_type == 2:
+                    query.add_expire_time_for_kemet()
                 query.status="approved"
                 query.course.students.add(query.user)
-                query.course.videos.first().watched_users.add(query.user)
-                query.course.videos.first().save()
+                if query.course.videos.first():
+                    query.course.videos.first().watched_users.add(query.user)
+                    query.course.videos.first().save()
                 query.course.save()
                 query.save()
                 send_mail(
                 'Payment Completed',
-                "Successfull Payment",
+                f"Successfull Payment for course {query.course.name} , user {query.user.first_name}",
                 PAYMENT_EMAIL_USERNAME,
-                [query.user.email],
+                [query.user.email,query.course.Instructor.email,FINANCE_EMAIL_USERNAME],
                 fail_silently=False,
                 connection=PAYMENT_MAIL_CONNECTION
                 )
                 messages.success(request,"Payment Approved Successfully")
-            elif qs == "teacher":
+            if qs == "teacher":
                 query=get_object_or_404(TeacherForms,id=id,status="pending")
                 query.status="approved"
                 query.teacher.account_type="teacher"
@@ -1581,12 +1620,15 @@ def approve_content(request,id):
                 query.teacher.save()
                 query.save()
                 messages.success(request,"Teacher Approved Successfully")
-            elif qs == "add_user":
+            if qs == "add_user":
                 query = get_object_or_404(AddStudentCourse,id=id,status="pending")
                 payment=Payment.objects.create(user=query.student,method="Western Union",transaction_number=f"added-student-{query.student}-{query.id}",
-                                               amount=0,course=query.course,
+                                                amount=0,course=query.course,
                     status="approved")
-                payment.add_expire_time()
+                if query.course.domain_type == 1:
+                    payment.add_expire_time()
+                else:
+                    payment.add_expire_time_for_kemet()
                 query.course.videos.first().save()
                 query.course.save()
                 query.status="approved"
@@ -1595,32 +1637,69 @@ def approve_content(request,id):
                 query.save()
                 send_mail(
                 f'Course {query.course.name}',
-               f"you have been added to course {query.course.name}",
+                f"you have been added to course {query.course.name}",
                 PAYMENT_EMAIL_USERNAME,
                 [query.student.email],
                 fail_silently=False,
                 connection=PAYMENT_MAIL_CONNECTION
                 )
                 messages.success(request,"User Added Successfully")
-            elif qs == "movies":
+            if qs == "movies":
                 query=get_object_or_404(Movies,id=id,status="pending")
                 query.status="approved"
                 messages.success(request,"Movie Approved Successfully")
                 query.save()
-            elif qs == "movie_payment":
-                query=get_object_or_404(Library_Payment,id=id,status="pending")
+            if qs == "movie_payment":
+                query=get_object_or_404(Library_Payment,library_type=3,id=id,status="pending")
                 query.status="approved"
+                query.get_movies().buyers.add(query.user)
+                query.get_movies().save()
                 messages.success(request,"Payment Approved Successfully")
                 query.save()
                 send_mail(
                 'Payment Completed',
                 "Successfull Payment",
                 PAYMENT_EMAIL_USERNAME,
-                [query.user.email],
+                [query.user.email,FINANCE_EMAIL_USERNAME],
                 fail_silently=False,
                 connection=PAYMENT_MAIL_CONNECTION
                 )
-        except:
+            if qs == "audios":
+                query=get_object_or_404(Audio_Tracks,id=id,status="pending")
+                query.status="approved"
+                messages.success(request,"Audio Approved Successfully")
+                query.save()
+            if qs == "audio_payment":
+                query=get_object_or_404(Library_Payment,library_type=2,id=id,status="pending")
+                query.status="approved"
+                query.get_music().buyers.add(query.user)
+                query.get_music().save()
+                messages.success(request,"Payment Approved Successfully")
+                query.save()
+                send_mail(
+                'Payment Completed',
+                "Successfull Payment",
+                PAYMENT_EMAIL_USERNAME,
+                [query.user.email,FINANCE_EMAIL_USERNAME],
+                fail_silently=False,
+                connection=PAYMENT_MAIL_CONNECTION
+                )
+            if qs == "audio_book_payment":
+                query=get_object_or_404(Library_Payment,library_type=1,id=id,status="pending")
+                query.status="approved"
+                query.get_audio_book().buyers.add(query.user)
+                query.get_audio_book().save()
+                messages.success(request,"Payment Approved Successfully")
+                query.save()
+                send_mail(
+                'Payment Completed',
+                "Successfull Payment",
+                PAYMENT_EMAIL_USERNAME,
+                [query.user.email,FINANCE_EMAIL_USERNAME],
+                fail_silently=False,
+                connection=PAYMENT_MAIL_CONNECTION
+                )
+        except: 
             return redirect(reverse("dashboard:home"))
     else:
         messages.error(request,"You Don't Have Permission")
@@ -1641,52 +1720,66 @@ def reject(request,id):
                 content_user=query.user
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
-            elif qs == "blog_payment":
+            if qs == "blog_payment":
                 query=get_object_or_404(Blog_Payment,id=id,status="pending")
                 content_user=query.user
                 mail=PAYMENT_EMAIL_USERNAME
                 connection=PAYMENT_MAIL_CONNECTION
-            elif qs == "consultant_payment":
+            if qs == "consultant_payment":
                 query=get_object_or_404(Cosultant_Payment,id=id,status="pending")
                 content_user=query.user
                 mail=PAYMENT_EMAIL_USERNAME
                 connection=PAYMENT_MAIL_CONNECTION
-            elif qs == "course":
+            if qs == "course":
                 query=get_object_or_404(Course,id=id,status="pending")
                 content_user=query.Instructor
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
-            elif qs == "events":
+            if qs == "events":
                 query=get_object_or_404(Events,id=id,status="pending")
                 content_user=query.user
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
-            elif qs == "payment":
+            if qs == "payment":
                 query=get_object_or_404(Payment,id=id,status="pending")
                 content_user=query.user
                 mail=PAYMENT_EMAIL_USERNAME
                 connection=PAYMENT_MAIL_CONNECTION
-            elif qs == "teacher":
+            if qs == "teacher":
                 query=get_object_or_404(TeacherForms,id=id,status="pending")
                 content_user=query.teacher
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
-            elif qs == "add_user":
+            if qs == "add_user":
                 query=get_object_or_404(AddStudentCourse,id=id,status="pending")
                 content_user=query.student
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
-            elif qs == "movies":
+            if qs == "movies":
                 query=get_object_or_404(Movies,id=id,status="pending")
                 content_user=query.user
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
-            elif qs == "movie_payment":
+            if qs == "movie_payment":
                 query=get_object_or_404(Library_Payment,id=id,status="pending")
                 content_user=query.user
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
-                
+            if qs == "audios":
+                query=get_object_or_404(Audio_Tracks,id=id,status="pending")
+                content_user=query.user
+                mail=DASHBOARD_EMAIL_USERNAME
+                connection=DASHBOARD_MAIL_CONNECTION
+            if qs == "audio_payment":
+                query=get_object_or_404(Library_Payment,id=id,status="pending")
+                content_user=query.user
+                mail=DASHBOARD_EMAIL_USERNAME
+                connection=DASHBOARD_MAIL_CONNECTION
+            if qs == "audio_book_payment":
+                query=get_object_or_404(Library_Payment,id=id,status="pending")
+                content_user=query.user
+                mail=DASHBOARD_EMAIL_USERNAME
+                connection=DASHBOARD_MAIL_CONNECTION
             form=RejectForm(request.POST or None)
             if request.method == "POST":
                 if form.is_valid():
@@ -1714,7 +1807,6 @@ def reject(request,id):
                     redirect_url = reverse('dashboard:approve')
                     return redirect(f'{redirect_url}?approve={qs}') 
         except:
-          
             return redirect(reverse("dashboard:home"))
     else:
         messages.error(request,"You Don't Have Permission")
@@ -1808,12 +1900,12 @@ def accept_consultant(request,id):
             instance.end_time=end_time
             instance.status="approved"
             instance.save()
-            body=f"your session will start on {consultant.date} from {start_time} to {end_time}"
+            body=f"new session with teacher {consultant.teacher.user.first_name} will start on {consultant.date} from {start_time} to {end_time},user {consultant.user.first_name}"
             send_mail(
-                "session details",
+                "New Session Details",
                 body,
-                DASHBOARD_EMAIL_HOST,
-                [consultant.user.email],
+                DASHBOARD_EMAIL_USERNAME,
+                [consultant.user.email,consultant.teacher.user.email],
                 fail_silently=False,
                 connection=DASHBOARD_MAIL_CONNECTION
                 )
@@ -1835,9 +1927,9 @@ def reject_consultant(request,id):
     consultant.save()
     send_mail(
         "Consultant Cancellation",
-        f"Consultant Has been canceled with teacher {consultant.teacher.user.get_full_name}",
-        DASHBOARD_EMAIL_HOST,
-        [consultant.user.email],
+        f"Consultant Has been canceled with teacher {consultant.teacher.user.first_name}",
+        DASHBOARD_EMAIL_USERNAME,
+        [consultant.user.email,consultant.teacher.user.email],
         fail_silently=False,
         connection=DASHBOARD_MAIL_CONNECTION
         )
@@ -1860,6 +1952,14 @@ def edit_consultant(request,id):
             instance.end_time=end_time
             instance.save()
             messages.success(request,"Session Edited Activated")
+            send_mail(
+            "Consultant Edited",
+            f"Consultant Has been edited with teacher {consultant.teacher.user.first_name}",
+            DASHBOARD_EMAIL_USERNAME,
+            [consultant.user.email,consultant.teacher.user.email],
+            fail_silently=False,
+            connection=DASHBOARD_MAIL_CONNECTION
+            )
             return redirect(reverse("dashboard:consultants"))
     context={"form":form}
     return render(request,"dashboard_consultant_accept.html",context)
@@ -1875,7 +1975,7 @@ def start_consultant(request,id):
     send_mail(
             "session details",
             body,
-            DASHBOARD_EMAIL_HOST,
+            DASHBOARD_EMAIL_USERNAME,
             [consultant.user.email],
             fail_silently=False,
             connection=DASHBOARD_MAIL_CONNECTION
@@ -1885,7 +1985,6 @@ def start_consultant(request,id):
 
     messages.success(request,"consultant started")
     return redirect(reverse("dashboard:consultants"))
-
 
 @login_required(login_url="accounts:login")
 def delete_session(request,id):
@@ -2078,6 +2177,7 @@ def add_user_director(request):
 import requests
 from django.http import JsonResponse
 def test(request):
+    send_mail_approve(request,user=request.user.email,body="test",subject="test")
     return render(request,"dashboard_test.html")
 
 @login_required(login_url="accounts:login")
@@ -2310,6 +2410,10 @@ def refunds(request):
             refunds=Refunds.objects.filter(type="consultant_payment").order_by("-id")
         elif type == "movies":
             refunds=Refunds.objects.filter(type="movie_payment").order_by("-id")
+        elif type == "music": 
+            refunds=Refunds.objects.filter(type="music_payment").order_by("-id")
+        elif type == "audio_book": 
+            refunds=Refunds.objects.filter(type="audio_book_payment").order_by("-id")
         else:
             return redirect(reverse("dashboard:home"))
     except:
@@ -2353,109 +2457,21 @@ def search_refunds(request):
                     messages.success(request,"Consultant Payment")
                 else:
                     messages.error(request,"invalid Consultant Payment")
+            elif type == "movie_payment":
+                payment=Library_Payment.objects.filter(transaction_number=transaction,library_type=3).exclude(status="refund")
+                context['payment'] = payment
+                if payment.exists():
+                    messages.success(request,"Movies Payment")
+                else:
+                    messages.error(request,"invalid Movie Payment")
+            elif type == "music_payment":
+                payment=Library_Payment.objects.filter(transaction_number=transaction,library_type=2).exclude(status="refund")
+                context['payment'] = payment
+                if payment.exists():
+                    messages.success(request,"Music Payment")
+                else:
+                    messages.error(request,"invalid Music Payment")
     return render(request,"dashboard_add_refund.html",context)
-
-@login_required(login_url="accounts:login")
-@for_admin_only 
-def paymob_consultant_payment_refund(request,payment):
-    url_1 = "https://accept.paymob.com/api/auth/tokens"
-    data_1 = {"api_key": PAYMOB_API_KEY}
-    r_1 = requests.post(url_1, json=data_1)
-    token = r_1.json().get("token")
-    body={
-            "auth_token": token,
-            "transaction_id": payment.transaction_number,
-            "amount_cents": payment.amount * 100
-            }
-    url = "https://accept.paymob.com/api/acceptance/void_refund/refund"
-    r_1=requests.post(url=url,json=body)
-    try:
-        r_2=r_1.json()
-        if r_2["success"] == True:
-            if payment.consultant:
-                payment.consultant.status="refund"
-                payment.consultant.save()
-            payment.status ="refund"
-            payment.save()
-            refund=Refunds.objects.create(type="consultant_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
-            data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":payment.get_consultant_date(),"teacher":payment.teacher.user.username}]}
-            refund.data=json.dumps(data)
-            refund.save()
-            messages.success(request,"Payment Refunded")
-        else:
-            messages.error(request,"invalid payment refund")
-    except:
-        messages.error(request,"invalid payment refund")
-
-@login_required(login_url="accounts:login")
-@for_admin_only  
-def paymob_course_payment_refund(request,payment):
-    url_1 = "https://accept.paymob.com/api/auth/tokens"
-    data_1 = {"api_key": PAYMOB_API_KEY}
-    r_1 = requests.post(url_1, json=data_1)
-    token = r_1.json().get("token")
-    body={
-            "auth_token": token,
-            "transaction_id": payment.transaction_number,
-            "amount_cents": payment.amount * 100
-            }
-    url = "https://accept.paymob.com/api/acceptance/void_refund/refund"
-    r_1=requests.post(url=url,json=body)
-    try:
-        r_2=r_1.json()
-        if r_2["success"] == True:
-            payment.status ="refund"
-            try:
-                payment.course.students.remove(payment.user)
-                for i in payment.course.videos.all():
-                    i.watched_users.remove(payment.user)
-                    i.save()
-                payment.course.save()
-            except:
-                pass
-            payment.save()
-            refund=Refunds.objects.create(type="course_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
-            my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","course":payment.course.name}]}
-            refund.data=json.dumps(my_data)
-            refund.save()
-            messages.success(request,"Payment Refunded")
-        else:
-            messages.error(request,"invalid payment refund")
-    except:
-        messages.error(request,"invalid payment refund")
-
-
-
-@login_required(login_url="accounts:login")
-@for_admin_only  
-def paymob_blog_payment_refund(request,payment):
-    url_1 = "https://accept.paymob.com/api/auth/tokens"
-    data_1 = {"api_key": PAYMOB_API_KEY}
-    r_1 = requests.post(url_1, json=data_1)
-    token = r_1.json().get("token")
-    body={
-            "auth_token": token,
-            "transaction_id": payment.transaction_number,
-            "amount_cents": payment.amount * 100
-            }
-    url = "https://accept.paymob.com/api/acceptance/void_refund/refund"
-    r_1=requests.post(url=url,json=body)
-    try:
-        r_2=r_1.json()
-        if r_2["success"] == True:
-            payment.status ="refund"
-            payment.user.vip=False
-            payment.user.save()
-            payment.save()
-            refund=Refunds.objects.create(type="blog_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
-            my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}"}]}
-            refund.data=json.dumps(my_data)
-            refund.save()
-            messages.success(request,"Payment Refunded")
-        else:
-            messages.error(request,"invalid payment refund")
-    except:
-        messages.error(request,"invalid payment refund")
 
 
 @login_required(login_url="accounts:login")
@@ -2466,55 +2482,85 @@ def add_refund(request,id):
         if type =="consultant_payment":
             payment=Cosultant_Payment.objects.get(id=id)
             if payment.status != "refund":
-                if payment.method == "Paymob":
-                    paymob_consultant_payment_refund(request,payment=payment)
-                else:
-                    if payment.consultant:
-                        payment.consultant.status="refund"
-                        payment.consultant.save()
-                    payment.status ="refund"
-                    payment.save()
-                    refund=Refunds.objects.create(type="consultant_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
-                    data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":payment.get_consultant_date(),"teacher":payment.teacher.user.username}]}
-                    refund.data=json.dumps(data)
-                    refund.save()
-                    messages.success(request,"Payment Refunded")
+                if payment.consultant:
+                    payment.consultant.status="refund"
+                    payment.consultant.save()
+                payment.status ="refund"
+                payment.save()
+                refund=Refunds.objects.create(type="consultant_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
+                data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":payment.get_consultant_date(),"teacher":payment.teacher.user.username}]}
+                refund.data=json.dumps(data)
+                refund.save()
+                messages.success(request,"Payment Refunded")
+
         elif type == "course_payment":
             payment=Payment.objects.get(id=id)
             if payment.status != "refund": 
-                if payment.method == "Paymob":
-                    paymob_course_payment_refund(request,payment=payment)
-                else:
-                    payment.status ="refund"
-                    try:
-                        payment.course.students.remove(payment.user)
-                        for i in payment.course.videos.all():
-                            i.watched_users.remove(payment.user)
-                            i.save()
-                        payment.course.save()
-                    except:
-                        pass
-                    payment.save()
-                    refund=Refunds.objects.create(type="course_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
-                    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","course":payment.course.name}]}
-                    refund.data=json.dumps(my_data)
-                    refund.save()
-                    messages.success(request,"Payment Refunded")
+                payment.status ="refund"
+                try:
+                    payment.course.students.remove(payment.user)
+                    for i in payment.course.videos.all():
+                        i.watched_users.remove(payment.user)
+                        i.save()
+                    payment.course.save()
+                except:
+                    pass
+                payment.save()
+                refund=Refunds.objects.create(type="course_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
+                my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","course":payment.course.name}]}
+                refund.data=json.dumps(my_data)
+                refund.save()
+                messages.success(request,"Payment Refunded")
+                send_mail(
+                    'Payment Refunded',
+                    f"Successfull Payment Refund for course {payment.course.name.title},user {payment.user.first_name}",
+                    PAYMENT_EMAIL_USERNAME,
+                    [payment.user.email,payment.course.Instructor.email],
+                    fail_silently=False,
+                    connection=PAYMENT_MAIL_CONNECTION
+                    )
         elif type == "blog_payment":
             payment=Blog_Payment.objects.get(id=id)
             if payment.status != "refund": 
-                if payment.method == "Paymob":
-                    paymob_blog_payment_refund(request,payment=payment)
-                else:
-                    payment.status ="refund"
-                    payment.user.vip=False
-                    payment.user.save()
-                    payment.save()
-                    refund=Refunds.objects.create(type="blog_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
-                    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}"}]}
-                    refund.data=json.dumps(my_data)
-                    refund.save()
-                    messages.success(request,"Payment Refunded")
+                payment.status ="refund"
+                payment.user.vip=False
+                payment.user.save()
+                payment.save()
+                refund=Refunds.objects.create(type="blog_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
+                my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}"}]}
+                refund.data=json.dumps(my_data)
+                refund.save()
+                messages.success(request,"Payment Refunded")
+        elif type == "movie_payment":
+            payment=Library_Payment.objects.get(id=id,library_type=3)
+            if payment.status != "refund": 
+                payment.status ="refund"
+                try:
+                    payment.get_movies().buyers.remove(username=payment.user.username)
+                    payment.get_movies.save()
+                except:
+                    pass
+                payment.save()
+                refund=Refunds.objects.create(type="movie_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
+                my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","movie":payment.get_movies().name}]}
+                refund.data=json.dumps(my_data)
+                refund.save()
+                messages.success(request,"Payment Refunded")
+        elif type == "music_payment":
+            payment=Library_Payment.objects.get(id=id,library_type=3)
+            if payment.status != "refund": 
+                payment.status ="refund"
+                try:
+                    payment.get_music().buyers.remove(username=payment.user.username)
+                    payment.get_movies.save()
+                except:
+                    pass
+                payment.save()
+                refund=Refunds.objects.create(type="music_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
+                my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","music":payment.get_music().name}]}
+                refund.data=json.dumps(my_data)
+                refund.save()
+                messages.success(request,"Payment Refunded")
     except:
         return redirect(reverse("dashboard:search_refunds"))
     return redirect(reverse("dashboard:search_refunds"))
@@ -2536,87 +2582,6 @@ def consultant_refund(request,id):
     return redirect(reverse("dashboard:consultant_payment"))
 
 
-@login_required(login_url="accounts:login")
-@for_admin_only  
-def accpet_paymob_course_payment_refund(request,payment,refund):
-    url_1 = "https://accept.paymob.com/api/auth/tokens"
-    data_1 = {"api_key": PAYMOB_API_KEY}
-    r_1 = requests.post(url_1, json=data_1)
-    token = r_1.json().get("token")
-    body={
-            "auth_token": token,
-            "transaction_id": payment.transaction_number,
-            "amount_cents": payment.amount * 100
-            }
-    url = "https://accept.paymob.com/api/acceptance/void_refund/refund"
-    r_1=requests.post(url=url,json=body)
-    try:
-        r_2=r_1.json()
-        if r_2["success"] == True:
-            payment.status ="refund"
-            try:
-                payment.course.students.remove(payment.user)
-                for i in payment.course.videos.all():
-                    i.watched_users.remove(payment.user)
-                    i.save()
-                payment.course.save()
-            except:
-                pass
-            payment.save()
-            refund.status="approved"
-            refund.save()
-            send_mail(
-                'Payment Refunded',
-                "Successfull Payment Refund",
-                PAYMENT_EMAIL_USERNAME,
-                [payment.user.email],
-                fail_silently=False,
-                connection=PAYMENT_MAIL_CONNECTION
-                )
-            messages.success(request,"Payment Refunded")
-        else:
-            messages.error(request,"invalid payment refund")
-    except:
-        messages.error(request,"invalid payment refund")
-
-
-@login_required(login_url="accounts:login")
-@for_admin_only  
-def accpet_paymob_consultant_payment_refund(request,payment,refund):
-    url_1 = "https://accept.paymob.com/api/auth/tokens"
-    data_1 = {"api_key": PAYMOB_API_KEY}
-    r_1 = requests.post(url_1, json=data_1)
-    token = r_1.json().get("token")
-    body={
-            "auth_token": token,
-            "transaction_id": payment.transaction_number,
-            "amount_cents": payment.amount * 100
-            }
-    url = "https://accept.paymob.com/api/acceptance/void_refund/refund"
-    r_1=requests.post(url=url,json=body)
-    try:
-        r_2=r_1.json()
-        if r_2["success"] == True:
-            if payment.consultant:
-                payment.consultant.status="refund"
-                payment.consultant.save()
-            payment.status ="refund"
-            payment.save()
-            refund.status="approved"
-            refund.save()
-            send_mail(
-                'Payment Refunded',
-                "Successfull Payment Refund",
-                PAYMENT_EMAIL_USERNAME,
-                [payment.user.email],
-                fail_silently=False,
-                connection=PAYMENT_MAIL_CONNECTION
-                )
-            messages.success(request,"Payment Refunded")
-        else:
-            messages.error(request,"invalid payment refund")
-    except:
-        messages.error(request,"invalid payment refund")
 
 @login_required(login_url="accounts:login")
 @for_admin_only 
@@ -2624,58 +2589,107 @@ def approve_refund(request,id):
     refund=get_object_or_404(Refunds,id=id,status="pending")
     data=refund.get_refund_data()
     payment=data["payment_id"]
-    if data["method"] == "Paymob":
-        if refund.type == "course_payment":
-            my_payment=Payment.objects.get(id=payment)
-            accpet_paymob_course_payment_refund(request,payment=my_payment,refund=refund)
-        elif refund.type == "consultant_payment":
-            my_payment=Cosultant_Payment.objects.get(id=payment)
-            accpet_paymob_consultant_payment_refund(request,payment=payment,refund=refund)
-        elif refund.type == "movie_payment":
-            my_payment=Library_Payment.objects.get(id=payment)
-            accpet_paymob_movie_payment_refund(request,payment=my_payment,refund=refund)
-    else:
-        if refund.type == "consultant_payment":
-            my_payment=Cosultant_Payment.objects.get(id=payment)
-            if my_payment.consultant:
-                my_payment.consultant.status="refund"
-                my_payment.consultant.save()
-            my_payment.status ="refund"
-            my_payment.save()
-            refund.status="approved"
-            refund.save()
-            send_mail(
-                'Payment Refunded',
-                "Successfull Payment Refund",
-                PAYMENT_EMAIL_USERNAME,
-                [my_payment.user.email],
-                fail_silently=False,
-                connection=PAYMENT_MAIL_CONNECTION
-                )
-            messages.success(request,"Payment Refunded")
-        elif refund.type =="course_payment":
-            my_payment=Cosultant_Payment.objects.get(id=payment)
-            my_payment.status ="refund"
-            try:
-                my_payment.course.students.remove(my_payment.user)
-                for i in my_payment.course.videos.all():
-                    i.watched_users.remove(my_payment.user)
-                    i.save()
-                my_payment.course.save()
-            except:
-                pass
-            my_payment.save()
-            refund.status="approved"
-            refund.save()
-            send_mail(
-                'Payment Refunded',
-                "Successfull Payment Refund",
-                PAYMENT_EMAIL_USERNAME,
-                [my_payment.user.email],
-                fail_silently=False,
-                connection=PAYMENT_MAIL_CONNECTION
-                )
-            messages.success(request,"Payment Refunded")
+    if refund.type == "consultant_payment":
+        my_payment=Cosultant_Payment.objects.get(id=payment)
+        if my_payment.consultant:
+            my_payment.consultant.status="refund"
+            my_payment.consultant.save()
+        my_payment.status ="refund"
+        my_payment.save()
+        refund.status="approved"
+        refund.save()
+        send_mail(
+            'Payment Refunded',
+            "Successfull Payment Refund",
+            PAYMENT_EMAIL_USERNAME,
+            [my_payment.user.email,my_payment.teacher.user.email,FINANCE_EMAIL_USERNAME],
+            fail_silently=False,
+            connection=PAYMENT_MAIL_CONNECTION
+            )
+        messages.success(request,"Payment Refunded")
+    elif refund.type =="course_payment":
+        my_payment=Payment.objects.get(id=payment)
+        my_payment.status ="refund"
+        try:
+            my_payment.course.students.remove(my_payment.user)
+            for i in my_payment.course.videos.all():
+                i.watched_users.remove(my_payment.user)
+                i.save()
+            my_payment.course.save()
+        except:
+            pass
+        my_payment.save()
+        refund.status="approved"
+        refund.save()
+        send_mail(
+            'Payment Refunded',
+            f"Successfull Payment Refund for course {my_payment.course.name.title},user {my_payment.user.first_name}",
+            PAYMENT_EMAIL_USERNAME,
+            [my_payment.user.email,my_payment.course.Instructor.email,FINANCE_EMAIL_USERNAME],
+            fail_silently=False,
+            connection=PAYMENT_MAIL_CONNECTION
+            )
+        messages.success(request,"Payment Refunded")
+    elif refund.type =="movie_payment":
+        my_payment=Library_Payment.objects.get(id=payment,library_type=3)
+        my_payment.status ="refund"
+        try:
+            my_payment.get_movies().buyers.remove(my_payment.user)
+            my_payment.get_movies().save()
+        except:
+            pass
+        my_payment.save()
+        refund.status="approved"
+        refund.save()
+        send_mail(
+            'Payment Refunded',
+            "Successfull Payment Refund",
+            PAYMENT_EMAIL_USERNAME,
+            [my_payment.user.email,FINANCE_EMAIL_USERNAME],
+            fail_silently=False,
+            connection=PAYMENT_MAIL_CONNECTION
+            )
+        messages.success(request,"Payment Refunded")
+    elif refund.type =="music_payment":
+        my_payment=Library_Payment.objects.get(id=payment,library_type=2)
+        my_payment.status ="refund"
+        try:
+            my_payment.get_music().buyers.remove(my_payment.user)
+            my_payment.get_music().save()
+        except:
+            pass
+        my_payment.save()
+        refund.status="approved"
+        refund.save()
+        send_mail(
+            'Payment Refunded',
+            "Successfull Payment Refund",
+            PAYMENT_EMAIL_USERNAME,
+            [my_payment.user.email],
+            fail_silently=False,
+            connection=PAYMENT_MAIL_CONNECTION
+            )
+        messages.success(request,"Payment Refunded")
+    elif refund.type =="audio_book_payment":
+        my_payment=Library_Payment.objects.get(id=payment,library_type=1)
+        my_payment.status ="refund"
+        try:
+            my_payment.get_audio_book().buyers.remove(my_payment.user)
+            my_payment.get_audio_book().save()
+        except:
+            pass
+        my_payment.save()
+        refund.status="approved"
+        refund.save()
+        send_mail(
+            'Payment Refunded',
+            "Successfull Payment Refund",
+            PAYMENT_EMAIL_USERNAME,
+            [my_payment.user.email],
+            fail_silently=False,
+            connection=PAYMENT_MAIL_CONNECTION
+            )
+        messages.success(request,"Payment Refunded")
     return redirect(reverse("dashboard:search_refunds"))
 
 @login_required(login_url="accounts:login")
@@ -2695,126 +2709,123 @@ def course_refund(request,slug,id):
  
 @login_required(login_url="accounts:login")
 @check_user_validation
+@check_edit_blog_pyment
 def edit_blog_payment(request,id):
     payment=get_object_or_404(Blog_Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method != "Western Union":
-            messages.error(request,"You Can't Edit This Payment Method")
+        if payment.method == "Western Union" or payment.method == "bank":
+            form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/blog-payment/{instance.user.slug}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/blog-payment/{instance.user.slug}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:blog_payment"))
+        else:
+            messages.error(request,"You Don't Have Permission")
             return redirect(reverse("accounts:blog_payment"))
-        form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
-        form.initial["payment_image"]=None
-        if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.status="pending"
-                image=request.FILES.get("payment_image")
-                if image:
-                    url=f"https://storage.bunnycdn.com/{storage_name}/blog-payment/{instance.user.slug}/{image}"
-                    headers = {
-                        "Content-Type": "application/octet-stream",
-                        "AccessKey": Storage_Api
-                    }
-                    response = requests.put(url,data=image,headers=headers)
-                    data=response.json()
-                    try: 
-                        if data["HttpCode"] == 201:
-                            instance.payment_image = f"https://{agartha_cdn}/blog-payment/{instance.user.slug}/{image}"
-                            instance.save()
-                    except:
-                        pass                 
-                instance.save()
-                body="payment edit is waiting for your approve"
-                subject="edit action"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                messages.success(request,"Payment Edited Successfully")
-                return redirect(reverse("accounts:blog_payment"))
-    else:
-        messages.error(request,"You Don't Have Permission")
-        return redirect(reverse("accounts:blog_payment"))
     context={"form":form}
     return render(request,"dashboard_edit_blog_payment.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_validation
+@check_edit_course_pyment
 def edit_course_payment(request,id):
     payment=get_object_or_404(Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method != "Western Union":
-            messages.error(request,"You Can't Edit This Payment Method")
+        if payment.method == "Western Union" or payment.method == "bank":
+            form=CoursePaymentFom(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    # today= today_datetime.date.today()
+                    instance.expired_at=instance.created_at
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{instance.course.slug}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/course-payment/{instance.course.slug}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:course_payment"))
+        else:
+            messages.error(request,"You Don't Have Permission")
             return redirect(reverse("accounts:course_payment"))
-        form=CoursePaymentFom(request.POST or None,request.FILES or None,instance=payment)
-        form.initial["payment_image"]=None
-        if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.status="pending"
-                # today= today_datetime.date.today()
-                instance.expired_at=instance.created_at
-                image=request.FILES.get("payment_image")
-                if image:
-                    url=f"https://storage.bunnycdn.com/{storage_name}/course-payment/{instance.course.slug}/{image}"
-                    headers = {
-                        "Content-Type": "application/octet-stream",
-                        "AccessKey": Storage_Api
-                    }
-                    response = requests.put(url,data=image,headers=headers)
-                    data=response.json()
-                    try: 
-                        if data["HttpCode"] == 201:
-                            instance.payment_image = f"https://{agartha_cdn}/course-payment/{instance.course.slug}/{image}"
-                            instance.save()
-                    except:
-                        pass                 
-                instance.save()
-                body="payment edit is waiting for your approve"
-                subject="edit action"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                messages.success(request,"Payment Edited Successfully")
-                return redirect(reverse("accounts:course_payment"))
-    else:
-        messages.error(request,"You Don't Have Permission")
-        return redirect(reverse("accounts:course_payment"))
     context={"form":form,"payment":payment} 
     return render(request,"dashboard_edit_course_payment.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_validation
+@check_edit_consultant_pyment
 def edit_consultant_payment(request,id):
     payment=get_object_or_404(Cosultant_Payment,id=id,status="declined")
     if request.user == payment.user:
-        if payment.method != "Western Union":
-            messages.error(request,"You Can't Edit This Payment Method")
+        if payment.method == "Western Union" or payment.method == "bank":
+            form=ConsultantPaymentFom(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:consultant_payment"))
+        else:
+            messages.error(request,"You Don't Have Permission")
             return redirect(reverse("accounts:consultant_payment"))
-        form=ConsultantPaymentFom(request.POST or None,request.FILES or None,instance=payment)
-        form.initial["payment_image"]=None
-        if request.method == "POST":
-            if form.is_valid():
-                instance=form.save(commit=False)
-                instance.status="pending"
-                image=request.FILES.get("payment_image")
-                if image:
-                    url=f"https://storage.bunnycdn.com/{storage_name}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
-                    headers = {
-                        "Content-Type": "application/octet-stream",
-                        "AccessKey": Storage_Api
-                    }
-                    response = requests.put(url,data=image,headers=headers)
-                    data=response.json()
-                    try: 
-                        if data["HttpCode"] == 201:
-                            instance.payment_image = f"https://{agartha_cdn}/consultant-payment/{instance.user.slug}/{instance.consult.teacher.date}/{image}"
-                            instance.save()
-                    except:
-                        pass                 
-                instance.save()
-                body="payment edit is waiting for your approve"
-                subject="edit action"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                messages.success(request,"Payment Edited Successfully")
-                return redirect(reverse("accounts:consultant_payment"))
-    else:
-        messages.error(request,"You Don't Have Permission")
-        return redirect(reverse("accounts:consultant_payment"))
     context={"form":form}
     return render(request,"dashboard_edit_consultant_payment.html",context)
 

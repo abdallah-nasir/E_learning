@@ -49,7 +49,7 @@ CLIENT_ID=os.environ["CLIENT_ID"] # paypal
 CLIENT_SECRET=os.environ["CLIENT_SECRET"] # paypl
 # Create your views here.
 def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
+    msg = EmailMessage(   
         subject=subject,
         body=body,
         from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
@@ -61,6 +61,14 @@ def send_mail_approve(request,user,body,subject):
     msg.send()
     return True
 
+def get_home_cache_data():
+    audios=Audio_Tracks.objects.filter(status="approved").select_related("user").order_by("-id")[:13]
+    artists=Artist.objects.filter(status="approved").select_related("user")[:8]
+    last_songs=Music.objects.all().select_related("track").order_by("-id")[:6]
+    context={"audios":audios,"artists":artists,"music":last_songs}
+    return context
+
+
 @login_required(login_url="accounts:login")
 def search(request):
     qs=request.GET.get("qs")
@@ -68,29 +76,32 @@ def search(request):
     query=False
     if qs:
         type=request.GET.get("type")
-        if type == "1":
-            query=Audio_Tracks.objects.filter(Q(name__icontains=qs) |Q(music__name=qs) | Q(category__name__icontains=qs)).prefetch_related("music")
-        elif type == "2":
-            query=Blog.objects.filter(Q(blog_type="audio",name__icontains=qs) | Q(blog_type="audio",category__name__icontains=qs)).select_related("user")
-        elif type == "3":
-            pass
-        elif type == "4":
-            query=Artist.objects.filter(Q(user__username__icontains=qs) | Q(user__first_name__icontains=qs)).select_related("user")
+        if type == "4":
+            query=Audio_Tracks.objects.filter(Q(name__icontains=qs) |Q(music__name=qs) | Q(category__name__icontains=qs)).prefetch_related("music").distinct()
+        if type == "5":
+            query=Blog.objects.filter(Q(blog_type="audio",name__icontains=qs) | Q(blog_type="audio",category__name__icontains=qs)).select_related("user").distinct()
+        if type == "3":
+            query=Movies.objects.filter(Q(name__icontains=qs) | Q(user__username__icontains=qs) | Q(category__name__icontains=qs)).select_related("user").distinct()
+        if type == "6":
+            query=Artist.objects.filter(Q(user__username__icontains=qs) | Q(user__first_name__icontains=qs)).select_related("user").distinct()
         else:
-            type= False
+            query=Audio_Tracks.objects.filter(Q(name__icontains=qs) |Q(music__name=qs) | Q(category__name__icontains=qs)).prefetch_related("music").distinct()
+        print(query)
     # if query:
     #     if 
     context={"qs":qs,"query":query,"type":type}
     return render(request,"library/audio/search.html",context)
 @login_required(login_url="accounts:login")
 def home(request):
-    return render(request,"library/audio/home.html")
+    data=get_home_cache_data()
+    context={"data":data}
+    return render(request,"library/audio/home.html",context)
 
 
 @login_required(login_url="accounts:login")
 def audio(request):
     tracks=Audio_Tracks.objects.filter(status="approved").prefetch_related("music")
-    paginator = Paginator(tracks, 1) 
+    paginator = Paginator(tracks, 9) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context={"tracks":page_obj}
@@ -98,8 +109,9 @@ def audio(request):
 
 @login_required(login_url="accounts:login")
 def single_audio(request,slug):
-    track=get_object_or_404(Audio_Tracks,slug=slug)
-    context={"track":track,"data":track.get_cache_data()}
+    track=get_object_or_404(Audio_Tracks,slug=slug,status="approved")
+    check_user=track.check_user_in(request.user.id)
+    context={"track":track,"data":track.get_cache_data(),"check_user":check_user}
     return render(request,"library/audio/single_track.html",context)
  
 @login_required(login_url="accounts:login")
@@ -121,7 +133,7 @@ def comment(request,slug):
 @login_required(login_url="accounts:login")
 def artists(request):
     artists=Artist.objects.filter(status="approved").select_related("user")
-    paginator = Paginator(artists, 1) 
+    paginator = Paginator(artists, 9) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context={"artists":page_obj}
@@ -146,7 +158,7 @@ def blog_audios(request):
 
 
 @login_required(login_url="accounts:login")
-@check_user_vip
+@check_user_is_kemet_vip
 @check_audio_payment_page
 def audio_payment(request,slug):
     track=get_object_or_404(Audio_Tracks,slug=slug,status="approved")
@@ -156,7 +168,7 @@ def audio_payment(request,slug):
     return render(request,"library/audio/payment.html",context)
 
 @login_required(login_url="accounts:login")
-@check_user_vip
+@check_user_is_kemet_vip
 @check_audio_payment_western
 def create_audio_western_payment(request,slug):
     form=PaymentForm(request.POST or None ,request.FILES or None)
@@ -178,7 +190,7 @@ def create_audio_western_payment(request,slug):
             print(data) 
             try:
                 if data["HttpCode"] == 201:
-                    payment.payment_image = f"https://{agartha_cdn}/movies-payment/{track.slug}/{payment.user.username}/{image}"
+                    payment.payment_image = f"https://{agartha_cdn}/music-payment/{track.slug}/{payment.user.username}/{image}"
                     payment.save()
             except:
                 pass
@@ -204,7 +216,7 @@ def create_audio_western_payment(request,slug):
 
 
 @login_required(login_url="accounts:login")
-@check_user_vip
+@check_user_is_kemet_vip
 @complete_user_data
 def paypal_create(request,id):
     if request.method =="POST":
@@ -259,7 +271,7 @@ def paypal_capture(request,order_id,track_id):
                         transaction=b["id"]
                 now= datetime.date.today()
                 payment=Library_Payment.objects.create(method="Paypal",
-                transaction_number=transaction,amount=track.get_price(),status="pending",user=request.user,created_at=now,library_type=2)
+                transaction_number=transaction,content_id=track.id,amount=track.get_price(),status="pending",user=request.user,created_at=now,library_type=2)
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
                 msg = EmailMessage(
@@ -279,107 +291,4 @@ def paypal_capture(request,order_id,track_id):
                 return JsonResponse({"status":0})
         except:
             return JsonResponse({"status":0})
-
-def random_integer_generator(size = 8, chars = string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
-
-@login_required(login_url="accounts:login")
-@check_user_vip
-@complete_user_data
-def paymob_payment(request,id):
-    if request.is_ajax():     
-        # return JsonResponse({"frame":PAYMOB_FRAME,"token":123})
-        track=Audio_Tracks.objects.get(id=id)
-        merchant_order_id=request.user.id + int(random_integer_generator())
-        url_1 = "https://accept.paymob.com/api/auth/tokens"
-        data_1 = {"api_key": PAYMOB_API_KEY}
-        r_1 = requests.post(url_1, json=data_1)
-        token = r_1.json().get("token")
-        data_2 = {
-        "auth_token": token,
-        "delivery_needed": "false",
-            "amount_cents":track.get_price() * 100,
-            "currency": "EGP",
-            "merchant_order_id": merchant_order_id,  # 81
-
-            "items": [
-    {
-        "name": track.id,
-        "amount_cents": track.get_price() * 100,
-        "description": "audios",  
-        "quantity": "1"
-    },
-    {
-        "name": track.id,
-        "amount_cents": track.get_price() * 100,
-        "description": 2,        #library_type  
-        "quantity": "1"
-    },
-    ],
-            "shipping_data": {
-                "apartment": "803",
-                "email": request.user.email,
-                "floor": "42",
-                "first_name": request.user.username,
-                "street": "Ethan Land",
-                "building": "8028",
-                "phone_number": f"{request.user.phone}",   
-                "postal_code": "01898",
-                "extra_description": "8 Ram , 128 Giga",
-                "city": "Jaskolskiburgh",
-                "country": "CR",
-                "last_name": request.user.last_name,
-                "state": "Utah"
-            },
-            "shipping_details": {
-                "notes": " test",
-                "number_of_packages": 1,
-                "weight": 1,
-                "weight_unit": "Kilogram",
-                "length": 1,
-                "width": 1,
-                "height": 1,
-                "contents": "product of some sorts"
-            }
-        }
-        url_2 = "https://accept.paymob.com/api/ecommerce/orders"
-        r_2 = requests.post(url_2, json=data_2)
-        my_id = r_2.json().get("id")
-        if my_id == None:
-            r_2 = requests.get(url_2, json=data_2)
-            my_id = r_2.json().get("results")[0]["id"]
-
-        data_3 = {
-            "auth_token": token,
-            "amount_cents": track.get_price() * 100,
-            "expiration": 15*60,
-            "order_id": my_id,
-            "billing_data": {
-                "apartment": "803",
-                "email": request.user.email,
-                "floor": "42",
-                "first_name": request.user.username,
-                "street": "Ethan Land",
-                "building": "8028", 
-                "phone_number":f"{request.user.phone}",
-                "shipping_method": "PKG",
-                "postal_code": "01898",
-                "city": "Jaskolskiburgh",
-                "country": "CR",
-                "last_name": request.user.last_name,
-                "state": "Utah"
-            },
-            "currency": "EGP",
-            "integration_id": PAYMOB_BLOG_INT,
-            "lock_order_when_paid": "true"
-        }
-        url_3 = "https://accept.paymob.com/api/acceptance/payment_keys"
-        r_3 = requests.post(url_3, json=data_3)
-        payment_token = (r_3.json().get("token"))
-        if payment_token == None:
-            success=0
-        else:
-            success=1
-        print(data_2["items"])
-        return JsonResponse({"success":success,"frame":PAYMOB_FRAME,"token":payment_token})
 

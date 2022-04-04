@@ -19,41 +19,8 @@ agartha_cdn=os.environ['agartha_cdn']
 PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]  # PAYMOB
 PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
 PAYMOB_BLOG_INT=os.environ['PAYMOB_BLOG_INT']
-PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
-PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
-PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
-SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
-PAYMENT_MAIL_CONNECTION = get_connection(
-host= SUPPORT_EMAIL_HOST, 
-port=PAYMENT_EMAIL_PORT, 
-username=PAYMENT_EMAIL_USERNAME, 
-password=PAYMENT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
-TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
-TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
-TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
-TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= TASK_NOTIFICATION_EMAIL_HOST, 
-port=TASK_NOTIFICATION_EMAIL_PORT, 
-username=TASK_NOTIFICATION_EMAIL_USERNAME, 
-password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
-use_tls=False
-)
-# Create your views here.
-def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
-        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
-        reply_to=[user],
-        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
-        )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-    return True
+from E_learning.all_email import *
+
 def get_library_home_data():
     audio_libraries=Library.objects.filter(type=3).order_by("-id")[:8]
     e_book_libraries=Library.objects.filter(type=4).order_by("-id")[:8]
@@ -93,6 +60,7 @@ def show_movie(request,slug):
     return render(request,"library/show_movie.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_kemet_vip
 @movies_check_payment
 def movie_payment(request,slug):
     movie=get_object_or_404(Movies,slug=slug,status="approved")
@@ -102,6 +70,7 @@ def movie_payment(request,slug):
     return render(request,"library/payment.html",context)
 
 @login_required(login_url="accounts:login")
+@check_user_is_kemet_vip
 @check_if_there_payment
 def create_movie_western_payment(request,slug):
     form=PaymentForm(request.POST or None ,request.FILES or None)
@@ -153,6 +122,7 @@ CLIENT_ID=os.environ["CLIENT_ID"] # paypal
 CLIENT_SECRET=os.environ["CLIENT_SECRET"] # paypl
 
 @login_required(login_url="accounts:login")
+@check_user_is_kemet_vip
 @complete_user_data
 def paypal_create(request,id):
     if request.method =="POST":
@@ -207,7 +177,7 @@ def paypal_capture(request,order_id,movie_id):
                         transaction=b["id"]
                 now= datetime.date.today()
                 payment=Library_Payment.objects.create(method="Paypal",
-                transaction_number=transaction,amount=movie.get_price(),status="pending",user=request.user,created_at=now,library_type=3)
+                transaction_number=transaction,content_id=movie.id,amount=movie.get_price(),status="pending",user=request.user,created_at=now,library_type=3)
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
                 msg = EmailMessage(
@@ -232,6 +202,7 @@ def random_integer_generator(size = 8, chars = string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 @login_required(login_url="accounts:login")
+@check_user_is_kemet_vip
 @complete_user_data
 def paymob_payment(request,id):
     if request.is_ajax():     
