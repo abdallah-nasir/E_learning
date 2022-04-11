@@ -12,54 +12,19 @@ from django.http import JsonResponse
 from .decorators import *
 from .forms import PaymentForm,CommentsForm
 import os,requests
+from E_learning.all_email import *
 Storage_Api=os.environ["Storage_Api"]
 storage_name=os.environ["storage_name"]
 library_id=os.environ["library_id"]
 storage_name=os.environ["storage_name"]
 agartha_cdn=os.environ['agartha_cdn']
-PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]  # PAYMOB
-PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
-PAYMOB_BLOG_INT=os.environ['PAYMOB_BLOG_INT']
-PAYMENT_EMAIL_USERNAME = os.environ['PAYMENT_EMAIL_USERNAME']
-PAYMENT_EMAIL_PASSWORD = os.environ['PAYMENT_EMAIL_PASSWORD']
-PAYMENT_EMAIL_PORT = os.environ['PAYMENT_EMAIL_PORT']
-SUPPORT_EMAIL_HOST = os.environ['SUPPORT_EMAIL_HOST']
-PAYMENT_MAIL_CONNECTION = get_connection(
-host= SUPPORT_EMAIL_HOST, 
-port=PAYMENT_EMAIL_PORT, 
-username=PAYMENT_EMAIL_USERNAME, 
-password=PAYMENT_EMAIL_PASSWORD, 
-use_tls=False
-) 
-TASK_NOTIFICATION_EMAIL_USERNAME=os.environ['TASK_NOTIFICATION_EMAIL_USERNAME']
-TASK_NOTIFICATION_EMAIL_PASSWORD=os.environ['TASK_NOTIFICATION_EMAIL_PASSWORD']
-TASK_NOTIFICATION_EMAIL_HOST=os.environ["TASK_NOTIFICATION_EMAIL_HOST"]
-TASK_NOTIFICATION_EMAIL_PORT=os.environ["TASK_NOTIFICATION_EMAIL_PORT"]
-TASK_NOTIFICATION_EMAIL_CONNECTION=get_connection(
-host= TASK_NOTIFICATION_EMAIL_HOST, 
-port=TASK_NOTIFICATION_EMAIL_PORT, 
-username=TASK_NOTIFICATION_EMAIL_USERNAME, 
-password=TASK_NOTIFICATION_EMAIL_PASSWORD, 
-use_tls=False
-)
+
 from paypalcheckoutsdk.orders import OrdersCreateRequest 
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
 from paypalcheckoutsdk.core import SandboxEnvironment,PayPalHttpClient
 CLIENT_ID=os.environ["CLIENT_ID"] # paypal
 CLIENT_SECRET=os.environ["CLIENT_SECRET"] # paypl
-# Create your views here.
-def send_mail_approve(request,user,body,subject):
-    msg = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=TASK_NOTIFICATION_EMAIL_USERNAME,
-        to=[TASK_NOTIFICATION_EMAIL_USERNAME],
-        reply_to=[user],
-        connection=TASK_NOTIFICATION_EMAIL_CONNECTION
-        )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
-    return True
+
 
 def get_home_cache_data():
     audios=Audio_Tracks.objects.filter(status="approved").select_related("user").order_by("-id")[:13]
@@ -67,30 +32,6 @@ def get_home_cache_data():
     last_songs=Music.objects.all().select_related("track").order_by("-id")[:6]
     context={"audios":audios,"artists":artists,"music":last_songs}
     return context
-
-
-@login_required(login_url="accounts:login")
-def search(request):
-    qs=request.GET.get("qs")
-    type=False
-    query=False
-    if qs:
-        type=request.GET.get("type")
-        if type == "4":
-            query=Audio_Tracks.objects.filter(Q(name__icontains=qs) |Q(music__name=qs) | Q(category__name__icontains=qs)).prefetch_related("music").distinct()
-        if type == "5":
-            query=Blog.objects.filter(Q(blog_type="audio",name__icontains=qs) | Q(blog_type="audio",category__name__icontains=qs)).select_related("user").distinct()
-        if type == "3":
-            query=Movies.objects.filter(Q(name__icontains=qs) | Q(user__username__icontains=qs) | Q(category__name__icontains=qs)).select_related("user").distinct()
-        if type == "6":
-            query=Artist.objects.filter(Q(user__username__icontains=qs) | Q(user__first_name__icontains=qs)).select_related("user").distinct()
-        else:
-            query=Audio_Tracks.objects.filter(Q(name__icontains=qs) |Q(music__name=qs) | Q(category__name__icontains=qs)).prefetch_related("music").distinct()
-        print(query)
-    # if query:
-    #     if 
-    context={"qs":qs,"query":query,"type":type}
-    return render(request,"library/audio/search.html",context)
 
 
 
@@ -138,7 +79,6 @@ def audio_payment(request,slug):
  
 @login_required(login_url="accounts:login")
 @check_user_is_kemet_vip
-@check_audio_book_payment_page
 @check_audio_book_payment_western
 def western_payment(request,slug):
     form=PaymentForm(request.POST or None ,request.FILES or None)
@@ -187,7 +127,6 @@ def western_payment(request,slug):
 
 @login_required(login_url="accounts:login")
 @check_user_is_kemet_vip
-@check_audio_book_payment_page
 @check_audio_book_payment_bank
 def bank_payment(request,slug):
     form=PaymentForm(request.POST or None ,request.FILES or None)

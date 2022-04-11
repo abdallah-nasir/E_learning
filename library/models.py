@@ -56,16 +56,16 @@ class Comments(models.Model):
     def __str__(self):
         return self.user.username
      
-class Audio_Book_Tracks(models.Model): 
+class Audio_Book_Tracks(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=100)
     image=models.ImageField()
     book=models.ManyToManyField("Audio_Book",blank=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
-    price=models.FloatField(null=True)
+    price=models.FloatField(null=True,default=0)
     buyers=models.ManyToManyField(User,related_name="audio_book_user",blank=True)
     comments=models.ManyToManyField(Comments,blank=True)
-    data=models.TextField() 
+    data=models.JSONField() 
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
     slug=models.SlugField(unique=True,blank=True,max_length=100)
     
@@ -79,6 +79,11 @@ class Audio_Book_Tracks(models.Model):
                 slug=slugify(self.name)
                 self.slug =f"{slug}-{random_string_generator()}"
         super(Audio_Book_Tracks, self).save()
+    def get_data(self):
+        data=self.data
+        book_data=data["about"] 
+        context={"about":book_data}
+        return context
     def get_total_duration(self):
         duration=0
         for i in self.book.all():
@@ -87,7 +92,7 @@ class Audio_Book_Tracks(models.Model):
         return total_time
     def get_price(self):
         try:
-            data=json.loads(self.data)
+            data=self.data
             if data["discount"]:
                 price=data["discount"]
             else:
@@ -152,7 +157,7 @@ class Audio_Tracks(models.Model):
     image=models.ImageField()
     music=models.ManyToManyField("Music",blank=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
-    price=models.FloatField(null=True)
+    price=models.FloatField(null=True,default=0)
     buyers=models.ManyToManyField(User,related_name="exist_user",blank=True)
     comments=models.ManyToManyField(Comments,blank=True)
     data=models.TextField() 
@@ -249,7 +254,7 @@ class Movies(models.Model):
     data=models.TextField()
     duration=models.PositiveIntegerField(null=True)
     buyers=models.ManyToManyField(User,blank=True,related_name="movies_user")
-    price=models.FloatField(null=True)
+    price=models.FloatField(null=True,default=0)
     comments=models.ManyToManyField(Comments,blank=True)
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
     slug=models.SlugField(unique=True,blank=True,max_length=100)
@@ -333,9 +338,10 @@ class E_Book(models.Model):
     name=models.CharField(max_length=150)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+    image=models.ImageField()
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
-    data=models.TextField()
-    price=models.FloatField(null=True)
+    data=models.JSONField() 
+    price=models.FloatField(null=True,default=0)
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
     slug=models.SlugField(unique=True,blank=True,max_length=100)
     def save(self, *args, **kwargs):
@@ -347,13 +353,19 @@ class E_Book(models.Model):
         super(E_Book, self).save()
 
     def __str__(self):
-        return self.name
- 
-    def get_book(self):
-        data=json.loads(self.data)
+        return self.name 
+    def check_pdf(self):
+        data=self.data
         try:
-            if data["book"]:
-                result=True
+            pdf=data["pdf"]
+            return True
+        except:
+            return False
+    def get_book(self):
+        data=self.data
+        try:
+            if data["pdf"]:
+                result=data["pdf"]
             else:
                 result=False
         except:
@@ -361,7 +373,7 @@ class E_Book(models.Model):
         return result
     def get_price(self):
         try:
-            data=json.loads(self.data)
+            data=self.data
             if data["discount"]:
                 price=data["discount"]
             else:
@@ -370,7 +382,7 @@ class E_Book(models.Model):
             price= self.price
         return price
     def get_data_e_book(self):
-        data=json.loads(self.data)
+        data=self.data
         images=data["images"]
         first_image=images[0]
         context={"images":images,"first_image":first_image}
@@ -411,7 +423,7 @@ class Library_Payment(models.Model):
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=10)
     created_at=models.DateField()
     # expired_at=models.DateField(blank=True,null=True)
-    # expired=models.BooleanField(default=False)
+    expired=models.BooleanField(default=False)
 
     def __str_(self):return self.method
 
@@ -425,7 +437,9 @@ class Library_Payment(models.Model):
             track=Audio_Tracks.objects.get(id=self.content_id)
         return track
     def check_payment(self):
-        if self.status == "declined":
+        if self.expired == True:
+            return False
+        elif self.status == "declined":
            
             if self.method == "Western Union" or self.method == "bank":
                 return True
@@ -439,6 +453,8 @@ class Library_Payment(models.Model):
             track=Audio_Book_Tracks.objects.get(id=self.content_id)
         return track
     def check_refund(self): 
+        if self.expired == True:
+            return False
         if self.status != "refund":
             if self.method == "Western Union":
                 return False

@@ -48,10 +48,11 @@
     <!--====== Style css ======-->
 
     <link
-  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
-  rel="stylesheet"
-/>
+    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
+    rel="stylesheet"
+    />
 {% endcache %}
+
 {% if LANGUAGE_CODE == "ar" %}
     <!--====== Bootstrap css ======-->
     <link rel="stylesheet" href="{% static 'css/base-rtl.css' %}">
@@ -354,6 +355,9 @@
               alt="{{request.user.username}}"
               loading="lazy"
             />
+            <span class="hello-msg">
+                Hello, {{request.user.username}}
+            </span>
           </a>
          
           <ul
@@ -472,18 +476,37 @@
         </div> <!-- serach form -->
     </div>
 
+    <div id="content">
     {% if messages %}
-    {% for message in messages  %}
-    <div class="container">
-        <div style="text-align:center;"  class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-            <strong>{{message}} </strong>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+    <div class="modal fade" id="agarthaModal" tabindex="-1" role="dialog" aria-labelledby="agarthaModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agarthaModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                 
+                    {% for message in messages  %} 
+                    <div class="alert alert-{{message.tags}}" role="alert">
+                        {{message}}
+                      </div>
+                    
+                    {% endfor %}
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="main-btn" data-dismiss="modal">Close</button>
+                    {% comment %} <button type="button" class="main-btn">Yes</button> {% endcomment %}
+                </div>
+            </div>
+        </div>
     </div>
-    {% endfor %}
-   {% endif %}
+   {% endif %}    
+        
+</div>
     <!--====== SEARCH BOX PART ENDS ======-->
    {% block content %}
 
@@ -641,8 +664,10 @@
 </body>
 <script style="text/javascript">
    
-
-  
+   
+    $(document).ready(function(){
+        $("#agarthaModal").modal('show');
+    });
   
 $(document).on('click',"#love-add",function(){
         var _vm=$(this);

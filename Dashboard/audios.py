@@ -265,6 +265,7 @@ def audio_payment(request):
 
 @login_required(login_url="accounts:login")
 @check_user_validation
+@check_edit_audio_pyment
 def edit_music_payment(request,slug,id):
     track=get_object_or_404(Audio_Tracks,slug=slug)
     payment=get_object_or_404(Library_Payment,library_type=2,id=id,status="declined")

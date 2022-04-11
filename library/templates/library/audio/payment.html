@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'kemet/home/base.html' %}
 {% load static %}
 {% load hosts %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'payment/css/style.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'payment/css/style.css' %}"> {% endcomment %}
 
 <title>{% block title %}|Payment{% endblock %}</title>
 
@@ -29,16 +29,20 @@
                       </thead>
                       <tbody>
                         <tr>
-                          <td>نبيل كمال محمد</td>
-                          <td>Egypt</td>
-                          <td>00201011609810</td>
+                            <td>نبيل كمال محمد</td>
+                            <td>مصر</td>
+                            <td>00201011609810</td>
                         </tr>
-                       
-                       
-                      </tbody>
+                        <tr>
+                            <td>Nabil Kamal Mohammad</td>
+                            <td>Egypt</td>
+                            <td>00201011609810</td>
+                        </tr>
+
+                    </tbody>
                     </table>
                     
-                    <form method="POST" action="{% url 'home:western_payment' course.slug %}" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'library:music_western_payment' track.slug %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">
@@ -85,7 +89,7 @@
                       </tbody>
                     </table>
                   </div>
-                    <form method="POST" action="{% url 'home:bank_payment' course.slug %}" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'library:music_bank_payment' track.slug %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">
@@ -225,32 +229,7 @@ $(document).ready(function () {
   });
 });
 
-$(document).on('click',"#card-data",function(){
-  var _vm=$(this);
 
-  // Ajax
-  $.ajax({
-    type:"GET",
-    url:"{% url 'library:audio_paymob_payment' track.id %}",
-    success:function(res){
-      if (res.success == 1){
-        $("#card-data").remove();
-        let html=` <iframe style=" display: block  !important;      
-                          border: none  !important;         
-                        height: 100vh  !important;        
-                       
-                       
-                        text-align:center  !important;
-                        align-items:center  !important;" width=100% src="https://accept.paymob.com/api/acceptance/iframes/${res.frame}?payment_token=${res.token}" ></iframe>`
-        $("#card").html(html);
-                  }
-          else{
-            window.location.href="{% url 'library:single_audio' track.slug %}";
-          }
-                },
-  
-                  });
-                  // End
-              });      
+     
   </script>
 {% endblock %}

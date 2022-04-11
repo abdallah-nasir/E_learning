@@ -11,7 +11,7 @@ def check_if_user_in_course(function):
     def wrap(request, *args, **kwargs):
         course =get_object_or_404(Course,slug=kwargs["course"])
         today=  datetime.date.today()
-        if course.students.filter(username=request.user.username).exists():
+        if course.students.filter(username=request.user.username).prefetch_related("students").exists():
             last_payment=Payment.objects.filter(user=request.user,expired=False,course=course,status="approved").last()
             if last_payment.expired_at <= today:  
                 last_payment.expired=True
@@ -39,7 +39,7 @@ def check_if_user_in_course(function):
 def check_if_user_in_pending_payment(function):
     def wrap(request, *args, **kwargs):
         course =get_object_or_404(Course,slug=kwargs["course"])
-        if Payment.objects.filter(user=request.user,course=course,status="pending").exists():
+        if Payment.objects.filter(user=request.user,course=course,status="pending",expired=False).exists():
             messages.error(request,"you already have a pending payment")
             return redirect(reverse("accounts:course_payment"))
         else:
@@ -51,7 +51,19 @@ def check_if_user_in_pending_payment(function):
 def check_if_user_in_pending_payment_western(function):
     def wrap(request, *args, **kwargs):
         course =get_object_or_404(Course,slug=kwargs["course"])
-        if Payment.objects.filter(user=request.user,course=course).exclude(status="approved").exists():
+        if Payment.objects.filter(user=request.user,course=course,expired=False,method="Western Union").exists():
+            messages.error(request,"you already have a pending payment")
+            return redirect(reverse("accounts:course_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+def check_if_user_in_pending_payment_bank(function):
+    def wrap(request, *args, **kwargs):
+        course =get_object_or_404(Course,slug=kwargs["course"])
+        if Payment.objects.filter(user=request.user,course=course,expired=False,method="bank").exists():
             messages.error(request,"you already have a pending payment")
             return redirect(reverse("accounts:course_payment"))
         else:

@@ -8,13 +8,13 @@ from django.shortcuts import get_object_or_404
 from django.contrib import messages
 def check_user_is_has_consul(function):
     def wrap(request, *args, **kwargs):
-        my_teacher=get_object_or_404(Teacher_Time,id=kwargs["teacher"],available=True)
-        payment = Cosultant_Payment.objects.filter(user=request.user,teacher=my_teacher).exclude(Q(status="approved") | Q(status='refund'))
+        my_teacher=get_object_or_404(Teacher_Time,id=kwargs["teacher"],available=True) 
+        payment = Cosultant_Payment.objects.filter(user=request.user,teacher=my_teacher,expired=False,status="pending")
         # print(payment)
         consultant=Consultant.objects.filter(user=request.user,teacher=my_teacher).exclude(Q(status="completed") | Q(status="refund") |Q(status="declined"))
-        print(consultant)  
+        print(consultant)   
         if payment.exists():
-            messages.error(request,f"You Already Have Pending Consultant")
+            messages.error(request,f"You Already Have Pending Consultant payment")
             return redirect(reverse("accounts:consultant_payment"))
         elif consultant.exists():
             messages.error(request,f"You Already Have Pending Consultant")
@@ -29,23 +29,24 @@ def check_user_is_has_consul(function):
   
 def check_user_is_has_consul_checkout(function):
     def wrap(request, *args, **kwargs):
-        try:
-            id=request.GET['consultant']
-            teacher=get_object_or_404(Teacher_Time,id=id,available=True)
-            payment = Cosultant_Payment.objects.filter(user=request.user,teacher=teacher).exclude(Q(status="approved") | Q(status="refund"))
-            consultant=Consultant.objects.filter(user=request.user,teacher=teacher).exclude(Q(status="completed") |Q(status="refund") |Q(status="declined") )
-            if payment.exists() :
-                messages.error(request,f"You Already Have Pending Consultant")
-                return redirect(reverse("accounts:consultant_payment"))
-            elif consultant.exists():
-                messages.error(request,f"You Already Have Pending Consultant")
-                return redirect(reverse("accounts:consultants"))
-            else:
-                return function(request, *args, **kwargs)
-        except:
-            return redirect(reverse("consultant:home"))
+        my_teacher=get_object_or_404(Teacher_Time,user__slug=kwargs["slug"],available=True) 
+        payment = Cosultant_Payment.objects.filter(user=request.user,teacher=my_teacher,expired=False,status="pending")
+        print(payment)
+        consultant=Consultant.objects.filter(user=request.user,teacher=my_teacher).exclude(Q(status="completed") | Q(status="refund") |Q(status="declined"))
+        print(consultant)   
+        if payment.exists():
+            messages.error(request,f"You Already Have Pending Consultant payment")
+            return redirect(reverse("accounts:consultant_payment"))
+        elif consultant.exists():
+            print("here")
+            messages.error(request,f"You Already Have Pending Consultant")
+            return redirect(reverse("accounts:consultants"))
+        else:
+            print("there") 
+            return function(request, *args, **kwargs)
+
     wrap.__doc__ = function.__doc__
-    wrap.__name__ = function.__name__
+    wrap.__name__ = function.__name__ 
     return wrap
 
 def validate_checkout(function):
@@ -71,8 +72,8 @@ def validate_post_checkout(function):
     def wrap(request, *args, **kwargs):
         try:
             id=request.POST["consultant"]
-            if Cosultant_Payment.objects.filter(user=request.user,teacher_id=id).exclude(Q(status="approved") | Q(status="refund")).exists():
-                messages.error(request,"you already have a pending consultant")
+            if Cosultant_Payment.objects.filter(user=request.user,teacher_id=id,expired=False,status="pending").exists():
+                messages.error(request,"you already have a pending consultant payment")
                 return redirect(reverse("accounts:consultant_payment"))
             date=request.POST["date"]
             teacher=get_object_or_404(Teacher_Time,id=id)
@@ -112,3 +113,27 @@ def check_user_data_form(function):
     wrap.__name__ = function.__name__
     return wrap
 
+
+def check_user_is_has_western(function):
+    def wrap(request, *args, **kwargs):
+        if Cosultant_Payment.objects.filter(user=request.user,teacher_id=kwargs["teacher"],expired=False,method="Western Union").select_related("user").exists():
+            messages.error(request,"you already have a pending consultant payment")
+            return redirect(reverse("accounts:consultant_payment"))
+        else: 
+            return function(request, *args, **kwargs) 
+  
+    wrap.__doc__ = function.__doc__
+    wrap.__name__
+    return wrap
+
+def check_user_is_has_bank(function):
+    def wrap(request, *args, **kwargs):
+        if Cosultant_Payment.objects.filter(user=request.user,teacher_id=kwargs["teacher"],expired=False,method="bank").select_related("user").exists():
+            messages.error(request,"you already have a pending consultant payment")
+            return redirect(reverse("accounts:consultant_payment"))
+        else: 
+            return function(request, *args, **kwargs) 
+  
+    wrap.__doc__ = function.__doc__
+    wrap.__name__
+    return wrap

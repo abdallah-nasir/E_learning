@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-18 16:57+0200\n"
+"POT-Creation-Date: 2022-04-08 13:02+0200\n"
 "PO-Revision-Date: 2022-02-18 16:58+0205\n"
 "Last-Translator: abdallah nasir <abdallah.nasir@ymail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,147 +16,235 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 "X-Translated-Using: django-rosetta 0.9.7\n"
 
-#: .\Blogs\templates\blog.html:52 .\Blogs\templates\blog.html:98
-#: .\Blogs\templates\blog.html:162 .\Blogs\templates\blog.html:207
-#: .\Blogs\templates\blog.html:248 .\Blogs\templates\blog.html:295
-#: .\Blogs\templates\blog_search.html:27 .\Blogs\templates\blog_search.html:66
-#: .\Blogs\templates\blog_search.html:112
-#: .\Blogs\templates\blog_search.html:156
-#: .\Blogs\templates\blog_search.html:185 .\Blogs\templates\blog_type.html:27
-#: .\Blogs\templates\blog_type.html:68 .\Blogs\templates\blog_type.html:114
-#: .\Blogs\templates\blog_type.html:158 .\Blogs\templates\blog_type.html:187
-#: .\Blogs\templates\blogs.html:155 .\Blogs\templates\blogs.html:195
-#: .\Blogs\templates\blogs.html:241 .\Blogs\templates\blogs.html:285
-#: .\Blogs\templates\blogs.html:314 .\Blogs\templates\blogs_2.html:156
-#: .\Blogs\templates\blogs_2.html:198 .\Blogs\templates\blogs_2.html:244
-#: .\Blogs\templates\blogs_2.html:288 .\Blogs\templates\blogs_2.html:317
+#: Blogs/templates/blog.html:55 Blogs/templates/blog.html:101
+#: Blogs/templates/blog.html:222 Blogs/templates/blog.html:263
+#: Blogs/templates/blog.html:310 Blogs/templates/blog_search.html:29
+#: Blogs/templates/blog_search.html:68 Blogs/templates/blog_search.html:114
+#: Blogs/templates/blog_search.html:158 Blogs/templates/blog_search.html:187
+#: Blogs/templates/blog_type.html:29 Blogs/templates/blog_type.html:70
+#: Blogs/templates/blog_type.html:116 Blogs/templates/blog_type.html:160
+#: Blogs/templates/blog_type.html:189 Blogs/templates/blogs.html:157
+#: Blogs/templates/blogs.html:197 Blogs/templates/blogs.html:243
+#: Blogs/templates/blogs.html:287 Blogs/templates/blogs.html:316
+#: Blogs/templates/blogs_2.html:158 Blogs/templates/blogs_2.html:200
+#: Blogs/templates/blogs_2.html:246 Blogs/templates/blogs_2.html:290
+#: Blogs/templates/blogs_2.html:319 Blogs/templates/blogs_category.html:158
+#: Blogs/templates/blogs_category.html:200
+#: Blogs/templates/blogs_category.html:246
+#: Blogs/templates/blogs_category.html:290
+#: Blogs/templates/blogs_category.html:319 Blogs/templates/kemet/blog.html:55
+#: Blogs/templates/kemet/blog.html:101 Blogs/templates/kemet/blog.html:222
+#: Blogs/templates/kemet/blog.html:263 Blogs/templates/kemet/blog.html:310
+#: Blogs/templates/kemet/blog_search.html:29
+#: Blogs/templates/kemet/blog_search.html:68
+#: Blogs/templates/kemet/blog_search.html:114
+#: Blogs/templates/kemet/blog_search.html:158
+#: Blogs/templates/kemet/blog_search.html:187
+#: Blogs/templates/kemet/blog_type.html:29
+#: Blogs/templates/kemet/blog_type.html:70
+#: Blogs/templates/kemet/blog_type.html:116
+#: Blogs/templates/kemet/blog_type.html:160
+#: Blogs/templates/kemet/blog_type.html:189
+#: Blogs/templates/kemet/blogs.html:157 Blogs/templates/kemet/blogs.html:197
+#: Blogs/templates/kemet/blogs.html:243 Blogs/templates/kemet/blogs.html:287
+#: Blogs/templates/kemet/blogs.html:316 Blogs/templates/kemet/blogs_2.html:158
+#: Blogs/templates/kemet/blogs_2.html:200
+#: Blogs/templates/kemet/blogs_2.html:246
+#: Blogs/templates/kemet/blogs_2.html:290
+#: Blogs/templates/kemet/blogs_2.html:319
+#: Blogs/templates/kemet/blogs_category.html:158
+#: Blogs/templates/kemet/blogs_category.html:200
+#: Blogs/templates/kemet/blogs_category.html:246
+#: Blogs/templates/kemet/blogs_category.html:290
+#: Blogs/templates/kemet/blogs_category.html:319
+#: Blogs/templates/kemet/test.html:158 Blogs/templates/kemet/test.html:200
+#: Blogs/templates/kemet/test.html:246 Blogs/templates/kemet/test.html:290
+#: Blogs/templates/kemet/test.html:319
 msgid "comments"
 msgstr "التعليقات"
 
-#: .\Blogs\templates\blog.html:64 .\Blogs\templates\blog.html:110
-#: .\Blogs\templates\blog.html:219 .\Blogs\templates\blog.html:261
-#: .\Blogs\templates\blog.html:314
+#: Blogs/templates/blog.html:67 Blogs/templates/blog.html:113
+#: Blogs/templates/blog.html:234 Blogs/templates/blog.html:276
+#: Blogs/templates/blog.html:329 Blogs/templates/kemet/blog.html:67
+#: Blogs/templates/kemet/blog.html:113 Blogs/templates/kemet/blog.html:234
+#: Blogs/templates/kemet/blog.html:276 Blogs/templates/kemet/blog.html:329
 msgid "Tags"
 msgstr "الوسوم"
 
-#: .\Blogs\templates\blog.html:70 .\Blogs\templates\blog.html:116
-#: .\Blogs\templates\blog.html:225 .\Blogs\templates\blog.html:267
-#: .\Blogs\templates\blog.html:320
+#: Blogs/templates/blog.html:73 Blogs/templates/blog.html:119
+#: Blogs/templates/blog.html:240 Blogs/templates/blog.html:282
+#: Blogs/templates/blog.html:335 Blogs/templates/kemet/blog.html:73
+#: Blogs/templates/kemet/blog.html:119 Blogs/templates/kemet/blog.html:240
+#: Blogs/templates/kemet/blog.html:282 Blogs/templates/kemet/blog.html:335
 msgid "Share"
 msgstr "شارك"
 
-#: .\Blogs\templates\blog.html:330
+#: Blogs/templates/blog.html:345 Blogs/templates/kemet/blog.html:345
 msgid "Comments"
 msgstr "التعليقات"
 
-#: .\Blogs\templates\blog.html:339 .\Blogs\templates\blog.html:370
+#: Blogs/templates/blog.html:354 Blogs/templates/blog.html:385
+#: Blogs/templates/kemet/blog.html:354 Blogs/templates/kemet/blog.html:385
 msgid "says"
 msgstr "يقول"
 
-#: .\Blogs\templates\blog.html:342 .\Blogs\templates\blog.html:373
+#: Blogs/templates/blog.html:357 Blogs/templates/blog.html:388
+#: Blogs/templates/kemet/blog.html:357 Blogs/templates/kemet/blog.html:388
 msgid "at"
 msgstr ""
 
-#: .\Blogs\templates\blog.html:349
+#: Blogs/templates/blog.html:364 Blogs/templates/kemet/blog.html:364
 msgid "Reply"
 msgstr "الرد"
 
-#: .\Blogs\templates\blog.html:354 .\Blogs\templates\blog.html:401
-#: .\templates\course-single.html:323 .\templates\teachers-single.html:229
-#: .\templates\video.html:272
+#: Blogs/templates/blog.html:369 Blogs/templates/blog.html:416
+#: Blogs/templates/kemet/blog.html:369 Blogs/templates/kemet/blog.html:416
+#: library/templates/library/show_movie.html:242
+#: library/templates/library/single_movie.html:242
+#: templates/course-single.html:326 templates/kemet/home/course-single.html:327
+#: templates/kemet/home/teachers-single.html:230
+#: templates/kemet/home/video.html:273 templates/teachers-single.html:229
+#: templates/video.html:272
 msgid "Comment"
 msgstr "التعليق"
 
-#: .\Blogs\templates\blog.html:393
+#: Blogs/templates/blog.html:408 Blogs/templates/kemet/blog.html:408
 msgid "Leave a Comment"
 msgstr "شاركنا رأيك"
 
-#: .\Blogs\templates\blog.html:423 .\Blogs\templates\blog_type.html:228
-#: .\Blogs\templates\blogs_2.html:358
+#: Blogs/templates/blog.html:438 Blogs/templates/blog_type.html:230
+#: Blogs/templates/blogs_2.html:360 Blogs/templates/blogs_category.html:360
+#: Blogs/templates/kemet/blog.html:438 Blogs/templates/kemet/blog_type.html:230
+#: Blogs/templates/kemet/blogs_2.html:360
+#: Blogs/templates/kemet/blogs_category.html:360
+#: Blogs/templates/kemet/test.html:360
 msgid "Recent Posts"
 msgstr "المشاركات الأخيرة"
 
-#: .\Blogs\templates\blog.html:432 .\Blogs\templates\blog_type.html:237
-#: .\Blogs\templates\blogs_2.html:367
+#: Blogs/templates/blog.html:447 Blogs/templates/blog_type.html:239
+#: Blogs/templates/blogs_2.html:369 Blogs/templates/blogs_category.html:369
+#: Blogs/templates/kemet/blog.html:447 Blogs/templates/kemet/blog_type.html:239
+#: Blogs/templates/kemet/blogs_2.html:369
+#: Blogs/templates/kemet/blogs_category.html:369
+#: Blogs/templates/kemet/test.html:369 templates/course_category.html:14
+#: templates/kemet/home/course_category.html:15
 msgid "Categories"
 msgstr "الفئات"
 
-#: .\Blogs\templates\blog_base.html:12
-#: .\accounts\templates\account_base.html:15 .\templates\account\login.html:10
-#: .\templates\account\signup.html:10 .\templates\base.html:19
+#: Blogs/templates/blog_base.html:13 Blogs/templates/kemet/blog_base.html:12
+#: accounts/templates/account_base.html:16 templates/account/login.html:10
+#: templates/account/signup.html:10 templates/base.html:20
+#: templates/kemet/home/base.html:20 templates/test.html:20
 msgid "Agartha Academy"
 msgstr "أكاديمية أݘارثا"
 
-#: .\Blogs\templates\blog_base.html:62
+#: Blogs/templates/blog_base.html:64 Blogs/templates/kemet/blog_base.html:63
 msgid "Welcome to Agartha Blogs"
 msgstr "أهلاً بك في أچارثا"
 
-#: .\Blogs\templates\blog_base.html:68
-#: .\accounts\templates\account_consultant_payment.html:76
-#: .\accounts\templates\account_course_payment.html:78
-#: .\accounts\templates\account_events.html:68
+#: Blogs/templates/blog_base.html:70 Blogs/templates/kemet/blog_base.html:69
+#: Dashboard/templates/dashboard_movies_payment.html:76
+#: accounts/templates/account_audio_book_payment.html:76
+#: accounts/templates/account_audio_payment.html:76
+#: accounts/templates/account_consultant_payment.html:76
+#: accounts/templates/account_course_payment.html:79
+#: accounts/templates/account_events.html:69
+#: accounts/templates/account_movies_payment.html:76
 msgid "Close"
 msgstr "إغلاق"
 
-#: .\Blogs\templates\blog_base.html:90
+#: Blogs/templates/blog_base.html:86 Blogs/templates/kemet/blog_base.html:85
+#, fuzzy
+#| msgid "Profile"
+msgid "Profile"
+msgstr "الملف الشخصي"
+
+#: Blogs/templates/blog_base.html:89 Blogs/templates/kemet/blog_base.html:88
+#, fuzzy
+#| msgid "Sign Out"
+msgid "Signout"
+msgstr "تسجيل الخروج"
+
+#: Blogs/templates/blog_base.html:94 Blogs/templates/kemet/blog_base.html:93
+#: E_learning/settings.py:195
+#: library/templates/library/audio/audio_base.html:85 templates/base.html:330
+#: templates/kemet/home/base.html:333 templates/test.html:346
+msgid "English"
+msgstr "الانجليزية"
+
+#: Blogs/templates/blog_base.html:96 Blogs/templates/kemet/blog_base.html:95
+#: E_learning/settings.py:196
+#: library/templates/library/audio/audio_base.html:87 templates/base.html:332
+#: templates/kemet/home/base.html:335 templates/test.html:348
+msgid "Arabic"
+msgstr "العربية"
+
+#: Blogs/templates/blog_base.html:104 Blogs/templates/kemet/blog_base.html:103
 msgid "Search something…"
 msgstr "ابحث"
 
-#: .\Blogs\templates\blog_base.html:102
-#: .\accounts\templates\account_base.html:59
+#: Blogs/templates/blog_base.html:116 Blogs/templates/kemet/blog_base.html:115
+#: accounts/templates/account_base.html:60
 msgid "Back To Home"
 msgstr "العودة إلى الصفحة الرئيسية"
 
-#: .\Blogs\templates\blog_base.html:113 .\Blogs\templates\blog_base.html:116
+#: Blogs/templates/blog_base.html:127 Blogs/templates/blog_base.html:130
+#: Blogs/templates/kemet/blog_base.html:126
+#: Blogs/templates/kemet/blog_base.html:129
 msgid "Home Blogs"
 msgstr "المقالات"
 
-#: .\Blogs\templates\blog_base.html:121
+#: Blogs/templates/blog_base.html:132 Blogs/templates/kemet/blog_base.html:131
+#, fuzzy
+#| msgid "Home Blogs"
+msgid "Home Blogs list"
+msgstr "المقالات"
+
+#: Blogs/templates/blog_base.html:137 Blogs/templates/kemet/blog_base.html:136
 msgid "Blogs Type"
 msgstr "نوع المقال"
 
-#: .\Blogs\templates\blog_base.html:124
+#: Blogs/templates/blog_base.html:140 Blogs/templates/kemet/blog_base.html:139
 #, fuzzy
 #| msgid "Quote post"
 msgid "Article post"
 msgstr "اقتباسات هامة"
 
-#: .\Blogs\templates\blog_base.html:125
+#: Blogs/templates/blog_base.html:141 Blogs/templates/kemet/blog_base.html:140
 msgid "Gallery post"
 msgstr "منشورات الصور"
 
-#: .\Blogs\templates\blog_base.html:126
+#: Blogs/templates/blog_base.html:142 Blogs/templates/kemet/blog_base.html:141
 msgid "Video post"
 msgstr "أفلام الوثائقية"
 
-#: .\Blogs\templates\blog_base.html:127
+#: Blogs/templates/blog_base.html:143 Blogs/templates/kemet/blog_base.html:142
 msgid "Audio post"
 msgstr "منشورات صوتية"
 
-#: .\Blogs\templates\blog_base.html:128
+#: Blogs/templates/blog_base.html:144 Blogs/templates/kemet/blog_base.html:143
 msgid "Quote post"
 msgstr "اقتباسات هامة"
 
-#: .\Blogs\templates\blog_base.html:129
+#: Blogs/templates/blog_base.html:145 Blogs/templates/kemet/blog_base.html:144
 msgid "Link post"
 msgstr "الروابط الهامة"
 
-#: .\Blogs\templates\blog_base.html:134
+#: Blogs/templates/blog_base.html:150 Blogs/templates/kemet/blog_base.html:149
 msgid "Pricing"
 msgstr "السعر"
 
-#: .\Blogs\templates\blog_base.html:177 .\templates\teachers-single.html:81
+#: Blogs/templates/blog_base.html:193 Blogs/templates/kemet/blog_base.html:192
+#: templates/kemet/home/teachers-single.html:82
+#: templates/teachers-single.html:81
 msgid "About"
 msgstr "عن أݘارثا"
 
-#: .\Blogs\templates\blog_base.html:178
-#| msgid ""
-#| "Deep within you, the light you are looking for. <br/> You have the "
-#| "capabilities that successful people possess. <br /> Just discover it..then "
-#| "invest it in yourself. <br /> Eternal... <br />Discover your inner kingdom"
+#: Blogs/templates/blog_base.html:194 Blogs/templates/kemet/blog_base.html:193
 msgid ""
 "Deep within you, the light you are looking for. <br/> You have the "
 "capabilities that successful people possess. <br/> Just discover it..then "
@@ -169,163 +257,236 @@ msgstr ""
 "أيها  أبدي ...\n"
 " اكتشف مملكتك الداخلية."
 
-#: .\Blogs\templates\blog_base.html:185 .\templates\base.html:497
+#: Blogs/templates/blog_base.html:201 Blogs/templates/kemet/blog_base.html:200
+#: templates/base.html:543 templates/kemet/home/base.html:522
+#: templates/test.html:532
 msgid "Sitemap"
 msgstr ""
 
-#: .\Blogs\templates\blog_base.html:199 .\templates\base.html:517
+#: Blogs/templates/blog_base.html:215 Blogs/templates/kemet/blog_base.html:214
+#: templates/base.html:563 templates/kemet/home/base.html:542
+#: templates/test.html:552
 #, fuzzy
 #| msgid "Our course"
 msgid "Our Products"
 msgstr "كورساتنا"
 
-#: .\Blogs\templates\blog_base.html:224
+#: Blogs/templates/blog_base.html:240 Blogs/templates/kemet/blog_base.html:239
 msgid "Terms"
 msgstr "الشروط والأحكام"
 
-#: .\Blogs\templates\blog_base.html:224 .\templates\base.html:549
+#: Blogs/templates/blog_base.html:240 Blogs/templates/kemet/blog_base.html:239
+#: templates/base.html:585 templates/kemet/home/base.html:564
+#: templates/test.html:574
 msgid "Privacy"
 msgstr "الخصوصية"
 
-#: .\Blogs\templates\blog_search.html:76
-#: .\Blogs\templates\blog_search.html:134 .\Blogs\templates\blog_type.html:78
-#: .\Blogs\templates\blog_type.html:136 .\Blogs\templates\blogs.html:205
-#: .\Blogs\templates\blogs.html:263 .\Blogs\templates\blogs_2.html:208
-#: .\Blogs\templates\blogs_2.html:266
+#: Blogs/templates/blog_search.html:78 Blogs/templates/blog_search.html:136
+#: Blogs/templates/blog_type.html:80 Blogs/templates/blog_type.html:138
+#: Blogs/templates/blogs.html:207 Blogs/templates/blogs.html:265
+#: Blogs/templates/blogs_2.html:210 Blogs/templates/blogs_2.html:268
+#: Blogs/templates/blogs_category.html:210
+#: Blogs/templates/blogs_category.html:268
+#: Blogs/templates/kemet/blog_search.html:78
+#: Blogs/templates/kemet/blog_search.html:136
+#: Blogs/templates/kemet/blog_type.html:80
+#: Blogs/templates/kemet/blog_type.html:138
+#: Blogs/templates/kemet/blogs.html:207 Blogs/templates/kemet/blogs.html:265
+#: Blogs/templates/kemet/blogs_2.html:210
+#: Blogs/templates/kemet/blogs_2.html:268
+#: Blogs/templates/kemet/blogs_category.html:210
+#: Blogs/templates/kemet/blogs_category.html:268
+#: Blogs/templates/kemet/test.html:210 Blogs/templates/kemet/test.html:268
 msgid "Read More"
 msgstr "اقرأ المزيد.."
 
-#: .\Blogs\templates\blog_search.html:166 .\Blogs\templates\blog_type.html:168
-#: .\Blogs\templates\blogs.html:295 .\Blogs\templates\blogs_2.html:298
+#: Blogs/templates/blog_search.html:168 Blogs/templates/blog_type.html:170
+#: Blogs/templates/blogs.html:297 Blogs/templates/blogs_2.html:300
+#: Blogs/templates/blogs_category.html:300
+#: Blogs/templates/kemet/blog_search.html:168
+#: Blogs/templates/kemet/blog_type.html:170
+#: Blogs/templates/kemet/blogs.html:297 Blogs/templates/kemet/blogs_2.html:300
+#: Blogs/templates/kemet/blogs_category.html:300
+#: Blogs/templates/kemet/test.html:300
 msgid "Show More"
 msgstr "أظهر المزيد.."
 
-#: .\Blogs\templates\blog_search.html:197
+#: Blogs/templates/blog_search.html:199
+#: Blogs/templates/kemet/blog_search.html:199
 msgid "Sorry,we didn\"t Find What You Want"
 msgstr "عذراً - لم نعثر على ما تبحث عنه ☹"
 
-#: .\Blogs\templates\blog_search.html:216 .\Blogs\templates\blog_type.html:215
-#: .\Blogs\templates\blogs.html:342 .\Blogs\templates\blogs_2.html:345
-#: .\accounts\templates\account_blog_payment.html:76
-#: .\accounts\templates\account_consult.html:72
-#: .\accounts\templates\account_consultant_payment.html:101
-#: .\accounts\templates\account_course.html:69
-#: .\accounts\templates\account_course_payment.html:103
-#: .\accounts\templates\account_events.html:94
+#: Blogs/templates/blog_search.html:218 Blogs/templates/blog_type.html:217
+#: Blogs/templates/blogs.html:344 Blogs/templates/blogs_2.html:347
+#: Blogs/templates/blogs_category.html:347
+#: Blogs/templates/kemet/blog_search.html:218
+#: Blogs/templates/kemet/blog_type.html:217
+#: Blogs/templates/kemet/blogs.html:344 Blogs/templates/kemet/blogs_2.html:347
+#: Blogs/templates/kemet/blogs_category.html:347
+#: Blogs/templates/kemet/test.html:347
+#: Dashboard/templates/dashboard_movies_payment.html:101
+#: accounts/templates/account_audio_book_payment.html:101
+#: accounts/templates/account_audio_payment.html:101
+#: accounts/templates/account_blog_payment.html:76
+#: accounts/templates/account_consult.html:73
+#: accounts/templates/account_consultant_payment.html:101
+#: accounts/templates/account_course.html:70
+#: accounts/templates/account_course_payment.html:104
+#: accounts/templates/account_events.html:95
+#: accounts/templates/account_movies_payment.html:101
 msgid "Next"
 msgstr "التالي "
 
-#: .\Blogs\templates\blog_type.html:202 .\Blogs\templates\blogs.html:329
-#: .\Blogs\templates\blogs_2.html:332
+#: Blogs/templates/blog_type.html:204 Blogs/templates/blogs.html:331
+#: Blogs/templates/blogs_2.html:334 Blogs/templates/blogs_category.html:334
+#: Blogs/templates/kemet/blog_type.html:204
+#: Blogs/templates/kemet/blogs.html:331 Blogs/templates/kemet/blogs_2.html:334
+#: Blogs/templates/kemet/blogs_category.html:334
+#: Blogs/templates/kemet/test.html:334
 msgid "Prev"
 msgstr "السابق"
 
-#: .\Blogs\templates\blog_type.html:262
+#: Blogs/templates/blog_type.html:264 Blogs/templates/kemet/blog_type.html:264
 msgid "Sorry"
 msgstr "عذراً"
 
-#: .\Blogs\templates\blog_type.html:262
+#: Blogs/templates/blog_type.html:264 Blogs/templates/kemet/blog_type.html:264
 msgid "Blog is Empty"
 msgstr "الصفحة  فارغة حالياً ☹"
 
-#: .\Blogs\templates\blogs.html:358 .\Blogs\templates\blogs_2.html:406
+#: Blogs/templates/blogs.html:360 Blogs/templates/blogs_2.html:408
+#: Blogs/templates/blogs_category.html:408 Blogs/templates/kemet/blogs.html:360
+#: Blogs/templates/kemet/blogs_2.html:408
+#: Blogs/templates/kemet/blogs_category.html:408
+#: Blogs/templates/kemet/test.html:408
 msgid "Our Teachers"
 msgstr "المدربين"
 
-#: .\Blogs\templates\blogs_2.html:394
+#: Blogs/templates/blogs_2.html:396 Blogs/templates/blogs_category.html:396
+#: Blogs/templates/kemet/blogs_2.html:396
+#: Blogs/templates/kemet/blogs_category.html:396
+#: Blogs/templates/kemet/test.html:396
 msgid "Sorry,Blog is Empty"
 msgstr "عذراً, الصفحة فارغة حالياً ☹"
 
-#: .\Blogs\templates\pricing.html:139
+#: Blogs/templates/kemet/pricing.html:141 Blogs/templates/pricing.html:141
 msgid "Pricing Tables"
 msgstr "جدول التسعير"
 
-#: .\Blogs\templates\pricing.html:155 .\templates\account\login.html:38
-#: .\templates\account\login.html:124 .\templates\account\signup.html:37
-#: .\templates\account\signup.html:68
+#: Blogs/templates/kemet/pricing.html:157 Blogs/templates/pricing.html:157
+#: templates/account/login.html:38 templates/account/login.html:125
+#: templates/account/signup.html:37 templates/account/signup.html:68
 msgid "Sign Up"
 msgstr "تسجيل"
 
-#: .\Consultant\models.py:21
+#: Consultant/models.py:21
 msgid "Saturday"
 msgstr ""
 
-#: .\Consultant\models.py:22
+#: Consultant/models.py:22
 msgid "Sunday"
 msgstr ""
 
-#: .\Consultant\models.py:23
+#: Consultant/models.py:23
 msgid "Monday"
 msgstr ""
 
-#: .\Consultant\models.py:24
+#: Consultant/models.py:24
 msgid "Tuesday"
 msgstr ""
 
-#: .\Consultant\models.py:25
+#: Consultant/models.py:25
 msgid "Wednesday"
 msgstr ""
 
-#: .\Consultant\models.py:26
+#: Consultant/models.py:26
 msgid "Thursday"
 msgstr ""
 
-#: .\Consultant\models.py:27
+#: Consultant/models.py:27
 msgid "Friday"
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:38
-#: .\Consultant\templates\consultant.html:42
-#: .\Consultant\templates\consultant_teacher.html:53
-#: .\Consultant\templates\consultant_teacher.html:57 .\templates\base.html:243
-#: .\templates\base.html:521
+#: Consultant/templates/consultant.html:45
+#: Consultant/templates/consultant.html:49
+#: Consultant/templates/consultant_teacher.html:58
+#: Consultant/templates/consultant_teacher.html:62
+#: Consultant/templates/kemet/consultant.html:45
+#: Consultant/templates/kemet/consultant.html:49
+#: Consultant/templates/kemet/consultant_teacher.html:58
+#: Consultant/templates/kemet/consultant_teacher.html:62
+#: templates/base.html:259 templates/base.html:567
+#: templates/kemet/home/base.html:262 templates/kemet/home/base.html:546
+#: templates/test.html:269 templates/test.html:556
 #, fuzzy
 #| msgid "Consultants"
 msgid "Consultations"
 msgstr "الاستشاريين"
 
-#: .\Consultant\templates\consultant.html:41
-#: .\Consultant\templates\consultant_teacher.html:56
-#: .\Dashboard\templates\dashboard_demo_event.html:17
-#: .\templates\about.html:15 .\templates\base.html:221
-#: .\templates\contact.html:32 .\templates\course-single.html:75
-#: .\templates\courses.html:17 .\templates\event_single.html:17
-#: .\templates\events.html:15 .\templates\global_search.html:15
-#: .\templates\home.html:6 .\templates\teachers-single.html:16
-#: .\templates\teachers.html:16 .\templates\video.html:21
-#: .\templates\wishlist.html:15
+#: Consultant/templates/consultant.html:48
+#: Consultant/templates/consultant_teacher.html:61
+#: Consultant/templates/kemet/consultant.html:48
+#: Consultant/templates/kemet/consultant_teacher.html:61
+#: Dashboard/templates/dashboard_demo_event.html:19
+#: library/templates/library/movies.html:19
+#: library/templates/library/show_movie.html:82
+#: library/templates/library/single_movie.html:82 templates/about.html:15
+#: templates/base.html:237 templates/branch.html:17 templates/contact.html:28
+#: templates/course-single.html:78 templates/course_category.html:17
+#: templates/courses.html:19 templates/event_single.html:19
+#: templates/events.html:15 templates/global_search.html:15
+#: templates/home.html:6 templates/kemet/home/about.html:16
+#: templates/kemet/home/base.html:236 templates/kemet/home/branch.html:18
+#: templates/kemet/home/contact.html:29
+#: templates/kemet/home/course-single.html:79
+#: templates/kemet/home/course_category.html:18
+#: templates/kemet/home/courses.html:19
+#: templates/kemet/home/event_single.html:18
+#: templates/kemet/home/events.html:17
+#: templates/kemet/home/global_search.html:16 templates/kemet/home/home.html:7
+#: templates/kemet/home/teachers-single.html:17
+#: templates/kemet/home/teachers.html:17 templates/kemet/home/video.html:22
+#: templates/kemet/home/wishlist.html:16 templates/teachers-single.html:16
+#: templates/teachers.html:16 templates/test.html:260 templates/video.html:21
+#: templates/wishlist.html:15
 msgid "Home"
 msgstr "الرئيسية"
 
-#: .\Consultant\templates\consultant.html:59
+#: Consultant/templates/consultant.html:66
+#: Consultant/templates/kemet/consultant.html:66
 msgid "Teachers available for consultation"
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:60
+#: Consultant/templates/consultant.html:67
+#: Consultant/templates/kemet/consultant.html:67
 msgid ""
-"There are times when we feel that it is the end and then discover that it is"
-" the beginning, and there are doors that we feel closed and then discover "
+"There are times when we feel that it is the end and then discover that it is "
+"the beginning, and there are doors that we feel closed and then discover "
 "that they are the real entrance."
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:81
+#: Consultant/templates/consultant.html:88
+#: Consultant/templates/kemet/consultant.html:88
 #, fuzzy
 #| msgid "Our Teachers"
 msgid "Book Our Teacher"
 msgstr "المدربين"
 
-#: .\Consultant\templates\consultant.html:82
+#: Consultant/templates/consultant.html:89
+#: Consultant/templates/kemet/consultant.html:89
 msgid "Meet your favorite teacher and book a counseling session in Agartha"
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:86
+#: Consultant/templates/consultant.html:93
+#: Consultant/templates/kemet/consultant.html:93
 msgid ""
 "You can book a consultation with the preferred coach at the times available "
 "for each coach.After setting the date and booking, the reservation will be "
 "confirmed by the coach."
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:89
+#: Consultant/templates/consultant.html:96
+#: Consultant/templates/kemet/consultant.html:96
 msgid ""
 "You will receive an email in case of refusal. You will receive an email to "
 "notify you of the rejection of the reservation and the reason for the "
@@ -334,488 +495,796 @@ msgid ""
 "chosen according to Cairo time, so be sure to choose the date accurately."
 msgstr ""
 
-#: .\Consultant\templates\consultant.html:91
+#: Consultant/templates/consultant.html:98
+#: Consultant/templates/kemet/consultant.html:98
 #, fuzzy
 #| msgid "Read More"
 msgid "Read More.."
 msgstr "اقرأ المزيد.."
 
-#: .\Consultant\templates\consultant.html:145
-#: .\Consultant\templates\consultant.html:202
+#: Consultant/templates/consultant.html:155
+#: Consultant/templates/kemet/consultant.html:155
 #, fuzzy
 #| msgid "Profile"
 msgid "View Profile"
 msgstr "الملف الشخصي"
 
-#: .\Consultant\templates\consultant.html:148
-#: .\Consultant\templates\consultant.html:205
+#: Consultant/templates/consultant.html:158
+#: Consultant/templates/kemet/consultant.html:158
 msgid "Book Now"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:114
+#: Consultant/templates/consultant_teacher.html:119
+#: Consultant/templates/kemet/consultant_teacher.html:119
 msgid "Mon"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:119
+#: Consultant/templates/consultant_teacher.html:124
+#: Consultant/templates/kemet/consultant_teacher.html:124
 msgid "Tue"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:123
+#: Consultant/templates/consultant_teacher.html:128
+#: Consultant/templates/kemet/consultant_teacher.html:128
 msgid "Wed"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:127
+#: Consultant/templates/consultant_teacher.html:132
+#: Consultant/templates/kemet/consultant_teacher.html:132
 msgid "Thu"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:131
+#: Consultant/templates/consultant_teacher.html:136
+#: Consultant/templates/kemet/consultant_teacher.html:136
 msgid "Fri"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:135
+#: Consultant/templates/consultant_teacher.html:140
+#: Consultant/templates/kemet/consultant_teacher.html:140
 #, fuzzy
 #| msgid "Status"
 msgid "Sat"
 msgstr "الحالة"
 
-#: .\Consultant\templates\consultant_teacher.html:139
+#: Consultant/templates/consultant_teacher.html:144
+#: Consultant/templates/kemet/consultant_teacher.html:144
 msgid "Sun"
 msgstr ""
 
-#: .\Consultant\templates\consultant_teacher.html:274
-#: .\Consultant\templates\consultant_teacher.html:323
-#: .\Consultant\templates\consultant_teacher.html:374
-#: .\Consultant\templates\consultant_teacher.html:427
-#: .\Consultant\templates\consultant_teacher.html:479
-#: .\Consultant\templates\consultant_teacher.html:530
-#: .\Consultant\templates\consultant_teacher.html:582
+#: Consultant/templates/consultant_teacher.html:279
+#: Consultant/templates/consultant_teacher.html:328
+#: Consultant/templates/consultant_teacher.html:379
+#: Consultant/templates/consultant_teacher.html:432
+#: Consultant/templates/consultant_teacher.html:484
+#: Consultant/templates/consultant_teacher.html:535
+#: Consultant/templates/consultant_teacher.html:587
+#: Consultant/templates/kemet/consultant_teacher.html:279
+#: Consultant/templates/kemet/consultant_teacher.html:328
+#: Consultant/templates/kemet/consultant_teacher.html:379
+#: Consultant/templates/kemet/consultant_teacher.html:432
+#: Consultant/templates/kemet/consultant_teacher.html:484
+#: Consultant/templates/kemet/consultant_teacher.html:535
+#: Consultant/templates/kemet/consultant_teacher.html:587
 #, fuzzy
 #| msgid "Available To"
 msgid "Available Time For Teacher"
 msgstr "إلى"
 
-#: .\Dashboard\templates\dashboard_demo_event.html:18
-#: .\accounts\templates\account_base.html:114
-#: .\accounts\templates\account_base.html:119 .\templates\base.html:230
-#: .\templates\base.html:523 .\templates\event_single.html:18
-#: .\templates\events.html:12 .\templates\events.html:16
+#: Dashboard/templates/dashboard_demo_event.html:20
+#: accounts/templates/account_base.html:119
+#: accounts/templates/account_base.html:124 templates/base.html:246
+#: templates/base.html:569 templates/event_single.html:20
+#: templates/events.html:12 templates/events.html:16
+#: templates/kemet/home/base.html:245 templates/kemet/home/base.html:548
+#: templates/kemet/home/event_single.html:19
+#: templates/kemet/home/events.html:14 templates/kemet/home/events.html:18
+#: templates/test.html:278 templates/test.html:558
 msgid "Events"
 msgstr "المناسبات"
 
-#: .\Dashboard\templates\dashboard_demo_event.html:51
-#: .\templates\event_single.html:51
+#: Dashboard/templates/dashboard_demo_event.html:53
+#: templates/event_single.html:53 templates/kemet/home/event_single.html:52
 msgid "Book Your Seat"
 msgstr "احجز مقعدك"
 
-#: .\Dashboard\templates\dashboard_demo_event.html:62
-#: .\accounts\templates\account_events.html:31
-#: .\templates\event_single.html:63
+#: Dashboard/templates/dashboard_demo_event.html:64
+#: accounts/templates/account_events.html:32 templates/event_single.html:65
+#: templates/kemet/home/event_single.html:64
 msgid "Start Time"
 msgstr "وقت البدء"
 
-#: .\Dashboard\templates\dashboard_demo_event.html:73
-#: .\templates\event_single.html:74
+#: Dashboard/templates/dashboard_demo_event.html:75
+#: templates/event_single.html:76 templates/kemet/home/event_single.html:75
 msgid "Finish Time"
 msgstr "وقت الانتهاء"
 
-#: .\Dashboard\templates\dashboard_demo_event.html:84
-#: .\templates\event_single.html:85
+#: Dashboard/templates/dashboard_demo_event.html:86
+#: templates/event_single.html:87 templates/kemet/home/event_single.html:86
 msgid "Address"
 msgstr "عنوان اللقاء"
 
-#: .\Dashboard\templates\dashboard_demo_event.html:97
-#: .\templates\event_single.html:98
+#: Dashboard/templates/dashboard_demo_event.html:99
+#: templates/event_single.html:100 templates/kemet/home/event_single.html:99
 msgid "Zoom Link"
 msgstr "رابط الزووم"
 
-#: .\Dashboard\templates\dashboard_demo_event.html:98
-#: .\templates\event_single.html:99
+#: Dashboard/templates/dashboard_demo_event.html:100
+#: templates/event_single.html:101 templates/kemet/home/event_single.html:100
 msgid "Click The Link"
 msgstr "اضغط على الرابط"
 
-#: .\E_learning\settings.py:194 .\templates\base.html:315
-msgid "English"
-msgstr "الانجليزية"
+#: Dashboard/templates/dashboard_movies_payment.html:29
+#: accounts/templates/account_audio_book_payment.html:29
+#: accounts/templates/account_audio_payment.html:29
+#: accounts/templates/account_blog_payment.html:29
+#: accounts/templates/account_consult.html:29
+#: accounts/templates/account_consultant_payment.html:29
+#: accounts/templates/account_course_payment.html:30
+#: accounts/templates/account_events.html:28
+#: accounts/templates/account_movies_payment.html:29
+#: library/templates/library/show_movie.html:114
+#: library/templates/library/single_movie.html:114
+msgid "User"
+msgstr "مستخدم"
 
-#: .\E_learning\settings.py:195 .\templates\base.html:312
-msgid "Arabic"
-msgstr "العربية"
+#: Dashboard/templates/dashboard_movies_payment.html:30
+#: accounts/templates/account_audio_book_payment.html:30
+#: accounts/templates/account_audio_payment.html:30
+#: accounts/templates/account_blog_payment.html:30
+#: accounts/templates/account_consultant_payment.html:30
+#: accounts/templates/account_course_payment.html:31
+#: accounts/templates/account_movies_payment.html:30
+msgid "Method"
+msgstr "طرق"
 
-#: .\accounts\templates\account_base.html:49
-msgid "User Dashboard"
-msgstr "لوحه التحكم"
+#: Dashboard/templates/dashboard_movies_payment.html:31
+#: accounts/templates/account_audio_book_payment.html:31
+#: accounts/templates/account_audio_payment.html:31
+#: accounts/templates/account_blog_payment.html:31
+#: accounts/templates/account_consultant_payment.html:31
+#: accounts/templates/account_course_payment.html:32
+#: accounts/templates/account_movies_payment.html:31
+msgid "Transaction"
+msgstr "التحويل"
 
-#: .\accounts\templates\account_base.html:65
-msgid "Teacher Dashboard"
-msgstr "لوحة تحكم الأدمن"
+#: Dashboard/templates/dashboard_movies_payment.html:32
+#: accounts/templates/account_audio_book_payment.html:32
+#: accounts/templates/account_audio_payment.html:32
+#: accounts/templates/account_blog_payment.html:32
+#: accounts/templates/account_consultant_payment.html:32
+#: accounts/templates/account_course_payment.html:34
+#: accounts/templates/account_movies_payment.html:32
+msgid "Payment Image"
+msgstr "صورة وصل الدفع"
 
-#: .\accounts\templates\account_base.html:73
-msgid "Pages"
-msgstr "الصفحات"
+#: Dashboard/templates/dashboard_movies_payment.html:34
+#: accounts/templates/account_audio_book_payment.html:34
+#: accounts/templates/account_audio_payment.html:34
+#: accounts/templates/account_blog_payment.html:33
+#: accounts/templates/account_consult.html:35
+#: accounts/templates/account_consultant_payment.html:34
+#: accounts/templates/account_course_payment.html:35
+#: accounts/templates/account_movies_payment.html:34
+msgid "Status"
+msgstr "الحالة"
 
-#: .\accounts\templates\account_base.html:81
-#: .\accounts\templates\account_consultant_payment.html:6
+#: Dashboard/templates/dashboard_movies_payment.html:35
+#: accounts/templates/account_audio_book_payment.html:35
+#: accounts/templates/account_audio_payment.html:35
+#: accounts/templates/account_blog_payment.html:36
+#: accounts/templates/account_consultant_payment.html:35
+#: accounts/templates/account_course_payment.html:36
+#: accounts/templates/account_events.html:35
+#: accounts/templates/account_movies_payment.html:35
+msgid "Action"
+msgstr ""
+
+#: Dashboard/templates/dashboard_movies_payment.html:48
+#: accounts/templates/account_audio_book_payment.html:48
+#: accounts/templates/account_audio_payment.html:48
+#: accounts/templates/account_blog_payment.html:47
+#: accounts/templates/account_consultant_payment.html:48
+#: accounts/templates/account_course_payment.html:50
+#: accounts/templates/account_movies_payment.html:48
+msgid "Image Link"
+msgstr "رابط الصورة"
+
+#: Dashboard/templates/dashboard_movies_payment.html:55
+#: accounts/templates/account_audio_book_payment.html:55
+#: accounts/templates/account_audio_payment.html:55
+#: accounts/templates/account_blog_payment.html:53
+#: accounts/templates/account_consultant_payment.html:55
+#: accounts/templates/account_course_payment.html:57
+#: accounts/templates/account_events.html:50
+#: accounts/templates/account_movies_payment.html:55
+msgid "Edit"
+msgstr "تعديل"
+
+#: Dashboard/templates/dashboard_movies_payment.html:58
+#: Dashboard/templates/dashboard_movies_payment.html:77
+#: accounts/templates/account_audio_book_payment.html:58
+#: accounts/templates/account_audio_book_payment.html:77
+#: accounts/templates/account_audio_payment.html:58
+#: accounts/templates/account_audio_payment.html:77
+#: accounts/templates/account_consultant_payment.html:58
+#: accounts/templates/account_consultant_payment.html:77
+#: accounts/templates/account_course_payment.html:60
+#: accounts/templates/account_course_payment.html:80
+#: accounts/templates/account_movies_payment.html:58
+#: accounts/templates/account_movies_payment.html:77
+msgid "Refund"
+msgstr ""
+
+#: Dashboard/templates/dashboard_movies_payment.html:89
+#: accounts/templates/account_audio_book_payment.html:89
+#: accounts/templates/account_audio_payment.html:89
+#: accounts/templates/account_blog_payment.html:64
+#: accounts/templates/account_consult.html:61
+#: accounts/templates/account_consultant_payment.html:89
+#: accounts/templates/account_course.html:58
+#: accounts/templates/account_course_payment.html:92
+#: accounts/templates/account_events.html:83
+#: accounts/templates/account_movies_payment.html:89
+msgid "Previous"
+msgstr "السابق"
+
+#: accounts/templates/account_audio_book_payment.html:6
+#: accounts/templates/account_audio_payment.html:6
+#: accounts/templates/account_base.html:82
+#: accounts/templates/account_consultant_payment.html:6
+#: accounts/templates/account_movies_payment.html:6
 msgid "Payments"
 msgstr "عمليات الدفع"
 
-#: .\accounts\templates\account_base.html:85
+#: accounts/templates/account_audio_book_payment.html:13
+#: accounts/templates/account_base.html:92
+#, fuzzy
+#| msgid "log Payments"
+msgid "Audio Book Payments"
+msgstr "سجل المدفوعات"
+
+#: accounts/templates/account_audio_payment.html:13
+#, fuzzy
+#| msgid "log Payments"
+msgid "Audio Payments"
+msgstr "سجل المدفوعات"
+
+#: accounts/templates/account_base.html:50
+msgid "User Dashboard"
+msgstr "لوحه التحكم"
+
+#: accounts/templates/account_base.html:66
+msgid "Teacher Dashboard"
+msgstr "لوحة تحكم الأدمن"
+
+#: accounts/templates/account_base.html:74
+msgid "Pages"
+msgstr "الصفحات"
+
+#: accounts/templates/account_base.html:86
 msgid "All Payment"
 msgstr "قائمة عمليات الدفع"
 
-#: .\accounts\templates\account_base.html:86
+#: accounts/templates/account_base.html:87
 #, fuzzy
 #| msgid "log Payments"
 msgid "Blog Payments"
 msgstr "سجل المدفوعات"
 
-#: .\accounts\templates\account_base.html:87
-#: .\accounts\templates\account_consultant_payment.html:13
+#: accounts/templates/account_base.html:88
+#: accounts/templates/account_consultant_payment.html:13
 msgid "Consultant Payments"
 msgstr "الدفعات الخاصة في الاستشارات"
 
-#: .\accounts\templates\account_base.html:88
-#: .\accounts\templates\account_course_payment.html:13
+#: accounts/templates/account_base.html:89
+#: accounts/templates/account_course_payment.html:14
 msgid "Course Payments"
 msgstr "الدفعات الخاصة في الكورسات"
 
-#: .\accounts\templates\account_base.html:99
-#: .\accounts\templates\account_course_payment.html:32
+#: accounts/templates/account_base.html:90
+#: accounts/templates/account_movies_payment.html:13
+#, fuzzy
+#| msgid "Course Payments"
+msgid "Movies Payments"
+msgstr "الدفعات الخاصة في الكورسات"
+
+#: accounts/templates/account_base.html:91
+#, fuzzy
+#| msgid "Course Payments"
+msgid "Music Payments"
+msgstr "الدفعات الخاصة في الكورسات"
+
+#: accounts/templates/account_base.html:104
+#: accounts/templates/account_course_payment.html:33
 msgid "Course"
 msgstr "الكورس"
 
-#: .\accounts\templates\account_base.html:103
+#: accounts/templates/account_base.html:108
 msgid "ll Courses"
 msgstr "الكورسات"
 
-#: .\accounts\templates\account_base.html:104
-#: .\accounts\templates\account_course.html:12 .\templates\base.html:226
-#: .\templates\base.html:520 .\templates\course-single.html:76
-#: .\templates\courses.html:5 .\templates\courses.html:18
-#: .\templates\global_search.html:16 .\templates\home.html:248
-#: .\templates\teachers-single.html:71 .\templates\video.html:22
+#: accounts/templates/account_base.html:109
+#: accounts/templates/account_course.html:13 templates/base.html:242
+#: templates/base.html:566 templates/course-single.html:79
+#: templates/courses.html:7 templates/courses.html:20
+#: templates/global_search.html:16 templates/home.html:238
+#: templates/kemet/home/base.html:241 templates/kemet/home/base.html:545
+#: templates/kemet/home/course-single.html:80
+#: templates/kemet/home/courses.html:7 templates/kemet/home/courses.html:20
+#: templates/kemet/home/global_search.html:17
+#: templates/kemet/home/home.html:239
+#: templates/kemet/home/teachers-single.html:72
+#: templates/kemet/home/video.html:23 templates/teachers-single.html:71
+#: templates/test.html:265 templates/test.html:555 templates/video.html:22
 msgid "Courses"
 msgstr "الكورسات"
 
-#: .\accounts\templates\account_base.html:118
+#: accounts/templates/account_base.html:123
 msgid "All Events"
 msgstr "قائمة المناسبات"
 
-#: .\accounts\templates\account_base.html:129
-#: .\accounts\templates\account_base.html:134
+#: accounts/templates/account_base.html:134
+#: accounts/templates/account_base.html:139
 msgid "Consultants"
 msgstr "الاستشاريين"
 
-#: .\accounts\templates\account_base.html:133
+#: accounts/templates/account_base.html:138
 msgid "All Consultants"
 msgstr "قائمة الاستشارات"
 
-#: .\accounts\templates\account_base.html:259
-#: .\accounts\templates\account_base.html:324 .\templates\base.html:349
+#: accounts/templates/account_base.html:149
+#: accounts/templates/account_base.html:153
+#, fuzzy
+#| msgid "Join our Teachers ?"
+msgid "Join our Teachers"
+msgstr "انضم إلى قائمة مدربي أچـارثا"
+
+#: accounts/templates/account_base.html:154
+#, fuzzy
+#| msgid "Our Teachers"
+msgid "Become Teacher"
+msgstr "المدربين"
+
+#: accounts/templates/account_base.html:280
+#: accounts/templates/account_base.html:345 templates/base.html:372
+#: templates/kemet/home/base.html:372 templates/test.html:382
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
-#: .\accounts\templates\account_base.html:316
+#: accounts/templates/account_base.html:337
 msgid "Ready to Leave ?"
 msgstr "هل تريد الخروج حقاً ؟"
 
-#: .\accounts\templates\account_base.html:321
+#: accounts/templates/account_base.html:342
 msgid "Select \"Logout\" below if you are ready to end your current session"
 msgstr "حدد \"تسجيل الخروج\" أدناه إذا كنت مستعداً لإنهاء الجلسة الحالية."
 
-#: .\accounts\templates\account_base.html:323
+#: accounts/templates/account_base.html:344
 msgid "Cancel"
 msgstr "إلغاء"
 
-#: .\accounts\templates\account_blog_payment.html:28
-#: .\accounts\templates\account_consult.html:28
-#: .\accounts\templates\account_consultant_payment.html:29
-#: .\accounts\templates\account_course_payment.html:29
-#: .\accounts\templates\account_events.html:27
-msgid "User"
-msgstr "مستخدم"
-
-#: .\accounts\templates\account_blog_payment.html:29
-#: .\accounts\templates\account_consultant_payment.html:30
-#: .\accounts\templates\account_course_payment.html:30
-msgid "Method"
-msgstr "طرق"
-
-#: .\accounts\templates\account_blog_payment.html:30
-#: .\accounts\templates\account_consultant_payment.html:31
-#: .\accounts\templates\account_course_payment.html:31
-msgid "Transaction"
-msgstr "التحويل"
-
-#: .\accounts\templates\account_blog_payment.html:31
-#: .\accounts\templates\account_consultant_payment.html:32
-#: .\accounts\templates\account_course_payment.html:33
-msgid "Payment Image"
-msgstr "صورة وصل الدفع"
-
-#: .\accounts\templates\account_blog_payment.html:32
-#: .\accounts\templates\account_consult.html:34
-#: .\accounts\templates\account_consultant_payment.html:34
-#: .\accounts\templates\account_course_payment.html:34
-msgid "Status"
-msgstr "الحالة"
-
-#: .\accounts\templates\account_blog_payment.html:33
-#: .\accounts\templates\account_events.html:33
+#: accounts/templates/account_blog_payment.html:34
+#: accounts/templates/account_events.html:34
 msgid "Expired"
 msgstr "انتهاء الصلاحية"
 
-#: .\accounts\templates\account_blog_payment.html:34
+#: accounts/templates/account_blog_payment.html:35
 msgid "Expire Date"
 msgstr "تاريخ انتهاء الصلاحية"
 
-#: .\accounts\templates\account_blog_payment.html:35
-#: .\accounts\templates\account_consultant_payment.html:35
-#: .\accounts\templates\account_course_payment.html:35
-#: .\accounts\templates\account_events.html:34
-msgid "Action"
-msgstr ""
-
-#: .\accounts\templates\account_blog_payment.html:46
-#: .\accounts\templates\account_consultant_payment.html:48
-#: .\accounts\templates\account_course_payment.html:49
-msgid "Image Link"
-msgstr "رابط الصورة"
-
-#: .\accounts\templates\account_blog_payment.html:53
-#: .\accounts\templates\account_consultant_payment.html:55
-#: .\accounts\templates\account_course_payment.html:56
-#: .\accounts\templates\account_events.html:49
-msgid "Edit"
-msgstr "تعديل"
-
-#: .\accounts\templates\account_blog_payment.html:64
-#: .\accounts\templates\account_consult.html:60
-#: .\accounts\templates\account_consultant_payment.html:89
-#: .\accounts\templates\account_course.html:57
-#: .\accounts\templates\account_course_payment.html:91
-#: .\accounts\templates\account_events.html:82
-msgid "Previous"
-msgstr "السابق"
-
-#: .\accounts\templates\account_consult.html:12
-#: .\accounts\templates\account_events.html:12
+#: accounts/templates/account_consult.html:13
+#: accounts/templates/account_events.html:13
 msgid "Blogs"
 msgstr "المدونات"
 
-#: .\accounts\templates\account_consult.html:29
-#: .\accounts\templates\account_course.html:28
-#: .\templates\course-single.html:106 .\templates\video.html:52
+#: accounts/templates/account_consult.html:30
+#: accounts/templates/account_course.html:29 templates/course-single.html:109
+#: templates/kemet/home/course-single.html:110
+#: templates/kemet/home/video.html:53 templates/video.html:52
 msgid "Teacher"
 msgstr "المدربين"
 
-#: .\accounts\templates\account_consult.html:30
-#: .\accounts\templates\account_events.html:30
+#: accounts/templates/account_consult.html:31
+#: accounts/templates/account_events.html:31
 msgid "Date"
 msgstr "تاريخ"
 
-#: .\accounts\templates\account_consult.html:31
+#: accounts/templates/account_consult.html:32
 msgid "From"
 msgstr "من"
 
-#: .\accounts\templates\account_consult.html:32
+#: accounts/templates/account_consult.html:33
 msgid "To"
 msgstr "إلى"
 
-#: .\accounts\templates\account_consult.html:33
-#: .\accounts\templates\account_course.html:30
-#: .\templates\course-single.html:361
+#: accounts/templates/account_consult.html:34
+#: accounts/templates/account_course.html:31
+#: library/templates/library/show_movie.html:272
+#: library/templates/library/single_movie.html:272
+#: templates/course-single.html:364 templates/kemet/home/course-single.html:365
 msgid "Price"
 msgstr "السعر"
 
-#: .\accounts\templates\account_consultant_payment.html:58
-#: .\accounts\templates\account_consultant_payment.html:77
-#: .\accounts\templates\account_course_payment.html:59
-#: .\accounts\templates\account_course_payment.html:79
-msgid "Refund"
-msgstr ""
-
-#: .\accounts\templates\account_course.html:27
-#: .\accounts\templates\account_events.html:28
+#: accounts/templates/account_course.html:28
+#: accounts/templates/account_events.html:29
 msgid "Name"
 msgstr "الاسم"
 
-#: .\accounts\templates\account_course.html:29
-#: .\templates\course-single.html:113 .\templates\video.html:59
+#: accounts/templates/account_course.html:30
+#: library/templates/library/show_movie.html:121
+#: library/templates/library/single_movie.html:121
+#: templates/course-single.html:116 templates/course_category.html:5
+#: templates/kemet/home/course-single.html:117
+#: templates/kemet/home/course_category.html:6
+#: templates/kemet/home/video.html:60 templates/video.html:59
 msgid "Category"
 msgstr "الفئة"
 
-#: .\accounts\templates\account_course.html:31
+#: accounts/templates/account_course.html:32
 msgid "Videos"
 msgstr "فيديوهات"
 
-#: .\accounts\templates\account_events.html:29
-#: .\templates\course-single.html:354 .\templates\video.html:303
+#: accounts/templates/account_events.html:30 templates/course-single.html:357
+#: templates/kemet/home/course-single.html:358
+#: templates/kemet/home/video.html:304 templates/video.html:303
 msgid "Students"
 msgstr "طلابنا"
 
-#: .\accounts\templates\account_events.html:32
+#: accounts/templates/account_events.html:33
 msgid "End Time"
 msgstr "وقت الانتهاء"
 
-#: .\accounts\templates\account_events.html:50
-#: .\accounts\templates\account_events.html:69
+#: accounts/templates/account_events.html:51
+#: accounts/templates/account_events.html:70
 msgid "Delete"
 msgstr "حذف"
 
-#: .\accounts\templates\account_events.html:59
+#: accounts/templates/account_events.html:60
 msgid "Delete Event"
 msgstr "حذف المناسبات"
 
-#: .\accounts\templates\account_events.html:65
+#: accounts/templates/account_events.html:66
 msgid "Are you Sure ?"
 msgstr "هل أنت متأكد؟"
 
-#: .\accounts\templates\account_user_info.html:12
+#: accounts/templates/account_user_info.html:14
 msgid "Pleasure you are in Agartha"
 msgstr "مرحباً بك في أجارثا"
 
-#: .\accounts\templates\account_user_info.html:22
-#: .\templates\account\login.html:186 .\templates\account\signup.html:168
+#: accounts/templates/account_user_info.html:24
+#: accounts/templates/edit_audio_book_payment.html:32
+#: accounts/templates/edit_audio_payment.html:32
+#: accounts/templates/edit_movies_payment.html:32
+#: templates/account/login.html:187 templates/account/signup.html:168
 msgid "Submit"
 msgstr "ارسال"
 
-#: .\accounts\templates\account_user_info.html:25
-msgid "Join our Teachers ?"
-msgstr "انضم إلى قائمة مدربي أچـارثا"
+#: accounts/templates/edit_audio_book_payment.html:13
+msgid "Edit Audio Book Payment"
+msgstr ""
 
-#: .\accounts\templates\account_user_info.html:25
-msgid "click here"
-msgstr "اضغط هنا"
+#: accounts/templates/edit_audio_payment.html:13
+#, fuzzy
+#| msgid "All Payment"
+msgid "Edit Audio Payment"
+msgstr "قائمة عمليات الدفع"
 
-#: .\templates\about.html:12 .\templates\about.html:16
-#: .\templates\base.html:253
+#: accounts/templates/edit_movies_payment.html:13
+msgid "Edit Movies Payment"
+msgstr ""
+
+#: library/templates/library/audio/audio_base.html:85
+#, fuzzy
+#| msgid "Language"
+msgid "English Language"
+msgstr "اللغة"
+
+#: library/templates/library/audio/audio_base.html:87
+#, fuzzy
+#| msgid "Language"
+msgid "Arabic Language"
+msgstr "اللغة"
+
+#: library/templates/library/home.html:12
+#, fuzzy
+#| msgid "Agartha Academy"
+msgid "Agartha Library"
+msgstr "أكاديمية أݘارثا"
+
+#: library/templates/library/home.html:12
+#, fuzzy
+#| msgid "Home Blogs"
+msgid "Home Page"
+msgstr "المقالات"
+
+#: library/templates/library/home.html:25
+msgid ""
+" Agartha World Library\n"
+"                          Wander through the orbits of the vast universe "
+"between the folds of books.\n"
+"                          Travel between space-time wherever you are.\n"
+"                          Enjoy a collection of\n"
+"                          Audio books, paper books, e-books "
+msgstr ""
+
+#: library/templates/library/movies.html:7
+#: library/templates/library/movies.html:20
+#: library/templates/library/show_movie.html:83
+#: library/templates/library/single_movie.html:83
+msgid "Movies"
+msgstr ""
+
+#: library/templates/library/movies.html:16
+#, fuzzy
+#| msgid "Our vision"
+msgid "Our Movies"
+msgstr "رؤيتنا"
+
+#: library/templates/library/movies.html:45 templates/branch.html:43
+#: templates/course_category.html:43 templates/courses.html:45
+#: templates/global_search.html:41 templates/kemet/home/branch.html:44
+#: templates/kemet/home/course_category.html:44
+#: templates/kemet/home/courses.html:45
+#: templates/kemet/home/global_search.html:42
+#: templates/kemet/home/wishlist.html:42 templates/wishlist.html:41
+msgid "Showing"
+msgstr "عرض"
+
+#: library/templates/library/movies.html:45 templates/courses.html:45
+#: templates/global_search.html:41 templates/kemet/home/courses.html:45
+#: templates/kemet/home/global_search.html:42
+#: templates/kemet/home/wishlist.html:42 templates/wishlist.html:41
+msgid "0f"
+msgstr ""
+
+#: library/templates/library/movies.html:45 templates/courses.html:45
+#: templates/kemet/home/courses.html:45
+msgid "Results"
+msgstr "النتائج"
+
+#: library/templates/library/show_movie.html:138
+#: library/templates/library/single_movie.html:138
+#: templates/course-single.html:146 templates/kemet/home/course-single.html:147
+#: templates/kemet/home/video.html:90 templates/video.html:89
+msgid "Overview"
+msgstr "ملخص"
+
+#: library/templates/library/show_movie.html:141
+#: library/templates/library/single_movie.html:141
+#: templates/course-single.html:149 templates/kemet/home/course-single.html:150
+#: templates/kemet/home/video.html:93 templates/video.html:92
+msgid "Curriculum"
+msgstr "المحاور"
+
+#: library/templates/library/show_movie.html:144
+#: library/templates/library/single_movie.html:144
+#: templates/course-single.html:152 templates/kemet/home/course-single.html:153
+#: templates/kemet/home/video.html:96 templates/video.html:95
+msgid "Instructor"
+msgstr "المدرب"
+
+#: library/templates/library/show_movie.html:147
+#: library/templates/library/single_movie.html:147 templates/branch.html:80
+#: templates/branch.html:141 templates/course-single.html:130
+#: templates/course-single.html:155 templates/course-single.html:456
+#: templates/course_category.html:80 templates/course_category.html:141
+#: templates/courses.html:82 templates/courses.html:143
+#: templates/global_search.html:76 templates/global_search.html:141
+#: templates/home.html:166 templates/home.html:405
+#: templates/kemet/home/branch.html:81 templates/kemet/home/branch.html:142
+#: templates/kemet/home/course-single.html:131
+#: templates/kemet/home/course-single.html:156
+#: templates/kemet/home/course-single.html:457
+#: templates/kemet/home/course_category.html:81
+#: templates/kemet/home/course_category.html:142
+#: templates/kemet/home/courses.html:82 templates/kemet/home/courses.html:143
+#: templates/kemet/home/global_search.html:77
+#: templates/kemet/home/global_search.html:142
+#: templates/kemet/home/home.html:167 templates/kemet/home/home.html:406
+#: templates/kemet/home/teachers-single.html:75
+#: templates/kemet/home/teachers-single.html:111
+#: templates/kemet/home/video.html:74 templates/kemet/home/video.html:99
+#: templates/kemet/home/video.html:364 templates/kemet/home/wishlist.html:78
+#: templates/kemet/home/wishlist.html:130 templates/teachers-single.html:74
+#: templates/teachers-single.html:110 templates/video.html:73
+#: templates/video.html:98 templates/video.html:363 templates/wishlist.html:77
+#: templates/wishlist.html:129
+msgid "Reviews"
+msgstr "التقييمات"
+
+#: library/templates/library/show_movie.html:155
+#: library/templates/library/single_movie.html:155
+#, fuzzy
+#| msgid "Lecture Summery"
+msgid "Movie Summery"
+msgstr "ملخص المحاضرة"
+
+#: library/templates/library/show_movie.html:196
+#: library/templates/library/single_movie.html:196
+#: templates/course-single.html:236 templates/kemet/home/course-single.html:237
+#: templates/kemet/home/teachers-single.html:148
+#: templates/kemet/home/video.html:183 templates/teachers-single.html:147
+#: templates/video.html:182
+msgid "Student Reviews"
+msgstr "تقييم طلابنا"
+
+#: library/templates/library/show_movie.html:220
+#: library/templates/library/single_movie.html:220
+#: templates/course-single.html:270 templates/kemet/home/course-single.html:271
+#: templates/kemet/home/teachers-single.html:182
+#: templates/kemet/home/video.html:217 templates/teachers-single.html:181
+#: templates/video.html:216
+msgid "Leave A Comment"
+msgstr "شارك تعليقك"
+
+#: library/templates/library/show_movie.html:250
+#: library/templates/library/single_movie.html:250
+#: templates/course-single.html:334 templates/kemet/home/course-single.html:335
+#: templates/kemet/home/teachers-single.html:235
+#: templates/kemet/home/video.html:281 templates/teachers-single.html:234
+#: templates/video.html:280
+msgid "Post Comment"
+msgstr ""
+
+#: library/templates/library/show_movie.html:267
+#: library/templates/library/single_movie.html:267
+#, fuzzy
+#| msgid "Course Features"
+msgid "Movie Features"
+msgstr "ميزات الكورس"
+
+#: library/templates/library/show_movie.html:269
+#: library/templates/library/single_movie.html:269
+#: templates/course-single.html:353 templates/kemet/home/course-single.html:354
+#: templates/kemet/home/video.html:300 templates/video.html:299
+msgid "Duration"
+msgstr "المدة"
+
+#: library/templates/library/show_movie.html:283
+#: library/templates/library/single_movie.html:285
+#, fuzzy
+#| msgid "Related Courses"
+msgid "Related Movies"
+msgstr "الكورسات المشابهة"
+
+#: library/templates/library/single_movie.html:274
+msgid "Watch Now"
+msgstr ""
+
+#: templates/about.html:12 templates/about.html:16 templates/base.html:269
+#: templates/kemet/home/about.html:13 templates/kemet/home/about.html:17
+#: templates/kemet/home/base.html:272 templates/test.html:290
 msgid "About Us"
 msgstr "من نحن"
 
-#: .\templates\about.html:34 .\templates\base.html:501
+#: templates/about.html:34 templates/base.html:547
+#: templates/kemet/home/about.html:35 templates/kemet/home/base.html:526
+#: templates/test.html:536
 msgid "About us"
 msgstr "من نحن"
 
-#: .\templates\about.html:35
+#: templates/about.html:35 templates/kemet/home/about.html:36
 msgid "Welcome to Agartha Academy"
 msgstr "أهلاً بك في أكاديمية أچـارثا"
 
-#: .\templates\about.html:52
+#: templates/about.html:52 templates/kemet/home/about.html:53
 msgid "Why Choose us"
 msgstr "لماذا تختار أچـارثا"
 
-#: .\templates\about.html:53
+#: templates/about.html:53 templates/kemet/home/about.html:54
 msgid ""
 "We have the origin of the information, we turn it into experience, where "
 "anyone can master new skills and achieve their goals"
 msgstr ""
 
-#: .\templates\about.html:59
+#: templates/about.html:59 templates/kemet/home/about.html:60
 msgid "Our Mission"
 msgstr "هدفنا"
 
-#: .\templates\about.html:66
+#: templates/about.html:66 templates/kemet/home/about.html:67
 msgid "Our vision"
 msgstr "رؤيتنا"
 
-#: .\templates\about.html:86 .\templates\home.html:200
+#: templates/about.html:86 templates/home.html:190
+#: templates/kemet/home/about.html:87 templates/kemet/home/home.html:191
 msgid "Students enrolled"
 msgstr "الطلاب الملتحقين"
 
-#: .\templates\about.html:92 .\templates\home.html:206
+#: templates/about.html:92 templates/home.html:196
+#: templates/kemet/home/about.html:93 templates/kemet/home/home.html:197
 msgid "Courses Uploaded"
 msgstr "الكورسات المتوفرة"
 
-#: .\templates\about.html:98 .\templates\home.html:212
+#: templates/about.html:98 templates/home.html:202
+#: templates/kemet/home/about.html:99 templates/kemet/home/home.html:203
 msgid "People certified"
 msgstr "آراء عملاءنا"
 
-#: .\templates\about.html:104
+#: templates/about.html:104 templates/kemet/home/about.html:105
 msgid "Global Teachers"
 msgstr "المدربين المميزين"
 
-#: .\templates\about.html:120 .\templates\home.html:235
+#: templates/about.html:120 templates/home.html:225
+#: templates/kemet/home/about.html:121 templates/kemet/home/home.html:226
 msgid "Featured Teachers"
 msgstr "المدربين المميزين"
 
-#: .\templates\about.html:121
+#: templates/about.html:121 templates/kemet/home/about.html:122
 msgid "Meet Our teachers"
 msgstr "تواصل مع مدربيننا"
 
-#: .\templates\account\account_inactive.html:5
-#: .\templates\account\account_inactive.html:11
+#: templates/account/account_inactive.html:5
+#: templates/account/account_inactive.html:11
 msgid "Account Inactive"
 msgstr "الحساب غير نشط"
 
-#: .\templates\account\account_inactive.html:12
+#: templates/account/account_inactive.html:12
 msgid "This account is inactive."
 msgstr "هذا الحساب غير نشط."
 
-#: .\templates\account\email.html:5 .\templates\account\email.html:8
+#: templates/account/email.html:5 templates/account/email.html:8
 msgid "E-mail Addresses"
 msgstr "عناوين البريد الإلكتروني"
 
-#: .\templates\account\email.html:10
+#: templates/account/email.html:10
 msgid "The following e-mail addresses are associated with your account:"
 msgstr "عناوين البريد الإلكتروني التالية مرتبطة بحسابك:"
 
-#: .\templates\account\email.html:24
+#: templates/account/email.html:24
 msgid "Verified"
 msgstr "تم التحقق"
 
-#: .\templates\account\email.html:26
+#: templates/account/email.html:26
 msgid "Unverified"
 msgstr "لم يتم التحقق منه"
 
-#: .\templates\account\email.html:28
+#: templates/account/email.html:28
 msgid "Primary"
 msgstr "أساسي"
 
-#: .\templates\account\email.html:34
+#: templates/account/email.html:34
 msgid "Make Primary"
 msgstr "الأساسي"
 
-#: .\templates\account\email.html:35
+#: templates/account/email.html:35
 msgid "Re-send Verification"
 msgstr "إعادة التحقق"
 
-#: .\templates\account\email.html:36
-#: .\templates\socialaccount\connections.html:35
+#: templates/account/email.html:36 templates/socialaccount/connections.html:35
 msgid "Remove"
 msgstr "ازالة"
 
-#: .\templates\account\email.html:43
+#: templates/account/email.html:43
 msgid "Warning:"
 msgstr "تحذير:"
 
-#: .\templates\account\email.html:43
+#: templates/account/email.html:43
 msgid ""
 "You currently do not have any e-mail address set up. You should really add "
-"an e-mail address so you can receive notifications, reset your password, "
-"etc."
+"an e-mail address so you can receive notifications, reset your password, etc."
 msgstr ""
-"ليس لديك حاليًا أي عنوان بريد إلكتروني تم إعداده. يجب عليك بالفعل إضافة "
-"عنوان بريد إلكتروني حتى تتمكن من تلقي الإشعارات وإعادة تعيين كلمة المرور "
-"الخاصة بك ، وما إلى ذلك."
+"ليس لديك حاليًا أي عنوان بريد إلكتروني تم إعداده. يجب عليك بالفعل إضافة عنوان "
+"بريد إلكتروني حتى تتمكن من تلقي الإشعارات وإعادة تعيين كلمة المرور الخاصة "
+"بك ، وما إلى ذلك."
 
-#: .\templates\account\email.html:48
+#: templates/account/email.html:48
 msgid "Add E-mail Address"
 msgstr "إضافة عنوان البريد الإلكتروني"
 
-#: .\templates\account\email.html:53
+#: templates/account/email.html:53
 msgid "Add E-mail"
 msgstr "أضف بريد إلكتروني"
 
-#: .\templates\account\email.html:63
+#: templates/account/email.html:63
 msgid "Do you really want to remove the selected e-mail address?"
 msgstr "هل تريد حقًا إزالة عنوان البريد الإلكتروني المحدد؟"
 
-#: .\templates\account\email\base_message.txt:1
+#: templates/account/email/base_message.txt:1
 #, python-format
 msgid "Hello from %(site_name)s!"
 msgstr "مرحبا من %(site_name)s!"
 
-#: .\templates\account\email\base_message.txt:5
+#: templates/account/email/base_message.txt:5
 #, python-format
 msgid ""
 "Thank you for using %(site_name)s!\n"
@@ -824,44 +1293,50 @@ msgstr ""
 "شكرًا لك على استخدام %(site_name)s!\n"
 "%(site_domain)s"
 
-#: .\templates\account\email\email_confirmation_message.txt:5
+#: templates/account/email/email_confirmation_message.txt:5
 #, python-format
 msgid ""
-"You're receiving this e-mail because user %(user_display)s has given your e-mail address to register an account on %(site_domain)s.\n"
+"You're receiving this e-mail because user %(user_display)s has given your e-"
+"mail address to register an account on %(site_domain)s.\n"
 "\n"
 "To confirm this is correct, go to %(activate_url)s"
 msgstr ""
-"أنت تتلقى هذا البريد الإلكتروني لأن المستخدم% (user_display) s قد أعطى عنوان بريدك الإلكتروني لتسجيل حساب على٪ (site_domain) s.\n"
+"أنت تتلقى هذا البريد الإلكتروني لأن المستخدم% (user_display) s قد أعطى عنوان "
+"بريدك الإلكتروني لتسجيل حساب على٪ (site_domain) s.\n"
 "\n"
 "للتأكد من صحة ذلك ، انتقل إلى%(activate_url)s"
 
-#: .\templates\account\email\email_confirmation_subject.txt:3
+#: templates/account/email/email_confirmation_subject.txt:3
 msgid "Please Confirm Your E-mail Address"
 msgstr "يرجى تأكيد عنوان البريد الإلكتروني الخاص بك"
 
-#: .\templates\account\email\password_reset_key_message.txt:4
+#: templates/account/email/password_reset_key_message.txt:4
 msgid ""
-"You're receiving this e-mail because you or someone else has requested a password for your user account.\n"
-"It can be safely ignored if you did not request a password reset. Click the link below to reset your password."
+"You're receiving this e-mail because you or someone else has requested a "
+"password for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
 msgstr ""
-"لقد تلقيت هذا البريد الإلكتروني لأنك أو طلب شخص آخر كلمة مرور لحساب المستخدم الخاص بك.\n"
-"يمكن تجاهله بأمان إذا لم تطلب إعادة تعيين كلمة المرور. انقر فوق الارتباط أدناه لإعادة تعيين كلمة المرور الخاصة بك."
+"لقد تلقيت هذا البريد الإلكتروني لأنك أو طلب شخص آخر كلمة مرور لحساب المستخدم "
+"الخاص بك.\n"
+"يمكن تجاهله بأمان إذا لم تطلب إعادة تعيين كلمة المرور. انقر فوق الارتباط "
+"أدناه لإعادة تعيين كلمة المرور الخاصة بك."
 
-#: .\templates\account\email\password_reset_key_message.txt:9
+#: templates/account/email/password_reset_key_message.txt:9
 #, python-format
 msgid "In case you forgot, your username is %(username)s."
 msgstr "في حال نسيت ، اسم المستخدم الخاص بك هو% %(username)s."
 
-#: .\templates\account\email\password_reset_key_subject.txt:3
+#: templates/account/email/password_reset_key_subject.txt:3
 msgid "Password Reset E-mail"
 msgstr "إعادة تعيين كلمة المرور البريد الإلكتروني"
 
-#: .\templates\account\email_confirm.html:6
-#: .\templates\account\email_confirm.html:13
+#: templates/account/email_confirm.html:6
+#: templates/account/email_confirm.html:13
 msgid "Confirm E-mail Address"
 msgstr "تأكيد عنوان البريد"
 
-#: .\templates\account\email_confirm.html:19
+#: templates/account/email_confirm.html:19
 #, python-format
 msgid ""
 "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
@@ -870,235 +1345,238 @@ msgstr ""
 "يرجى تأكيد أن<a href=\"mailto:%(email)s\">%(email)s</a> هو عنوان بريد "
 "إلكتروني للمستخدم%(user_display)s."
 
-#: .\templates\account\email_confirm.html:23
+#: templates/account/email_confirm.html:23
 msgid "Confirm"
 msgstr "تأكيد"
 
-#: .\templates\account\email_confirm.html:30
+#: templates/account/email_confirm.html:30
 #, python-format
 msgid ""
-"This e-mail confirmation link expired or is invalid. Please <a "
-"href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+"This e-mail confirmation link expired or is invalid. Please <a href="
+"\"%(email_url)s\">issue a new e-mail confirmation request</a>."
 msgstr ""
 "انتهت صلاحية ارتباط تأكيد البريد الإلكتروني هذا أو أنه غير صالح. يرجى\n"
 " <a href=\"%(email_url)s\"> إصدار طلب تأكيد بريد إلكتروني جديد </a>."
 
-#: .\templates\account\login.html:10 .\templates\account\signup.html:10
+#: templates/account/login.html:10 templates/account/signup.html:10
 msgid "Login - Signup"
 msgstr "تسجيل / تسجيل دخول"
 
-#: .\templates\account\login.html:38 .\templates\account\signup.html:37
+#: templates/account/login.html:38 templates/account/signup.html:37
 msgid "Log In "
 msgstr "تسجيل دخول"
 
-#: .\templates\account\login.html:68 .\templates\account\signup.html:179
+#: templates/account/login.html:69 templates/account/signup.html:179
 msgid "Log In"
 msgstr "تسجيل دخول"
 
-#: .\templates\account\login.html:70 .\templates\account\signup.html:181
+#: templates/account/login.html:71 templates/account/signup.html:181
 msgid "Username / Email"
 msgstr "اسم المستخدم/الايميل"
 
-#: .\templates\account\login.html:80 .\templates\account\signup.html:186
+#: templates/account/login.html:81 templates/account/signup.html:186
 msgid "Your Password"
 msgstr "كلمة المرور"
 
-#: .\templates\account\login.html:91 .\templates\account\signup.html:192
+#: templates/account/login.html:92 templates/account/signup.html:192
 msgid "submit"
 msgstr "ارسال"
 
-#: .\templates\account\login.html:92 .\templates\account\signup.html:193
+#: templates/account/login.html:93 templates/account/signup.html:193
 msgid "Forgot your password?"
 msgstr "هل نسيت كلمة السر؟"
 
-#: .\templates\account\login.html:127 .\templates\account\signup.html:71
-msgid "Your Full Name"
-msgstr "الاسم الكامل"
+#: templates/account/login.html:128 templates/account/signup.html:71
+#, fuzzy
+#| msgid "Username / Email"
+msgid "Username"
+msgstr "اسم المستخدم/الايميل"
 
-#: .\templates\account\login.html:133 .\templates\account\signup.html:82
-#: .\templates\contact.html:67
+#: templates/account/login.html:134 templates/account/signup.html:82
+#: templates/contact.html:63 templates/kemet/home/contact.html:64
 msgid "Email"
 msgstr "البريد إلكتروني"
 
-#: .\templates\account\login.html:138 .\templates\account\signup.html:92
+#: templates/account/login.html:139 templates/account/signup.html:92
 msgid "Mobile Number"
 msgstr "رقم الموبايل"
 
-#: .\templates\account\login.html:144 .\templates\account\signup.html:103
+#: templates/account/login.html:145 templates/account/signup.html:103
 msgid "Password"
 msgstr " كلمة السر"
 
-#: .\templates\account\login.html:147 .\templates\account\signup.html:112
+#: templates/account/login.html:148 templates/account/signup.html:112
 msgid "Confirm Password"
 msgstr "تأكيد كلمة المرور"
 
-#: .\templates\account\login.html:152 .\templates\account\signup.html:123
+#: templates/account/login.html:153 templates/account/signup.html:123
 msgid "Gender"
 msgstr "الجنس"
 
-#: .\templates\account\login.html:157 .\templates\account\signup.html:129
+#: templates/account/login.html:158 templates/account/signup.html:129
 msgid "Female"
 msgstr "أنثى"
 
-#: .\templates\account\login.html:161 .\templates\account\signup.html:133
+#: templates/account/login.html:162 templates/account/signup.html:133
 msgid "Male"
 msgstr "ذكر"
 
-#: .\templates\account\login.html:174 .\templates\account\signup.html:151
+#: templates/account/login.html:175 templates/account/signup.html:151
 msgid "By signing up, you agree to our"
 msgstr "بالضغط على \"تسجيل\"، فإنك توافق على"
 
-#: .\templates\account\login.html:180 .\templates\account\signup.html:162
+#: templates/account/login.html:181 templates/account/signup.html:162
 msgid "Terms of use"
 msgstr "شروط الاستخدام"
 
-#: .\templates\account\login.html:181 .\templates\account\signup.html:163
+#: templates/account/login.html:182 templates/account/signup.html:163
 msgid "and"
 msgstr "و"
 
-#: .\templates\account\login.html:182 .\templates\account\signup.html:164
+#: templates/account/login.html:183 templates/account/signup.html:164
 msgid "Privacy Policy"
 msgstr "سياسة الخصوصية"
 
-#: .\templates\account\logout.html:5 .\templates\account\logout.html:8
-#: .\templates\account\logout.html:17
+#: templates/account/logout.html:5 templates/account/logout.html:8
+#: templates/account/logout.html:17
 msgid "Sign Out"
 msgstr "تسجيل الخروج"
 
-#: .\templates\account\logout.html:10
+#: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
 msgstr "هل أنت متأكد أنك تريد الخروج؟"
 
-#: .\templates\account\messages\cannot_delete_primary_email.txt:2
+#: templates/account/messages/cannot_delete_primary_email.txt:2
 #, python-format
 msgid "You cannot remove your primary e-mail address (%(email)s)."
 msgstr "لا يمكنك إزالة عنوان بريدك الإلكتروني الأساسي (%(email)s)."
 
-#: .\templates\account\messages\email_confirmation_sent.txt:2
+#: templates/account/messages/email_confirmation_sent.txt:2
 #, python-format
 msgid "Confirmation e-mail sent to %(email)s."
 msgstr "تم إرسال بريد التأكيد الإلكتروني إلى %(email)s"
 
-#: .\templates\account\messages\email_confirmed.txt:2
+#: templates/account/messages/email_confirmed.txt:2
 #, python-format
 msgid "You have confirmed %(email)s."
 msgstr "لقد أكّدت %(email)s."
 
-#: .\templates\account\messages\email_deleted.txt:2
+#: templates/account/messages/email_deleted.txt:2
 #, python-format
 msgid "Removed e-mail address %(email)s."
 msgstr "تمت إزالة عنوان البريد الإلكتروني %(email)s."
 
-#: .\templates\account\messages\logged_in.txt:4
+#: templates/account/messages/logged_in.txt:4
 #, python-format
 msgid "Successfully signed in as %(name)s."
 msgstr "تم تسجيل الدخول بنجاح %(name)s."
 
-#: .\templates\account\messages\logged_out.txt:2
+#: templates/account/messages/logged_out.txt:2
 msgid "You have signed out."
 msgstr "لقد قمت بتسجيل الخروج."
 
-#: .\templates\account\messages\password_changed.txt:2
+#: templates/account/messages/password_changed.txt:2
 msgid "Password successfully changed."
 msgstr "تم تغيير كلمة المرور بنجاح."
 
-#: .\templates\account\messages\password_set.txt:2
+#: templates/account/messages/password_set.txt:2
 msgid "Password successfully set."
 msgstr "تم تعيين كلمة المرور بنجاح."
 
-#: .\templates\account\messages\primary_email_set.txt:2
+#: templates/account/messages/primary_email_set.txt:2
 msgid "Primary e-mail address set."
 msgstr "تم تعيين عنوان البريد الإلكتروني الأساسي."
 
-#: .\templates\account\messages\unverified_primary_email.txt:2
+#: templates/account/messages/unverified_primary_email.txt:2
 msgid "Your primary e-mail address must be verified."
 msgstr "يجب التحقق من عنوان البريد الإلكتروني الأساسي الخاص بك."
 
-#: .\templates\account\password_change.html:5
-#: .\templates\account\password_change.html:9
-#: .\templates\account\password_change.html:14
-#: .\templates\account\password_reset_from_key_done.html:4
-#: .\templates\account\password_reset_from_key_done.html:7
+#: templates/account/password_change.html:5
+#: templates/account/password_change.html:9
+#: templates/account/password_change.html:14
+#: templates/account/password_reset_from_key_done.html:4
+#: templates/account/password_reset_from_key_done.html:7
 msgid "Change Password"
 msgstr "تغيير كلمة المرور"
 
-#: .\templates\account\password_change.html:15
+#: templates/account/password_change.html:15
 msgid "Forgot Password?"
 msgstr "هل نسيت كلمة السر؟"
 
-#: .\templates\account\password_reset_done.html:6
-#: .\templates\account\password_reset_done.html:10
+#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:10
 msgid "Password Reset"
 msgstr "إعادة تعيين كلمة المرور"
 
-#: .\templates\account\password_reset_done.html:17
+#: templates/account/password_reset_done.html:17
 msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
 msgstr ""
-"لقد أرسلنا لك بريدًا إلكترونيًا. يرجى الاتصال بنا إذا لم تستلمها في غضون بضع"
-" دقائق."
+"لقد أرسلنا لك بريدًا إلكترونيًا. يرجى الاتصال بنا إذا لم تستلمها في غضون بضع "
+"دقائق."
 
-#: .\templates\account\password_reset_from_key.html:101
+#: templates/account/password_reset_from_key.html:101
 msgid "Bad Token"
 msgstr "Bad Token"
 
-#: .\templates\account\password_reset_from_key.html:121
+#: templates/account/password_reset_from_key.html:121
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
-"reset</a>."
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
 msgstr ""
-"رابط إعادة تعيين كلمة المرور غير صالح ، ربما لأنه تم استخدامه بالفعل. الرجاء طلب\n"
+"رابط إعادة تعيين كلمة المرور غير صالح ، ربما لأنه تم استخدامه بالفعل. الرجاء "
+"طلب\n"
 "<a href=\"%(passwd_reset_url)s\">كلمه مرور جديديه </a>."
 
-#: .\templates\account\password_reset_from_key.html:140
-#: .\templates\account\password_reset_from_key_done.html:8
+#: templates/account/password_reset_from_key.html:140
+#: templates/account/password_reset_from_key_done.html:8
 msgid "Your password is now changed."
 msgstr "تم تغيير كلمة مرورك الآن."
 
-#: .\templates\account\password_set.html:5
-#: .\templates\account\password_set.html:8
-#: .\templates\account\password_set.html:13
+#: templates/account/password_set.html:5 templates/account/password_set.html:8
+#: templates/account/password_set.html:13
 msgid "Set Password"
 msgstr "ضبط كلمة المرور"
 
-#: .\templates\account\signup_closed.html:5
-#: .\templates\account\signup_closed.html:11
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:11
 msgid "Sign Up Closed"
 msgstr "التسجيل مغلق"
 
-#: .\templates\account\signup_closed.html:13
+#: templates/account/signup_closed.html:13
 msgid "We are sorry, but the sign up is currently closed."
 msgstr "نحن آسفون ، ولكن التسجيل مغلق حاليا."
 
-#: .\templates\account\snippets\already_logged_in.html:5
+#: templates/account/snippets/already_logged_in.html:5
 msgid "Note"
 msgstr "ملاحظة"
 
-#: .\templates\account\snippets\already_logged_in.html:5
+#: templates/account/snippets/already_logged_in.html:5
 #, python-format
 msgid "you are already logged in as %(user_display)s."
 msgstr "لقد قمت بتسجيل الدخول بالفعل باعتبار%(user_display)s."
 
-#: .\templates\account\socialaccount\signup.html:76
+#: templates/account/socialaccount/signup.html:76
 #, python-format
 msgid ""
 "You  are about to use your %(provider_name)s account to login to\n"
-"              %(site_name)s. As a final step, please complete the following form:"
+"              %(site_name)s. As a final step, please complete the following "
+"form:"
 msgstr ""
 "أنت على وشك استخدام حساب%(provider_name)sالخاص بك لتسجيل الدخول إلى\n"
 "%(site_name)s كخطوة أخيرة ، يرجى إكمال النموذج التالي:"
 
-#: .\templates\account\verification_sent.html:5
-#: .\templates\account\verification_sent.html:8
-#: .\templates\account\verified_email_required.html:5
-#: .\templates\account\verified_email_required.html:8
+#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:8
+#: templates/account/verified_email_required.html:5
+#: templates/account/verified_email_required.html:8
 msgid "Verify Your E-mail Address"
 msgstr "تحقق من عنوان بريدك الإلكتروني"
 
-#: .\templates\account\verification_sent.html:10
+#: templates/account/verification_sent.html:10
 msgid ""
 "We have sent an e-mail to you for verification. Follow the link provided to "
 "finalize the signup process. Please contact us if you do not receive it "
@@ -1107,7 +1585,7 @@ msgstr ""
 "لقد أرسلنا إليك بريدًا إلكترونيًا للتحقق. اتبع الرابط المقدم لإنهاء عملية "
 "التسجيل. يرجى الاتصال بنا إذا لم تستلمها في غضون بضع دقائق."
 
-#: .\templates\account\verified_email_required.html:12
+#: templates/account/verified_email_required.html:12
 msgid ""
 "This part of the site requires us to verify that\n"
 "you are who you claim to be. For this purpose, we require that you\n"
@@ -1117,7 +1595,7 @@ msgstr ""
 "أنت من تدعي أنك. لهذا الغرض ، نحن نطلب منك\n"
 "التحقق من ملكية عنوان البريد الإلكتروني الخاص بك."
 
-#: .\templates\account\verified_email_required.html:16
+#: templates/account/verified_email_required.html:16
 msgid ""
 "We have sent an e-mail to you for\n"
 "verification. Please click on the link inside this e-mail. Please\n"
@@ -1127,371 +1605,394 @@ msgstr ""
 "تحقق. الرجاء الضغط على الرابط الموجود داخل هذا البريد الإلكتروني. لو سمحت\n"
 "اتصل بنا إذا لم تستلمها في غضون بضع دقائق."
 
-#: .\templates\account\verified_email_required.html:20
+#: templates/account/verified_email_required.html:20
 #, python-format
 msgid ""
-"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
-"e-mail address</a>."
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
+"mail address</a>."
 msgstr ""
-"<strong> ملاحظة: </ strong> لا يزال بإمكانك  <a href=\"%(email_url)s\">تغيير"
-" البريد الالكتروني</a>."
+"<strong> ملاحظة: </ strong> لا يزال بإمكانك  <a href=\"%(email_url)s\">تغيير "
+"البريد الالكتروني</a>."
 
-#: .\templates\base.html:168
+#: templates/base.html:182 templates/kemet/home/base.html:181
+#: templates/test.html:205
 #, fuzzy
 #| msgid "Need Help? call us free"
 msgid "Need Help? call us"
 msgstr "تحتاج مساعدة؟ اتصل بنا مجانا"
 
-#: .\templates\base.html:193
+#: templates/base.html:208 templates/kemet/home/base.html:207
+#: templates/test.html:231
 msgid "Join Us"
 msgstr ""
 
-#: .\templates\base.html:234 .\templates\base.html:502
-#: .\templates\teachers-single.html:13 .\templates\teachers-single.html:17
-#: .\templates\teachers.html:13 .\templates\teachers.html:17
+#: templates/base.html:250 templates/base.html:548
+#: templates/kemet/home/base.html:253 templates/kemet/home/base.html:527
+#: templates/kemet/home/teachers-single.html:14
+#: templates/kemet/home/teachers-single.html:18
+#: templates/kemet/home/teachers.html:14 templates/kemet/home/teachers.html:18
+#: templates/teachers-single.html:13 templates/teachers-single.html:17
+#: templates/teachers.html:13 templates/teachers.html:17
+#: templates/test.html:282 templates/test.html:537
 msgid "Teachers"
 msgstr "المدربين"
 
-#: .\templates\base.html:238
+#: templates/base.html:254 templates/kemet/home/base.html:257
+#: templates/test.html:274
 msgid "Blog"
 msgstr "المدونة"
 
-#: .\templates\base.html:249
+#: templates/base.html:265 templates/kemet/home/base.html:268
+#: templates/test.html:286
 msgid "Service"
 msgstr "الخدمات"
 
-#: .\templates\base.html:251 .\templates\contact.html:52
+#: templates/base.html:267 templates/contact.html:48
+#: templates/kemet/home/base.html:270 templates/kemet/home/contact.html:49
+#: templates/test.html:288
 msgid "Contact Us"
 msgstr "اتصل بنا"
 
-#: .\templates\base.html:252 .\templates\base.html:553
+#: templates/base.html:268 templates/base.html:589
+#: templates/kemet/home/base.html:271 templates/kemet/home/base.html:568
+#: templates/test.html:289 templates/test.html:578
 msgid "FAQS"
 msgstr "الأسئلة المتكررة"
 
-#: .\templates\base.html:260
+#: templates/base.html:276 templates/kemet/home/base.html:279
+#: templates/test.html:297
 msgid "Language"
 msgstr "اللغة"
 
-#: .\templates\base.html:345
+#: templates/base.html:368 templates/kemet/home/base.html:368
+#: templates/test.html:378
 #, fuzzy
 #| msgid "Profile"
 msgid "My profile"
 msgstr "الملف الشخصي"
 
-#: .\templates\base.html:353 .\templates\base.html:375
+#: templates/base.html:376 templates/base.html:398
+#: templates/kemet/home/base.html:376 templates/kemet/home/base.html:398
+#: templates/test.html:386 templates/test.html:404
 msgid "Login"
 msgstr "تسجيل الدخول"
 
-#: .\templates\base.html:378
+#: templates/base.html:401 templates/kemet/home/base.html:401
+#: templates/test.html:407
 #, fuzzy
 #| msgid "Sign Up"
 msgid "Signup"
 msgstr "تسجيل"
 
-#: .\templates\base.html:450
+#: templates/base.html:473 templates/kemet/home/base.html:473
+#: templates/test.html:483
 msgid "Search in Courses and Teachers"
 msgstr "البحث في الدورات والمدربين"
 
-#: .\templates\base.html:503 .\templates\contact.html:29
-#: .\templates\contact.html:33
+#: templates/base.html:549 templates/contact.html:25 templates/contact.html:29
+#: templates/kemet/home/base.html:528 templates/kemet/home/contact.html:26
+#: templates/kemet/home/contact.html:30 templates/test.html:538
 msgid "Contact"
 msgstr "تواصل معنا"
 
-#: .\templates\base.html:522
+#: templates/base.html:568 templates/kemet/home/base.html:547
+#: templates/test.html:557
 msgid "Articles"
 msgstr ""
 
-#: .\templates\base.html:533 .\templates\base.html:552
+#: templates/base.html:579 templates/base.html:588
+#: templates/kemet/home/base.html:558 templates/kemet/home/base.html:567
+#: templates/test.html:568 templates/test.html:577
 msgid "Support"
 msgstr "فريق الدعم"
 
-#: .\templates\base.html:551
+#: templates/base.html:587 templates/kemet/home/base.html:566
+#: templates/test.html:576
 msgid "Policy"
 msgstr "سياسة الاستخدام"
 
-#: .\templates\contact.html:53
+#: templates/branch.html:5 templates/kemet/home/branch.html:6
+msgid "Branch"
+msgstr ""
+
+#: templates/branch.html:14 templates/kemet/home/branch.html:15
+msgid "Branches"
+msgstr ""
+
+#: templates/branch.html:43 templates/course_category.html:43
+#: templates/kemet/home/branch.html:44
+#: templates/kemet/home/course_category.html:44
+msgid "of"
+msgstr ""
+
+#: templates/branch.html:43 templates/course_category.html:43
+#: templates/kemet/home/branch.html:44
+#: templates/kemet/home/course_category.html:44
+#, fuzzy
+#| msgid "Results"
+msgid " Results"
+msgstr "النتائج"
+
+#: templates/contact.html:49 templates/kemet/home/contact.html:50
 msgid "Keep in touch"
 msgstr "ابق على اتصال"
 
-#: .\templates\contact.html:61
+#: templates/contact.html:57 templates/kemet/home/contact.html:58
 msgid "Your name"
 msgstr "اسمك"
 
-#: .\templates\contact.html:73
+#: templates/contact.html:69 templates/kemet/home/contact.html:70
 msgid "Subject"
 msgstr "الموضوع"
 
-#: .\templates\contact.html:79
+#: templates/contact.html:75 templates/kemet/home/contact.html:76
 msgid "Phone"
 msgstr "رقم الموبايل"
 
-#: .\templates\contact.html:85
+#: templates/contact.html:81 templates/kemet/home/contact.html:82
 msgid "Message"
 msgstr "رسالة"
 
-#: .\templates\contact.html:92
+#: templates/contact.html:88 templates/kemet/home/contact.html:89
 msgid "Send"
 msgstr "إرسال"
 
-#: .\templates\course-single.html:119 .\templates\video.html:65
+#: templates/course-single.html:122 templates/kemet/home/course-single.html:123
+#: templates/kemet/home/video.html:66 templates/video.html:65
 msgid "Review"
 msgstr "تقييم"
 
-#: .\templates\course-single.html:127 .\templates\course-single.html:152
-#: .\templates\course-single.html:453 .\templates\courses.html:80
-#: .\templates\courses.html:141 .\templates\global_search.html:76
-#: .\templates\global_search.html:141 .\templates\home.html:156
-#: .\templates\teachers-single.html:74 .\templates\teachers-single.html:110
-#: .\templates\video.html:73 .\templates\video.html:98
-#: .\templates\video.html:363 .\templates\wishlist.html:77
-#: .\templates\wishlist.html:129
-msgid "Reviews"
-msgstr "التقييمات"
-
-#: .\templates\course-single.html:143 .\templates\video.html:89
-msgid "Overview"
-msgstr "ملخص"
-
-#: .\templates\course-single.html:146 .\templates\video.html:92
-msgid "Curriculum"
-msgstr "المحاور"
-
-#: .\templates\course-single.html:149 .\templates\video.html:95
-msgid "Instructor"
-msgstr "المدرب"
-
-#: .\templates\course-single.html:160
+#: templates/course-single.html:163 templates/kemet/home/course-single.html:164
 msgid "Course Summery"
 msgstr ""
 
-#: .\templates\course-single.html:181 .\templates\video.html:131
+#: templates/course-single.html:184 templates/kemet/home/course-single.html:185
+#: templates/kemet/home/video.html:132 templates/video.html:131
 msgid "Lecture"
 msgstr ""
 
-#: .\templates\course-single.html:233 .\templates\teachers-single.html:147
-#: .\templates\video.html:182
-msgid "Student Reviews"
-msgstr "تقييم طلابنا"
-
-#: .\templates\course-single.html:259 .\templates\teachers-single.html:173
-#: .\templates\video.html:208
+#: templates/course-single.html:262 templates/kemet/home/course-single.html:263
+#: templates/kemet/home/teachers-single.html:174
+#: templates/kemet/home/video.html:209 templates/teachers-single.html:173
+#: templates/video.html:208
 msgid "Star"
 msgstr ""
 
-#: .\templates\course-single.html:267 .\templates\teachers-single.html:181
-#: .\templates\video.html:216
-msgid "Leave A Comment"
-msgstr "شارك تعليقك"
-
-#: .\templates\course-single.html:287 .\templates\teachers-single.html:200
-#: .\templates\video.html:236
+#: templates/course-single.html:290 templates/kemet/home/course-single.html:291
+#: templates/kemet/home/teachers-single.html:201
+#: templates/kemet/home/video.html:237 templates/teachers-single.html:200
+#: templates/video.html:236
 msgid "Your Rating"
 msgstr "تقييمك"
 
-#: .\templates\course-single.html:331 .\templates\teachers-single.html:234
-#: .\templates\video.html:280
-msgid "Post Comment"
-msgstr ""
-
-#: .\templates\course-single.html:348
+#: templates/course-single.html:351 templates/kemet/home/course-single.html:352
 msgid "Course Features"
 msgstr "ميزات الكورس"
 
-#: .\templates\course-single.html:350 .\templates\video.html:299
-msgid "Duration"
-msgstr "المدة"
-
-#: .\templates\course-single.html:351
+#: templates/course-single.html:354 templates/kemet/home/course-single.html:355
 msgid "Lectures"
 msgstr "محاضرات"
 
-#: .\templates\course-single.html:352
+#: templates/course-single.html:355 templates/kemet/home/course-single.html:356
 msgid "Quizzes"
 msgstr "الإختبارات"
 
-#: .\templates\course-single.html:368
+#: templates/course-single.html:371 templates/kemet/home/course-single.html:372
 msgid "Take Quiz"
 msgstr "قدم اختبار"
 
-#: .\templates\course-single.html:372
+#: templates/course-single.html:375 templates/kemet/home/course-single.html:376
 msgid "Enroll Now"
 msgstr "تسجيل الآن"
 
-#: .\templates\course-single.html:402
+#: templates/course-single.html:405 templates/kemet/home/course-single.html:406
 msgid "Recent Event"
 msgstr "المناسبات الحديثة"
 
-#: .\templates\course-single.html:424 .\templates\video.html:334
+#: templates/course-single.html:427 templates/kemet/home/course-single.html:428
+#: templates/kemet/home/video.html:335 templates/video.html:334
 msgid "Related Courses"
 msgstr "الكورسات المشابهة"
 
-#: .\templates\courses.html:14 .\templates\global_search.html:12
+#: templates/courses.html:16 templates/global_search.html:12
+#: templates/kemet/home/courses.html:16
+#: templates/kemet/home/global_search.html:13
 msgid "Our Courses"
 msgstr "كورساتنا"
 
-#: .\templates\courses.html:43 .\templates\global_search.html:41
-#: .\templates\wishlist.html:41
-msgid "Showing"
-msgstr "عرض"
-
-#: .\templates\courses.html:43 .\templates\global_search.html:41
-#: .\templates\wishlist.html:41
-msgid "0f"
-msgstr ""
-
-#: .\templates\courses.html:43
-msgid "Results"
-msgstr "النتائج"
-
-#: .\templates\faqs.html:13
-msgid "Friendly Asked Questions"
-msgstr "مجموعة الأسئلة المتداولة"
-
-#: .\templates\faqs.html:14
-msgid ""
-"The most frequently asked questions about LearnPLUS are listed below.<br>If "
-"you want to ask a question at you, please contact us"
-msgstr ""
-
-#: .\templates\global_search.html:110 .\templates\global_search.html:176
+#: templates/global_search.html:110 templates/global_search.html:176
+#: templates/kemet/home/global_search.html:111
+#: templates/kemet/home/global_search.html:177
 msgid "Sorry we didn\"t find what you want"
 msgstr "عذراًو لم نجد ما تبحث عنه"
 
-#: .\templates\home.html:77
+#: templates/home.html:77 templates/kemet/home/home.html:78
 msgid "courses"
 msgstr "الكورسات"
 
-#: .\templates\home.html:130
+#: templates/home.html:89 templates/kemet/home/home.html:90
+msgid "Subscribe to Agartha free"
+msgstr ""
+
+#: templates/home.html:90 templates/kemet/home/home.html:91
+#, fuzzy
+#| msgid "Sign Up"
+msgid "Sign up now"
+msgstr "تسجيل"
+
+#: templates/home.html:130 templates/kemet/home/home.html:131
 msgid "Our course"
 msgstr "كورساتنا"
 
-#: .\templates\home.html:131
+#: templates/home.html:131 templates/home.html:370
+#: templates/kemet/home/home.html:132 templates/kemet/home/home.html:371
 msgid "Featured courses"
 msgstr "الكورسات الحالية"
 
-#: .\templates\home.html:218
+#: templates/home.html:208 templates/kemet/home/home.html:209
 msgid "Global Teacher"
 msgstr "المدربين المميزين"
 
-#: .\templates\home.html:234
+#: templates/home.html:224 templates/kemet/home/home.html:225
 msgid "Top Tutors"
 msgstr "افضل المعلمين"
 
-#: .\templates\home.html:259
+#: templates/home.html:249 templates/kemet/home/home.html:250
 msgid "Happy Students"
 msgstr "طلابنا"
 
-#: .\templates\home.html:292
+#: templates/home.html:282 templates/kemet/home/home.html:283
 msgid "Upcoming events"
 msgstr "المناسبات القادمة"
 
-#: .\templates\home.html:322
+#: templates/home.html:312 templates/kemet/home/home.html:313
 msgid "Latest Blog"
 msgstr "أحدث مدونة"
 
-#: .\templates\home.html:323
+#: templates/home.html:313 templates/kemet/home/home.html:314
 msgid "From the Blogs"
 msgstr "من المدونات"
 
-#: .\templates\home.html:337 .\templates\home.html:358
+#: templates/home.html:327 templates/home.html:348
+#: templates/kemet/home/home.html:328 templates/kemet/home/home.html:349
 msgid "By"
 msgstr "بواسطة"
 
-#: .\templates\socialaccount\authentication_error.html:5
-#: .\templates\socialaccount\authentication_error.html:11
+#: templates/home.html:369 templates/kemet/home/home.html:370
+#, fuzzy
+#| msgid "Related Courses"
+msgid "Kemet Courses"
+msgstr "الكورسات المشابهة"
+
+#: templates/kemet/home/base.html:249
+msgid "Library"
+msgstr ""
+
+#: templates/kemet/home/teachers-single.html:69
+#: templates/teachers-single.html:68
+msgid "Dashboard"
+msgstr "لوحه التحكم"
+
+#: templates/kemet/home/video.html:107 templates/video.html:106
+msgid "Lecture Summery"
+msgstr "ملخص المحاضرة"
+
+#: templates/kemet/home/video.html:142 templates/video.html:141
+msgid "Preview Lecture"
+msgstr "معاينة المحاضرة"
+
+#: templates/kemet/home/video.html:298 templates/video.html:297
+msgid "Lecture Features"
+msgstr "ميزات الدورة"
+
+#: templates/kemet/home/video.html:315 templates/video.html:314
+msgid "Recent Events"
+msgstr "المناسبات الأخيرة"
+
+#: templates/kemet/home/wishlist.html:13 templates/wishlist.html:12
+msgid "MY WISHLIST"
+msgstr "قائمة أمنياتي"
+
+#: templates/kemet/home/wishlist.html:17 templates/wishlist.html:16
+msgid "Cart"
+msgstr "سلة اختياراتي"
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:11
 msgid "Social Network Login Failure"
 msgstr "فشل تسجيل الدخول إلى الشبكة الاجتماعية"
 
-#: .\templates\socialaccount\authentication_error.html:13
+#: templates/socialaccount/authentication_error.html:13
 msgid ""
 "An error occurred while attempting to login via your social network account."
-msgstr ""
-"حدث خطأ أثناء محاولة تسجيل الدخول عبر حساب الشبكة الاجتماعية الخاص بك."
+msgstr "حدث خطأ أثناء محاولة تسجيل الدخول عبر حساب الشبكة الاجتماعية الخاص بك."
 
-#: .\templates\socialaccount\connections.html:5
-#: .\templates\socialaccount\connections.html:8
+#: templates/socialaccount/connections.html:5
+#: templates/socialaccount/connections.html:8
 msgid "Account Connections"
 msgstr "اتصالات الحساب"
 
-#: .\templates\socialaccount\connections.html:11
+#: templates/socialaccount/connections.html:11
 msgid ""
 "You can sign in to your account using any of the following third party "
 "accounts:"
 msgstr ""
 "يمكنك تسجيل الدخول إلى حسابك باستخدام أي من حسابات الطرف الثالث التالية:"
 
-#: .\templates\socialaccount\connections.html:43
+#: templates/socialaccount/connections.html:43
 msgid ""
 "You currently have no social network accounts connected to this account."
 msgstr "ليس لديك حاليًا أي حسابات شبكات اجتماعية متصلة بهذا الحساب."
 
-#: .\templates\socialaccount\connections.html:46
+#: templates/socialaccount/connections.html:46
 msgid "Add a 3rd Party Account"
 msgstr "أضف حساب طرف ثالث"
 
-#: .\templates\socialaccount\login_cancelled.html:5
-#: .\templates\socialaccount\login_cancelled.html:11
+#: templates/socialaccount/login_cancelled.html:5
+#: templates/socialaccount/login_cancelled.html:11
 msgid "Login Cancelled"
 msgstr "تم إلغاء تسجيل الدخول"
 
-#: .\templates\socialaccount\login_cancelled.html:13
+#: templates/socialaccount/login_cancelled.html:13
 #, python-format
 msgid ""
 "You decided to cancel logging in to our site using one of your existing "
-"accounts. If this was a mistake, please proceed to <a "
-"href=\"%(login_url)s\">sign in</a>."
+"accounts. If this was a mistake, please proceed to <a href=\"%(login_url)s"
+"\">sign in</a>."
 msgstr ""
-"لقد قررت إلغاء تسجيل الدخول إلى موقعنا باستخدام أحد حساباتك الحالية. إذا كان"
-" هذا خطأ ، فيرجى المتابعة إلى <a href=%(login_url)s\"> تسجيل الدخول </a>."
+"لقد قررت إلغاء تسجيل الدخول إلى موقعنا باستخدام أحد حساباتك الحالية. إذا كان "
+"هذا خطأ ، فيرجى المتابعة إلى <a href=%(login_url)s\"> تسجيل الدخول </a>."
 
-#: .\templates\socialaccount\messages\account_connected.txt:2
+#: templates/socialaccount/messages/account_connected.txt:2
 msgid "The social account has been connected."
 msgstr "تم ربط الحساب الاجتماعي."
 
-#: .\templates\socialaccount\messages\account_connected_other.txt:2
+#: templates/socialaccount/messages/account_connected_other.txt:2
 msgid "The social account is already connected to a different account."
 msgstr "الحساب الاجتماعي متصل بالفعل بحساب مختلف."
 
-#: .\templates\socialaccount\messages\account_disconnected.txt:2
+#: templates/socialaccount/messages/account_disconnected.txt:2
 msgid "The social account has been disconnected."
 msgstr "تم قطع الحساب الاجتماعي."
 
-#: .\templates\socialaccount\signup.html:84
+#: templates/socialaccount/signup.html:84
 #, python-format
 msgid ""
 "You  are about to use your %(provider_name)s account to login to\n"
-"                %(site_name)s. As a final step, please complete the following form:"
+"                %(site_name)s. As a final step, please complete the "
+"following form:"
 msgstr ""
 "أنت على وشك استخدام حساب %(provider_name)s الخاص بك لتسجيل الدخول إلى\n"
 "%(site_name)s .كخطوة أخيرة ، يرجى إكمال النموذج التالي:"
 
-#: .\templates\teachers-single.html:68
-msgid "Dashboard"
-msgstr "لوحه التحكم"
+#~ msgid "click here"
+#~ msgstr "اضغط هنا"
 
-#: .\templates\video.html:106
-msgid "Lecture Summery"
-msgstr "ملخص المحاضرة"
+#~ msgid "Your Full Name"
+#~ msgstr "الاسم الكامل"
 
-#: .\templates\video.html:141
-msgid "Preview Lecture"
-msgstr "معاينة المحاضرة"
-
-#: .\templates\video.html:297
-msgid "Lecture Features"
-msgstr "ميزات الدورة"
-
-#: .\templates\video.html:314
-msgid "Recent Events"
-msgstr "المناسبات الأخيرة"
-
-#: .\templates\wishlist.html:12
-msgid "MY WISHLIST"
-msgstr "قائمة أمنياتي"
-
-#: .\templates\wishlist.html:16
-msgid "Cart"
-msgstr "سلة اختياراتي"
+#~ msgid "Friendly Asked Questions"
+#~ msgstr "مجموعة الأسئلة المتداولة"
 
 #~ msgid "Back To Course"
 #~ msgstr "العودة إلى الصفحة الرئيسية"
@@ -1529,20 +2030,20 @@ msgstr "سلة اختياراتي"
 #~ msgid "You make like"
 #~ msgstr "بلغنا عن إعجابك"
 
-#, python-format
 #~ msgid ""
 #~ "Please sign in with one\n"
-#~ "of your existing third party accounts. Or, <a href=\"%(signup_url)s\">sign up</a>\n"
+#~ "of your existing third party accounts. Or, <a href=\"%(signup_url)s"
+#~ "\">sign up</a>\n"
 #~ "for a %(site_name)s account and sign in below:"
 #~ msgstr ""
 #~ "الرجاء تسجيل الدخول بواحد\n"
-#~ "من حسابات الطرف الثالث الحالية الخاصة بك. أو<a href=\"%(signup_url)s\">sign up</a> اشترك </a>\n"
+#~ "من حسابات الطرف الثالث الحالية الخاصة بك. أو<a href=\"%(signup_url)s"
+#~ "\">sign up</a> اشترك </a>\n"
 #~ "لحساب%(site_name)s وقم بتسجيل الدخول أدناه:"
 
 #~ msgid "or"
 #~ msgstr "أو"
 
-#, python-format
 #~ msgid ""
 #~ "If you have not created an account yet, then please\n"
 #~ "<a href=\"%(signup_url)s\">sign up</a> first."

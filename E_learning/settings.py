@@ -134,27 +134,27 @@ WSGI_APPLICATION = 'E_learning.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
-# DATABASES = {    
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
-#     }
-# }    
+DATABASES = {    
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
+    }
+}    
   
-import pymysql
-pymysql.install_as_MySQLdb()
-import MySQLdb
-DATABASES={   
-    "default":{
-        "ENGINE":"django.db.backends.mysql",
-        "NAME":"agarthaa_e_learning",
-        "USER":"agarthaa_root",
-        "PASSWORD":"AgarthaNew",
-        "HOST":"localhost",
-        "PORT":"3307",
-        'OPTIONS':{'sql_mode': 'STRICT_ALL_TABLES'},
-    }      
-}  
+# import pymysql
+# pymysql.install_as_MySQLdb()
+# import MySQLdb
+# DATABASES={   
+#     "default":{
+#         "ENGINE":"django.db.backends.mysql",
+#         "NAME":"agarthaa_e_learning",
+#         "USER":"agarthaa_root",
+#         "PASSWORD":"AgarthaNew",
+#         "HOST":"localhost",
+#         "PORT":"3307",
+#         'OPTIONS':{'sql_mode': 'STRICT_ALL_TABLES'},
+#     }      
+# }  
 CACHES = { 
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
@@ -224,6 +224,7 @@ BOOTSTRAP4 = {
 # crispy forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 from django.contrib.messages import constants as messages
+MESSAGE_LEVEL = messages.DEBUG 
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'
 }

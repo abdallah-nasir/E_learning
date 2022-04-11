@@ -811,6 +811,134 @@
 
                                    </tbody>
                                 </table>
+                                {% elif qs == "audio_book" %}
+                                <h3>Audio Book Track</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Track</th>
+                                            <th>category</th>
+                                            <th>Price</th>    
+                                            <th>Image</th>   
+                                            <th>Music</th>   
+                                            <th>Action</th>            
+                                        </tr>
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.name|truncatechars:20}}</td>
+                                        <td>{{i.category.name}}</td>
+                                        <td>{{i.get_price}}</td>
+                                       <td>
+                                        {% if i.image %}
+                                           <a target="__" href="{{i.image}}">image link</a>
+                                           {% endif %}
+                                        </td>
+                                         <td>
+                                      
+                                           <a target="__" href="{% url 'dashboard:audio_book_urls:track_music' i.slug %}">{{i.book.count}} Music</a>
+                                           
+                                        </td>
+                                <td>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#audios-{{i.id}}">Approve</button>
+                                <a href="{% url 'dashboard:reject' i.id %}?reject=audio_book" class="btn btn-danger">Reject</a>
+                            </td>
+                                     
+                                     
+                                    </tr>
+                                    <div class="modal fade" id="audios-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Audio</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=audio_book" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == "e_book" %}
+                                <h3>E-Book</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Name</th>
+                                            <th>category</th>
+                                            <th>Price</th>    
+                                            <th>Image</th>   
+                                            <th>Book</th>   
+                                            <th>Action</th>            
+                                        </tr>
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.name|truncatechars:20}}</td>
+                                        <td>{{i.category.name}}</td>
+                                        <td>{{i.get_price}}</td>
+                                       <td>
+                                        {% if i.image %}
+                                           <a target="__" href="{{i.image}}">image link</a>
+                                           {% endif %}
+                                        </td>
+                                         <td>
+                                      
+                                           <a target="__" href="{{i.get_book}}">Link</a>
+                                           
+                                        </td>
+                                <td>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#audios-{{i.id}}">Approve</button>
+                                <a href="{% url 'dashboard:reject' i.id %}?reject=e_book" class="btn btn-danger">Reject</a>
+                            </td>
+                                     
+                                     
+                                    </tr>
+                                    <div class="modal fade" id="audios-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Audio</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=e_book" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
                                 {% endif %}
 
 

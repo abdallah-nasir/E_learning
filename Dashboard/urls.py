@@ -156,6 +156,7 @@ path("library/movies/add/",movies.add_movies,name="add_movies"),
 path("library/movies/video/<str:slug>/",movies.uplaod_movie_video,name="uplaod_movie_video"), 
 path("library/audio/",include("Dashboard.audio_urls",namespace="audios")), 
 path("library/audio-book/",include("Dashboard.audio_book_urls",namespace="audio_book_urls")), 
+path("library/e-book/",include("Dashboard.e_book_urls",namespace="e_book")), 
 
 ####### ads   
 path("ads/<str:slug>/",views.ads,name="ads"),

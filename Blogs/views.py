@@ -342,6 +342,7 @@ def paypal_capture(request,order_id,price_id):
                 payment.data=json.dumps(price_data)
                 payment.save()
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
+                
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
                 msg = EmailMessage(
                     subject="Payment completed", 

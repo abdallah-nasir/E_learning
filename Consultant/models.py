@@ -212,7 +212,9 @@ class Consultant(models.Model):
         data=json.loads(self.user_data)
         return data
         
-
+    def get_consult_payment(self):
+        payment=Cosultant_Payment.objects.get(consultant=self)
+        return payment
 # def check_if_user__has_const(user):
 #     conslt=Consultant.objects.filter(Q(user=user,completed=False) | Q(user=user,pending=True))
 #     return conslt
@@ -245,6 +247,7 @@ class Cosultant_Payment(models.Model):
     created_at=models.DateField(auto_now_add=True)
     status=models.CharField(choices=PAYMENT_CHOICES,default="pending",max_length=50)
     user_data=models.TextField()
+    expired=models.BooleanField(default=False)
     # check_reject=CheckRejectConsultant()
     # objects=models.Manager() 
     def __str__(self):
@@ -259,6 +262,8 @@ class Cosultant_Payment(models.Model):
         rejects=Rejects.objects.filter(type="consultant_payment",content_id=self.id,user=self.user).delete()
         return rejects
     def check_payment(self):
+        if self.expired != False:
+            return False
         if self.status == "declined":
            
             if self.method == "Western Union" or self.method == "bank":
@@ -269,6 +274,8 @@ class Cosultant_Payment(models.Model):
             return False
 
     def check_refund(self): 
+        if self.expired != False:
+            return False
         if self.status != "refund":
             if self.method == "Western Union":
                 return False

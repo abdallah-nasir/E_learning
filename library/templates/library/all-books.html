@@ -1,0 +1,338 @@
+{% extends 'kemet/home/base.html' %}
+{% load i18n %}
+{% load hosts %}
+
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list  for LANGUAGES as languages %}
+{% block content %}
+<style type="text/css">
+select{
+    display:block !important;
+}
+</style>
+<meta charset="utf-8">
+<title>{% trans 'Agartha Library' %} | {% trans 'Home Page' %}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--====== Library PART Start ======-->
+
+<section id="page-banner" class="pt-105 pb-130 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-5.jpg' %})">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-banner-cont">
+                    <h2>{{slug.title}}</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'library:home' %}">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{slug}}</li>
+                        </ol>
+                    </nav>
+                </div>  <!-- page banner cont -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+<!--====== PAGE BANNER PART ENDS ======-->
+
+<div class="home-lager-shearch" style="padding-top: 25px; margin-top: -125px; padding-bottom: 60px; background-color: rgb(252, 252, 252);">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 large-search">
+                <div class="search-form wow pulse">
+                    <form action="{% url  'library:all_search' %}" method="GET" class=" form-inline">
+                       <div class="col-md-12">
+                        <div class="row">
+                           <div class="col-md-4">
+                            <div class="form-group">
+                                <label>The Type Book:</label>
+                                <select class="form-control" name='type' id="exampleFormControlSelect1">
+                                <option value="e-book">EBooks </option>
+                                <option value="audio-book">AudioBooks</option>
+                                    </select>
+                              </div>
+                           </div>
+                           <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Category:</label>
+                                <select class="form-control" name='category' id="exampleFormControlSelect1">
+                                   {% for i in categories %}
+                                   <option  value="{{i.id}}">{{i.name}}</option>
+                                   {% endfor %}
+                                </select>
+                              </div>
+                           </div>
+                           <div class="col-md-4">
+                            <div class="form-group">
+                                <label f>Language:</label>
+                                <select class="form-control" name='language' id="exampleFormControlSelect1">
+                                    <option>English</option>
+                                    <option>Arabic</option>
+                                    <option>German</option>
+                                    <option>Greek</option>
+                                </select>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                             <div class="form-group">
+                                <label >Author:</label>
+                                <input type="text" name="author" class="form-control" placeholder="Author">
+
+                               </div>
+                            </div>
+                            <div class="col-md-4">
+                             <div class="form-group">
+                                <label >Title:</label>
+                                <input type="text" name="title" class="form-control" placeholder="Title">
+
+                               </div>
+                            </div>
+                            <div class="col-md-4">
+                             <div class="form-group">
+                                <label >The translator:</label>
+                                <input type="text" name="translator" class="form-control" placeholder="The translator">
+
+                               </div>
+                            </div>
+                         </div>
+
+                         <div class="row">
+                            <div class="col-md-4">
+                             <div class="form-group">
+                                <label >Publisher:</label>
+                                <input type="text" name='publisher' class="form-control" placeholder="Publisher">
+
+                               </div>
+                            </div>
+                            <div class="col-md-4">
+                             <div class="form-group">
+                                <label >ISBN Number:</label>
+                                <input type="text" name='isbn' class="form-control" placeholder="ISBN">
+
+                               </div>
+                            </div>
+                            <div class="col-md-4">
+                             <div class="form-group">
+								<div class="simulador">
+									<div class="contenedor">
+										<label for="price-range">Price range ($):</label>
+										<div class="slider-container">
+											<div class="interno">
+												<div class="slidecontainer">
+													<input type="range" min="0" max="1000" value="1" name="price" class="slider" id="rango" oninput="outputUpdate(val)">
+												</div>
+												<output for="rango" id="valor"></output>
+
+											</div>
+										</div>
+									</div>
+								</div>
+                                {% comment %} <input type="range" name="price" class="form-control-range" id="slider">
+								<output id="output"></output> {% endcomment %}
+                               </div>
+                            </div>
+                         </div>
+                         
+                       </div>
+                  
+                       <div class="center">
+                        <input type="submit" value="" class="btn btn-default btn-lg-sheach">
+                        </div>                
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--====== SHOP PART START ======-->
+
+<section id="shop-page" class="pt-120 pb-120 gray-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shop-top-search">
+                    <div class="shop-bar">
+                        <ul class="nav" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="active" id="shop-grid-tab" data-toggle="tab" href="#shop-grid" role="tab" aria-controls="shop-grid" aria-selected="true"><i class="fa fa-th-large"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="shop-list-tab" data-toggle="tab" href="#shop-list" role="tab" aria-controls="shop-list" aria-selected="false"><i class="fa fa-th-list"></i></a>
+                            </li>
+                            <li class="nav-item">Showing {{books.start_index}} 0f {{books.paginator.count}} Results</li>
+                        </ul> <!-- nav -->
+                    </div><!-- shop bar -->
+                    {% comment %} <div class="shop-select">
+                        <select>
+                            <option value="1">Sort by</option>
+                            <option value="1">Sort by 01</option>
+                            <option value="2">Sort by 02</option>
+                            <option value="3">Sort by 03</option>
+                            <option value="4">Sort by 04</option>
+                            <option value="5">Sort by 05</option>
+                        </select>
+                    </div> <!-- shop select --> {% endcomment %}
+                </div> <!-- shop top search -->
+            </div>
+        </div> <!-- row -->
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="shop-grid" role="tabpanel" aria-labelledby="shop-grid-tab">
+                <div class="row justify-content-center">
+                    {% for i in books %}
+                    {% if slug == "audio-book" %}
+                    <div class="col-lg-3 col-md-6 col-sm-8">
+                        <div class="singel-publication mt-30">
+                            <div class="image">
+                                <img src="{{i.image}}" alt="Publication">
+                                <div class="add-cart">
+                                    <ul>
+                                        {% comment %} <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-heart-o"></i></a></li> {% endcomment %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="cont">
+                                <div class="name">
+                                    <a href="{% url 'library:audio_book:single_audio' slug=i.slug %}"><h6>{{i.name|truncatewords:10}}</h6></a>
+                                    <span>${{i.get_price}}</span>
+                                </div>
+                                <div class="button text-right">
+                                    <a href="{% url 'library:audio_book:single_audio' slug=i.slug %}" class="main-btn">Details</a>
+                                </div>
+                            </div>
+                        </div> <!-- singel publication -->
+                    </div>
+                    {% else %}
+                    <div class="col-lg-3 col-md-6 col-sm-8">
+                        <div class="singel-publication mt-30">
+                            <div class="image">
+                                <img src="{{i.image}}" alt="Publication">
+                                <div class="add-cart">
+                                    <ul>
+                                        {% comment %} <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-heart-o"></i></a></li> {% endcomment %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="cont">
+                                <div class="name">
+                                    <a href="{% url 'library:e_book:single_book' slug=i.slug %}"><h6>{{i.name|truncatewords:10}}</h6></a>
+                                    {% if get_price %}
+                                    <span>${{i.get_price}}</span>
+                                    {% else %}
+                                    <span>Free</span>
+
+                                    {% endif %}
+                                </div>
+                                <div class="button text-right">
+                                    <a href="{% url 'library:e_book:single_book' slug=i.slug %}" class="main-btn">Details</a>
+                                </div>
+                            </div>
+                        </div> <!-- singel publication -->
+                    </div>
+                    {% endif %}
+                  {% endfor %}
+                </div> <!-- row -->
+            </div>
+            <div class="tab-pane fade" id="shop-list" role="tabpanel" aria-labelledby="shop-list-tab">
+                <div class="row">
+                    {% for  i in books %}
+                    {% if slug == "audio-book" %}
+                    <div class="col-lg-6">
+                        <div class="singel-publication mt-30">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="image">
+                                        <img src="{{i.image}}" alt="Publication">
+                                        <div class="add-cart">
+                                            <ul>
+                                                {% comment %} <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                                <li><a href="#"><i class="fa fa-heart-o"></i></a></li> {% endcomment %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="cont">
+                                        <div class="name">
+                                            <a href="shop-singel.html"><h6>{{i.name|truncatewords:10}}</h6></a>
+                                            <span>${{i.get_price}}</span>
+                                        </div>
+                                        <div class="description pt-10">
+                                            <p>{{i.get_data.data|truncatewords:20}}</p>
+                                        </div>
+                                        <div class="button">
+                                            <a href="{% url 'library:audio_book:single_audio' i.slug %}" class="main-btn">Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- row -->
+                        </div> <!-- singel publication -->
+                    </div>
+                    {% else %}
+
+                    {% endif %}
+                   {% endfor %}
+                </div> <!-- row -->
+            </div>
+        </div> <!-- tab content -->
+        <div class="row">
+            <div class="col-lg-12">
+                <nav class="courses-pagination mt-50">
+                    {% if books.has_other_pages  %}
+                    <ul class="pagination justify-content-center">
+                       {% if books.has_previous  %}
+                        <li class="page-item">
+                            <a href="?page={{ books.previous_page_number }}" aria-label="Previous">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for i in books.paginator.page_range %}
+                        {% if books.number == i %}
+                        <li class="page-item"><a class="active" >{{i}}</a></li>
+                      {% else %}
+                        <li class="page-item"><a href="?page={{ i }}">{{i}}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                        {% if books.has_next %}
+                        <li class="page-item">
+                            <a href="?page={{ books.next_page_number }}" aria-label="Next">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </nav>  <!-- courses pagination -->
+            </div>
+        </div>  <!-- row -->
+    </div> <!-- container -->
+</section>
+<!--====== Library PART ENDS ======-->
+
+
+
+<script src="{% static 'library/assets/js/icheck.min.js' %}"></script>
+
+<script src="{% static 'library/assets/js/price-range.js' %}"></script>
+<script type="text/javascript">
+	var slider = document.getElementById('rango');
+
+	slider.oninput = function() {
+		var output = document.getElementById('valor');
+		output.innerHTML = this.value;
+		var sliderWidth = this.getBoundingClientRect().width;
+		var outputWidth = output.getBoundingClientRect().width;
+		var offset = this.value / (this.max - this.min) * sliderWidth - outputWidth / 2;
+		output.setAttribute('style', 'left: ' + offset + 'px');
+	}
+	
+	slider.oninput();
+</script>
+{% endblock %}

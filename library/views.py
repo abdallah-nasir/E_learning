@@ -16,25 +16,63 @@ storage_name=os.environ["storage_name"]
 library_id=os.environ["library_id"]
 storage_name=os.environ["storage_name"]
 agartha_cdn=os.environ['agartha_cdn']
-PAYMOB_API_KEY = os.environ["PAYMOB_API_KEY"]  # PAYMOB
-PAYMOB_FRAME=os.environ["PAYMOB_FRAME"]
-PAYMOB_BLOG_INT=os.environ['PAYMOB_BLOG_INT']
 from E_learning.all_email import *
 
 def get_library_home_data():
-    audio_libraries=Library.objects.filter(type=3).order_by("-id")[:8]
-    e_book_libraries=Library.objects.filter(type=4).order_by("-id")[:8]
-    context={"audios":audio_libraries,"e_books":e_book_libraries}
-    return contrext
+    audio_book=Audio_Book_Tracks.objects.filter(status="approved").order_by("-id")[:5]
+    e_book=E_Book.objects.filter(status="approved").order_by("-id")[:6]
+    context={"audio_books":audio_book,"e_books":e_book}
+    return context
+
+@login_required(login_url="accounts:login")
+def search(request):
+    categories=Category.objects.all()
+    author=request.GET.get("author")
+    type=request.GET.get("type")
+    category=request.GET.get("category")
+    language=request.GET.get("language")
+    title=request.GET.get("title")
+    translator=request.GET.get("translator")
+    publisher=request.GET.get("publisher")
+    isbn=request.GET.get("isbn")
+    price=request.GET.get("price")
+    all_filters={"status":"approved","category__id":category,"data__language":language,"name__icontains":title,"data__translator__icontains":translator,"data__publisher__icontains":publisher,"data__isbn":isbn,"price__range":(0,price)}
+    new_filter={}
+    for i in all_filters:
+        if all_filters[i] != None and all_filters[i] != "" :
+            new_filter[i] =all_filters[i]
+    if type == "e-book":
+        query=E_Book.objects.filter(**new_filter)
+        print(query)
+    else:
+        query=Audio_Book_Tracks.objects.filter(**new_filter)
+    print(new_filter)
+    print(query)
+    context={"query":query,"type":type,"categories":categories}
+    return render(request,"library/search.html",context)
+
+
 @login_required(login_url="accounts:login")
 def home(request):
-    # data=get_library_home_data()
-    # paginator = Paginator(libraries, 9) 
-    # page_number = request.GET.get('page')
-    # page_obj = paginator.get_page(page_number)
-    # context={"data":data}
-    return render(request,"library/home.html")
+    data=get_library_home_data()
+    context={"data":data}
+    return render(request,"library/home.html",context)
    
+@login_required(login_url="accounts:login")
+def books(request,slug):
+    if slug == "audio-book":
+        books=Audio_Book_Tracks.objects.filter(status="approved")
+    elif slug == "e-book":
+        books=E_Book.objects.filter(status="approved")
+    else:
+        return redirect(reverse("library:home"))
+    categories=Category.objects.all()
+    paginator = Paginator(books, 9) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"books":page_obj,"slug":slug,"categories":categories}
+    return render(request,"library/all-books.html",context)
+
 
 @login_required(login_url="accounts:login")
 def movies(request):
@@ -71,7 +109,7 @@ def movie_payment(request,slug):
 
 @login_required(login_url="accounts:login")
 @check_user_is_kemet_vip
-@check_if_there_payment
+@check_video_payment_western
 def create_movie_western_payment(request,slug):
     form=PaymentForm(request.POST or None ,request.FILES or None)
     movie=get_object_or_404(Movies,slug=slug,status="approved")
@@ -82,6 +120,53 @@ def create_movie_western_payment(request,slug):
             number=form.cleaned_data["number"]
             payment=Library_Payment.objects.create(user=request.user,
             method="Western Union",content_id=movie.id,library_type=3,amount=movie.get_price(), transaction_number=number,status="pending",created_at=now)
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/movies-payment/{movie.slug}/{payment.user.username}/{image}"
+            headers = {
+                "AccessKey": Storage_Api, 
+                "Content-Type": "application/octet-stream",
+                }
+            response = requests.put(image_url,data=image,headers=headers)
+            data=response.json()
+            print(data) 
+            try:
+                if data["HttpCode"] == 201:
+                    payment.payment_image = f"https://{agartha_cdn}/movies-payment/{movie.slug}/{payment.user.username}/{image}"
+                    payment.save()
+            except:
+                pass
+            msg = EmailMessage(
+                subject="Payment completed", 
+                body="thank you for your payment",
+                from_email=PAYMENT_EMAIL_USERNAME,
+                to=[payment.user.email],
+                connection=PAYMENT_MAIL_CONNECTION
+                )
+            msg.content_subtype = "html"  # Main content is now text/html
+            msg.send()
+            body="new payment is waiting for your approve"
+            subject="new payment"
+            send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
+            messages.success(request,"We Have sent an Email,Please check your Inbox")
+            return redirect(reverse("accounts:movies_payment"))
+        else:
+            messages.error(request,"invalid form")
+            print(form.errors)
+            return redirect(reverse("library:movie_payment",kwargs={"slug":movie.slug}))
+
+
+@login_required(login_url="accounts:login")
+@check_user_is_kemet_vip
+@check_video_payment_bank
+def create_movie_bank_payment(request,slug):
+    form=PaymentForm(request.POST or None ,request.FILES or None)
+    movie=get_object_or_404(Movies,slug=slug,status="approved")
+    if request.method == 'POST':
+        if form.is_valid():
+            now= datetime.date.today()
+            image=form.cleaned_data["image"]
+            number=form.cleaned_data["number"]
+            payment=Library_Payment.objects.create(user=request.user,
+            method="bank",content_id=movie.id,library_type=3,amount=movie.get_price(), transaction_number=number,status="pending",created_at=now)
             image_url=f"https://storage.bunnycdn.com/{storage_name}/movies-payment/{movie.slug}/{payment.user.username}/{image}"
             headers = {
                 "AccessKey": Storage_Api, 
@@ -201,105 +286,6 @@ def paypal_capture(request,order_id,movie_id):
 def random_integer_generator(size = 8, chars = string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
-@login_required(login_url="accounts:login")
-@check_user_is_kemet_vip
-@complete_user_data
-def paymob_payment(request,id):
-    if request.is_ajax():     
-        # return JsonResponse({"frame":PAYMOB_FRAME,"token":123})
-        movie=Movies.objects.get(id=id)
-        merchant_order_id=request.user.id + int(random_integer_generator())
-        url_1 = "https://accept.paymob.com/api/auth/tokens"
-        data_1 = {"api_key": PAYMOB_API_KEY}
-        r_1 = requests.post(url_1, json=data_1)
-        token = r_1.json().get("token")
-        data_2 = {
-        "auth_token": token,
-        "delivery_needed": "false",
-            "amount_cents":movie.get_price() * 100,
-            "currency": "EGP",
-            "merchant_order_id": merchant_order_id,  # 81
-
-            "items": [
-    {
-        "name": movie.id,
-        "amount_cents": movie.get_price() * 100,
-        "description": "movies",  
-        "quantity": "1"
-    },
-    {
-        "name": movie.id,
-        "amount_cents": movie.get_price() * 100,
-        "description": 3,        #library_type  
-        "quantity": "1"
-    },
-    ],
-            "shipping_data": {
-                "apartment": "803",
-                "email": request.user.email,
-                "floor": "42",
-                "first_name": request.user.username,
-                "street": "Ethan Land",
-                "building": "8028",
-                "phone_number": f"{request.user.phone}",   
-                "postal_code": "01898",
-                "extra_description": "8 Ram , 128 Giga",
-                "city": "Jaskolskiburgh",
-                "country": "CR",
-                "last_name": request.user.last_name,
-                "state": "Utah"
-            },
-            "shipping_details": {
-                "notes": " test",
-                "number_of_packages": 1,
-                "weight": 1,
-                "weight_unit": "Kilogram",
-                "length": 1,
-                "width": 1,
-                "height": 1,
-                "contents": "product of some sorts"
-            }
-        }
-        url_2 = "https://accept.paymob.com/api/ecommerce/orders"
-        r_2 = requests.post(url_2, json=data_2)
-        my_id = r_2.json().get("id")
-        if my_id == None:
-            r_2 = requests.get(url_2, json=data_2)
-            my_id = r_2.json().get("results")[0]["id"]
-
-        data_3 = {
-            "auth_token": token,
-            "amount_cents": movie.get_price() * 100,
-            "expiration": 15*60,
-            "order_id": my_id,
-            "billing_data": {
-                "apartment": "803",
-                "email": request.user.email,
-                "floor": "42",
-                "first_name": request.user.username,
-                "street": "Ethan Land",
-                "building": "8028", 
-                "phone_number":f"{request.user.phone}",
-                "shipping_method": "PKG",
-                "postal_code": "01898",
-                "city": "Jaskolskiburgh",
-                "country": "CR",
-                "last_name": request.user.last_name,
-                "state": "Utah"
-            },
-            "currency": "EGP",
-            "integration_id": PAYMOB_BLOG_INT,
-            "lock_order_when_paid": "true"
-        }
-        url_3 = "https://accept.paymob.com/api/acceptance/payment_keys"
-        r_3 = requests.post(url_3, json=data_3)
-        payment_token = (r_3.json().get("token"))
-        if payment_token == None:
-            success=0
-        else:
-            success=1
-        print(data_2["items"])
-        return JsonResponse({"success":success,"frame":PAYMOB_FRAME,"token":payment_token})
 
 
 @login_required(login_url="accounts:login")

@@ -114,9 +114,8 @@ def payment(request,teacher):
     return render(request,"kemet/consultant_payment.html",context)
 
 
-
 @login_required(login_url="accounts:login")
-@check_user_is_has_consul
+@check_user_is_has_western
 @complete_user_data
 @check_user_data_form
 def western_payment(request,teacher):
@@ -163,11 +162,10 @@ def western_payment(request,teacher):
             messages.error(request,"invalid form")
     context={"form":form,"teacher":teacher,"url":url}
     return render(request,"kemet/consultant_western.html",context)
-
-
+ 
 
 @login_required(login_url="accounts:login")
-@check_user_is_has_consul
+@check_user_is_has_bank
 @complete_user_data
 @check_user_data_form
 def bank_payment(request,teacher):

@@ -3850,6 +3850,7 @@ p.form-message.error {
 }
 .header-top p{
     color:white;
+    padding: 0;
 }
 .header-top span{
     color:#e3c871e8;

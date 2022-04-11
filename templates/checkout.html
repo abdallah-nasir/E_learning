@@ -2,7 +2,7 @@
 {% load static %}
 {% load hosts %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'payment/css/style.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'payment/css/style.css' %}"> {% endcomment %}
 
 <title>{% block title %}|Payment{% endblock %}</title>
 
@@ -29,13 +29,17 @@
                       </thead>
                       <tbody>
                         <tr>
-                          <td>نبيل كمال محمد</td>
-                          <td>Egypt</td>
-                          <td>00201011609810</td>
+                            <td>نبيل كمال محمد</td>
+                            <td>مصر</td>
+                            <td>00201011609810</td>
                         </tr>
-                       
-                       
-                      </tbody>
+                        <tr>
+                            <td>Nabil Kamal Mohammad</td>
+                            <td>Egypt</td>
+                            <td>00201011609810</td>
+                        </tr>
+
+                    </tbody>
                     </table>
                     
                     <form method="POST" action="{% url 'home:western_payment' course.slug %}" enctype="multipart/form-data">

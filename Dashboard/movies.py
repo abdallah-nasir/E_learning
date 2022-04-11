@@ -1,3 +1,4 @@
+
 from django.shortcuts import render,redirect
 import os
 from django.template.defaultfilters import urlencode
@@ -217,7 +218,15 @@ def uplaod_movie_video(request,slug):
                 data=response.json()
                 movie.duration=int(data["length"])  
                 movie.save()
-                messages.success(request,"Movie added successfully")
+                time=cache.get(f"dashoard_movie_email_{request.user}_{movie.id}")
+                if time and time == True:
+                    pass
+                else:
+                    body=f"movie edit for user {request.user.email}"
+                    subject="edit movie"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    cache.set(f"dashoard_movie_email_{request.user}_{movie.id}",True,60*60*3)
+                    messages.success(request,"Movie added successfully")
                 return JsonResponse({"message":"1"})
             else:
                 return FailedJsonResponse({"message":"1"})
@@ -250,8 +259,9 @@ def check_movie(request,slug):
     my_response = requests.get( url,headers=headers)
     try:
         data=my_response.json() 
+        print(data)
         if data["length"] != 0 or data["encodeProgress"] == 100 or data["status"] != 0:
-            print(data["encodeProgress"])
+            print(data["status"])
             movie.duration=int(data["length"])
             movie_data["video"]=f"https://iframe.mediadelivery.net/embed/{library_id}/{data['guid']}?autoplay=false"
             movie.data=json.dumps(movie_data)
@@ -360,16 +370,8 @@ def edit_movie(request,slug):
             movie.data=json.dumps(movie_data)
             movie.status="pending"
             form.save()  
-            time=cache.get(f"dashoard_movie_email_{request.user}_{instance.id}")
-            if time and time == True:
-                pass
-            else:
-                body=f"movie edit for user {request.user.email}"
-                subject="edit movie"
-                send_mail_approve(request,user=request.user.email,subject=subject,body=body)
-                cache.set(f"dashoard_movie_email_{request.user}_{instance.id}",True,60*60*3)
             messages.success(request,"movie edited successfully")
-            return redirect(reverse("dashboard:movies"))
+            return redirect(reverse("dashboard:uplaod_movie_video",kwargs={"slug":movie.slug}))
     context={"form":form,"movie":movie}
     return render(request,"dashboard_library_edit_movies.html",context)
 
@@ -381,7 +383,7 @@ def upload_demo_movie(request,slug):
     movie_data=json.loads(movie.data)
     if movie.check_demo_movies():
         return redirect(reverse("dashboard:movies"))
-    elif movie.check_movies() == False:
+    if movie.check_movies() == False:
         messages.error(request,"upload movie first") 
         return redirect(reverse("dashboard:movies"))
     else:
@@ -500,40 +502,6 @@ def movie_refund(request,slug,id):
 
 
 
-@login_required(login_url="accounts:login")
-@for_admin_only  
-def accpet_paymob_movie_payment_refund(request,payment,refund):
-    url_1 = "https://accept.paymob.com/api/auth/tokens"
-    data_1 = {"api_key": PAYMOB_API_KEY}
-    r_1 = requests.post(url_1, json=data_1)
-    token = r_1.json().get("token")
-    body={
-            "auth_token": token,
-            "transaction_id": payment.transaction_number,
-            "amount_cents": payment.amount * 100
-            }
-    url = "https://accept.paymob.com/api/acceptance/void_refund/refund"
-    r_1=requests.post(url=url,json=body)
-    try:
-        r_2=r_1.json()
-        if r_2["success"] == True:
-            payment.status ="refund"
-            payment.save()
-            refund.status="approved"
-            refund.save()
-            send_mail(
-                'Payment Refunded',
-                "Successfull Payment Refund",
-                PAYMENT_EMAIL_USERNAME,
-                [payment.user.email],
-                fail_silently=False,
-                connection=PAYMENT_MAIL_CONNECTION
-                )
-            messages.success(request,"Payment Refunded")
-        else:
-            messages.error(request,"invalid payment refund")
-    except:
-        messages.error(request,"invalid payment refund")
 
 @login_required(login_url="accounts:login")
 @check_if_there_payment_edited

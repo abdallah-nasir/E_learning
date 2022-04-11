@@ -22,10 +22,9 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from taggit.models import Tag
-from library.models import Library_Payment,Audio_Tracks
+from library.models import Library_Payment,Audio_Tracks,Audio_Book_Tracks,E_Book
 from .models import *
-from .movies import accpet_paymob_movie_payment_refund,paymob_movie_payment_refund
-from .audios import accpet_paymob_music_payment_refund,paymob_music_payment_refund
+
 from django.core.cache import cache 
 from django.contrib.auth.decorators import user_passes_test
 import json,requests
@@ -1456,15 +1455,15 @@ def approve(request):
             if qs == "blogs":
                 query=Blog.objects.filter(status="pending").order_by("-id")
             elif qs == "blog_payment":  
-                query=Blog_Payment.objects.filter(status="pending").order_by("-id")
+                query=Blog_Payment.objects.filter(status="pending",expired=False).order_by("-id")
             elif qs == "consultant_payment": 
-                query=Cosultant_Payment.objects.filter(status="pending").order_by("-id")
+                query=Cosultant_Payment.objects.filter(status="pending",expired=False).order_by("-id")
             elif qs == "course":
                 query=Course.objects.filter(status="pending").order_by("-id")
             elif qs == "events":
                 query=Events.objects.filter(status="pending").order_by("-id")
             elif qs == "payment":
-                query=Payment.objects.filter(status="pending").order_by("-id")
+                query=Payment.objects.filter(status="pending",expired=False).order_by("-id")
             elif qs == "teacher":
                 query=TeacherForms.objects.filter(status="pending").order_by("-id")
             elif qs == "add_user":
@@ -1474,11 +1473,15 @@ def approve(request):
             elif qs == "audios":
                 query= Audio_Tracks.objects.filter(status="pending").order_by("-id")
             elif qs == "movie_payment":
-                query= Library_Payment.objects.filter(status="pending",library_type=3).order_by("-id")
+                query= Library_Payment.objects.filter(status="pending",library_type=3,expired=False).order_by("-id")
+            elif qs == "audio_book":
+                query= Audio_Book_Tracks.objects.filter(status="pending").order_by("-id")
             elif qs == "audio_payment":
-                query= Library_Payment.objects.filter(status="pending",library_type=2).order_by("-id")
+                query= Library_Payment.objects.filter(status="pending",library_type=2,expired=False).order_by("-id")
+            elif qs == "e_book":
+                    query= E_Book.objects.filter(status="pending").order_by("-id")
             elif qs == "audio_book_payment":
-                query= Library_Payment.objects.filter(status="pending",library_type=1).order_by("-id")
+                query= Library_Payment.objects.filter(status="pending",library_type=1,expired=False).order_by("-id")
             else:
                 query=False
         except:
@@ -1524,16 +1527,22 @@ def approve_content(request,id):
                 data=json.loads(query.data)
                 if data["type"] == "agartha":
                     query.add_time_expired_to_related_course()
+                    query.user.vip = True
                 elif data["type"] == "kemet":
                     query.add_time_expired_to_related_course_kemet()
-                query.status="approved"
-                query.save()
-                
-                if data["type"] == "agartha":
-                    query.user.vip = True
-                if data["type"] == "kemet":
                     query.user.is_kemet_vip=True
+                query.status="approved"
+                if data["type"] == "agartha":
+                    for i in Blog_Payment.objects.filter(user=request.user,type=1,expired=False).exclude(id=query.id).select_related("user"):
+                        i.expired=True
+                        i.save()
+                else:
+                    for i in Blog_Payment.objects.filter(user=request.user,type=2,expired=False).exclude(id=query.id).select_related("user"):
+                        i.expired=True
+                        i.save()
                 query.user.save()
+                query.save()                    
+                
                 send_mail(
                 'Payment Completed',
                 "Successfull Payment",
@@ -1557,6 +1566,9 @@ def approve_content(request,id):
                 consult.end_time=query.teacher.end_time
                 consult.save()
                 query.save()
+                for i in Cosultant_Payment.objects.filter(user=query.user,teacher=query.teacher,expired=False).exclude(id=query.id).select_related("user"):
+                    i.expired=True
+                    i.save()
                 send_mail(
                     'Payment Completed',
                     f"Successfull Payment of consultant with user {query.user.first_name}",
@@ -1603,6 +1615,9 @@ def approve_content(request,id):
                     query.course.videos.first().save()
                 query.course.save()
                 query.save()
+                for i in Payment.objects.filter(user=query.user,course=query.course,expired=False).exclude(id=query.id).select_related("user"):
+                    i.expired=True
+                    i.save()
                 send_mail(
                 'Payment Completed',
                 f"Successfull Payment for course {query.course.name} , user {query.user.first_name}",
@@ -1656,6 +1671,9 @@ def approve_content(request,id):
                 query.get_movies().save()
                 messages.success(request,"Payment Approved Successfully")
                 query.save()
+                for i in Library_Payment.objects.filter(user=query.user,library_type=3,content_id=query.get_movies().id,expired=False).exclude(id=query.id).select_related("user"):
+                    i.expired=True
+                    i.save()
                 send_mail(
                 'Payment Completed',
                 "Successfull Payment",
@@ -1669,6 +1687,16 @@ def approve_content(request,id):
                 query.status="approved"
                 messages.success(request,"Audio Approved Successfully")
                 query.save()
+            if qs == "audio_book":
+                query=get_object_or_404(Audio_Book_Tracks,id=id,status="pending")
+                query.status="approved"
+                messages.success(request,"Audio Book Approved Successfully")
+                query.save()
+            if qs == "e_book":
+                query=get_object_or_404(E_Book,id=id,status="pending")
+                query.status="approved"
+                messages.success(request,"E-Book Approved Successfully")
+                query.save()
             if qs == "audio_payment":
                 query=get_object_or_404(Library_Payment,library_type=2,id=id,status="pending")
                 query.status="approved"
@@ -1676,6 +1704,9 @@ def approve_content(request,id):
                 query.get_music().save()
                 messages.success(request,"Payment Approved Successfully")
                 query.save()
+                for i in Library_Payment.objects,filter(user=query.user,library_type=2,content_id=query.get_music().id,expired=False).exclude(id=query.id).select_related("user"):
+                    i.expired=True
+                    i.save()
                 send_mail(
                 'Payment Completed',
                 "Successfull Payment",
@@ -1691,6 +1722,9 @@ def approve_content(request,id):
                 query.get_audio_book().save()
                 messages.success(request,"Payment Approved Successfully")
                 query.save()
+                for i in Library_Payment.objects.filter(user=query.user,content_id=query.get_audio_book().id,library_type=1,expired=False).exclude(id=query.id).select_related("user"):
+                    i.expired=True
+                    i.save()
                 send_mail(
                 'Payment Completed',
                 "Successfull Payment",
@@ -1767,6 +1801,16 @@ def reject(request,id):
                 connection=DASHBOARD_MAIL_CONNECTION
             if qs == "audios":
                 query=get_object_or_404(Audio_Tracks,id=id,status="pending")
+                content_user=query.user
+                mail=DASHBOARD_EMAIL_USERNAME
+                connection=DASHBOARD_MAIL_CONNECTION
+            if qs == "audio_book":
+                query=get_object_or_404(Audio_Book_Tracks,id=id,status="pending")
+                content_user=query.user
+                mail=DASHBOARD_EMAIL_USERNAME
+                connection=DASHBOARD_MAIL_CONNECTION
+            if qs == "e_book":
+                query=get_object_or_404(E_Book,id=id,status="pending")
                 content_user=query.user
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
@@ -1924,6 +1968,7 @@ def reject_consultant(request,id):
         data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":payment.get_consultant_date(),"teacher":payment.teacher.user.username}]}
         refund.data=json.dumps(data)
         refund.save()
+    payment.expired=True 
     consultant.save()
     send_mail(
         "Consultant Cancellation",
@@ -2066,6 +2111,8 @@ def complete_consultant(request,id):
     consult=get_object_or_404(Consultant,id=id,status="started")
     if request.user == consult.teacher.user:
         consult.status="completed"
+        consult.get_consult_payment().expired=True
+        consult.get_consult_payment().save()
         consult.save()
         messages.success(request,"Consultant Completed Successfully")
     return redirect(reverse("dashboard:consultants"))
@@ -2486,6 +2533,7 @@ def add_refund(request,id):
                     payment.consultant.status="refund"
                     payment.consultant.save()
                 payment.status ="refund"
+                payment.expired=True
                 payment.save()
                 refund=Refunds.objects.create(type="consultant_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
                 data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":payment.get_consultant_date(),"teacher":payment.teacher.user.username}]}
@@ -2505,6 +2553,7 @@ def add_refund(request,id):
                     payment.course.save()
                 except:
                     pass
+                payment.expired=True
                 payment.save()
                 refund=Refunds.objects.create(type="course_payment",content_id=payment.id,transaction_number=payment.transaction_number,user=payment.user,status="approved")
                 my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","course":payment.course.name}]}
@@ -2523,6 +2572,7 @@ def add_refund(request,id):
             payment=Blog_Payment.objects.get(id=id)
             if payment.status != "refund": 
                 payment.status ="refund"
+                payment.expired=True
                 payment.user.vip=False
                 payment.user.save()
                 payment.save()
@@ -2535,6 +2585,7 @@ def add_refund(request,id):
             payment=Library_Payment.objects.get(id=id,library_type=3)
             if payment.status != "refund": 
                 payment.status ="refund"
+                payment.expired=True
                 try:
                     payment.get_movies().buyers.remove(username=payment.user.username)
                     payment.get_movies.save()
@@ -2550,6 +2601,7 @@ def add_refund(request,id):
             payment=Library_Payment.objects.get(id=id,library_type=3)
             if payment.status != "refund": 
                 payment.status ="refund"
+                payment.expired=True
                 try:
                     payment.get_music().buyers.remove(username=payment.user.username)
                     payment.get_movies.save()
@@ -2595,6 +2647,7 @@ def approve_refund(request,id):
             my_payment.consultant.status="refund"
             my_payment.consultant.save()
         my_payment.status ="refund"
+        my_payment.expired =True
         my_payment.save()
         refund.status="approved"
         refund.save()
@@ -2610,6 +2663,7 @@ def approve_refund(request,id):
     elif refund.type =="course_payment":
         my_payment=Payment.objects.get(id=payment)
         my_payment.status ="refund"
+        my_payment.expired =True
         try:
             my_payment.course.students.remove(my_payment.user)
             for i in my_payment.course.videos.all():
@@ -2633,6 +2687,8 @@ def approve_refund(request,id):
     elif refund.type =="movie_payment":
         my_payment=Library_Payment.objects.get(id=payment,library_type=3)
         my_payment.status ="refund"
+        my_payment.expired =True
+
         try:
             my_payment.get_movies().buyers.remove(my_payment.user)
             my_payment.get_movies().save()
@@ -2653,6 +2709,7 @@ def approve_refund(request,id):
     elif refund.type =="music_payment":
         my_payment=Library_Payment.objects.get(id=payment,library_type=2)
         my_payment.status ="refund"
+        my_payment.expired =True
         try:
             my_payment.get_music().buyers.remove(my_payment.user)
             my_payment.get_music().save()
@@ -2673,6 +2730,7 @@ def approve_refund(request,id):
     elif refund.type =="audio_book_payment":
         my_payment=Library_Payment.objects.get(id=payment,library_type=1)
         my_payment.status ="refund"
+        my_payment.expired =True
         try:
             my_payment.get_audio_book().buyers.remove(my_payment.user)
             my_payment.get_audio_book().save()

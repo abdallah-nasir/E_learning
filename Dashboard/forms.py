@@ -17,6 +17,7 @@ import datetime as compare_time
 from datetime import date,datetime,time
 from taggit.forms import *
 from taggit.models import Tag
+from django.core.validators import FileExtensionValidator
 User=get_user_model()
 # Audio_Extension=[".3gp",".aa",".aac",".aiff",".wav",".m4a",".amr",".mp3",".webm",".wmv",".mkv"]
 # Video_Extension=[".webm",".mkv",".flv",".avi",".wmv",".rmvb",".amv",".mp4",".m4p",".mpg",".mpeg",".m4v",".3gp"]
@@ -123,10 +124,11 @@ class BlogGalleryForm(forms.ModelForm):
         request=get_current_request()
         type=request.GET.get("blog_type")
         image=request.FILES.getlist("image")
-        for i in image:
-            image_extension=os.path.splitext(i.name)[1]
-            if image_extension.lower() not in IMAGE_EXTENSIONS:
-                raise forms.ValidationError("invalid image extension")
+        if image:
+            for i in image:
+                image_extension=os.path.splitext(i.name)[1]
+                if image_extension.lower() not in IMAGE_EXTENSIONS:
+                    raise forms.ValidationError("invalid image extension")
         return image
 
 class AddCourse(forms.ModelForm):
@@ -150,14 +152,10 @@ class AddCourse(forms.ModelForm):
         return price
     def clean_image(self):
         image=self.cleaned_data.get("image")
-        request=get_current_request()
-        try:
-            if request.FILES["image"]:
-                image_extension=os.path.splitext(image.name)[1]
-                if image_extension.lower() not in IMAGE_EXTENSIONS:
-                    raise forms.ValidationError("invalid image extension")
-        except:
-            pass
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
         return image
 
 class EditCourse(forms.ModelForm):
@@ -181,14 +179,10 @@ class EditCourse(forms.ModelForm):
         return price
     def clean_image(self):
         image=self.cleaned_data.get("image")
-        request=get_current_request()
-        try:
-            if request.FILES["image"]:
-                image_extension=os.path.splitext(image.name)[1]
-                if image_extension.lower() not in IMAGE_EXTENSIONS:
-                    raise forms.ValidationError("invalid image extension")
-        except:  
-            pass
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
         return image
 
 class AddVideo(forms.ModelForm):
@@ -237,7 +231,7 @@ class AddEvent(forms.ModelForm):
                 'append': 'fa fa-clock-o',
                 'icon_toggle': True,
             }))
-    zoom_link=forms.CharField(max_length=300,required=False)
+    zoom_link=forms.CharField(max_length=300,required=True)
     class Meta:
         model=Events    
         fields=['name',"category","image","details","date","start_time","end_time","place","zoom_link"]
@@ -485,9 +479,10 @@ class CategoryForm(forms.ModelForm):
     def clean_image(self):
         request=get_current_request()
         image=request.FILES.get("image")
-        image_extension=os.path.splitext(image.name)[1]
-        if image_extension.lower() not in IMAGE_EXTENSIONS:
-            raise forms.ValidationError("invalid image extension")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
         return image
 class BranchForm(forms.ModelForm):
     class Meta:
@@ -528,9 +523,10 @@ class Update_Certification(forms.ModelForm):
     def clean_image(self):
         request=get_current_request()
         image=request.FILES.get("image")
-        image_extension=os.path.splitext(image.name)[1]
-        if image_extension.lower() not in IMAGE_EXTENSIONS:
-            raise forms.ValidationError("invalid image extension")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
         return image
 class Refunds_Form(forms.ModelForm):
     class Meta:
@@ -577,9 +573,10 @@ class CoursePaymentFom(forms.ModelForm):
     def clean_payment_image(self):
         request=get_current_request()
         image=request.FILES.get("payment_image")
-        image_extension=os.path.splitext(image.name)[1]
-        if image_extension.lower() not in IMAGE_EXTENSIONS:
-            raise forms.ValidationError("invalid image extension")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            if image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
         return image
 
 class MusicPaymentForm(forms.ModelForm):
@@ -620,10 +617,11 @@ class E_Book_LibraryForm(forms.ModelForm):
     def clean_images(self):
         request=get_current_request()
         images=request.FILES.getlist("images")
-        for i in images:
-            image_extension=os.path.splitext(i.name)[1]
-            while image_extension.lower() not in IMAGE_EXTENSIONS:
-                raise forms.ValidationError("invalid image extension")
+        if images:
+            for i in images:
+                image_extension=os.path.splitext(i.name)[1]
+                while image_extension.lower() not in IMAGE_EXTENSIONS:
+                    raise forms.ValidationError("invalid image extension")
         return images
     
 class E_Book_File_Form(forms.Form):
@@ -638,10 +636,11 @@ class E_Book_File_Form(forms.Form):
     def clean_images(self):
         request=get_current_request()
         images=request.FILES.getlist("images")
-        for i in images:
-            image_extension=os.path.splitext(i.name)[1]
-            while image_extension.lower() not in IMAGE_EXTENSIONS:
-                raise forms.ValidationError("invalid image extension")
+        if images:
+            for i in images:
+                image_extension=os.path.splitext(i.name)[1]
+                while image_extension.lower() not in IMAGE_EXTENSIONS:
+                    raise forms.ValidationError("invalid image extension")
         return images
 class LibraryCategoryForm(forms.ModelForm):
     class Meta:
@@ -658,10 +657,11 @@ class MoviesLibraryForm(forms.ModelForm):
     def clean_image(self):
         request=get_current_request()
         image=request.FILES.getlist("image")
-        for i in image:
-            image_extension=os.path.splitext(i.name)[1]
-            while image_extension.lower() not in IMAGE_EXTENSIONS:
-                raise forms.ValidationError("invalid image extension")
+        if image:
+            for i in image:
+                image_extension=os.path.splitext(i.name)[1]
+                while image_extension.lower() not in IMAGE_EXTENSIONS:
+                    raise forms.ValidationError("invalid image extension")
         return image 
 class MoviesLibraryEditForm(forms.ModelForm):
     image=forms.ImageField(required=False)
@@ -706,14 +706,24 @@ class MusicLibraryEditForm(forms.ModelForm):
                 if image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
         return image 
-    
+LANGUAGE_BOOK=(
+    ("English","English"),
+    ("Arabic","Arabic"),
+    ("German","German"),
+    ("Greek","Greek"),
+)
 class AudioBookEditForm(forms.ModelForm):
     image=forms.ImageField(required=False)
     price=forms.FloatField(required=False,min_value=0)
-    data=forms.CharField(required=False,widget=forms.Textarea())
+    about=forms.CharField(required=False,widget=forms.Textarea())
+    language=forms.ChoiceField(choices=LANGUAGE_BOOK)
+    author=forms.CharField(required=False)
+    translator=forms.CharField(required=False)
+    publisher=forms.CharField(required=False)
+    isbn=forms.CharField(required=False)
     class Meta:
         model=Audio_Book_Tracks
-        fields=["name","category","data","price"]
+        fields=["name","category","price"]
         
     def clean_image(self):
         request=get_current_request()
@@ -748,25 +758,82 @@ class AddTrackForm(forms.ModelForm):
        
     def clean_image(self):
         image=self.cleaned_data.get("image")
-        image_extension=os.path.splitext(image.name)[1]
-        while image_extension.lower() not in IMAGE_EXTENSIONS:
-            raise forms.ValidationError("invalid image extension")
-        print(image)
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            while image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
         return image 
 
 class AddAudioBookTrackForm(forms.ModelForm):
     price=forms.FloatField(required=False,min_value=0)
-    data=forms.CharField(required=True,widget=forms.Textarea())
+    about=forms.CharField(required=True,widget=forms.Textarea())
+    language=forms.ChoiceField(choices=LANGUAGE_BOOK)
+    author=forms.CharField(required=True)
+    translator=forms.CharField(required=True)
+    publisher=forms.CharField(required=True)
+    isbn=forms.CharField(required=True)
     class Meta: 
        model=Audio_Book_Tracks  
-       fields=["name","price","category","data","image"]
+       fields=["name","price","category","image"]
        
     def clean_image(self):
         image=self.cleaned_data.get("image")
-        image_extension=os.path.splitext(image.name)[1]
-        while image_extension.lower() not in IMAGE_EXTENSIONS:
-            raise forms.ValidationError("invalid image extension")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            while image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
         return image 
+
+
+class AddEBookTrackForm(forms.ModelForm):
+    price=forms.FloatField(required=False,min_value=0)
+    about=forms.CharField(required=True,widget=forms.Textarea())
+    language=forms.ChoiceField(choices=LANGUAGE_BOOK,required=True)
+    author=forms.CharField(required=True)
+    translator=forms.CharField(required=True)
+    publisher=forms.CharField(required=True)
+    isbn=forms.CharField(required=True)
+    class Meta: 
+       model=E_Book  
+       fields=["name","price","category","image"]
+       
+    def clean_image(self):
+        image=self.cleaned_data.get("image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            while image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image 
+
+class EditEBookTrackForm(forms.ModelForm):
+    price=forms.FloatField(required=False,min_value=0)
+    about=forms.CharField(required=True,widget=forms.Textarea())
+    language=forms.ChoiceField(choices=LANGUAGE_BOOK,required=True)
+    author=forms.CharField(required=True)
+    translator=forms.CharField(required=True)
+    publisher=forms.CharField(required=True)
+    isbn=forms.CharField(required=True)
+    image=forms.ImageField(required=False)
+    class Meta: 
+       model=E_Book  
+       fields=["name","price","category","image"]
+       
+    def clean_image(self):
+        image=self.cleaned_data.get("image")
+        if image:
+            image_extension=os.path.splitext(image.name)[1]
+            while image_extension.lower() not in IMAGE_EXTENSIONS:
+                raise forms.ValidationError("invalid image extension")
+        return image 
+class UploadPdf(forms.Form):
+    pdf=forms.FileField(allow_empty_file=True,widget=forms.FileInput(attrs={'accept':'application/pdf'}))
+
+    def clean_pdf(self):
+        file=self.cleaned_data.get("pdf")
+        file_extension=os.path.splitext(file.name)[1]
+        while file_extension.lower() not in BOOK_EXTENSION:
+            raise forms.ValidationError("invalid file extension")
+        return file 
 class MusicForm(forms.ModelForm):
     class Meta:
        model=Music  

@@ -54,9 +54,16 @@ def add_track(request):
             image=request.FILES.get("image")
             instance.user=request.user
             instance.image=None
-            data=form.cleaned_data.get("data")
-            data={"data":data}
-            instance.data=json.dumps(data)
+            language=form.cleaned_data.get("language")
+            author=form.cleaned_data.get("author")
+            publisher=form.cleaned_data.get("publisher")
+            isbn=form.cleaned_data.get("isbn")
+            about=form.cleaned_data.get("about")
+
+            translator=form.cleaned_data.get("translator")
+            data={"about":about,"language":language,"author":author,"publisher":publisher,
+            "translator":translator,"isbn":isbn}
+            instance.data=data
             instance.save()
             headers = {  
                         "Accept": "*/*", 
@@ -191,15 +198,24 @@ def track_music(request,slug):
 def edit_audio(request,slug):
     audio=get_object_or_404(Audio_Book_Tracks,user=request.user,slug=slug)
     form =AudioBookEditForm(request.POST or None,instance=audio)
-    movie_data=json.loads(audio.data)
-    form.initial["data"]=movie_data["data"]
+    movie_data=audio.data
+    form.initial["about"]=movie_data["about"]
+    form.initial["language"]=movie_data["language"]
+    form.initial["author"]=movie_data["author"]
+    form.initial["translator"]=movie_data["translator"]
+    form.initial["publisher"]=movie_data["publisher"]
+    form.initial["isbn"]=movie_data["isbn"]
     if request.method == "POST":
         if form.is_valid():
             instance=form.save(commit=False)
-            data=form.cleaned_data.get("data")
-            if data:
-                movie_data["data"]=data
             image=form.cleaned_data.get("image")
+            about=form.cleaned_data.get("about")
+            language=form.cleaned_data.get("language")
+            author=form.cleaned_data.get("author")
+            publisher=form.cleaned_data.get("publisher")
+            isbn=form.cleaned_data.get("isbn")
+            translator=form.cleaned_data.get("translator")
+
             if image:
                 headers = {
                "Accept": "*/*",
@@ -229,9 +245,10 @@ def edit_audio(request,slug):
                             audio.image=image
                     except:
                         pass
-            audio.data=json.dumps(movie_data)
+            movie_data={"about":about,"language":language,"author":author,"translator":translator,"publisher":publisher,"isbn":isbn}
+            audio.data=movie_data
             audio.status="pending"
-            form.save()  
+            audio.save()  
             body=f"audio book edit for user {request.user.email}"
             subject="edit audio book"
             send_mail_approve(request,user=request.user.email,subject=subject,body=body)
@@ -329,4 +346,9 @@ def audio_book_refund(request,slug,id):
 
 
 
-
+@login_required(login_url="accounts:login")
+@check_user_validation
+def track_music(request,slug):
+    track=get_object_or_404(Audio_Book_Tracks,slug=slug,status="pending")
+    context={"track":track}
+    return render(request,"audio-book/track_music.html",context)

@@ -13,6 +13,8 @@ path("is-play-music/<str:slug>/",views.is_play_music,name="is_play_music"),
 path("payments/",views.audio_payment,name="audio_payment"), 
 path("refund/<str:slug>/<int:id>/",views.audio_book_refund,name="audio_book_refund"), 
 path("edit/audio-book/payment/<str:slug>/<int:id>/",views.edit_audio_book_payment,name="edit_music_payment"), 
+ path("demo/<str:slug>/",views.track_music,name="track_music"), 
+
  
 
 ]  

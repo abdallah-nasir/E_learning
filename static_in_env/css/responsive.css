@@ -18,7 +18,7 @@
 @media (min-width: 992px) and (max-width: 1199.98px) {
 
 .navigation .navbar .navbar-nav li {
-	margin-right: 35px;
+	margin-right: 25px;
 }
 .singel-course .cont {
 	padding-left: 25px;
@@ -1408,4 +1408,64 @@
 
 
 
+}
+
+@media (max-width:991.75px) {
+    /* .Welcome-entry .col-md-7 {
+        display: none;
+    } */
+    .welcome_text h2 {
+        display: none;
+    }
+    .welcome-circle {
+        background-color: transparent !important;
+        border-color: #fff !important;
+    }
+	.bookshelf{
+		/* width: fit-content; */
+		margin:0px auto 40px;
+	}
+    
+}
+
+@media (min-width: 767.75px){
+    .slider-cont {
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+@media (max-width: 767.75px){
+	.singel-publication .image .item-type-icon {
+		width: 90px;
+		height: 90px;
+		padding: 15px;
+	}
+    .welcome-circle {
+        display: none;
+    }
+    .welcome-estate {
+        margin: 8px 0;
+    }
+	.faqs .search-section {
+		display: block;
+	}
+	.faqs .wrap ,
+	.faqs label.faq-search {
+		width: 100%;
+		margin: 0;
+	}
+	.faqs label.faq-search {
+		border-radius: 5px 5px 0 0;
+	}
+	.faqs .wrap {
+		border-radius: 0 0 5px 5px;
+		margin-bottom: 20px;
+	}
+	.searchButton {
+		border-radius: 0 0px 5px 0;
+	}
+	.faqs .searchTerm {
+		border-radius: 0 0px 0 5px;
+	}
 }

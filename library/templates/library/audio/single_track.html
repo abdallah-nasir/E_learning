@@ -43,7 +43,7 @@
 
 						<div class="release__list">
 							<ul class="main__list main__list--playlist main__list--dashbox">
-                                {% for i in track.book.all %}
+                                {% for i in track.music.all %}
 								<li class="single-item">
                                     {% if i.is_play %}
 									<a data-playlist data-title="{{forloop.counter}}.{{i.name}}" data-artist="{{i.name}}" data-img="{% static 'audio/img/covers/cover.svg' %}" href="{{i.get_music}}" class="single-item__cover">
@@ -134,7 +134,7 @@
 								{% endfor %}
 							</ul>
                            
-							<form action="{% url 'library:audio_book:comment' track.slug %}" method="post" class="comments__form">
+							<form action="{% url 'library:comment' track.slug %}" method="post" class="comments__form">
                                 {% csrf_token %}
 								<div class="sign__group">
 									<textarea id="text" name="comment" class="sign__textarea" placeholder="Add comment"></textarea>

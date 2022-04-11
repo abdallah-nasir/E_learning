@@ -17,7 +17,7 @@ def slugify(str):
     return str
 # Create your models here.
 TYPE=(
-    ("course","course"),
+    ("course","course"),  
     ("blogs","blogs"),
     ("blog_payment","blog_payment"),
     ("consultant_payment","consultant_payment"),

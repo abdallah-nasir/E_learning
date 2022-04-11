@@ -230,7 +230,7 @@ def check_consultant_refund(function):
 def redirect_teacher_movies_payment(function):
     def wrap(request, *args, **kwargs):
         if request.user.account_type == "teacher":
-            return redirect(reverse("dashboard:audios:movies_payment"))
+            return redirect(reverse("dashboard:movies_payment"))
         else:
             return function(request, *args, **kwargs)
     wrap.__doc__ = function.__doc__

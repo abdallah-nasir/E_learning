@@ -18,7 +18,7 @@
     
     <!--====== Title ======-->
     <title>{% trans 'Agartha Academy' %} {% block title  %}{% endblock %}</title>
-    {% cache 172800 kemet_static_head %}
+    {% cache 172800 static_head %}
     <!--====== Favicon Icon ======-->
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
 
@@ -48,10 +48,11 @@
     <!--====== Style css ======-->
 
     <link
-  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
-  rel="stylesheet"
-/>
+    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
+    rel="stylesheet"
+    />
 {% endcache %}
+
 {% if LANGUAGE_CODE == "ar" %}
     <!--====== Bootstrap css ======-->
     <link rel="stylesheet" href="{% static 'css/base-rtl.css' %}">
@@ -191,7 +192,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4">
                         <div class="logo">
-                            <a href="{% url  'home:home'   %}">
+                            <a href="{% url  'home:home'  %}">
                                 <img src="{% static 'images/logo.png' %}" alt="Logo">
                             </a>
                           
@@ -204,7 +205,7 @@
                          
                             <div class="button float-left">
                                 
-                                <a href="{% url 'blogs:pricing'  %}" class="main-btn">{% trans 'Join Us' %}</a>
+                                <a href="{% url 'blogs:pricing' %}" class="main-btn">{% trans 'Join Us' %}</a>
                                
                             </div>
                         </div>
@@ -233,33 +234,33 @@
       <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="active" href="{% url 'home:home'  %}">{% trans 'Home' %}</a>
+                <a class="active" href="{% url  'home:home' %}">{% trans 'Home' %}</a>
                 
             </li>
          
             <li class="nav-item">
-                <a href="{% url 'home:courses'  %}">{% trans 'Courses' %}</a>
+                <a href="{% url  'home:courses'%}">{% trans 'Courses' %}</a>
               
             </li>
             <li class="nav-item">
-                <a href="{% url 'home:events'  %}">{% trans 'Events' %}</a>
+                <a href="{% url  'library:home' %}">{% trans 'Library' %}</a>
                 
             </li>
             <li class="nav-item">
-                <a  href="{% url 'library:home' %}">{% trans 'Library' %}</a>
-            
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'home:teachers'  %}">{% trans 'Teachers' %}</a>
+                <a href="{% url  'home:events' %}">{% trans 'Events' %}</a>
                 
             </li>
             <li class="nav-item">
-                <a href="{% url 'blogs:blogs'   %}">{% trans 'Blog' %}</a>
+                <a href="{% url  'home:teachers' %}">{% trans 'Teachers' %}</a>
+                
+            </li>
+            <li class="nav-item">
+                <a href="{% url  'blogs:blogs' %}">{% trans 'Blog' %}</a>
 
             </li>                            
            
              <li class="nav-item">
-                <a href="{% url  'consultant:home'  %}">{% trans 'Consultations' %}</a>
+                <a href="{% url  'consultant:home' %}">{% trans 'Consultations' %}</a>
                
             </li> 
           
@@ -267,9 +268,9 @@
             <li class="nav-item">
                 <a href="#">{% trans 'Service' %}</a>
                 <ul class="sub-menu">
-                <li><a href="{% url  'home:contact'  %}">{% trans 'Contact Us' %}</a></li> 
-                <li><a href="{% url  'home:faqs'  %}">{% trans 'FAQS' %}</a></li>
-                <li><a href="{% url  'home:about'  %}">{% trans 'About Us' %}</a></li>
+                <li><a href="{% url  'home:contact' %}">{% trans 'Contact Us' %}</a></li> 
+                <li><a href="{% url  'home:faqs' %}">{% trans 'FAQS' %}</a></li>
+                <li><a href="{% url  'home:about' %}">{% trans 'About Us' %}</a></li>
                
             </ul> 
             </li>
@@ -299,7 +300,7 @@
             <i class="fa fa-search"></i>
         </a>
         {% if request.user.is_authenticated %}
-        <a class="text-reset me-3"  href="{% url  'home:cart' request.user.slug  %}">
+        <a class="text-reset me-3"  href="{% url  'home:cart' request.user.slug %}">
             <i class="fa fa-shopping-bag"></i>
             <span id="shop-numbers" class="badge rounded-pill badge-notification bg-success">{{my_wishlist.course.count}}</span>
         </a>
@@ -330,9 +331,9 @@
             <li>
                 {% if LANGUAGE_CODE == "ar" %}
                
-              <a class="dropdown-item" title="{% trans 'English' %}" href="{% url  'language'  %}?path={{request.path}}&language=en">{% trans 'English' %}</a>
+              <a class="dropdown-item" title="{% trans 'English' %}" href="{% url  'language' %}?path={{request.path}}&language=en">{% trans 'English' %}</a>
               {% else %}
-            <a class="dropdown-item" title="{% trans 'Arabic' %}" href="{% url  'language'  %}?path={{request.path}}&language=ar">{% trans 'Arabic' %}</a>
+            <a class="dropdown-item" title="{% trans 'Arabic' %}" href="{% url  'language' %}?path={{request.path}}&language=ar">{% trans 'Arabic' %}</a>
 
              
               {% endif %}
@@ -358,6 +359,9 @@
               alt="{{request.user.username}}"
               loading="lazy"
             />
+            <span class="hello-msg">
+                Hello, {{request.user.username}}
+            </span>
           </a>
          
           <ul
@@ -365,15 +369,15 @@
             aria-labelledby="navbarDropdownMenuAvatar"
           >
             <li>
-              <a class="dropdown-item" href="{% url  'accounts:account_info'  %}">{% trans 'My profile' %}</a>
+              <a class="dropdown-item" href="{% url  'accounts:account_info' %}">{% trans 'My profile' %}</a>
             </li>
             {% if request.user.is_authenticated %}
             <li>
-              <a class="dropdown-item" href="{% url  'accounts:logout'  %}">{% trans 'Logout' %}</a>
+              <a class="dropdown-item" href="{% url  'accounts:logout' %}">{% trans 'Logout' %}</a>
             </li>
             {% else %}
             <li>
-              <a class="dropdown-item" href="{% url  'accounts:login'  %}">{% trans 'Login' %}</a>
+              <a class="dropdown-item" href="{% url  'accounts:login' %}">{% trans 'Login' %}</a>
             </li>
             {% endif %}
           </ul>
@@ -395,10 +399,10 @@
               aria-labelledby="navbarDropdownMenuLink"
             >
               <li>
-                <a class="dropdown-item" href="{% url  'accounts:login'  %}">{% trans 'Login' %}</a>
+                <a class="dropdown-item" href="{% url  'accounts:login' %}">{% trans 'Login' %}</a>
               </li>
               <li>
-                <a class="dropdown-item" href="{% url  'accounts:signup'  %}">{% trans 'Signup' %}</a>
+                <a class="dropdown-item" href="{% url  'accounts:signup' %}">{% trans 'Signup' %}</a>
               </li>
             
             </ul>
@@ -468,7 +472,7 @@
                 <span></span>
                 <span></span>
             </div>
-            <form action="{% url  'home:global_search'  %}" method='GET' >
+            <form action="{% url  'home:global_search' %}" method='GET' >
 
                 <input type="text" name="qs" placeholder="{% trans 'Search in Courses and Teachers' %}">
                 <button><i class="fa fa-search"></i></button>
@@ -476,18 +480,38 @@
         </div> <!-- serach form -->
     </div>
 
-    {% if messages %}
-    {% for message in messages  %}
-    <div class="container">
-        <div style="text-align:center;"  class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-            <strong>{{message}} </strong>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-    </div>
-    {% endfor %}
-   {% endif %}
+    <div id="content">
+        <div id="content">
+            {% if messages %}
+            <div class="modal fade" id="agarthaModal" tabindex="-1" role="dialog" aria-labelledby="agarthaModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="agarthaModalLabel"></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                         
+                            {% for message in messages  %} 
+                            <div class="alert alert-{{message.tags}}" role="alert">
+                                {{message}}
+                              </div>
+                            
+                            {% endfor %}
+        
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="main-btn" data-dismiss="modal">Close</button>
+                            {% comment %} <button type="button" class="main-btn">Yes</button> {% endcomment %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+           {% endif %}    
+                
+        </div>
     <!--====== SEARCH BOX PART ENDS ======-->
    {% block content %}
 
@@ -523,9 +547,9 @@
                             </div>
                             <ul>
                                 </li>
-                                <li><a href="{% url  'home:about'   %}"><i class="fa fa-angle-right"></i> {% trans 'About us' %}</a></li>
-                                <li><a href="{% url  'home:teachers'  %}"><i class="fa fa-angle-right"></i> {% trans 'Teachers' %}</a></li>
-                                <li><a href="{% url  'home:contact'  %}"><i class="fa fa-angle-right"></i> {% trans 'Contact' %}</a></li>
+                                <li><a href="{% url  'home:about' %}"><i class="fa fa-angle-right"></i> {% trans 'About us' %}</a></li>
+                                <li><a href="{% url  'home:teachers' %}"><i class="fa fa-angle-right"></i> {% trans 'Teachers' %}</a></li>
+                                <li><a href="{% url  'home:contact' %}"><i class="fa fa-angle-right"></i> {% trans 'Contact' %}</a></li>
                             </ul>
                             <!-- <ul>
                                 <li><a href="#"><i class="fa fa-angle-right"></i>Gallery</a></li> 
@@ -542,10 +566,10 @@
                                 <h6> {% trans 'Our Products' %}</h6>
                             </div>
                             <ul>
-                                <li><a href="{% url  'home:courses'   %}"><i class="fa fa-angle-right"></i> {% trans 'Courses' %}</a></li>
-                                <li><a href="{% url  'consultant:home'  %}"><i class="fa fa-angle-right"></i> {% trans 'Consultations' %}</a></li>
-                                <li><a href="{% url  'blogs:blogs'  %}"><i class="fa fa-angle-right"></i> {% trans 'Articles' %}</a></li>
-                                <li><a href="{% url  'home:events'  %}"><i class="fa fa-angle-right"></i> {% trans 'Events' %}</a></li>
+                                <li><a href="{% url  'home:courses' %}"><i class="fa fa-angle-right"></i> {% trans 'Courses' %}</a></li>
+                                <li><a href="{% url  'consultant:home' %}"><i class="fa fa-angle-right"></i> {% trans 'Consultations' %}</a></li>
+                                <li><a href="{% url  'blogs:blogs' %}"><i class="fa fa-angle-right"></i> {% trans 'Articles' %}</a></li>
+                                <li><a href="{% url  'home:events' %}"><i class="fa fa-angle-right"></i> {% trans 'Events' %}</a></li>
 
                           
                                 <!-- <li><a href="#"><i class="fa fa-angle-right"></i>Documentation</a></li> -->
@@ -561,14 +585,14 @@
                             <div class="footer-link">
                                 <ul>
                                 <li>
-                                    <a href="{% url  'home:privacy'  %}"><i class="fa fa-angle-right"></i> {% trans 'Privacy' %}</a>
+                                    <a href="{% url  'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Privacy' %}</a>
                                 </li>
-                                <li><a href="{% url  'home:privacy'  %}"><i class="fa fa-angle-right"></i> {% trans 'Policy' %}</a></li>
+                                <li><a href="{% url  'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Policy' %}</a></li>
                                 <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i> {% trans 'Support' %}</a></li>
-                                <li><a href="{% url  'home:faqs'  %}"><i class="fa fa-angle-right"></i> {% trans 'FAQS' %}</a></li>
+                                <li><a href="{% url  'home:faqs' %}"><i class="fa fa-angle-right"></i> {% trans 'FAQS' %}</a></li>
 
                             </ul>
-                            </div> 
+                            </div>
                                
                         </div> <!-- footer address -->
                     </div>
@@ -580,7 +604,7 @@
             <div class="container">
                 <div class="row">
                     <div  class="col-12 offset-lg-3">
-                        <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url  'home:terms'  %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url  'home:privacy'  %}">Privacy Policy</a></p>
+                        <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url  'home:terms' %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url  'home:privacy' %}">Privacy Policy</a></p>
                     </div>
               
                 </div> 
@@ -597,7 +621,7 @@
     <!--====== BACK TO TP PART ENDS ======-->
    
     
-    {% cache 172800 kemet_static_js %}
+    {% cache 172800 static_js %}
     <!--====== jquery js ======-->
     <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
@@ -641,12 +665,14 @@
   type="text/javascript"
   src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"
 ></script>
-<!-- {% endcache %} -->
+{% endcache %}
 </body>
 <script style="text/javascript">
    
-
-  
+   
+    $(document).ready(function(){
+        $("#agarthaModal").modal('show');
+    });
   
 $(document).on('click',"#love-add",function(){
         var _vm=$(this);
@@ -656,7 +682,7 @@ $(document).on('click',"#love-add",function(){
         $.ajax({
         
 
-            url:"{% url  'home:wishlist_add'  %}",
+            url:"{% url  'home:wishlist_add' %}",
             data:{
                 'id':_productId,
                 
@@ -709,7 +735,7 @@ $(document).on('click',"#love-add",function(){
             $.ajax({
             
     
-                url:"{% url  'home:wishlist_remove'  %}",
+                url:"{% url  'home:wishlist_remove' %}",
                 data:{
                     'id':_productId,
                     

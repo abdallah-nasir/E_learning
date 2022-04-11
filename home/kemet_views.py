@@ -71,6 +71,16 @@ def course_search(request):
         page_obj = paginator.get_page(page_number)
     return render(request,"kemet/home/course_search.html",{"course":page_obj,"qs":qs})
 
+def get_home_data_subdomain():
+    events=Events.objects.filter(status="approved").select_related("user").order_by("-date")[:5]
+    courses=Course.objects.filter(status="approved",domain_type=2).select_related("Instructor").order_by("-id")[0:5]
+    teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:4]
+    categories=Category.objects.filter(domain_type=2).order_by("?")[:6]
+    testimonial=Testimonials.objects.select_related("user").order_by("?")[:4]
+    blogs=blog_model.Blog.objects.filter(status="approved",domain_type=2).select_related("user").order_by("-id")[:4]
+    ads=Ads.objects.filter(domain_type=2).select_related("course")
+    context={"events":list(events),"ads":list(ads),"courses":list(courses),"teachers":list(teachers),"blogs":list(blogs),"categories":list(categories),"testimonials":list(testimonial)}
+    return context
 def home(request):
     data=cache.get("kemet_data")
     if data ==None:
@@ -398,7 +408,7 @@ def western_payment(request,course):
 @login_required(login_url="accounts:login")
 @check_if_user_data_complete
 @check_if_user_in_course
-@check_if_user_in_pending_payment_western
+@check_if_user_in_pending_payment_bank
 def bank_payment(request,course):
     form=PaymentMethodForm(request.POST or None,request.FILES or None)
     my_course=get_object_or_404(Course,slug=course)
@@ -414,7 +424,7 @@ def bank_payment(request,course):
                     }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            payment=Payment.objects.create(user=request.user,amount=my_course.get_price(),method="Bank",transaction_number=number,course=my_course,       
+            payment=Payment.objects.create(user=request.user,amount=my_course.get_price(),method="bank",transaction_number=number,course=my_course,       
                 status="pending")
             try:
                 if data["HttpCode"] == 201:
@@ -447,7 +457,7 @@ def checkout(request,course):
     form=PaymentMethodForm(request.POST or None,request.FILES or None)
     my_course=get_object_or_404(Course,slug=course,domain_type=2)
     context={"form":form,"course":my_course,"frame": PAYMOB_FRAME, "payment_token": 11}
-    return render(request,"checkout.html",context)        
+    return render(request,"kemet/home/checkout.html",context)        
  
 def payment_method_ajax(request):
     course_id=request.POST.get("ajax_course")

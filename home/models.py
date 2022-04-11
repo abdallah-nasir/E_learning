@@ -3,7 +3,7 @@ from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
-from django.core.mail import send_mail,send_mass_mail
+from django.core.mail import send_mail,send_mass_mail,EmailMessage
 from Blogs import models as blog_model
 from django.urls import reverse
 import string, random
@@ -34,27 +34,8 @@ def slugify(str):
     str = str.replace("؟", "")
     return str
 
-def get_home_data():  
-    events=Events.objects.filter(status="approved").select_related("user").order_by("-date")[:5]
-    courses=Course.objects.filter(status="approved").exclude(domain_type=2).select_related("Instructor").order_by("-id")[0:5]
-    teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:4]
-    categories=Category.objects.filter(domain_type=1).order_by("?")[:6]
-    testimonial=Testimonials.objects.select_related("user").order_by("?")[:4]
-    blogs=blog_model.Blog.objects.filter(status="approved").select_related("user").exclude(domain_type=2).order_by("-id")[:4]
-    ads=Ads.objects.filter(domain_type=1).select_related("course")
-    context={"events":list(events),"ads":list(ads),"courses":list(courses),"teachers":list(teachers),"blogs":list(blogs),"categories":list(categories),"testimonials":list(testimonial)}
-    return context
 
-def get_home_data_subdomain():
-    events=Events.objects.filter(status="approved").select_related("user").order_by("-date")[:5]
-    courses=Course.objects.filter(status="approved",domain_type=2).select_related("Instructor").order_by("-id")[0:5]
-    teachers=User.objects.filter(account_type="teacher",is_active=True).order_by("?")[:4]
-    categories=Category.objects.filter(domain_type=2).order_by("?")[:6]
-    testimonial=Testimonials.objects.select_related("user").order_by("?")[:4]
-    blogs=blog_model.Blog.objects.filter(status="approved",domain_type=2).select_related("user").order_by("-id")[:4]
-    ads=Ads.objects.filter(domain_type=2).select_related("course")
-    context={"events":list(events),"ads":list(ads),"courses":list(courses),"teachers":list(teachers),"blogs":list(blogs),"categories":list(categories),"testimonials":list(testimonial)}
-    return context
+
 DOMAIN=(
     (1,"agartha"),
     (2,"kemet"),
@@ -346,22 +327,26 @@ class Events(models.Model):
         super(Events, self).save()
         
     def get_students_events(self):
-        course=Course.objects.filter(branch=self.category,status="approved",Instructor=self.user).exclude(domain_type=2)
+        course=Course.objects.filter(branch=self.category,status="approved").prefetch_related("students")
         list=[]
         for i in course:
             for b in i.students.all():
                 self.students.add(b)
-                self.save()
+                self.save()   
                 list.append(b.email)
-        message1 =  (f'Event {self.name} start ',
-                     f'Event {self.name} has been started , Click The Link to join {self.get_details()["zoom"]}',
-        settings.EMAIL_HOST_USER,
-       list
-       )
-        try: 
-            send_mass_mail((message1,), fail_silently=False)
-        except:
-            pass
+        msg_html = render_to_string("emails/event_start.html",{"event":self})
+        msg = EmailMessage(subject=f"Event {self.name} start", body=msg_html, from_email=settings.EMAIL_HOST_USER, to=list)
+        msg.content_subtype = "html"  # Main content is now text/html
+        msg.send() 
+    #     message1 =  (f'',
+    #                  f'' ,
+    #     settings.EMAIL_HOST_USER,
+    #    list
+    #    )
+    #     try: 
+    #         send_mass_mail((message1,), fail_silently=False)
+    #     except:
+    #         pass
         return list
     def get_details(self):
         data=json.loads(self.details)
@@ -425,7 +410,9 @@ class Payment(models.Model):
     def __str__(self):
         return self.method
     def check_payment(self): 
-        if self.status == "declined":
+        if self.expired != False:
+            return False
+        elif self.status == "declined":
             if self.method == "Western Union" or self.method == "bank":
                 return True
             else:
@@ -433,7 +420,9 @@ class Payment(models.Model):
         else:
             return False
     def check_refund(self): 
-        if self.status != "refund":
+        if self.expired != False:
+            return False
+        elif self.status != "refund":
             if self.method == "Western Union":
                 return False
             else:

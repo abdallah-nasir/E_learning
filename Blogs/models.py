@@ -320,8 +320,19 @@ class Blog_Payment(models.Model):
         return self.method
 
     def check_payment(self):
+        if self.expired == True:
+            return False
+        if self.type == 1:
+            if self.user.vip == True:
+                return False
+            else:
+                return True
+        if self.type == 2:
+            if self.user.is_kemet_vip == True:
+                return False
+            else:
+                return False
         if self.status == "declined":
-           
             if self.method == "Western Union" or self.method == "bank":
                 return True
             else:

@@ -28,6 +28,8 @@ path("wishlist-add/",views.wishlist_add,name="wishlist_add"),
 path("wishlist-remove/",views.wishlist_remove,name="wishlist_remove"),
 #checkout
 path("checkout/courses/<str:course>/",views.checkout,name="checkout"),
+path("bank/<str:course>/",views.bank_payment,name="bank_payment"),
+
 path("western/<str:course>/",views.western_payment,name="western_payment"),
 path("payment/success/",views.success,name="success"),
 path("payment/failed/",views.failed,name="failed"),   

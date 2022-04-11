@@ -98,7 +98,7 @@ def check_audio_payment_western(function):
     def wrap(request, *args, **kwargs):
         track=get_object_or_404(Audio_Tracks,slug=kwargs["slug"],status="approved")
         if track.price and track.price > 0:
-            payment=Library_Payment.objects.filter(user=request.user,library_type=2,content_id=track.id,method="Western Union").select_related("user")
+            payment=Library_Payment.objects.filter(user=request.user,library_type=2,content_id=track.id,method="Western Union",expired=False).select_related("user")
             if payment.exists():
                 messages.error(request,"you already have an existing payment")
                 return redirect(reverse("accounts:audio_payment"))              
@@ -111,6 +111,58 @@ def check_audio_payment_western(function):
     wrap.__name__ = function.__name__
     return wrap 
  
+ 
+def check_video_payment_western(function):
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(Movies,slug=kwargs["slug"],status="approved")
+        if track.price and track.price > 0:
+            payment=Library_Payment.objects.filter(user=request.user,library_type=3,content_id=track.id,method="Western Union",expired=False).select_related("user")
+            if payment.exists():
+                messages.error(request,"you already have an existing payment")
+                return redirect(reverse("accounts:movies_payment"))              
+            else:
+                return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"track is free")
+            return redirect(reverse("library:single_movie",kwargs={"slug":track.slug}))  
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap 
+
+ 
+def check_video_payment_bank(function):
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(Movies,slug=kwargs["slug"],status="approved")
+        if track.price and track.price > 0:
+            payment=Library_Payment.objects.filter(user=request.user,library_type=3,content_id=track.id,method="bank",expired=False).select_related("user")
+            if payment.exists():
+                messages.error(request,"you already have an existing payment")
+                return redirect(reverse("accounts:movies_payment"))              
+            else:
+                return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"track is free")
+            return redirect(reverse("library:single_movie",kwargs={"slug":track.slug}))  
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap 
+
+def check_audio_payment_bank(function):
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(Audio_Tracks,slug=kwargs["slug"],status="approved")
+        if track.price and track.price > 0:
+            payment=Library_Payment.objects.filter(user=request.user,library_type=2,content_id=track.id,method="bank",expired=False).select_related("user")
+            if payment.exists():
+                messages.error(request,"you already have an existing payment")
+                return redirect(reverse("accounts:audio_payment"))              
+            else:
+                return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"track is free")
+            return redirect(reverse("library:single_track",kwargs={"slug":track.slug}))  
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap 
 def check_user_is_kemet_vip(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_kemet_vip == False:
@@ -132,7 +184,7 @@ def check_audio_book_payment_page(function):
             messages.error(request,"you already have this music")
             return redirect(reverse("accounts:audio_payment"))
         if track.price and track.price > 0:
-            payment=Library_Payment.objects.filter(user=request.user,library_type=1,content_id=track.id).exclude(Q(status="refund") | Q(status="declined")).select_related("user")
+            payment=Library_Payment.objects.filter(user=request.user,library_type=1,content_id=track.id,status="pending").select_related("user")
             if payment.exists():
                 messages.error(request,"you already have an existing payment")
                 return redirect(reverse("accounts:audio_book_payment"))              
@@ -149,7 +201,7 @@ def check_audio_book_payment_western(function):
     def wrap(request, *args, **kwargs):
         track=get_object_or_404(Audio_Book_Tracks,slug=kwargs["slug"],status="approved")
         if track.price and track.price > 0:
-            payment=Library_Payment.objects.filter(user=request.user,library_type=1,content_id=track.id,method="Western Union").select_related("user")
+            payment=Library_Payment.objects.filter(user=request.user,library_type=1,content_id=track.id,method="Western Union",expired=False).select_related("user")
             if payment.exists():
                 messages.error(request,"you already have an existing payment")
                 return redirect(reverse("accounts:audio_book_payment"))              
@@ -166,7 +218,7 @@ def check_audio_book_payment_bank(function):
     def wrap(request, *args, **kwargs):
         track=get_object_or_404(Audio_Book_Tracks,slug=kwargs["slug"],status="approved")
         if track.price and track.price > 0:
-            payment=Library_Payment.objects.filter(user=request.user,library_type=1,content_id=track.id,method="bank").select_related("user")
+            payment=Library_Payment.objects.filter(user=request.user,library_type=1,content_id=track.id,method="bank",expired=False).select_related("user")
             if payment.exists():
                 messages.error(request,"you already have an existing payment")
                 return redirect(reverse("accounts:audio_book_payment"))              

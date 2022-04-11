@@ -1,282 +1,755 @@
-
 {% load static %}
 {% load hosts %}
-{% load crispy_forms_tags %}
-<!DOCTYPE html>
-<html>
-<head>
-<title>Payment Form</title>
-<!-- for-mobile-apps -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="Payment Form Widget Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
-		function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- //for-mobile-apps -->
-<link href="{% static 'payment/css/style.css' %}" rel="stylesheet" type="text/css" media="all" />
-<!-- <link href='{% static "payment/fonts.googleapis.com/css?family=Fugaz+One" %}' rel='stylesheet' type='text/css'> -->
-<link href='fonts.googleapis.com/css?family=Alegreya+Sans:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,800,800italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-<style type="text/css">
-li.resp-tab-item span .pic1{
-  background: url(https://a57.foxnews.com/static.foxbusiness.com/foxbusiness.com/content/uploads/2020/01/931/506/Credible-Mastercard-Visa-iStock-458551149.jpg?ve=1&tl=1) repeat round !important;
-}
+{% load i18n %}
+{% load cache %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list for LANGUAGES as languages %}
+<!doctype html>
+<html {% if LANGUAGE_CODE == "ar" %}lang="ar"{% else %}lang="en"{% endif %}>
 
-</style>
+<head>
+
+    <!--====== Required meta tags ======-->
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!--====== Title ======-->
+    <title>{% trans 'Agartha Academy' %} {% block title  %}{% endblock %}</title>
+    {% cache 172800 static_head %}
+    <!--====== Favicon Icon ======-->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
+
+    <!--====== Slick css ======-->
+    <link rel="stylesheet" href="{% static 'css/slick.css' %}">
+
+    <!--====== Animate css ======-->
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+
+    <!--====== Nice Select css ======-->
+    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}">
+
+    <!--====== Nice Number css ======-->
+    <link rel="stylesheet" href="{% static 'css/jquery.nice-number.min.css' %}">
+
+    <!--====== Magnific Popup css ======-->
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+
+    <!--====== Bootstrap css ======-->
+    <!--====== Fontawesome css ======-->
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+
+    <!--====== Default css ======-->
+    <link rel="stylesheet" href="{% static 'css/default.css' %}">
+
+    <!--====== Style css ======-->
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
+          rel="stylesheet"/>
+    {% endcache %}
+    {% if LANGUAGE_CODE == "ar" %}
+    <!--====== Bootstrap css ======-->
+    <link rel="stylesheet" href="{% static 'css/base-rtl.css' %}">
+    <!--====== Style css ======-->
+    <link rel="stylesheet" href="{% static 'css/base-style-rtl.css' %}">
+    <!--====== Responsive css ======-->
+    {% else %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base-style2.css' %}">
+
+    {% endif %}
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+    <!--====== Responsive css ======-->
+
+    <style type="text/css">
+        p {
+            margin-bottom: 0 !important;
+        }
+
+        .row > * {
+        }
+
+        .right-icon ul li {
+            display: table-cell !important;
+        }
+
+        /*     .nice-select {
+                    display: none !important;
+                }*/
+
+        .fa-heart {
+            cursor: pointer;
+        }
+
+
+        #news-bar:hover {
+            transition: 0.37s;
+        }
+
+        .fa-search:hover {
+            color: #ffc600;
+        }
+
+        .fa-globe:hover {
+            color: #ffc600;
+        }
+
+        #news-bar a {
+            padding: 8px 2px;
+            font-size: 16px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+            #news-bar a:hover {
+                transition: 0.37s;
+                color: #ffc600;
+            }
+
+        #info-img {
+            margin-left: 30px;
+        }
+
+        .navbar {
+            box-shadow: none !important;
+        }
+
+        .badge-notification {
+            background-color: #ffc600 !important;
+        }
+
+        .bg-light {
+            --mdb-bg-opacity: 0 !important;
+        }
+    </style>
+
 
 </head>
+
 <body>
-	<div class="main"> 
-		<h1>Payment Form</h1>
-		<div class="content">
-			
-	
-						<div class="sap_tabs">
-							<div id="horizontalTab" style="display: block; width: 100%; margin: 0px;">
-								<div class="pay-tabs">
-									<h2>Select Payment Method</h2>
-               
-									  <ul class="resp-tabs-list">
-										<li class="resp-tab-item" aria-controls="tab_item-0" role="tab"><span><label  style="height: 70px;" class="pic1"></label>Visa / Credit Card</span></li> 
-										  <li class="resp-tab-item" aria-controls="tab_item-3" role="tab"><span><label style="height: 70px;" class="pic2"></label>Wester Union</span></li> 
-										  <li class="resp-tab-item" aria-controls="tab_item-2" role="tab"><span><label style="height: 70px;" class="pic4"></label>PayPal</span></li>
-										  <div class="clear"></div>
-									  </ul>	
-								</div>
-								<div class="resp-tabs-container" style="padding:none !important;">
-									<div class="tab-1 resp-tab-content" aria-labelledby="tab_item-0">
-										<div class="payment-info">
-											<button id='card-data' type="button" style="align-items: center;" class="btn btn-primary">insert your card info</button>
-                     
-                       <div class="col">
-                        <div  id="card">
+    <!-- oncontextmenu="return false;" -->
+    <!--====== PRELOADER PART START ======-->
+
+    <div class="preloader">
+        <div class="loader rubix-cube">
+            <div class="layer layer-1"></div>
+            <div class="layer layer-2"></div>
+            <div class="layer layer-3 color-1"></div>
+            <div class="layer layer-4"></div>
+            <div class="layer layer-5"></div>
+            <div class="layer layer-6"></div>
+            <div class="layer layer-7"></div>
+            <div class="layer layer-8"></div>
+        </div>
+    </div>
+
+    <!--====== PRELOADER PART START ======-->
+    <!--====== Popup PART START ======-->
+
+    <div class="modal fade" id="agarthaModal" tabindex="-1" role="dialog" aria-labelledby="agarthaModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agarthaModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis cumque aperiam quis sint et quasi necessitatibus nesciunt aliquam facilis! Impedit deserunt obcaecati temporibus nisi laborum excepturi maiores aut consequuntur esse?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="main-btn" data-dismiss="modal">No</button>
+                    <button type="button" class="main-btn">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--====== Popup PART START ======-->
+    <!--====== HEADER PART START ======-->
+
+    <header id="header-part">
+
+        <div class="header-top d-none d-lg-block">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="support float-right row justify-content-center align-items-center">
+                            <div class="icon col-sm-3">
+                                <img id="info-img" src="{% static 'images/all-icon/email.png' %}" alt="icon">
+                            </div>
+                            <div class="cont col-sm-9">
+                                <p>info@agartha.academy</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="slideUp" id="news-bar">
+                            <marquee direction="left" scrollamount="3" behavior="scroll" onmouseover="this.stop()" onmouseout="this.start()">
+                                {% for i in news %}
+                                <a href="{{i.link}}" class="hvr-pop">{{i.name}}</a><a>&nbsp;⏳&nbsp;</a>
+                                {% endfor %}
+                            </marquee>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="support float-left row justify-content-center align-items-center">
+                            <div class="icon col-sm-3">
+                                <img src="{% static 'images/all-icon/support.png' %}" alt="icon">
+                            </div>
+                            <div class="cont col-sm-9">
+                                <span style="color:#ffc600;"> <p>{% trans 'Need Help? call us' %}</p> 00201011609810</span>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div> <!-- header top -->
+
+        <div class="header-logo-support pt-30 pb-30">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4">
+                        <div class="logo">
+                            <a href="{% url  'home:home'   %}">
+                                <img src="{% static 'images/logo.png' %}" alt="Logo">
+                            </a>
 
                         </div>
-                
-                       </div>
-                   
-                       
 
-											<!-- <div class="single-bottom">
-													<ul>
-														<li>
-															<input type="checkbox"  id="brand" value="">
-															<label for="brand"><span></span>By checking this box, I agree to the Terms & Conditions & Privacy Policy.</label>
-														</li>
-													</ul>
-											</div> -->
-										</div>
-									</div>
-                  <div class="tab-1 resp-tab-content" aria-labelledby="tab_item-3">	
-										<div class="payment-info">
-											
-											<h3 class="pay-title">Western Union Info</h3>
-										
-												<div class="tab-for">
-													<table>
-														<tr>
-															<th colspan="3"> <h5>  التحويل عبر الويسترن باسم</h5></th>
-														</tr>
-														<tr>
-															<td>Name Recive: </td>
-															<td><h5> Nabil Kamal Mohamed </h5> </td>
-														</tr>
-														<tr>
-															<td>اسم المستلم </td>
-															<td>نبيل كمال محمد </td>
-														</tr>
-														<tr>
-															<td> Country:</td>
-															<td> Egypt</td>
-														</tr>
-														<tr>
-															<td>Mobil Number:</td>
-															<td>00201011609810</td>
-														</tr>
-													</table>
-													<h4 style="color:red">
-														الرجاء استخدام رقم طلبك كمرجع لعملية الدفع
-													</h4>
-												</div>
-                        <form method="POST" action="{% url 'blogs:western_payment' price.id %}" enctype="multipart/form-data">
-                          {{ form.non_field_errors }}
-                          {% csrf_token %}
-                        
-                          <div class="tab-for">
-                            <h5>Phone Number</h5>
-                            {{ form.number.errors }}
-                            <input type="text" name="number" id="number" required="true">
-                            <h5>Image receipt</h5>
-                            {{ form.payment_image.errors }}
-                            <input type="file" name="image" accept="image/*" required="true">
-                          </div>
-                          <br /><br />
-                          <input type="hidden" name="payment"  value="Western Union">
-                          <input type="submit"  value="submit">
-                        </form>
-											
-											<div class="single-bottom">
-													<ul>
-														<!-- <li>
-															<input type="checkbox"  id="brand" value="">
-															<label for="brand"><span></span>By checking this box, I agree to the Terms & Conditions & Privacy Policy.</label>
-														</li> -->
-													</ul>
-											</div>
-										</div>	
-									</div>
-									<div class="tab-1 resp-tab-content" aria-labelledby="tab_item-2">
-										<div class="payment-info">
-											<h3>PayPal</h3>
-											<h4>Already Have A PayPal Account?</h4>
-                          </div>
-                          <div id="paypal-button-container"></div>
-									</div>
-								
-								</div>	
-							</div>
-						</div>	
-            
-		</div>
-	</div>
-  <script type="text/javascript" src="{% static 'payment/js/jquery.min.js' %}"></script>
-  <script src="{% static 'payment/js/easyResponsiveTabs.js' %}" type="text/javascript"></script>
+                    </div>
+                    {% if not request.user.vip %}
+                    <div class="col-lg-8 col-md-8">
+                        <div class="support-button float-right d-none d-md-block ">
 
-    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
-  <script type="text/javascript">
+                            <div class="button float-left">
 
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                                <a href="{% url 'blogs:pricing'  %}" class="main-btn" data-toggle="modal" data-target="#agarthaModal">{% trans 'Join Us' %}</a>
 
-    // Render the PayPal button into #paypal-button-container
-    paypal.Buttons({
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div> <!-- header logo support -->
 
-        style: {
-            color:  'blue',
-            shape:  'pill',
-            label:  'pay',
-            height: 40
-        },
-                           // Call your server to set up the transaction
-                           createOrder: function(data, actions) {
-                            return fetch('{% url "blogs:paypal_create" price.id %}', {
-                                method: 'post',
-                                headers: {"X-CSRFToken": csrftoken}
-                            }).then(function(res) {
-                                return res.json();
-                            }).then(function(orderData) {
-                                return orderData.id;
-                            });
-                        },
-              
-                        // Call your server to finalize the transaction
-                        onApprove: function(data, actions) {
-                    
-                            return fetch('/blogs/paypal/capture/' + data.orderID +'/{{price.id}}/',{                                method: 'post',
-                                headers: {"X-CSRFToken": csrftoken}
-                            }).then(function(res) {
-                               
-                                window.location.href = '{% url "accounts:blog_payment" %}';                                
-                                return res.json();
-                            }).then(function(orderData) {
-                             
-                                // Three cases to handle:
-                                //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-                                //   (2) Other non-recoverable errors -> Show a failure message
-                                //   (3) Successful transaction -> Show a success / thank you message
-              
-                                // Your server defines the structure of 'orderData', which may differ
-                                var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
-              
-                                if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
-                                    // Recoverable state, see: "Handle Funding Failures"
-                                    // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
-                                    return actions.restart();
-                                }
-              
-                                if (errorDetail) {
-                                    var msg = 'Sorry, your transaction could not be processed.';
-                                    if (errorDetail.description) msg += '\n\n' + errorDetail.description;
-                                    if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
-                                    // Show a failure message
-                                    return alert(msg);
-                                }
-              
-                                // Show a success message to the buyer
-                               
-                            });
-                        },
-                        onCancel: function (data, actions) {
-                            return fetch('{% url "accounts:blog_payment" %}',{
-                                method: 'post',
-                                headers: {"X-CSRFToken": csrftoken}
-                            }).then(function(res){
-                                window.location.href = '{% url "accounts:blog_payment" %}';
-                                return res.json();
-                            })
-                            // Show a cancel page or return to cart
-                           
-                          },
-              
-                          
+        <div class="navigation">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                        <!-- Navbar -->
+                        <nav class="navbar navbar-expand-lg navbar-light ">
+                            <!-- Container wrapper -->
+                            <div class="container-fluid">
+                                <!-- Toggle button -->
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
 
-    }).render('#paypal-button-container');
+                                <!-- Collapsible wrapper -->
+                                <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
+                                    <ul class="navbar-nav mr-auto">
+                                        <li class="nav-item">
+                                            <a class="active" href="{% url 'home:home'  %}">{% trans 'Home' %}</a>
 
-    $(document).ready(function() {
-      $("#number").keydown(function(event) {
-          // Allow: backspace, delete, tab, escape, and enter
-          if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
-              // Allow: Ctrl+A
-              (event.keyCode == 65 && event.ctrlKey === true) ||
-              // Allow: home, end, left, right
-              (event.keyCode >= 35 && event.keyCode <= 39)) {
-              // let it happen, don't do anything
-              return;
-          } else {
-              // Ensure that it is a number and stop the keypress
-              if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
-                  event.preventDefault();
-              }
-          }
-      });
-  });
-$(document).ready(function () {
-  $('#horizontalTab').easyResponsiveTabs({
-    type: 'default', //Types: default, vertical, accordion           
-    width: 'auto', //auto or any width like 600px
-    fit: true   // 100% fit in a container
-  });
-});
+                                        </li>
 
-$(document).on('click',"#card-data",function(){
-  var _vm=$(this);
+                                        <li class="nav-item">
+                                            <a href="{% url 'home:courses'  %}">{% trans 'Courses' %}</a>
 
-  // Ajax
-  $.ajax({
-    type:"GET",
-    url:"{% url 'blogs:paymob_payment' price.id %}",
-      success:function(res){
-        if (res.success == 1){
-          $("#card-data").remove();
-          let html=` <iframe style=" display: block  !important;      
-                            border: none  !important;         
-                          height: 100vh  !important;        
-                         
-                         
-                          text-align:center  !important;
-                          align-items:center  !important;" width=100% src="https://accept.paymob.com/api/acceptance/iframes/${res.frame}?payment_token=${res.token}" ></iframe>`
-          $("#card").html(html);
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url  'consultant:home'  %}">{% trans 'Consultations' %}</a>
+
+                                        </li>
+                                       
+                                        <li class="nav-item">
+                                            <a href="{% url 'blogs:blogs'   %}">{% trans 'Blog' %}</a>
+
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'home:events'  %}">{% trans 'Events' %}</a>
+
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'home:teachers'  %}">{% trans 'Teachers' %}</a>
+
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#">{% trans 'Service' %}</a>
+                                            <ul class="sub-menu">
+                                                <li><a href="{% url  'home:contact'  %}">{% trans 'Contact Us' %}</a></li>
+                                                <li><a href="{% url  'home:faqs'  %}">{% trans 'FAQS' %}</a></li>
+                                                <li><a href="{% url  'home:about'  %}">{% trans 'About Us' %}</a></li>
+
+                                            </ul>
+                                        </li>
+
+
+                                        <!-- <li class="nav-item">
+        <a href="#">{% trans 'Language' %}</a>
+        <ul class="sub-menu">
+
+            {% for language in languages %}
+             <li> <a href="/{{language.code}}" class="u-c-brand">{{ language.name_local }} ({{ language.code }})</a>
+             </li>
+        {%  endfor %}
+        </ul>
+
+    </li> -->
+
+
+                                    </ul>
+                                </div>
+                                <!-- Collapsible wrapper -->
+                                <!-- Right elements -->
+                                <div class="d-flex align-items-center">
+                                    <!-- Icon -->
+                                    <a class="navbar-icon me-3" style="cursor:pointer;" id="search">
+                                        <i class="fa fa-search"></i>
+                                    </a>
+                                    {% if request.user.is_authenticated %}
+                                    <a class="navbar-icon me-3" href="{% url  'home:cart' request.user.slug  %}">
+                                        <i class="fa fa-shopping-bag"></i>
+                                        <span id="shop-numbers" class="badge rounded-pill badge-notification bg-success">{{my_wishlist.course.count}}</span>
+                                    </a>
+                                    {% else %}
+                                    <a class="navbar-icon me-3" href="{% url  'account_login' %}">
+                                        <i class="fa fa-shopping-bag"></i>
+                                        <span class="badge rounded-pill badge-notification bg-success">0</span>
+                                    </a>
+
+                                    {% endif %}
+                                    <!-- Notifications -->
+                                    <div class="dropdown">
+                                        <a class="navbar-icon me-3 dropdown-toggle hidden-arrow"
+                                           href="#"
+                                           id="navbarDropdownMenuLink"
+                                           role="button"
+                                           data-mdb-toggle="dropdown"
+                                           aria-expanded="false">
+                                            <i class="fa fa-globe"></i>
+                                        </a>
+
+                                        <ul class="dropdown-menu dropdown-menu-end"
+                                            aria-labelledby="navbarDropdownMenuLink">
+                                            <li>
+                                                {% if LANGUAGE_CODE == "ar" %}
+
+                                                <a class="dropdown-item" title="{% trans 'English' %}" href="{% url  'language'  %}?path={{request.path}}&language=en">{% trans 'English' %}</a>
+                                                {% else %}
+                                                <a class="dropdown-item" title="{% trans 'Arabic' %}" href="{% url  'language'  %}?path={{request.path}}&language=ar">{% trans 'Arabic' %}</a>
+
+
+                                                {% endif %}
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                    <!-- Avatar -->
+                                    <div class="dropdown" id="profile-list">
+                                        {% if request.user.is_authenticated %}
+                                        <a class="navbar-icon dropdown-toggle d-flex align-items-center hidden-arrow"
+                                           href="#"
+                                           id="navbarDropdownMenuAvatar"
+                                           role="button"
+                                           data-mdb-toggle="dropdown"
+                                           aria-expanded="false">
+                                            <img src="{{request.user.image}}"
+                                                 class="rounded-circle img-circle"
+                                                 height="30"
+                                                 alt="{{request.user.username}}"
+                                                 loading="lazy" />
+                                            <span class="hello-msg">
+                                                Hello, {{request.user.username}}
+                                            </span>
+                                        </a>
+
+                                        <ul class="dropdown-menu dropdown-menu-end"
+                                            aria-labelledby="navbarDropdownMenuAvatar">
+                                            <li>
+                                                <a class="dropdown-item" href="{% url  'accounts:account_info'  %}">{% trans 'My profile' %}</a>
+                                            </li>
+                                            {% if request.user.is_authenticated %}
+                                            <li>
+                                                <a class="dropdown-item" href="{% url  'accounts:logout'  %}">{% trans 'Logout' %}</a>
+                                            </li>
+                                            {% else %}
+                                            <li>
+                                                <a class="dropdown-item" href="{% url  'accounts:login'  %}">{% trans 'Login' %}</a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                        {% else %}
+                                        <div class="dropdown">
+                                            <a class="text-reset me-3 dropdown-toggle hidden-arrow"
+                                               href="#"
+                                               id="navbarDropdownMenuLink"
+                                               role="button"
+                                               data-mdb-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="fa fa-user"></i>
+                                            </a>
+
+                                            <ul class="dropdown-menu dropdown-menu-end"
+                                                aria-labelledby="navbarDropdownMenuLink">
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url  'accounts:login'  %}">{% trans 'Login' %}</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url  'accounts:signup'  %}">{% trans 'Signup' %}</a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- Right elements -->
+                            </div>
+                            <!-- Container wrapper -->
+                        </nav>
+                        <!-- Navbar -->
+                    </div>
+                    <!-- <div class="col-lg-2 col-md-2 col-sm-3 col-3">
+
+
+                            <div class="container" >
+                                <div class="row">
+                                    <div class="col-lg-10 col-md-10 col-sm-9 col-8">
+                                        <nav class="navbar navbar-expand-lg navbar-expand-md">
+
+                                            <div class="collapse navbar-collapse sub-menu-bar"  style=" display: contents;" >
+                                                <ul class="navbar-nav mr-auto">
+                                                <li  class="nav-item active"><a  style="cursor:pointer;" id="search"><i class="fa fa-search"></i></a></li>
+                                                    <li class="nav-item">
+                                                        <a style="cursor:pointer;"><i class="fa fa-globe"></i></a>
+                                                        <ul class="sub-menu">
+                                                            {% if LANGUAGE_CODE == "en" %}
+                                                            <li><a href="/ar/">Arabic</a></li>
+                                                               {% elif LANGUAGE_CODE == "ar" %}
+                                                            <li><a href="/en/">English</a></li>
+                                                            {% else %}
+                                                            <li><a href="/ar/">Arabic</a></li>
+                                                            {% endif %}
+                                                        </ul>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="{% url  'accounts:account_info' %}"><i class="fa fa-user"></i></a>
+
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </nav>
+                                    </div>
+
+
+                                        </div>
+                            </div>
+
+
+
+                    </div> -->
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div>
+
+    </header>
+
+    <!--====== HEADER PART ENDS ======-->
+    <!--====== Input Hidden START ======-->
+
+    <input type="hidden" name="showPopup" id="showPopupMSG" data-showpopup="false" value="false">
+
+    <!--====== HEADER PART ENDS ======-->
+    <!--====== SEARCH BOX PART START ======-->
+
+    <div class="search-box">
+        <div class="serach-form">
+            <div class="closebtn">
+                <span></span>
+                <span></span>
+            </div>
+            <form action="{% url  'home:global_search'  %}" method='GET'>
+
+                <input type="text" name="qs" placeholder="{% trans 'Search in Courses and Teachers' %}">
+                <button><i class="fa fa-search"></i></button>
+            </form>
+        </div> <!-- serach form -->
+    </div>
+
+    {% if messages %}
+    {% for message in messages  %}
+    <div class="container">
+        <div style="text-align:center;" class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            <strong>{{message}} </strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <!--====== SEARCH BOX PART ENDS ======-->
+    {% block content %}
+
+    {% endblock %}
+
+
+    <!--====== FOOTER PART START ======-->
+
+    <footer id="footer-part">
+        <div class="footer-top pt-40 pb-70">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-5 col-md-12 col-sm-12">
+                        <div class="footer-about mt-40">
+                            <div class="logo">
+                                <a href="#"><img src="{% static 'images/logo-2.png' %}" alt="Logo"></a>
+                            </div>
+                            <p>
+                                Deep within you, the light you are looking for.<br />You have the capabilities that successful people possess. <br />Just discover it.. then invest it in yourself. <br />Eternal... <br />Discover your inner kingdom.
+                            </p>
+                            <ul class="mt-20">
+                                <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                            </ul>
+                        </div> <!-- footer about -->
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-12" style="padding:0">
+                        <div class="footer-link mt-40">
+                            <div class="footer-title pb-25">
+                                <h6>{% trans 'Sitemap' %}</h6>
+                            </div>
+                            <ul>
+                                </li>
+                                <li><a href="{% url  'home:about'   %}"><i class="fa fa-angle-right"></i> {% trans 'About us' %}</a></li>
+                                <li><a href="{% url  'home:teachers'  %}"><i class="fa fa-angle-right"></i> {% trans 'Teachers' %}</a></li>
+                                <li><a href="{% url  'home:contact'  %}"><i class="fa fa-angle-right"></i> {% trans 'Contact' %}</a></li>
+                            </ul>
+                            <!-- <ul>
+                                <li><a href="#"><i class="fa fa-angle-right"></i>Gallery</a></li>
+                                <li><a href="shop.html"><i class="fa fa-angle-right"></i>Shop</a></li>
+                                <li><a href="{% url  'home:teachers' %}"><i class="fa fa-angle-right"></i>Teachers</a></li>
+                                <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>Support</a></li>
+                                <li><a href="{% url  'home:contact' %}"><i class="fa fa-angle-right"></i>Contact</a></li>
+                            </ul> -->
+                        </div> <!-- footer link -->
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-12">
+                        <div class="footer-link support mt-40">
+                            <div class="footer-title pb-25">
+                                <h6> {% trans 'Our Products' %}</h6>
+                            </div>
+                            <ul>
+                                <li><a href="{% url  'home:courses'   %}"><i class="fa fa-angle-right"></i> {% trans 'Courses' %}</a></li>
+                                <li><a href="{% url  'consultant:home'  %}"><i class="fa fa-angle-right"></i> {% trans 'Consultations' %}</a></li>
+                                <li><a href="{% url  'blogs:blogs'  %}"><i class="fa fa-angle-right"></i> {% trans 'Articles' %}</a></li>
+                                <li><a href="{% url  'home:events'  %}"><i class="fa fa-angle-right"></i> {% trans 'Events' %}</a></li>
+
+
+                                <!-- <li><a href="#"><i class="fa fa-angle-right"></i>Documentation</a></li> -->
+                            </ul>
+                        </div> <!-- support -->
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-12">
+                        <div class="footer-address mt-40">
+                            <div class="footer-title pb-25">
+                                <h6> {% trans 'Support' %}</h6>
+                            </div>
+
+                            <div class="footer-link">
+                                <ul>
+                                    <li>
+                                        <a href="{% url  'home:privacy'  %}"><i class="fa fa-angle-right"></i> {% trans 'Privacy' %}</a>
+                                    </li>
+                                    <li><a href="{% url  'home:privacy'  %}"><i class="fa fa-angle-right"></i> {% trans 'Policy' %}</a></li>
+                                    <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i> {% trans 'Support' %}</a></li>
+                                    <li><a href="{% url  'home:faqs'  %}"><i class="fa fa-angle-right"></i> {% trans 'FAQS' %}</a></li>
+
+                                </ul>
+                            </div>
+
+                        </div> <!-- footer address -->
+                    </div>
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </div> <!-- footer top -->
+
+        <div class="footer-copyright pt-10 pb-25">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 offset-lg-3">
+                        <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url  'home:terms'  %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url  'home:privacy'  %}">Privacy Policy</a></p>
+                    </div>
+
+                </div>
+            </div> <!-- container -->
+        </div> <!-- footer copyright -->
+    </footer>
+
+    <!--====== FOOTER PART ENDS ======-->
+    <!--====== BACK TO TP PART START ======-->
+
+    <a href="#" class="back-to-top"><i class="fa fa-angle-up"></i></a>
+
+    <!--====== BACK TO TP PART ENDS ======-->
+    {% cache 172800 static_js %}
+    <!--====== jquery js ======-->
+    <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
+
+    <!--====== Bootstrap js ======-->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <!--====== Slick js ======-->
+    <script src="{% static 'js/slick.min.js' %}"></script>
+
+    <!--====== Magnific Popup js ======-->
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+
+    <!--====== Counter Up js ======-->
+    <script src="{% static 'js/waypoints.min.js' %}"></script>
+    <script src="{% static 'js/jquery.counterup.min.js' %}"></script>
+
+    <!--====== Nice Select js ======-->
+    <script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
+
+    <!--====== Nice Number js ======-->
+    <script src="{% static 'js/jquery.nice-number.min.js' %}"></script>
+
+    <!--====== Count Down js ======-->
+    <script src="{% static 'js/jquery.countdown.min.js' %}"></script>
+
+    <!--====== Validator js ======-->
+    <script src="{% static 'js/validator.min.js' %}"></script>
+
+    <!--====== Ajax Contact js ======-->
+    <script src="{% static 'js/ajax-contact.js' %}"></script>
+
+    <!--====== Main js ======-->
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <!--====== Map js ======-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDC3Ip9iVC0nIxC6V14CKLQ1HZNF_65qEQ"></script>
+    <script src="{% static 'js/map-script.js' %}"></script>
+    <!-- MDB -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"></script>
+
+    {% endcache %}
+
+    <script style="text/javascript">
+
+
+
+
+        $(document).on('click', "#love-add", function () {
+            var _vm = $(this);
+            var _index = _vm.attr('data-index');
+            var _productId = $(".love-add-" + _index).val();
+            // Ajax
+            $.ajax({
+
+
+                url: "{% url  'home:wishlist_add'  %}",
+                data: {
+                    'id': _productId,
+
+                },
+                dataType: 'json',
+                beforeSend: function () {
+                    _vm.attr('disabled', true);
+                },
+                success: function (res) {
+                    let html_data1 = `
+                                ${res.shop}
+                                    `;
+
+                    $("#shop-numbers").html(html_data1);
+
+                    if (res.color == "yellow") {
+                        let html_data2 = `
+                                        <li ><a><i style="color:#ffc600;"  id="love-color-${_productId}"  class="fa fa-heart"></i><span>${res.count}</span></a></li> `;
+
+                        $(".love-add-" + _productId).html(html_data2);
+                        _vm.attr('disabled', false);
                     }
-            else{
-              window.location.href="/blogs/payment/{{price.id}}/";
-            }
-                  },
-          
-  
-                  });
-                  // End
-              });      
-  </script>
+
+
+                },
+                error: function (res) {
+                    let html_data2 = `
+
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        <strong>Message</strong> Please Login First
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+
+                                    `;
+
+                    $("#collapse-" + _productId).html(html_data2);
+                    $("#collapse-2-" + _productId).html(html_data2);
+                },
+            });
+            // End
+        });
+
+        $(document).on('click', "#love-remove", function () {
+            var _vm = $(this);
+            var _index = _vm.attr('data-index');
+            var _productId = $(".love-remove-" + _index).val();
+            // Ajax
+            $.ajax({
+
+
+                url: "{% url  'home:wishlist_remove'  %}",
+                data: {
+                    'id': _productId,
+
+                },
+                dataType: 'json',
+                beforeSend: function () {
+                    _vm.attr('disabled', true);
+                },
+                success: function (res) {
+                    let html_data1 = `
+                                    ${res.shop}
+                                        `;
+
+                    $("#shop-numbers").html(html_data1);
+                    $("#wish-" + _productId).remove();
+                    $("#wish-2-" + _productId).remove();
+                    if (res.count == 0) {
+                        window.location.assign(window.location.pathname);
+                    }
+
+                },
+
+            });
+            // End
+        });
+
+        $(document).ready(function () {
+            $('#videoElementID').bind('contextmenu', function () { return false; });
+        });
+
+    </script>
+
+
 </body>
+
+
 </html>

@@ -298,7 +298,7 @@ def check_audio_book_refund(function):
 def check_if_there_payment_edited(function):
     def wrap(request, *args, **kwargs):
         movie=get_object_or_404(Movies,slug=kwargs["slug"])
-        payment=Library_Payment.objects.filter(user=request.user,library_type=3,content_id=movie.id,status="approved").select_related("user")
+        payment=Library_Payment.objects.filter(user=request.user,library_type=3,content_id=movie.id,expired=False).select_related("user")
         if payment.exists():
             messages.error(request,"you already have an existing payment")
             return redirect(reverse("accounts:movies_payment"))
@@ -307,8 +307,6 @@ def check_if_there_payment_edited(function):
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
-
-
 
 
 def check_edit_blog_pyment(function):
@@ -350,6 +348,20 @@ def check_edit_consultant_pyment(function):
             while i.status == "approved" or i.status == "pending": 
                 messages.error(request,"you are already have another payment")
                 return redirect(reverse("accounts:consultant_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
+def check_edit_audio_pyment(function):
+    def wrap(request, *args, **kwargs):
+        payment=get_object_or_404(Library_Payment,id=kwargs["id"])
+        another_payment=Library_Payment.objects.filter(user=request.user,library_type=2,expired=False).exclude(id=payment.id).select_related("user")
+        for i in another_payment:
+            while i.status == "approved" or i.status == "pending":
+                messages.error(request,"you are already have another payment")
+                return redirect(reverse("accounts:audio_payment"))
         else:
             return function(request, *args, **kwargs)
     wrap.__doc__ = function.__doc__

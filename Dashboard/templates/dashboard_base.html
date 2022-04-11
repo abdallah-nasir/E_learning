@@ -164,7 +164,7 @@
                     </div>
                 </div>
             </li>
-            {% if request.user.is_superuser %}
+            {% if request.user.is_superuser  %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseads"
                     aria-expanded="true" aria-controls="collapseads">
@@ -232,6 +232,24 @@
                             <a class="collapse-item" href="{% url 'dashboard:audio_book_urls:tracks' %}">Tracks</a>
                         <a class="collapse-item" href="{% url 'dashboard:audio_book_urls:add_track' %}">Add Track</a>
                         <a class="collapse-item" href="{% url 'dashboard:audio_book_urls:add_audio' %}">Add To Book</a>
+
+                        
+                        <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
+                        <a class="collapse-item" href="cards.html">Course Payments</a> -->
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapselibraryebook"
+                    aria-expanded="true" aria-controls="collapselibraryaudio">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Library E-Book</span>
+                </a>
+                <div id="collapselibraryebook" class="collapse" aria-labelledby="headingTwo" data-parent="#collapselibraryebook">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">All E-Books:</h6>
+                            <a class="collapse-item" href="{% url 'dashboard:e_book:books' %}">Books</a>
+                        <a class="collapse-item" href="{% url 'dashboard:e_book:add_e_book' %}">Add E-Book</a>
 
                         
                         <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
@@ -482,7 +500,9 @@
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=movie_payment">Movies Payment</a>
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audios">Audios</a>
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audio_payment">Audio Payments</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audio_book">Audio Book</a>
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audio_book_payment">Audio Book Payments</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=e_book">E-Book</a>
 
 
                         <!-- <a class="collapse-item" href="register.html"></a>

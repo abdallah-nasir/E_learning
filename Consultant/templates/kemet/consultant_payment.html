@@ -29,16 +29,20 @@
                       </thead>
                       <tbody>
                         <tr>
-                          <td>نبيل كمال محمد</td>
-                          <td>Egypt</td>
-                          <td>00201011609810</td>
+                            <td>نبيل كمال محمد</td>
+                            <td>مصر</td>
+                            <td>00201011609810</td>
                         </tr>
-                       
-                       
-                      </tbody>
+                        <tr>
+                            <td>Nabil Kamal Mohammad</td>
+                            <td>Egypt</td>
+                            <td>00201011609810</td>
+                        </tr>
+
+                    </tbody>
                     </table>
                     
-                    <form method="POST" action="{% url 'home:bank_payment' teacher.id %}" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'consultant:western_payment' teacher.id %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">
@@ -85,7 +89,7 @@
                       </tbody>
                     </table>
                   </div>
-                    <form method="POST" action="{% url 'blogs:western_payment' teacher.id %}" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'consultant:bank_payment' teacher.id %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">

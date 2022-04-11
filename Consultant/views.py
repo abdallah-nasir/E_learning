@@ -116,7 +116,7 @@ def payment(request,teacher):
 
 
 @login_required(login_url="accounts:login")
-@check_user_is_has_consul
+@check_user_is_has_western
 @complete_user_data
 @check_user_data_form
 def western_payment(request,teacher):
@@ -167,7 +167,7 @@ def western_payment(request,teacher):
 
 
 @login_required(login_url="accounts:login")
-@check_user_is_has_consul
+@check_user_is_has_bank
 @complete_user_data
 @check_user_data_form
 def bank_payment(request,teacher):
