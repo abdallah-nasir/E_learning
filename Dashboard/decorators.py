@@ -179,7 +179,7 @@ def check_consultant_refund(function):
         elif refunds.exists():
             messages.error(request,"you already have pending refund for this payment")
             return redirect(reverse("dashboard:consultant_payment"))
-        elif payment.consultant:
+        elif payment.consultant: 
             if payment.consultant.date < today or payment.consultant.date == today:
                 messages.error(request,"time already passed")
                 return redirect(reverse("dashboard:consultant_payment"))
@@ -189,7 +189,6 @@ def check_consultant_refund(function):
             elif payment.consultant.date > today:
                 difference= payment.consultant.date - today
                 if difference.days < 3:
-                    print("here")
                     messages.error(request,"time already passed")
                     return redirect(reverse("dashboard:consultant_payment"))
                 else:
@@ -312,10 +311,7 @@ def check_if_there_payment_edited(function):
 def check_edit_blog_pyment(function):
     def wrap(request, *args, **kwargs):
         payment=get_object_or_404(Blog_Payment,id=kwargs["id"])
-        another_payment=Blog_Payment.objects.filter(user=request.user,type=1,expired=False).exclude(id=payment.id).select_related("user")
-        if request.user.vip:
-            messages.error(request,"you are already a member")
-            return redirect(reverse("accounts:blog_payment"))
+        another_payment=Blog_Payment.objects.filter(user=request.user,type=payment.type,expired=False).exclude(id=payment.id).select_related("user")
         for i in another_payment:
             while i.status == "approved" or i.status == "pending":
                 messages.error(request,"you are already have another payment")

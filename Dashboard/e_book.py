@@ -109,32 +109,18 @@ def upload_pdf(request,slug):
     if request.method == "POST":
         if form.is_valid():
             pdf=form.cleaned_data.get("pdf")
-            headers = {  
-                        "Accept": "*/*", 
-                        "AccessKey":Storage_Api}
-            url=f"https://storage.bunnycdn.com/{storage_name}/books/{book.slug}/{pdf}"
-            response = requests.put(url,data=pdf,headers=headers) 
-            data=response.json()
-            print(data)
-            try:
-                if data["HttpCode"] == 201:
-                    pdf_url = f"https://{agartha_cdn}/books/{book.slug}/{pdf}"
-                    data=book.data
-                    data["pdf"]=pdf_url
-                    book.save()
-                    messages.success(request,"Pdf added successfully")
-            except:
-                pass
-        else:
-            print(form.errors)
+            book.pdf = pdf
+            book.save()
+            messages.success(request,"Pdf added successfully")
+    
     context={"form":form,"book":book}
     return render(request,"e-book/upload_pdf.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_validation 
 def delete_book(request,slug):
-    music=get_object_or_404(Audio_Book,slug=slug)    
-    music_url=music.get_music()
+    music=get_object_or_404(E_Book,slug=slug)    
+    music_url=music.get_book()
     try:
         music_url_replace=music_url.replace(f"https://{agartha_cdn}",f"https://storage.bunnycdn.com/{storage_name}")
         headers = {
@@ -195,11 +181,9 @@ def edit_book(request,slug):
 
                 data=response.json()
                 for i in data:
-                    print(data)
                     image_url=f"https://storage.bunnycdn.com/{storage_name}/library-e-book/{book.slug}/{i['ObjectName']}"
                     response = requests.delete(image_url,headers=headers)
                     data=response.json()
-                    print(data)
                 images=request.FILES.getlist("image")
                 for i in images:
                     headers = {  
@@ -233,25 +217,25 @@ def edit_book(request,slug):
 @check_user_validation
 def book_payment(request): 
     if request.user.is_superuser:
-        audios=Library_Payment.objects.filter(library_type=1).order_by("-id")
+        audios=Library_Payment.objects.filter(library_type=4).order_by("-id")
     else:
-        audios=Library_Payment.objects.filter(user=request.user,library_type=1).order_by("-id") 
+        audios=Library_Payment.objects.filter(user=request.user,library_type=4).order_by("-id") 
     paginator = Paginator(audios, 10) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context={"payments":page_obj}
-    return render(request,"audio-book/audio_book_payments.html",context)
+    return render(request,"e-book/e_book_payments.html",context)
  
 @login_required(login_url="accounts:login")
 @check_user_validation
 def edit_e_book_payment(request,slug,id):
     payment=get_object_or_404(Library_Payment,id=id,status="declined")
-    track=get_object_or_404(Audio_Book_Tracks,slug=slug)
+    track=get_object_or_404(E_Book,slug=slug)
     if request.user == payment.user:
         if payment.method == "Western Union" or payment.method == "bank":
-            if Library_Payment.objects.filter(user=request.user,library_type=1,content_id=track.id,status="approved").select_related("user").exists():
+            if Library_Payment.objects.filter(user=request.user,library_type=4,content_id=track.id,status="approved").select_related("user").exists():
                 messages.success(request,"you already have a payment for this movie")
-                return redirect(reverse("accounts:audio_book_payment"))
+                return redirect(reverse("accounts:e_book_payment"))
             form=MusicPaymentForm(request.POST or None,request.FILES or None,instance=payment)
             form.initial["payment_image"]=None
             if request.method == "POST":
@@ -260,7 +244,7 @@ def edit_e_book_payment(request,slug,id):
                     instance.status="pending"
                     image=request.FILES.get("payment_image")
                     if image:
-                        url=f"https://storage.bunnycdn.com/{storage_name}/audio-book-payment/{track.slug}/{payment.user.username}/{image}"
+                        url=f"https://storage.bunnycdn.com/{storage_name}/e-book-payment/{track.slug}/{payment.user.username}/{image}"
                         headers = {
                             "Content-Type": "application/octet-stream",
                             "AccessKey": Storage_Api
@@ -269,7 +253,7 @@ def edit_e_book_payment(request,slug,id):
                         data=response.json()
                         try: 
                             if data["HttpCode"] == 201:
-                                instance.payment_image = f"https://{agartha_cdn}/audio-book-payment/{audio_book.track.slug}/{payment.user.username}/{image}"
+                                instance.payment_image = f"https://{agartha_cdn}/e-book-payment/{track.slug}/{payment.user.username}/{image}"
                                 instance.save()
                         except:
                             pass                 
@@ -278,22 +262,18 @@ def edit_e_book_payment(request,slug,id):
                     subject="edit action"
                     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                     messages.success(request,"Payment Edited Successfully")
-                    return redirect(reverse("accounts:audio_book_payment"))
-        else:  
-            messages.error(request,"You Don't Have Permission")
-            return redirect(reverse("accounts:audio_book_payment"))
+                    return redirect(reverse("dashboard:e_book_payment"))
     context={"form":form}
-    return render(request,"edit_audio_book_payment.html",context)
-
+    return render(request,"e-book/edit_e_book_payment.html",context)
 
 
 @login_required(login_url="accounts:login")
 @check_user_validation
 @check_audio_book_refund
 def e_book_refund(request,slug,id):   
-    payment=get_object_or_404(Library_Payment,id=id,library_type=1)
-    refund=Refunds.objects.create(type="audio_book_payment",content_id=id,user=request.user,transaction_number=payment.transaction_number)
-    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","Book":payment.get_audio_book().name}]}
+    payment=get_object_or_404(Library_Payment,id=id,library_type=4)
+    refund=Refunds.objects.create(type="e_book_payment",content_id=id,user=request.user,transaction_number=payment.transaction_number)
+    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","Book":payment.get_e_book().name}]}
     refund.data=json.dumps(my_data)
     refund.save()
     body=f"a new refund from user {request.user.email}"

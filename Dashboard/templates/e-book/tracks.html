@@ -27,8 +27,9 @@
                                         <tr>
                                             <th>Name</th>
                                             <th>User</th>
-                                            <th>Books</th>
+                                            <th>Price</th>
                                             <th>Image</th>
+                                            <th>Status</th>
                                             <th>Action</th>
 
                                         </tr>
@@ -39,21 +40,20 @@
                     <tr>
                                         <td>{{i.name|truncatewords:10}}</td>
                                         <td>{{i.user.username}}</td>
-                                          <td>
-                                            {% if i.get_book %}
-                                            <a href="{{i.get_book}}" target="__blank">Link</a>
-                                            {% else %}
-                                            None
-                                            {% endif %}
+                                    
+                                <td>{{i.price}}</td>
 
-                                            </td>
                                           <td><a target="__blank" href="{{i.image}}" >Image</a></td>
+                                          <td>
+                                            {{i.status}}
+                                        </td>
                                         <td>
                                         <a class="btn btn-info" href="{% url 'dashboard:e_book:edit_book' i.slug  %}">Edit</a>
                                         {% if i.check_pdf %}
 
                                         {% endif %}
                                         </td>
+                                       
                                     </tr>
 
                                     

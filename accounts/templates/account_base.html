@@ -90,6 +90,7 @@
                         <a class="collapse-item" href="{% url 'accounts:movies_payment' %}">{% trans 'Movies Payments' %}</a>
                         <a class="collapse-item" href="{% url 'accounts:audio_payment' %}">{% trans 'Music Payments' %}</a>
                         <a class="collapse-item" href="{% url 'accounts:audio_book_payment' %}">{% trans 'Audio Book Payments' %}</a>
+                        <a class="collapse-item" href="{% url 'accounts:e_book_payment' %}">{% trans 'E-Book Payments' %}</a>
 
                     </div>
                 </div>
@@ -142,6 +143,26 @@
                     </div>
                 </div>
             </li>
+        </li>
+        <li class="nav-item">
+         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseseven"
+             aria-expanded="true" aria-controls="collapseseven">
+             <i class="fas fa-fw fa-cog"></i>
+             <span>{% trans 'Library' %}</span>
+         </a>
+         <div id="collapseseven" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+             <div class="bg-white py-2 collapse-inner rounded">
+                 <h6 class="collapse-header">{% trans 'All Library' %}:</h6>
+                 <a class="collapse-item" href="{% url 'accounts:library' %}?type=e-book">{% trans 'E-Books' %}</a>
+                 <a class="collapse-item" href="{% url 'accounts:library' %}?type=audio-book">{% trans 'Aduio-Books' %}</a>
+                 <a class="collapse-item" href="{% url 'accounts:library' %}?type=movies">{% trans 'Movies' %}</a>
+                 <a class="collapse-item" href="{% url 'accounts:library' %}?type=audio">{% trans 'Audio' %}</a>
+
+                 <!-- <a class="collapse-item" href="buttons.html">Consultant Payments</a>
+                 <a class="collapse-item" href="cards.html">Course Payments</a> -->
+             </div>
+         </div>
+     </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsesix"
                     aria-expanded="true" aria-controls="collapsesix">

@@ -68,7 +68,7 @@ def category(request,slug):
 
 
 @login_required(login_url="accounts:login")
-@check_user_is_member
+# @check_user_is_member
 @check_blogs_payment_status
 def single_blog(request,slug):
     blog=get_object_or_404(Blog,slug=slug)

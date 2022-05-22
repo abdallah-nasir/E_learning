@@ -164,7 +164,8 @@ path("search-ads/",views.search_ads,name="search_ads"),
 path("library/add/category/",views.add_library_category,name="add_library_category"), 
 path("ads-ada/<int:id>/<str:domain>/",views.add_ads,name="add_ads"), 
 path("remove-ads/<int:id>/",views.remove_ads,name="remove_ads"), 
-
+####### faqs 
+path("faqs/",include("Dashboard.faqs_urls",namespace="faqs")),
 
 #############
 path("test/",views.test,name="test"),

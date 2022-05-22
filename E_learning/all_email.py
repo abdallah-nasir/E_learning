@@ -56,6 +56,5 @@ def send_mail_approve(request,user,body,subject):
         )
     msg.content_subtype = "html"  # Main content is now text/html
     msg.send()
-    print("here")
     return True
 

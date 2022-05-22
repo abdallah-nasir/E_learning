@@ -3,12 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#: templates/account/messages/logged_in.txt:4
+#: templates/account/messages/logged_out.txt:2
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-08 13:02+0200\n"
+"POT-Creation-Date: 2022-04-12 23:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -150,6 +152,7 @@ msgstr ""
 #: accounts/templates/account_audio_payment.html:76
 #: accounts/templates/account_consultant_payment.html:76
 #: accounts/templates/account_course_payment.html:79
+#: accounts/templates/account_e_book_payment.html:76
 #: accounts/templates/account_events.html:69
 #: accounts/templates/account_movies_payment.html:76
 msgid "Close"
@@ -166,14 +169,14 @@ msgstr ""
 #: Blogs/templates/blog_base.html:94 Blogs/templates/kemet/blog_base.html:93
 #: E_learning/settings.py:195
 #: library/templates/library/audio/audio_base.html:85 templates/base.html:330
-#: templates/kemet/home/base.html:333 templates/test.html:346
+#: templates/kemet/home/base.html:334 templates/test.html:346
 msgid "English"
 msgstr ""
 
 #: Blogs/templates/blog_base.html:96 Blogs/templates/kemet/blog_base.html:95
 #: E_learning/settings.py:196
 #: library/templates/library/audio/audio_base.html:87 templates/base.html:332
-#: templates/kemet/home/base.html:335 templates/test.html:348
+#: templates/kemet/home/base.html:336 templates/test.html:348
 msgid "Arabic"
 msgstr ""
 
@@ -242,13 +245,13 @@ msgid ""
 msgstr ""
 
 #: Blogs/templates/blog_base.html:201 Blogs/templates/kemet/blog_base.html:200
-#: templates/base.html:543 templates/kemet/home/base.html:522
+#: templates/base.html:542 templates/kemet/home/base.html:547
 #: templates/test.html:532
 msgid "Sitemap"
 msgstr ""
 
 #: Blogs/templates/blog_base.html:215 Blogs/templates/kemet/blog_base.html:214
-#: templates/base.html:563 templates/kemet/home/base.html:542
+#: templates/base.html:562 templates/kemet/home/base.html:567
 #: templates/test.html:552
 msgid "Our Products"
 msgstr ""
@@ -258,9 +261,13 @@ msgid "Terms"
 msgstr ""
 
 #: Blogs/templates/blog_base.html:240 Blogs/templates/kemet/blog_base.html:239
-#: templates/base.html:585 templates/kemet/home/base.html:564
+#: templates/base.html:584 templates/kemet/home/base.html:589
 #: templates/test.html:574
 msgid "Privacy"
+msgstr ""
+
+#: Blogs/templates/blog_payment.html:12
+msgid "Agartha pyament"
 msgstr ""
 
 #: Blogs/templates/blog_search.html:78 Blogs/templates/blog_search.html:136
@@ -314,6 +321,7 @@ msgstr ""
 #: accounts/templates/account_consultant_payment.html:101
 #: accounts/templates/account_course.html:70
 #: accounts/templates/account_course_payment.html:104
+#: accounts/templates/account_e_book_payment.html:101
 #: accounts/templates/account_events.html:95
 #: accounts/templates/account_movies_payment.html:101
 msgid "Next"
@@ -397,8 +405,8 @@ msgstr ""
 #: Consultant/templates/kemet/consultant.html:49
 #: Consultant/templates/kemet/consultant_teacher.html:58
 #: Consultant/templates/kemet/consultant_teacher.html:62
-#: templates/base.html:259 templates/base.html:567
-#: templates/kemet/home/base.html:262 templates/kemet/home/base.html:546
+#: templates/base.html:259 templates/base.html:566
+#: templates/kemet/home/base.html:263 templates/kemet/home/base.html:571
 #: templates/test.html:269 templates/test.html:556
 msgid "Consultations"
 msgstr ""
@@ -416,7 +424,7 @@ msgstr ""
 #: templates/courses.html:19 templates/event_single.html:19
 #: templates/events.html:15 templates/global_search.html:15
 #: templates/home.html:6 templates/kemet/home/about.html:16
-#: templates/kemet/home/base.html:236 templates/kemet/home/branch.html:18
+#: templates/kemet/home/base.html:237 templates/kemet/home/branch.html:18
 #: templates/kemet/home/contact.html:29
 #: templates/kemet/home/course-single.html:79
 #: templates/kemet/home/course_category.html:18
@@ -543,9 +551,9 @@ msgstr ""
 #: Dashboard/templates/dashboard_demo_event.html:20
 #: accounts/templates/account_base.html:119
 #: accounts/templates/account_base.html:124 templates/base.html:246
-#: templates/base.html:569 templates/event_single.html:20
+#: templates/base.html:568 templates/event_single.html:20
 #: templates/events.html:12 templates/events.html:16
-#: templates/kemet/home/base.html:245 templates/kemet/home/base.html:548
+#: templates/kemet/home/base.html:250 templates/kemet/home/base.html:573
 #: templates/kemet/home/event_single.html:19
 #: templates/kemet/home/events.html:14 templates/kemet/home/events.html:18
 #: templates/test.html:278 templates/test.html:558
@@ -590,6 +598,7 @@ msgstr ""
 #: accounts/templates/account_consult.html:29
 #: accounts/templates/account_consultant_payment.html:29
 #: accounts/templates/account_course_payment.html:30
+#: accounts/templates/account_e_book_payment.html:29
 #: accounts/templates/account_events.html:28
 #: accounts/templates/account_movies_payment.html:29
 #: library/templates/library/show_movie.html:114
@@ -603,6 +612,7 @@ msgstr ""
 #: accounts/templates/account_blog_payment.html:30
 #: accounts/templates/account_consultant_payment.html:30
 #: accounts/templates/account_course_payment.html:31
+#: accounts/templates/account_e_book_payment.html:30
 #: accounts/templates/account_movies_payment.html:30
 msgid "Method"
 msgstr ""
@@ -613,6 +623,7 @@ msgstr ""
 #: accounts/templates/account_blog_payment.html:31
 #: accounts/templates/account_consultant_payment.html:31
 #: accounts/templates/account_course_payment.html:32
+#: accounts/templates/account_e_book_payment.html:31
 #: accounts/templates/account_movies_payment.html:31
 msgid "Transaction"
 msgstr ""
@@ -623,6 +634,7 @@ msgstr ""
 #: accounts/templates/account_blog_payment.html:32
 #: accounts/templates/account_consultant_payment.html:32
 #: accounts/templates/account_course_payment.html:34
+#: accounts/templates/account_e_book_payment.html:32
 #: accounts/templates/account_movies_payment.html:32
 msgid "Payment Image"
 msgstr ""
@@ -634,6 +646,7 @@ msgstr ""
 #: accounts/templates/account_consult.html:35
 #: accounts/templates/account_consultant_payment.html:34
 #: accounts/templates/account_course_payment.html:35
+#: accounts/templates/account_e_book_payment.html:34
 #: accounts/templates/account_movies_payment.html:34
 msgid "Status"
 msgstr ""
@@ -644,6 +657,7 @@ msgstr ""
 #: accounts/templates/account_blog_payment.html:36
 #: accounts/templates/account_consultant_payment.html:35
 #: accounts/templates/account_course_payment.html:36
+#: accounts/templates/account_e_book_payment.html:35
 #: accounts/templates/account_events.html:35
 #: accounts/templates/account_movies_payment.html:35
 msgid "Action"
@@ -655,6 +669,7 @@ msgstr ""
 #: accounts/templates/account_blog_payment.html:47
 #: accounts/templates/account_consultant_payment.html:48
 #: accounts/templates/account_course_payment.html:50
+#: accounts/templates/account_e_book_payment.html:48
 #: accounts/templates/account_movies_payment.html:48
 msgid "Image Link"
 msgstr ""
@@ -665,6 +680,7 @@ msgstr ""
 #: accounts/templates/account_blog_payment.html:53
 #: accounts/templates/account_consultant_payment.html:55
 #: accounts/templates/account_course_payment.html:57
+#: accounts/templates/account_e_book_payment.html:55
 #: accounts/templates/account_events.html:50
 #: accounts/templates/account_movies_payment.html:55
 msgid "Edit"
@@ -680,6 +696,8 @@ msgstr ""
 #: accounts/templates/account_consultant_payment.html:77
 #: accounts/templates/account_course_payment.html:60
 #: accounts/templates/account_course_payment.html:80
+#: accounts/templates/account_e_book_payment.html:58
+#: accounts/templates/account_e_book_payment.html:77
 #: accounts/templates/account_movies_payment.html:58
 #: accounts/templates/account_movies_payment.html:77
 msgid "Refund"
@@ -693,6 +711,7 @@ msgstr ""
 #: accounts/templates/account_consultant_payment.html:89
 #: accounts/templates/account_course.html:58
 #: accounts/templates/account_course_payment.html:92
+#: accounts/templates/account_e_book_payment.html:89
 #: accounts/templates/account_events.html:83
 #: accounts/templates/account_movies_payment.html:89
 msgid "Previous"
@@ -702,6 +721,7 @@ msgstr ""
 #: accounts/templates/account_audio_payment.html:6
 #: accounts/templates/account_base.html:82
 #: accounts/templates/account_consultant_payment.html:6
+#: accounts/templates/account_e_book_payment.html:6
 #: accounts/templates/account_movies_payment.html:6
 msgid "Payments"
 msgstr ""
@@ -765,10 +785,10 @@ msgstr ""
 
 #: accounts/templates/account_base.html:109
 #: accounts/templates/account_course.html:13 templates/base.html:242
-#: templates/base.html:566 templates/course-single.html:79
+#: templates/base.html:565 templates/course-single.html:79
 #: templates/courses.html:7 templates/courses.html:20
 #: templates/global_search.html:16 templates/home.html:238
-#: templates/kemet/home/base.html:241 templates/kemet/home/base.html:545
+#: templates/kemet/home/base.html:242 templates/kemet/home/base.html:570
 #: templates/kemet/home/course-single.html:80
 #: templates/kemet/home/courses.html:7 templates/kemet/home/courses.html:20
 #: templates/kemet/home/global_search.html:17
@@ -803,7 +823,7 @@ msgstr ""
 
 #: accounts/templates/account_base.html:280
 #: accounts/templates/account_base.html:345 templates/base.html:372
-#: templates/kemet/home/base.html:372 templates/test.html:382
+#: templates/kemet/home/base.html:376 templates/test.html:382
 msgid "Logout"
 msgstr ""
 
@@ -880,6 +900,10 @@ msgstr ""
 msgid "Videos"
 msgstr ""
 
+#: accounts/templates/account_e_book_payment.html:13
+msgid "E-Book Payments"
+msgstr ""
+
 #: accounts/templates/account_events.html:30 templates/course-single.html:357
 #: templates/kemet/home/course-single.html:358
 #: templates/kemet/home/video.html:304 templates/video.html:303
@@ -927,20 +951,24 @@ msgstr ""
 msgid "Edit Movies Payment"
 msgstr ""
 
+#: library/templates/library/all-books.html:16
+#: library/templates/library/home.html:12
+#: library/templates/library/search.html:16
+msgid "Agartha Library"
+msgstr ""
+
+#: library/templates/library/all-books.html:16
+#: library/templates/library/home.html:12
+#: library/templates/library/search.html:16
+msgid "Home Page"
+msgstr ""
+
 #: library/templates/library/audio/audio_base.html:85
 msgid "English Language"
 msgstr ""
 
 #: library/templates/library/audio/audio_base.html:87
 msgid "Arabic Language"
-msgstr ""
-
-#: library/templates/library/home.html:12
-msgid "Agartha Library"
-msgstr ""
-
-#: library/templates/library/home.html:12
-msgid "Home Page"
 msgstr ""
 
 #: library/templates/library/home.html:25
@@ -951,6 +979,53 @@ msgid ""
 "                          Travel between space-time wherever you are.\n"
 "                          Enjoy a collection of\n"
 "                          Audio books, paper books, e-books "
+msgstr ""
+
+#: library/templates/library/home.html:45
+#: library/templates/library/home.html:65
+msgid ""
+" Agartha World Library\n"
+"                            Wander through the orbits of the vast universe "
+"between the folds of books.\n"
+"                            Travel between space-time wherever you are.\n"
+"                            Enjoy a collection of\n"
+"                            Audio books, paper books, e-books"
+msgstr ""
+
+#: library/templates/library/home.html:88
+msgid "Grow awareness"
+msgstr ""
+
+#: library/templates/library/home.html:100
+msgid "E-Books"
+msgstr ""
+
+#: library/templates/library/home.html:109
+msgid "Audio Books"
+msgstr ""
+
+#: library/templates/library/home.html:123
+msgid "Documentaries"
+msgstr ""
+
+#: library/templates/library/home.html:132
+msgid "Best Music "
+msgstr ""
+
+#: library/templates/library/home.html:152
+msgid "The most important books that have just arrived"
+msgstr ""
+
+#: library/templates/library/home.html:153
+msgid "RECENT E-BOOKS"
+msgstr ""
+
+#: library/templates/library/home.html:191
+msgid "The most important AudioBooks that have just arrived"
+msgstr ""
+
+#: library/templates/library/home.html:192
+msgid "RECENT AUDIOBOOKS"
 msgstr ""
 
 #: library/templates/library/movies.html:7
@@ -1091,12 +1166,12 @@ msgstr ""
 
 #: templates/about.html:12 templates/about.html:16 templates/base.html:269
 #: templates/kemet/home/about.html:13 templates/kemet/home/about.html:17
-#: templates/kemet/home/base.html:272 templates/test.html:290
+#: templates/kemet/home/base.html:273 templates/test.html:290
 msgid "About Us"
 msgstr ""
 
-#: templates/about.html:34 templates/base.html:547
-#: templates/kemet/home/about.html:35 templates/kemet/home/base.html:526
+#: templates/about.html:34 templates/base.html:546
+#: templates/kemet/home/about.html:35 templates/kemet/home/base.html:551
 #: templates/test.html:536
 msgid "About us"
 msgstr ""
@@ -1105,49 +1180,68 @@ msgstr ""
 msgid "Welcome to Agartha Academy"
 msgstr ""
 
-#: templates/about.html:52 templates/kemet/home/about.html:53
+#: templates/about.html:38
+msgid ""
+"Your awareness is important so what you do now is crucial. We know how "
+"stressful the learning process can be.\n"
+"                            Our goal is to create the right plan to help you "
+"develop your awareness.\n"
+"                           \n"
+"                           We offer you the knowledge, skills and experience "
+"of experienced professionals. We have personally experienced this case and "
+"can appreciate what you are about to experience.\n"
+"                           \n"
+"                           - Our goal is to make a strong team! Once "
+"students register with us, they are considered part of the Agartha family.\n"
+"                            \n"
+"                           Our academic staff and fellow academics are known "
+"for their credibility, dedication, quality and professionalism and are ready "
+"to help you develop yourself."
+msgstr ""
+
+#: templates/about.html:59 templates/kemet/home/about.html:53
 msgid "Why Choose us"
 msgstr ""
 
-#: templates/about.html:53 templates/kemet/home/about.html:54
+#: templates/about.html:60 templates/kemet/home/about.html:54
 msgid ""
 "We have the origin of the information, we turn it into experience, where "
 "anyone can master new skills and achieve their goals"
 msgstr ""
 
-#: templates/about.html:59 templates/kemet/home/about.html:60
+#: templates/about.html:66 templates/kemet/home/about.html:60
 msgid "Our Mission"
 msgstr ""
 
-#: templates/about.html:66 templates/kemet/home/about.html:67
+#: templates/about.html:73 templates/kemet/home/about.html:67
 msgid "Our vision"
 msgstr ""
 
-#: templates/about.html:86 templates/home.html:190
+#: templates/about.html:93 templates/home.html:190
 #: templates/kemet/home/about.html:87 templates/kemet/home/home.html:191
 msgid "Students enrolled"
 msgstr ""
 
-#: templates/about.html:92 templates/home.html:196
+#: templates/about.html:99 templates/home.html:196
 #: templates/kemet/home/about.html:93 templates/kemet/home/home.html:197
 msgid "Courses Uploaded"
 msgstr ""
 
-#: templates/about.html:98 templates/home.html:202
+#: templates/about.html:105 templates/home.html:202
 #: templates/kemet/home/about.html:99 templates/kemet/home/home.html:203
 msgid "People certified"
 msgstr ""
 
-#: templates/about.html:104 templates/kemet/home/about.html:105
+#: templates/about.html:111 templates/kemet/home/about.html:105
 msgid "Global Teachers"
 msgstr ""
 
-#: templates/about.html:120 templates/home.html:225
+#: templates/about.html:127 templates/home.html:225
 #: templates/kemet/home/about.html:121 templates/kemet/home/home.html:226
 msgid "Featured Teachers"
 msgstr ""
 
-#: templates/about.html:121 templates/kemet/home/about.html:122
+#: templates/about.html:128 templates/kemet/home/about.html:122
 msgid "Meet Our teachers"
 msgstr ""
 
@@ -1385,15 +1479,6 @@ msgstr ""
 msgid "Removed e-mail address %(email)s."
 msgstr ""
 
-#: templates/account/messages/logged_in.txt:4
-#, python-format
-msgid "Successfully signed in as %(name)s."
-msgstr ""
-
-#: templates/account/messages/logged_out.txt:2
-msgid "You have signed out."
-msgstr ""
-
 #: templates/account/messages/password_changed.txt:2
 msgid "Password successfully changed."
 msgstr ""
@@ -1516,18 +1601,18 @@ msgid ""
 "mail address</a>."
 msgstr ""
 
-#: templates/base.html:182 templates/kemet/home/base.html:181
+#: templates/base.html:182 templates/kemet/home/base.html:182
 #: templates/test.html:205
 msgid "Need Help? call us"
 msgstr ""
 
-#: templates/base.html:208 templates/kemet/home/base.html:207
+#: templates/base.html:208 templates/kemet/home/base.html:208
 #: templates/test.html:231
 msgid "Join Us"
 msgstr ""
 
-#: templates/base.html:250 templates/base.html:548
-#: templates/kemet/home/base.html:253 templates/kemet/home/base.html:527
+#: templates/base.html:250 templates/base.html:547
+#: templates/kemet/home/base.html:254 templates/kemet/home/base.html:552
 #: templates/kemet/home/teachers-single.html:14
 #: templates/kemet/home/teachers-single.html:18
 #: templates/kemet/home/teachers.html:14 templates/kemet/home/teachers.html:18
@@ -1537,72 +1622,72 @@ msgstr ""
 msgid "Teachers"
 msgstr ""
 
-#: templates/base.html:254 templates/kemet/home/base.html:257
+#: templates/base.html:254 templates/kemet/home/base.html:258
 #: templates/test.html:274
 msgid "Blog"
 msgstr ""
 
-#: templates/base.html:265 templates/kemet/home/base.html:268
+#: templates/base.html:265 templates/kemet/home/base.html:269
 #: templates/test.html:286
 msgid "Service"
 msgstr ""
 
 #: templates/base.html:267 templates/contact.html:48
-#: templates/kemet/home/base.html:270 templates/kemet/home/contact.html:49
+#: templates/kemet/home/base.html:271 templates/kemet/home/contact.html:49
 #: templates/test.html:288
 msgid "Contact Us"
 msgstr ""
 
-#: templates/base.html:268 templates/base.html:589
-#: templates/kemet/home/base.html:271 templates/kemet/home/base.html:568
+#: templates/base.html:268 templates/base.html:588
+#: templates/kemet/home/base.html:272 templates/kemet/home/base.html:593
 #: templates/test.html:289 templates/test.html:578
 msgid "FAQS"
 msgstr ""
 
-#: templates/base.html:276 templates/kemet/home/base.html:279
+#: templates/base.html:276 templates/kemet/home/base.html:280
 #: templates/test.html:297
 msgid "Language"
 msgstr ""
 
-#: templates/base.html:368 templates/kemet/home/base.html:368
+#: templates/base.html:368 templates/kemet/home/base.html:372
 #: templates/test.html:378
 msgid "My profile"
 msgstr ""
 
 #: templates/base.html:376 templates/base.html:398
-#: templates/kemet/home/base.html:376 templates/kemet/home/base.html:398
+#: templates/kemet/home/base.html:380 templates/kemet/home/base.html:402
 #: templates/test.html:386 templates/test.html:404
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:401 templates/kemet/home/base.html:401
+#: templates/base.html:401 templates/kemet/home/base.html:405
 #: templates/test.html:407
 msgid "Signup"
 msgstr ""
 
-#: templates/base.html:473 templates/kemet/home/base.html:473
+#: templates/base.html:473 templates/kemet/home/base.html:477
 #: templates/test.html:483
 msgid "Search in Courses and Teachers"
 msgstr ""
 
-#: templates/base.html:549 templates/contact.html:25 templates/contact.html:29
-#: templates/kemet/home/base.html:528 templates/kemet/home/contact.html:26
+#: templates/base.html:548 templates/contact.html:25 templates/contact.html:29
+#: templates/kemet/home/base.html:553 templates/kemet/home/contact.html:26
 #: templates/kemet/home/contact.html:30 templates/test.html:538
 msgid "Contact"
 msgstr ""
 
-#: templates/base.html:568 templates/kemet/home/base.html:547
+#: templates/base.html:567 templates/kemet/home/base.html:572
 #: templates/test.html:557
 msgid "Articles"
 msgstr ""
 
-#: templates/base.html:579 templates/base.html:588
-#: templates/kemet/home/base.html:558 templates/kemet/home/base.html:567
+#: templates/base.html:578 templates/base.html:587
+#: templates/kemet/home/base.html:583 templates/kemet/home/base.html:592
 #: templates/test.html:568 templates/test.html:577
 msgid "Support"
 msgstr ""
 
-#: templates/base.html:587 templates/kemet/home/base.html:566
+#: templates/base.html:586 templates/kemet/home/base.html:591
 #: templates/test.html:576
 msgid "Policy"
 msgstr ""
@@ -1774,8 +1859,12 @@ msgstr ""
 msgid "Kemet Courses"
 msgstr ""
 
-#: templates/kemet/home/base.html:249
+#: templates/kemet/home/base.html:246
 msgid "Library"
+msgstr ""
+
+#: templates/kemet/home/faqs.html:6
+msgid "FAQs"
 msgstr ""
 
 #: templates/kemet/home/teachers-single.html:69

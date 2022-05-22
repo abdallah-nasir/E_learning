@@ -54,7 +54,6 @@ def change_cache_value(request,name,data_check,action,number=0,domain=None):
         if action == "remove":
             cache_name=data[name]
             if data_check in cache_name:
-                print("here")
                 cache_name.remove(data_check)
                 if domain == None : 
                     cache.set("data",data,60*60*24*3)
@@ -62,9 +61,7 @@ def change_cache_value(request,name,data_check,action,number=0,domain=None):
                     cache.set("kemet_data",data,60*60*24*3)
         elif action == "add":
             cache_name=data[name]
-            print(len(cache_name))
             if number >= len(cache_name):
-                print("here")
                 if data_check not in cache_name:
                     cache_name.append(data_check)
                     if  domain == None:
@@ -112,11 +109,9 @@ def delete_image(request,file_url,image_url,headers,name):
     response = requests.get(file_url, headers=headers) 
     data=response.json()
     for i in data:
-        print(i['ObjectName'],name)
         while i['ObjectName'] == name: 
             response = requests.delete(image_url,headers=headers)
             data=response.json()
-            print(data)
             break
     return data
 class FailedJsonResponse(JsonResponse):
@@ -144,7 +139,6 @@ def add_images_to_library(request,form,images,url_name,instance):
         except:
             pass
     instance.data=json.dumps(library_data)
-    print(instance.data)
     instance.save()
     messages.success(request,"library added successfully")
     status=True
@@ -203,7 +197,6 @@ def uplaod_movie_video(request,slug):
         if request.is_ajax():
             if form.is_valid():
                 url = f"http://video.bunnycdn.com/library/{library_id}/videos/{movie.get_movies()['video_uid']}"
-                print(url)
                 file=form.cleaned_data.get("video")
                 headers = {
                     "Accept": "application/json",
@@ -259,9 +252,7 @@ def check_movie(request,slug):
     my_response = requests.get( url,headers=headers)
     try:
         data=my_response.json() 
-        print(data)
         if data["length"] != 0 or data["encodeProgress"] == 100 or data["status"] != 0:
-            print(data["status"])
             movie.duration=int(data["length"])
             movie_data["video"]=f"https://iframe.mediadelivery.net/embed/{library_id}/{data['guid']}?autoplay=false"
             movie.data=json.dumps(movie_data)
@@ -298,7 +289,6 @@ def check_movie(request,slug):
             movie.save() 
             response = requests.put( url,data=file,headers=headers)
             data=my_response.json()
-            print(data)
             movie.duration = int(data["length"])
             movie.save() 
             messages.success(request,"movie uploaded successfully")
@@ -348,11 +338,9 @@ def edit_movie(request,slug):
 
                 data=response.json()
                 for i in data:
-                    print(i['ObjectName'])
                     image_url=f"https://storage.bunnycdn.com/{storage_name}/e-books/{movie.slug}/{i['ObjectName']}"
                     response = requests.delete(image_url,headers=headers)
                     data=response.json()
-                    print(data)
                 images=request.FILES.getlist("image")
                 for i in images:
                     headers = {  
@@ -436,7 +424,6 @@ def check_demo_movie(request,slug):
     try:
         data=my_response.json() 
         if data["length"] != 0 or data["encodeProgress"] == 100 or data["status"] != 0:
-            print(data["encodeProgress"])
             movie_data["demo_duration"]=int(data["length"])
             movie_data["demo_video_url"]=f"https://iframe.mediadelivery.net/embed/{library_id}/{data['guid']}?autoplay=false"
             movie.data=json.dumps(movie_data)

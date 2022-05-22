@@ -20,8 +20,8 @@
             <div class="row">
                 <div class="col-xl-9 col-lg-10">
                     <div class="slider-cont">
-                        <h1 data-animation="bounceInLeft" data-delay="1s">More than 5,000+ courses for develop your skill</h1>
-                        <a data-animation="fadeInUp" data-delay="1.3s" href="#" class="main-btn">Start Trial now</a>
+                        <h1 data-animation="bounceInLeft" data-delay="1s">{% trans 'More than 5,000+ courses for develop your skill' %}</h1>
+                        <a data-animation="fadeInUp" data-delay="1.3s" href="{% url 'home:courses' %}" class="main-btn">{% trans 'Start Trial now' %}</a>
                     </div>
                 </div>
             </div> <!-- row -->
@@ -108,7 +108,7 @@
                                 {{form.phone.errors}}
                             </div>
                             <div class="singel-form">
-                                <button class="main-btn" type="submit">Get it Now</button>
+                                <button class="main-btn" type="submit">{% trans 'Get it Now' %}</button>
                             </div>
                         </form>
                     </div>

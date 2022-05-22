@@ -18,7 +18,7 @@
     
     <!--====== Title ======-->
     <title>{% trans 'Agartha Academy' %} {% block title  %}{% endblock %}</title>
-    {% cache 172800 static_head %}
+    {% cache 172800 kemet_static_head %}
     <!--====== Favicon Icon ======-->
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
 
@@ -360,7 +360,7 @@
               loading="lazy"
             />
             <span class="hello-msg">
-                Hello, {{request.user.username}}
+                {% trans 'Hello,' %} {{request.user.first_name}}
             </span>
           </a>
          
@@ -530,7 +530,7 @@
                                 <a href="#"><img src="{% static 'images/logo-2.png' %}" alt="Logo"></a>
                             </div>
                             <p >
-                                Deep within you, the light you are looking for.<br/>You have the capabilities that successful people possess. <br />Just discover it.. then invest it in yourself. <br />Eternal... <br />Discover your inner kingdom.
+                                {% blocktrans %} Deep within you, the light you are looking for.<br/>You have the capabilities that successful people possess. <br />Just discover it.. then invest it in yourself. <br />Eternal... <br />Discover your inner kingdom.{% endblocktrans %}
                             </p>
                             <ul class="mt-20">
                                 <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
@@ -621,7 +621,7 @@
     <!--====== BACK TO TP PART ENDS ======-->
    
     
-    {% cache 172800 static_js %}
+    {% cache 172800 kemet_static_js %}
     <!--====== jquery js ======-->
     <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>

@@ -53,7 +53,6 @@ def change_cache_value(request,name,data_check,action,number=0,domain=None):
         if action == "remove":
             cache_name=data[name]
             if data_check in cache_name:
-                print("here")
                 cache_name.remove(data_check)
                 if domain == None : 
                     cache.set("data",data,60*60*24*3)
@@ -61,9 +60,7 @@ def change_cache_value(request,name,data_check,action,number=0,domain=None):
                     cache.set("kemet_data",data,60*60*24*3)
         elif action == "add":
             cache_name=data[name]
-            print(len(cache_name))
             if number >= len(cache_name):
-                print("here")
                 if data_check not in cache_name:
                     cache_name.append(data_check)
                     if  domain == None:
@@ -111,11 +108,9 @@ def delete_image(request,file_url,image_url,headers,name):
     response = requests.get(file_url, headers=headers) 
     data=response.json()
     for i in data:
-        print(i['ObjectName'],name)
         while i['ObjectName'] == name: 
             response = requests.delete(image_url,headers=headers)
             data=response.json()
-            print(data)
             break
     return data
 class FailedJsonResponse(JsonResponse):
@@ -137,7 +132,6 @@ def home(request):
             instance=form.save(commit=False)
             try:
                 if request.FILES["account_image"]:
-                    print(request.FILES["account_image"])
                     file_name=request.FILES["account_image"]
                     url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{instance.slug}/"
                     headers = {
@@ -254,7 +248,6 @@ def add_blog(request):
         form=BlogTypeForm(request.GET or None)
         form_number=2
     if request.method == "POST":
-        print(request.FILES)
         if form_number == 1:
             if form.is_valid():
                 instance=form.save(commit=False)
@@ -280,7 +273,6 @@ def add_blog(request):
                         "AccessKey": AccessKey
                     }
                     response = requests.post( url, json=data, headers=headers)
-                    print(response)
                     data=response.json()
                     my_blog_data=json.loads(instance.data)
                     my_blog_data["video_guid"]=data["guid"]
@@ -305,7 +297,6 @@ def add_blog(request):
 
                     response = requests.put(image_url,data=i,headers=headers)
                     data=response.json()
-                    print(data)
                     try:
                         if data["HttpCode"] == 201:
                             image_location = f"https://{agartha_cdn}/blogs/{instance.user}/{instance.slug}/{i}"
@@ -339,10 +330,8 @@ def edit_video_blog(request,slug):
         if form.is_valid():
             my_blog_data=json.loads(blog.data)
             video_guid=my_blog_data["video_guid"]
-            print(video_guid)
             url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video_guid}"
             file=form.cleaned_data.get("video")
-            print(file)
             headers = {
                 "Accept": "application/json",
                 "Content-Type": "application/*+json",
@@ -361,7 +350,6 @@ def edit_video_blog(request,slug):
             messages.success(request,"Video added successfully")
             return JsonResponse({"message":"1"})
         else:
-            print(form.errors)
             return FailedJsonResponse({"message":"1"})
     context={"form":form,"blog":blog}
     return render(request,"dashboard_edit_video_blog.html",context)
@@ -375,7 +363,6 @@ def add_audio_blog(request,slug):
     if request.is_ajax():
         if form.is_valid():
             file=form.cleaned_data.get("video")
-            print(file)
             url=f"https://storage.bunnycdn.com/{storage_name}/blogs-audio/{blog.slug}/{file}"
             headers = {
                     "Content-Type": "application/octet-stream",
@@ -383,7 +370,6 @@ def add_audio_blog(request,slug):
                 }
             response = requests.put(url,data=file,headers=headers)
             data=response.json()
-            print(data)
             try: 
                 if data["HttpCode"] == 201:
                     blog.video = f"https://{agartha_cdn}/blogs-audio/{blog.slug}/{file}"
@@ -409,14 +395,11 @@ def add_video_blog(request,slug):
     form=BlogVideoForm(request.POST or None,request.FILES or None)
     if request.is_ajax():
         if form.is_valid():
-            print("valid")
             # instance=form.save(commit=False)
             my_blog_data=json.loads(blog.data)
             video_guid=my_blog_data["video_guid"]
-            print(video_guid)
             url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video_guid}"
             file=form.cleaned_data.get("video")
-            print(file)
             headers = {
                 "Accept": "application/json",
                 "Content-Type": "application/*+json",
@@ -480,7 +463,6 @@ def check_blog_video(request,slug):
     try:
         data=my_response.json() 
         if data["length"] != 0 or data["encodeProgress"] == 100 or data["status"] != 0:
-            print(data["encodeProgress"])
             blog_data["video_length"] =data["length"]
             blog.data=json.dumps(blog_data)
             blog.save()
@@ -571,7 +553,6 @@ def edit_blog(request,slug):
                         messages.error(request,"delete current image first")
                         return redirect(reverse("dashboard:edit_blog",kwargs={"slug":blog.slug}))
                     else:
-                        print(image)
                         image_extension=os.path.basename(image.name).split(".")[1]   
                         image.name=f'{instance.slug}.{image_extension}'
                         image_url=f"https://storage.bunnycdn.com/{storage_name}/blogs/{instance.user.username}/{instance.slug}/{image}"
@@ -646,7 +627,6 @@ def edit_audio_blog(request,slug):
     if request.is_ajax():
         if form.is_valid():
             file=form.cleaned_data.get("video")
-            print(file)
             url=f"https://storage.bunnycdn.com/{storage_name}/blogs-audio/{blog.slug}/{file}"
             headers = {
                     "Content-Type": "application/octet-stream",
@@ -654,7 +634,6 @@ def edit_audio_blog(request,slug):
                 }
             response = requests.put(url,data=file,headers=headers)
             data=response.json()
-            print(data)
             blog.status="pending"
             blog.save()
             try: 
@@ -671,7 +650,6 @@ def edit_audio_blog(request,slug):
             return JsonResponse({"message":"1","url":"/dashoard/blogs/"})
         else:
             messages.error(request,"invalid audio extensions")
-            print(form.errors)
             return FailedJsonResponse({"message":"1"})
     context={"form":form,"blog":blog}
     return render(request,"dashboard_edit_audio_blog.html",context)
@@ -782,7 +760,6 @@ def edit_course(request,slug):
                 if time and time == True:
                     pass
                 else:
-                    print(time)
                     body=f"course edit from user {request.user.email}"
                     subject="edit course"
                     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
@@ -832,7 +809,6 @@ def add_course(request):
             file=form.cleaned_data.get("image")
             response = requests.put(image_url,data=file,headers=headers)
             data=response.json()
-            print(data)
             try:
                 if data["HttpCode"] == 201:
                     instance.image = f"https://{agartha_cdn}/courses/{instance.slug}/{file_name}"
@@ -856,8 +832,6 @@ def add_course(request):
             send_mail_approve(request,user=request.user.email,subject=subject,body=body)
             messages.success(request,"course added successfully")
             return redirect(reverse("dashboard:add_video",kwargs={"slug":instance.slug}))
-        else:
-            print(form.errors)
     context={"form":form}
     return render(request,"dashboard_add_course.html",context)
 
@@ -902,11 +876,7 @@ def edit_videos(request,slug):
     if request.user == video.user and video.my_course.status !="pending":
         form=EditVideo(request.POST or None,instance=video)
         if request.method == "POST":
-            instance=form.save(commit=False)
-            # if request.FILES.get("video") != None:
-            #     video.video.delete()
-            #     instance.video=request.FILES.get("video") 
-                # print("here")     
+            instance=form.save(commit=False)    
             instance.my_course.status = "pending"  
             instance.my_course.save()
         
@@ -947,14 +917,10 @@ def add_video(request,slug):
                     "AccessKey": AccessKey
                 }
                 response = requests.post( url, json=json, headers=headers)
-                print(response)
                 data=response.json()
-                print(data)
                 instance.video_uid=data["guid"]
                 instance.save()
                 return redirect(reverse("dashboard:complete_add_video",kwargs={"slug":instance.slug}))
-            else:
-                print("invalid")
     else:
         messages.error(request,"You Don't Have Permisssion")
         return redirect(reverse("dashboard:blogs"))
@@ -972,7 +938,6 @@ def complete_add_video(request,slug):
     else:
         if request.is_ajax():
             if form.is_valid():
-                print("valid")
                 url = f"http://video.bunnycdn.com/library/{library_id}/videos/{video.video_uid}"
                 file=form.cleaned_data.get("video")
                 headers = {
@@ -984,7 +949,6 @@ def complete_add_video(request,slug):
                 video.video=f"https://iframe.mediadelivery.net/embed/{library_id}/{video.video_uid}?autoplay=false"
                 response = requests.get( url, headers=headers)
                 data=response.json()
-                print(data)
                 video.duration=data["length"]  
                 video.save()
                 video.total_duration()
@@ -1047,7 +1011,6 @@ def check_video(request,slug):
                     data=my_response.json()
                     video.duration = data["length"]
                     video.save()
-                    print(data)
                     video.total_duration()
                     messages.success(request,"Video Uploaded Successfully")
                     return JsonResponse({"message":"1"})
@@ -1134,8 +1097,6 @@ def add_event(request):
             send_mail_approve(request,user=request.user.email,subject=subject,body=body)
             messages.success(request,"Event added successfully")
             return redirect("dashboard:events")
-        else:
-            print(form.errors)
     context={"form":form}
     return render(request,"dashboard_add_events.html",context)
 
@@ -1178,7 +1139,6 @@ def edit_event(request,id):
                     image_extension=os.path.basename(image.name).split(".")[1]   
                     image.name=f"{instance.slug}.{image_extension}"
                     new_image_url=f"https://storage.bunnycdn.com/{storage_name}/events/{instance.user.username}/{image}"
-                    print(image.name)
                     response = requests.put(url=new_image_url,data=image,headers=headers)
                     data=response.json()
                     try:
@@ -1291,9 +1251,6 @@ def add_quiestions(request,slug):
                     course.quiz.save()
                 messages.success(request,"Question added successfully")
                 return redirect(reverse("dashboard:add_answer",kwargs={"course":course.slug,"slug":instance.slug}))
-            else:
-                print(request.POST.get("start_time"))
-                print('invalid')
     else:
         messages.error(request,"You Don't Have Permission")
         return redirect(reverse("dashboard:courses"))
@@ -1438,11 +1395,6 @@ def teachers(request):
     context={"teachers":page_obj}
     return render(request,"dashboard_teachers.html",context)
 
-def get_choices_keys():
-    choices={"Blogs":"blogs","Consultant Payment":"consultant_payment"}
-    for i in choices.values():
-        print(i)
-    return True
 
 @login_required(login_url="accounts:login")
 @for_admin_only
@@ -1482,6 +1434,8 @@ def approve(request):
                     query= E_Book.objects.filter(status="pending").order_by("-id")
             elif qs == "audio_book_payment":
                 query= Library_Payment.objects.filter(status="pending",library_type=1,expired=False).order_by("-id")
+            elif qs == "e_book_payment":
+                query= Library_Payment.objects.filter(status="pending",library_type=4,expired=False).order_by("-id")
             else:
                 query=False
         except:
@@ -1495,7 +1449,9 @@ def approve(request):
 
 @login_required(login_url="accounts:login")
 def show_demo_blog(request,slug):
-    blog=get_object_or_404(Blog,status="pending",slug=slug)
+    blog=get_object_or_404(Blog,slug=slug)
+    if blog.status == "approved":
+        return redirect(reverse("dashboard:blogs"))
     if request.user.is_director or request.user.is_superuser or request.user == blog.user:  
         pass
     else:
@@ -1594,8 +1550,8 @@ def approve_content(request,id):
                 change_cache_value(request,name="events",data_check=query,action="add",number=5)
                 messages.success(request,"Event Approved Successfully")
                 send_mail(
-                f'Event {query.name.title}',
-                f"Event {query.name.title} Approved Successfully",
+                f'Event {query.name.title()}',
+                f"Event {query.name.title()} Approved Successfully",
                 DASHBOARD_EMAIL_USERNAME,
                 [query.user.email],
                 fail_silently=False,
@@ -1733,6 +1689,24 @@ def approve_content(request,id):
                 fail_silently=False,
                 connection=PAYMENT_MAIL_CONNECTION
                 )
+            if qs == "e_book_payment":
+                query=get_object_or_404(Library_Payment,library_type=4,id=id,status="pending")
+                query.status="approved"
+                query.get_e_book().buyers.add(query.user)
+                query.get_e_book().save()
+                messages.success(request,"Payment Approved Successfully")
+                query.save()
+                for i in Library_Payment.objects.filter(user=query.user,library_type=4,content_id=query.get_e_book().id,expired=False).exclude(id=query.id).select_related("user"):
+                    i.expired=True
+                    i.save()
+                send_mail(
+                'Payment Completed',
+                "Successfull Payment",
+                PAYMENT_EMAIL_USERNAME,
+                [query.user.email,FINANCE_EMAIL_USERNAME],
+                fail_silently=False,
+                connection=PAYMENT_MAIL_CONNECTION
+                )
         except: 
             return redirect(reverse("dashboard:home"))
     else:
@@ -1824,11 +1798,15 @@ def reject(request,id):
                 content_user=query.user
                 mail=DASHBOARD_EMAIL_USERNAME
                 connection=DASHBOARD_MAIL_CONNECTION
+            if qs == "e_book_payment":
+                query=get_object_or_404(Library_Payment,id=id,status="pending")
+                content_user=query.user
+                mail=DASHBOARD_EMAIL_USERNAME
+                connection=DASHBOARD_MAIL_CONNECTION
             form=RejectForm(request.POST or None)
             if request.method == "POST":
                 if form.is_valid():
                     instance=form.save(commit=False)
-                    print(form.cleaned_data.get("message"))
                     instance.type=qs
                     instance.user=content_user
                     instance.content_id=id
@@ -1844,9 +1822,6 @@ def reject(request,id):
                  
                     query.status="declined"
                     query.save()
-                    # if qs == "teacher":
-                    #     print("teacher")
-                        # query.delete()
                     messages.success(request,"Content Rejected Successfully")
                     redirect_url = reverse('dashboard:approve')
                     return redirect(f'{redirect_url}?approve={qs}') 
@@ -2090,8 +2065,6 @@ def add_consultant(request):
                 cache.delete(f"consultant_data_{instance.user}")
             messages.success(request,"Consultant Added Successfully")
             return redirect(reverse("dashboard:consultants_sessions"))
-        else:
-            print(form.errors)
     context={"form":form}
     return render(request,"dashboard_add_consultant.html",context)
 
@@ -2205,7 +2178,6 @@ def add_user_director(request):
     if request.method =="POST":
         if form.is_valid(): 
             user=request.POST.get("user")
-            print(user)
             this_user=User.objects.filter(Q(username=user,account_type="teacher") | Q(email=user,account_type="teacher"))
             if this_user.exists():
                 user=this_user.last() 
@@ -2640,7 +2612,7 @@ def consultant_refund(request,id):
 def approve_refund(request,id):
     refund=get_object_or_404(Refunds,id=id,status="pending")
     data=refund.get_refund_data()
-    payment=data["payment_id"]
+    payment=data["payment_id"]  
     if refund.type == "consultant_payment":
         my_payment=Cosultant_Payment.objects.get(id=payment)
         if my_payment.consultant:
@@ -2722,7 +2694,7 @@ def approve_refund(request,id):
             'Payment Refunded',
             "Successfull Payment Refund",
             PAYMENT_EMAIL_USERNAME,
-            [my_payment.user.email],
+            [my_payment.user.email,FINANCE_EMAIL_USERNAME],
             fail_silently=False,
             connection=PAYMENT_MAIL_CONNECTION
             )
@@ -2743,7 +2715,28 @@ def approve_refund(request,id):
             'Payment Refunded',
             "Successfull Payment Refund",
             PAYMENT_EMAIL_USERNAME,
-            [my_payment.user.email],
+            [my_payment.user.email,FINANCE_EMAIL_USERNAME],
+            fail_silently=False,
+            connection=PAYMENT_MAIL_CONNECTION
+            )
+        messages.success(request,"Payment Refunded")
+    elif refund.type == "e_book_payment":
+        my_payment=Library_Payment.objects.get(id=payment,library_type=4)
+        my_payment.status ="refund"
+        my_payment.expired =True
+        try:
+            my_payment.get_e_book().buyers.remove(my_payment.user)
+            my_payment.get_e_book().save()
+        except:
+            pass
+        my_payment.save()
+        refund.status="approved"
+        refund.save()
+        send_mail(
+            'Payment Refunded',
+            "Successfull Payment Refund",
+            PAYMENT_EMAIL_USERNAME,
+            [my_payment.user.email,FINANCE_EMAIL_USERNAME],
             fail_silently=False,
             connection=PAYMENT_MAIL_CONNECTION
             )
@@ -2770,9 +2763,9 @@ def course_refund(request,slug,id):
 @check_edit_blog_pyment
 def edit_blog_payment(request,id):
     payment=get_object_or_404(Blog_Payment,id=id,status="declined")
+    form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
     if request.user == payment.user:
         if payment.method == "Western Union" or payment.method == "bank":
-            form=BlogPaymentFom(request.POST or None,request.FILES or None,instance=payment)
             form.initial["payment_image"]=None
             if request.method == "POST":
                 if form.is_valid():
@@ -2799,9 +2792,9 @@ def edit_blog_payment(request,id):
                     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
                     messages.success(request,"Payment Edited Successfully")
                     return redirect(reverse("accounts:blog_payment"))
-        else:
-            messages.error(request,"You Don't Have Permission")
-            return redirect(reverse("accounts:blog_payment"))
+    else:
+        messages.error(request,"You Don't Have Permission")
+        return redirect(reverse("accounts:blog_payment"))
     context={"form":form}
     return render(request,"dashboard_edit_blog_payment.html",context)
 

@@ -18,7 +18,7 @@ select{
 
 <!--====== Library PART Start ======-->
 
-<section id="page-banner" class="pt-105 pb-130 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-5.jpg' %})">
+<section id="page-banner" class="pt-105 pb-130 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-7.jpg' %})">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -189,12 +189,11 @@ select{
                         <div class="singel-publication mt-30">
                             <div class="image">
                                 <img src="{{i.image}}" alt="Publication">
-                                <div class="add-cart">
-                                    <ul>
-                                        {% comment %} <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-heart-o"></i></a></li> {% endcomment %}
-                                    </ul>
-                                </div>
+                                <span class="item-type-icon">
+                                    <img src="{% static 'images/all-icon/audiobook (2).png' %}" alt="">
+                                    <!-- <div class="img-color"></div> -->
+                                </span>
+                                
                             </div>
                             <div class="cont">
                                 <div class="name">
@@ -212,12 +211,11 @@ select{
                         <div class="singel-publication mt-30">
                             <div class="image">
                                 <img src="{{i.image}}" alt="Publication">
-                                <div class="add-cart">
-                                    <ul>
-                                        {% comment %} <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-heart-o"></i></a></li> {% endcomment %}
-                                    </ul>
-                                </div>
+                                <span class="item-type-icon">
+                                    <img src="{% static 'images/all-icon/ebook (1).png' %}" alt="">
+                                    <!-- <div class="img-color"></div> -->
+                                </span>
+                               
                             </div>
                             <div class="cont">
                                 <div class="name">
@@ -249,12 +247,10 @@ select{
                                 <div class="col-sm-6">
                                     <div class="image">
                                         <img src="{{i.image}}" alt="Publication">
-                                        <div class="add-cart">
-                                            <ul>
-                                                {% comment %} <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-heart-o"></i></a></li> {% endcomment %}
-                                            </ul>
-                                        </div>
+                                        <span class="item-type-icon">
+                                            <img src="{% static 'images/all-icon/audiobook (2).png' %}" alt="">
+                                            <!-- <div class="img-color"></div> -->
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -275,7 +271,35 @@ select{
                         </div> <!-- singel publication -->
                     </div>
                     {% else %}
-
+                    <div class="col-lg-6">
+                        <div class="singel-publication mt-30">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="image">
+                                        <img src="{{i.image}}" alt="Publication">
+                                        <span class="item-type-icon">
+                                            <img src="{% static 'images/all-icon/ebook (1).png' %}" alt="">
+                                            <!-- <div class="img-color"></div> -->
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="cont">
+                                        <div class="name">
+                                            <a href="shop-singel.html"><h6>{{i.name|truncatewords:10}}</h6></a>
+                                            <span>${{i.get_price}}</span>
+                                        </div>
+                                        <div class="description pt-10">
+                                            <p>{{i.get_about|truncatewords:20}}</p>
+                                        </div>
+                                        <div class="button">
+                                            <a href="{% url 'library:audio_book:single_audio' i.slug %}" class="main-btn">Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- row -->
+                        </div> <!-- singel publication -->
+                    </div>
                     {% endif %}
                    {% endfor %}
                 </div> <!-- row -->

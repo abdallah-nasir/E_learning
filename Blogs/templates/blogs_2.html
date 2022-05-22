@@ -259,12 +259,12 @@
 								<i class="fa fa-link"></i>
 							</div>
 							<div class="entry-header-title">
-								<h2><a href="{% url 'blogs:category' i.category.slug %}">{{i.category.name.title|truncatewords:10}}</a></h2>
-								<a class="entry-link btn" href="{[i.get_link]}"><i class="fa fa-external-link"></i> {{i.get_link}}</a>
+								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name.title|truncatewords:10}}</a></h2>
+								<a class="entry-link btn" href="{{i.get_link}}"><i class="fa fa-external-link"></i> {{i.get_link}}</a>
 							</div>
 						</header>
 						<div class="entry-content">
-							<p>{{i.details|truncatewords:20}}</p>
+							<p>{{i.details|safe|truncatewords:20}}</p>
 							<a href="{% url 'blogs:blog' i.slug %}" class="btn-more">{% trans 'Read More' %}</a>
 						</div>
 					</article>

@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from .forms import *
 from .decorators import *
-from Frontend.models import *
+from Frontend.models import Privacy,Terms
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.http import JsonResponse,HttpResponseRedirect
@@ -88,7 +88,6 @@ def home(request):
         cache.set("kemet_data",data,60*60*24*3)  
     else:
         data=cache.get("kemet_data")
-    print(data)
     context={"data":data}
     return render(request,"kemet/home/home.html",context)
 
@@ -349,7 +348,6 @@ def wishlist_add(request):
         except: 
             return FailedJsonResponse({"message":"invalid id"})
     else:
-        print("here")
         return FailedJsonResponse({"message":"error message"})
 
 
@@ -461,13 +459,11 @@ def checkout(request,course):
  
 def payment_method_ajax(request):
     course_id=request.POST.get("ajax_course")
-    print(course_id)
     course=get_object_or_404(Course,id=course_id)
     payment_form=PaymentMethodForm(request.POST or None,request.FILES or None)
     my_method=None
     if request.is_ajax():     
         my_method=request.POST.get("payment_method")
-        print(my_method)
         if payment_form.is_valid():
             return JsonResponse({"payment":my_method})
         else:
@@ -521,14 +517,11 @@ def create(request,course):
             response = client.execute(create_order)
             data = response.result.__dict__['_dict']      
 
-            # print(data)
             return JsonResponse(data)
         except:
-            print("except")
             data={}
             return JsonResponse(data)
     else:
-        print("not here")
         return JsonResponse({'details': "invalid request"})         
 
 @login_required(login_url="accounts:login")

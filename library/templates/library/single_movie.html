@@ -196,7 +196,7 @@ iframe #body #video-wrapper{
                                             <h6>{% trans 'Student Reviews' %}</h6>
                                         </div>
                                         <ul>
-                                            {% for i in movie.comments.all %}
+                                            {% for i in movie.get_comments %}
                                            <li>
                                                <div class="singel-reviews">
                                                     <div class="reviews-author">

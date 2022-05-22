@@ -56,12 +56,10 @@ class MyCustomSignupForm(SignupForm):
         if image:
             size=image.size / (1024 * 1024)
             type=os.path.splitext(image.name)[1]
-            print(size)
-            list_type=[".jpg",".jpeg",".png"]
             if size > 2:
                 raise forms.ValidationError("image size is more 2 MB")
-            elif type not in list_type:   
-                raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
+            elif type not in IMAGE_EXTENSIONS:   
+                raise forms.ValidationError(f"image Extension is not valid")
     def clean_phone(self):
         phone=self.cleaned_data.get("phone")
         if User.objects.filter(phone=phone).exists():
@@ -96,16 +94,13 @@ class MyCustomSocialSignupForm(SocialSignUpForm):
         return phone
     def clean(self):
         image=self.cleaned_data.get("image")
-        print(image)
         if image:
             size=image.size / (1024 * 1024)
             type=os.path.splitext(image.name)[1]
-            print(size)
-            list_type=[".jpg",".jpeg",".png"]
             if size > 2:
                 raise forms.ValidationError("image size is more 2 MB")
-            elif type not in list_type:   
-                raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
+            elif type not in IMAGE_EXTENSIONS:   
+                raise forms.ValidationError(f"image Extension is not valid")
 
     def save(self, request):
         # Ensure you call the parent class's save.
@@ -165,7 +160,6 @@ class Teacher_Form(forms.ModelForm):
 
     def clean_facebook(self): 
         facebook=self.cleaned_data.get("facebook")
-        print(facebook[0:25])
         if facebook and facebook[0:25] != "https://www.facebook.com/":
             raise forms.ValidationError("invalid url")
         return facebook   
@@ -230,7 +224,6 @@ class ChangeTeacherDataForm(forms.ModelForm):
         extra_kwargs={"first_name":{"required":True},"last_name":{"required":True}}
     def clean_facebook(self): 
         facebook=self.cleaned_data.get("facebook")
-        print(facebook[0:25])
         if facebook and facebook[0:25] != "https://www.facebook.com/":
             raise forms.ValidationError("invalid url")
         return facebook   
@@ -277,6 +270,9 @@ class BlogPaymentFom(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"blog{image_extension}"
+                image.name=image_name
         return image
 
 class CoursePaymentFom(forms.ModelForm):
@@ -291,6 +287,9 @@ class CoursePaymentFom(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"course{image_extension}"
+                image.name=image_name
         return image
 class ConsultantPaymentFom(forms.ModelForm):
     payment_image=forms.ImageField(required=False)
@@ -304,6 +303,9 @@ class ConsultantPaymentFom(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"consultant{image_extension}"
+                image.name=image_name
         return image
 
 class CodeForm(forms.Form):
@@ -322,5 +324,8 @@ class MoviesPaymentForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"movies{image_extension}"
+                image.name=image_name
         return image
 

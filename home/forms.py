@@ -36,6 +36,9 @@ class PaymentMethodForm(forms.Form):
                 raise forms.ValidationError("image size is more 2 MB")
             elif type not in IMAGE_EXTENSIONS:   
                 raise forms.ValidationError(f"image Extension is not valid")
+            else:
+                image_name=f"payment{os.path.splitext(image.name)[1]}"
+                image.name=image_name
         else:
             raise forms.ValidationError("invalid image")
 class CashForm(forms.Form):
@@ -44,15 +47,15 @@ class CashForm(forms.Form):
     def clean_payment_image(self):
         try:
             image=self.cleaned_data.get("payment_image")
-            print("here")
             size=image.size / (1024 * 1024)
             type=os.path.splitext(image.name)[1]
-            print(size)
-            list_type=[".jpg",".jpeg",".png"]
             if size > 2:
                 raise forms.ValidationError("image size is more 2 MB")
-            elif type not in list_type:   
-                raise forms.ValidationError(f"image Extension Must be JPG / JPEG / PNG")
+            elif type not in IMAGE_EXTENSIONS:   
+                raise forms.ValidationError(f"image Extension is not valid")
+            else:
+                image_name=f"cash{type}"
+                image.name=image_name
         except:
             raise forms.ValidationError(f"invalid image")
 

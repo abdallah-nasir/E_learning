@@ -43,11 +43,8 @@ def search(request):
             new_filter[i] =all_filters[i]
     if type == "e-book":
         query=E_Book.objects.filter(**new_filter)
-        print(query)
     else:
         query=Audio_Book_Tracks.objects.filter(**new_filter)
-    print(new_filter)
-    print(query)
     context={"query":query,"type":type,"categories":categories}
     return render(request,"library/search.html",context)
 
@@ -127,7 +124,6 @@ def create_movie_western_payment(request,slug):
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data) 
             try:
                 if data["HttpCode"] == 201:
                     payment.payment_image = f"https://{agartha_cdn}/movies-payment/{movie.slug}/{payment.user.username}/{image}"
@@ -150,7 +146,6 @@ def create_movie_western_payment(request,slug):
             return redirect(reverse("accounts:movies_payment"))
         else:
             messages.error(request,"invalid form")
-            print(form.errors)
             return redirect(reverse("library:movie_payment",kwargs={"slug":movie.slug}))
 
 
@@ -174,7 +169,6 @@ def create_movie_bank_payment(request,slug):
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data) 
             try:
                 if data["HttpCode"] == 201:
                     payment.payment_image = f"https://{agartha_cdn}/movies-payment/{movie.slug}/{payment.user.username}/{image}"
@@ -197,7 +191,6 @@ def create_movie_bank_payment(request,slug):
             return redirect(reverse("accounts:movies_payment"))
         else:
             messages.error(request,"invalid form")
-            print(form.errors)
             return redirect(reverse("library:movie_payment",kwargs={"slug":movie.slug}))
 
 from paypalcheckoutsdk.orders import OrdersCreateRequest 

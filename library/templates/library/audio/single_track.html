@@ -76,7 +76,7 @@
 									</a>
 									
 									{% endif %}
-									<span class="single-item__time">{{i.guration_model}}</span>
+									<span class="single-item__time">{{i.get_duration_model}}</span>
 								</li>
 								{% endfor %}
 							</ul>
@@ -112,7 +112,7 @@
 							</div>
 
 							<ul class="comments__list">
-                                {% for i in track.comments.all %}
+                                {% for i in track.get_comments %}
 								<li class="comments__item">
 									<div class="comments__autor">
 										<img class="comments__avatar" src="{{i.user.image}}" alt="">

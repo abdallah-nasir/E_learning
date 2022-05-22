@@ -52,6 +52,9 @@ class AddBlog(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"blog{image_extension}"
+                image.name=image_name
         return image
 
 
@@ -72,6 +75,9 @@ class BlogQuoteForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"blog{image_extension}"
+                image.name=image_name
         return image
 class BlogLinkForm(forms.ModelForm):
     link=forms.CharField(required=True,max_length=100)
@@ -87,6 +93,9 @@ class BlogLinkForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"blog_link{image_extension}"
+                image.name=image_name
         return image
     
 class BlogVideoForm(forms.ModelForm):
@@ -129,6 +138,9 @@ class BlogGalleryForm(forms.ModelForm):
                 image_extension=os.path.splitext(i.name)[1]
                 if image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
+                else:
+                    image_name=f"blog{image_extension}"
+                    i.name=image_name
         return image
 
 class AddCourse(forms.ModelForm):
@@ -143,7 +155,6 @@ class AddCourse(forms.ModelForm):
         request=get_current_request()
         price=self.cleaned_data.get("price")
         discount=request.POST.get("discount")
-        print(price,discount)  
         if price <= 0:
             raise forms.ValidationError("invalid price")
         if discount: 
@@ -156,6 +167,9 @@ class AddCourse(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"course{image_extension}"
+                image.name=image_name
         return image
 
 class EditCourse(forms.ModelForm):
@@ -170,7 +184,6 @@ class EditCourse(forms.ModelForm):
         request=get_current_request()
         price=self.cleaned_data.get("price")
         discount=request.POST.get("discount")
-        print(price,discount)  
         if price <= 0:
             raise forms.ValidationError("invalid price")
         if discount: 
@@ -183,6 +196,9 @@ class EditCourse(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"course{image_extension}"
+                image.name=image_name
         return image
 
 class AddVideo(forms.ModelForm):
@@ -242,6 +258,9 @@ class AddEvent(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]   
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"event{image_extension}"
+                image.name=image_name
         return image
     def clean_date(self):
         date=self.cleaned_data.get("date")
@@ -259,7 +278,6 @@ class AddEvent(forms.ModelForm):
         end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
         category=self.cleaned_data.get("category")
         calculate=datetime.strptime(f"{end}","%I:%M:%S %p")-datetime.strptime(f"{start}","%I:%M:%S %p")
-        print(start_time,end_time)
         if start_time < end_time:
             time_betwen = calculate.seconds/60
             if time_betwen < 15:
@@ -269,9 +287,7 @@ class AddEvent(forms.ModelForm):
         if start_time and end_time:
             first=start_time.strftime("%H:%M:%S")
             second=end_time.strftime("%H:%M:%S")
-            print(first,second)
             if Events.objects.filter(Q(date=date,start_time__range=(first,second)) | Q(date=date,end_time__range=(first,second))).exists():
-                print("here")
                 raise forms.ValidationError("start time is unavailable now")
 class Edit_event(forms.ModelForm):
     date=forms.DateField(required=True,widget=DatePicker(options={'minDate': f"{date.today()}"}, attrs={
@@ -301,6 +317,9 @@ class Edit_event(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"event{image_extension}"
+                image.name=image_name
         return image
     def clean_date(self):
         date=self.cleaned_data.get("date")
@@ -318,7 +337,6 @@ class Edit_event(forms.ModelForm):
         end_time=datetime.strptime(f"{end}","%I:%M:%S %p").time()
         category=self.cleaned_data.get("category")
         calculate=datetime.strptime(f"{end}","%I:%M:%S %p")-datetime.strptime(f"{start}","%I:%M:%S %p")
-        print(start_time,end_time)
         if start_time < end_time:
             time_betwen = calculate.seconds/60
             if time_betwen < 15:
@@ -328,9 +346,7 @@ class Edit_event(forms.ModelForm):
         if start_time and end_time:
             first=start_time.strftime("%H:%M:%S")
             second=end_time.strftime("%H:%M:%S")
-            print(first,second)    
             if Events.objects.filter(Q(date=date,start_time__range=(first,second)) | Q(date=date,end_time__range=(first,second))).exclude(id=request.POST.get("id")).exists():
-                print(request.POST["id"])
                 raise forms.ValidationError("start time is unavailable now")
 
 class AddQuestion(forms.ModelForm):
@@ -403,7 +419,6 @@ class UploadVideoForm(forms.Form):
     def clean_video(self):
         video=self.cleaned_data.get("video")
         video_extension=os.path.splitext(video.name)[1]
-        print(video_extension)
         if video_extension.lower() not in Video_Extension:
             raise forms.ValidationError("invalid video extension")
         return video 
@@ -483,6 +498,9 @@ class CategoryForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"category{image_extension}"
+                image.name=image_name
         return image
 class BranchForm(forms.ModelForm):
     class Meta:
@@ -527,6 +545,9 @@ class Update_Certification(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             if image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"certificate{image_extension}"
+                image.name=image_name
         return image
 class Refunds_Form(forms.ModelForm):
     class Meta:
@@ -622,6 +643,9 @@ class E_Book_LibraryForm(forms.ModelForm):
                 image_extension=os.path.splitext(i.name)[1]
                 while image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
+                else:
+                    image_name=f"e_book{image_extension}"
+                    i.name=image_name
         return images
     
 class E_Book_File_Form(forms.Form):
@@ -641,6 +665,9 @@ class E_Book_File_Form(forms.Form):
                 image_extension=os.path.splitext(i.name)[1]
                 while image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
+                else:
+                    image_name=f"e_book{image_extension}"
+                    i.name=image_name
         return images
 class LibraryCategoryForm(forms.ModelForm):
     class Meta:
@@ -662,6 +689,9 @@ class MoviesLibraryForm(forms.ModelForm):
                 image_extension=os.path.splitext(i.name)[1]
                 while image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
+                else:
+                    image_name=f"movies{image_extension}"
+                    i.name=image_name
         return image 
 class MoviesLibraryEditForm(forms.ModelForm):
     image=forms.ImageField(required=False)
@@ -678,6 +708,9 @@ class MoviesLibraryEditForm(forms.ModelForm):
                 image_extension=os.path.splitext(i.name)[1]
                 while image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
+                else:
+                    image_name=f"movies{image_extension}"
+                    i.name=image_name
         return image 
 class MoviesVideoForm(forms.Form):
     video=forms.FileField(required=True)
@@ -705,6 +738,9 @@ class MusicLibraryEditForm(forms.ModelForm):
                 image_extension=os.path.splitext(i.name)[1]
                 if image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
+                else:
+                    image_name=f"music{image_extension}"
+                    i.name=image_name
         return image 
 LANGUAGE_BOOK=(
     ("English","English"),
@@ -733,6 +769,9 @@ class AudioBookEditForm(forms.ModelForm):
                 image_extension=os.path.splitext(i.name)[1]
                 if image_extension.lower() not in IMAGE_EXTENSIONS:
                     raise forms.ValidationError("invalid image extension")
+                else:
+                    image_name=f"course{image_extension}"
+                    i.name=image_name
         return image 
 DOMAINS=(
     (1,"agartha"),
@@ -762,6 +801,9 @@ class AddTrackForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             while image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"track{image_extension}"
+                image.name=image_name
         return image 
 
 class AddAudioBookTrackForm(forms.ModelForm):
@@ -782,6 +824,9 @@ class AddAudioBookTrackForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             while image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"audio{image_extension}"
+                image.name=image_name
         return image 
 
 
@@ -803,6 +848,9 @@ class AddEBookTrackForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             while image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"e_book{image_extension}"
+                image.name=image_name
         return image 
 
 class EditEBookTrackForm(forms.ModelForm):
@@ -824,6 +872,9 @@ class EditEBookTrackForm(forms.ModelForm):
             image_extension=os.path.splitext(image.name)[1]
             while image_extension.lower() not in IMAGE_EXTENSIONS:
                 raise forms.ValidationError("invalid image extension")
+            else:
+                image_name=f"e_book{image_extension}"
+                image.name=image_name
         return image 
 class UploadPdf(forms.Form):
     pdf=forms.FileField(allow_empty_file=True,widget=forms.FileInput(attrs={'accept':'application/pdf'}))
@@ -871,4 +922,31 @@ class AddArtistForm(forms.Form):
         if Artist.objects.filter(user__username=username).select_related("user").exists():
             raise forms.ValidationError("this user is already artist")
         return username
-    
+from Frontend.models import Category as faq_category,Branch as faq_branch,Faq
+class AddCategoryFaq(forms.ModelForm):
+    class Meta:
+        model = faq_category 
+        fields= "__all__"
+
+class AddBranchFaq(forms.ModelForm):
+    class Meta:
+        model = faq_branch
+        fields= "__all__"
+        
+class AddFaq(forms.ModelForm):
+    category = forms.ModelChoiceField(queryset=faq_category.objects.all())
+    branch = forms.ModelChoiceField(queryset=faq_branch.objects.none())
+    class Meta:
+        model = Faq 
+        fields= ["name_ar","name_en","category","branch"]
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        if "category" in self.data:
+            self.fields["branch"].queryset=Branch.objects.filter(category__id=self.data["category"])
+
+    def clean_branch(self):
+        old_branch = self.cleaned_data.get("branch")
+        print(old_branch)
+        branch = faq_branch.objects.get(id=old_branch.id)
+        return branch 

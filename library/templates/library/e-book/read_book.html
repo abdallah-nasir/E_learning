@@ -1,0 +1,353 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agartha Academy | {{book.name}}</title>
+    <link rel="stylesheet" href="{% static 'flipbook/wow_book.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <style>
+        @font-face {
+            font-family: "FontAwesome";
+            font-weight: normal;
+            font-style : normal;
+                src : url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.eot?v=4.3.0");
+                src : url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.eot?#iefix&v=4.3.0") format("embedded-opentype"),
+                        url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff2?v=4.3.0") format("woff2"),
+                        url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff?v=4.3.0") format("woff"),
+                        url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.ttf?v=4.3.0") format("truetype"),
+                        url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular") format("svg");
+        }
+        @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Roboto:300,400,500,700');
+
+        body {
+            font-family: 'Roboto';
+            font-weight: 400;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        body{
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        .my-toolbar span {
+            display: block;
+            width: 46px;
+            height: 46px;
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            z-index: 10007;
+            color: #07294d;
+            background-color: #fff;
+            top: 0;
+            left: 0;
+            position: relative;
+            text-align: center;
+            padding: 10px 0;
+            transition: .5s;
+        }
+        .my-toolbar span i{
+            font-family: FontAwesome;
+            speak: none;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .my-toolbar span:nth-child(1) i::before{
+            content: "\f053\f053";
+            letter-spacing: -6px;
+            margin-left: -10px;
+        }
+        .my-toolbar span:nth-child(2) i::before{
+            content: "\f053";
+        }
+        .my-toolbar span:nth-child(3) i::before{
+            content: "\f054";
+        }
+        .my-toolbar span:nth-child(4) i::before{
+            content: "\f054\f054";
+            letter-spacing: -6px;
+            margin-left: -10px;
+        }
+        .my-toolbar span:nth-child(5) i::before{
+            content: "\f00e";
+        }
+        .my-toolbar span:nth-child(6) i::before{
+            content: "\f0b2";
+        }
+        .my-toolbar span:nth-child(7) i::before{
+            content: "\f010";
+        }
+        .my-toolbar span:nth-child(8) i::before{
+            content: "\f04b";
+        }
+        .my-toolbar span:nth-child(9) i::before{
+            content: "\f028";
+        }
+        .my-toolbar span.wowbook-disabled:nth-child(9) i::before{
+            content: "\f026";
+        }
+        .my-toolbar span:nth-child(10) i:nth-child(1) {
+            font-size: 24px;
+            top: 0;
+        }
+        .my-toolbar span:nth-child(10) i:nth-child(1)::before{
+            content: "\f001";
+        }
+        .my-toolbar span:nth-child(10) i:nth-child(2) {
+            font-size: 36px;
+            top: 2px;
+            left: 2px;
+        }
+        .my-toolbar span:nth-child(10) i:nth-child(2)::before{
+            content: "\f05e";
+        }
+        .my-toolbar span.play:nth-child(10) i:nth-child(2)::before{
+            content: "";
+        }
+        .wowbook-control.wowbook-control-currentPage:hover,
+        .my-toolbar span:hover {
+            background-color: #07294d;
+            color: #ffc600;
+        }
+        .wowbook-control.wowbook-control-currentPage:hover{
+            border-radius: 50px;
+        }
+        .wowbook-control.wowbook-control-currentPage .wowbook-input-page:focus {
+            border-color: #07294d;
+            color: #07294d;
+        }
+        .my-toolbar {
+            display: flex;
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            justify-content: center;
+            width: 100%;
+            height: 46px;
+            background-color: #fff;
+            box-shadow: 0 0 10px 0 rgb(0 0 0 / 20%);
+        }
+        .wowbook-container {
+            background-size: 100% 100% !important;
+        }
+        .wowbook-controls, .wowbook-share-buttons, .wowbook-nav {
+            /* box-shadow: 0 0 10px 0 rgb(0 0 0 / 20%); */
+            /* background: #222; */
+                color: #07294d;       
+                background-color:  #fff; 
+            background-image:none;
+            background-repeat: repeat-x;
+            /* color: white; */
+        }
+        .wowbook-control, .wowbook-control:visited, .wowbook-control:active, .wowbook-control.remove-sticky-hover-style:hover {
+            background: transparent;
+            color: inherit;
+            /* color: white; */
+            -webkit-tap-highlight-color: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .wowbook-control.wowbook-control-currentPage {
+            position: absolute;
+            width: 21.4688px;
+            left: 0px;
+            font-weight: bold;
+            transition: .6s;
+        }
+        .wowbook-toc {
+            background: white;
+            color: #07294d;
+            top: 46px;
+            bottom: auto;
+            width: 250px;
+            font-family: 'Roboto', sans-serif;
+            height: calc(100vh - 50px - 47px);
+        }
+        .wowbook-vertical.wowbook-thumbnails {
+            display: inline-block;
+            height: calc(100vh - 50px - 47px);
+            top: 46px;
+            /* width: 430px !important; */
+        }
+        .wowbook-vertical.wowbook-thumbnails .wowbook-button {
+            background: white;
+            color: #07294d;
+            transition: .6s;
+        }
+        .wowbook-toc-items a {
+            transition: .6s;
+            font-weight: bold;
+        }
+        .wowbook-thumbnail {
+            width : 210px; /* you can also use "ems" */
+        }
+        @media (max-width:440px) {
+            .wowbook-thumbnail {
+                width : 120px; /* you can also use "ems" */
+            } 
+        }
+    </style>
+</head>
+<body>
+    <div class="my-toolbar" data-toc=''>
+        <span id="first"><i></i></span>
+        <span id="back"><i></i></span>
+        <span id="next"><i></i></span>
+        <span id="last"><i></i></span>
+        <span id="zoomIn"><i></i></span>
+        <span id="zoomReset"><i></i></span>
+        <span id="zoomOut"><i></i></span>
+        <span id="slideShow"><i></i></span>
+        <span id="flipsound"><i></i></span>
+        <span id="background-music" class="fa-stack fa-lg">
+            <i class="fa-stack-1x"></i>
+            <i class="fa-stack-2x"></i>
+            <audio id="my_audio" loop>
+                <source src="{% static 'flipbook/music/Spring-Flowers.mp3' %}">
+                not working
+            </audio>
+        </span>
+    </div>
+    <span class="book-section" data-index="2,3,5" data-title="page 2,page 3, page 5"></span>
+    <div id="book">
+    </div>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'flipbook/pdf.combined.min.js' %}"></script>
+    <script src="{% static 'flipbook/wow_book.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // document.getElementById("my_audio").play();
+            var pageIndex = ($('.book-section').data('index')).split(",");
+            var pageTitle = ($('.book-section').data('title')).split(',');
+            var tocContent1 = []
+            for (let i = 0;i< pageIndex.length ; i++){
+                tocContent1.push( [pageTitle[i] ,parseInt(pageIndex[i]) ])
+            }
+            
+            // var tocContent =  [[ "go to page 2", 2 ],[ "click here to page 4", 4 ],[ "new chapter on page 7", 7 ],[ "search on duckduckgo", "https://google.com" ]];
+            $("#book").wowBook({
+                // ...
+                // other configuration options
+                // ...
+                pdf: "{{book.get_book}}", 
+                pdfFind: true,
+                // rtl :true,
+                thumbnailNumber : true,
+                toolbar: "toc ,fullscreen, thumbnails ,home , find,currentPage",
+                toolbarPosition : "top",
+                container: true, // valid values: true, false, window,
+                containerBackground: "url({% static 'flipbook/flipbook-background.jpg' %})",
+                containerWidth: "100%" ,
+                containerHeight:"calc(100vh - 50px)",
+                // ... other configuration options
+                softPages:true,
+                flipSound     : true,
+                // array with the files
+                flipSoundFile : ["page-flip.mp3" ],
+                // where are these files. This value will be prepended in each file name.
+                // Don't forget the ending "/"
+                flipSoundPath : "{% static 'flipbook/sound/' %}",
+                homeURL: "{% url 'library:e_book:single_book' book.slug %}",
+                // customizing control's text
+                strings: {
+                    "lastLeftTooltip"  : "" // go to last left page button tooltip
+                    ,"leftTooltip"      : "" // go to left page button tooltip
+                    ,"rightTooltip"     : "" // go to right page button tooltip
+                    ,"lastRightTooltip" : "" // go to last right page button tooltip
+                    ,"firstTooltip"     : "go to first page" // go to first page button tooltip
+                    ,"backTooltip"      : "back to previous page" // back to previous page button tooltip
+                    ,"nextTooltip"      : "go to next page" // go to next page button tooltip
+                    ,"lastTooltip"      : "go to last page" // go to last page button tooltip
+                    ,"zoominTooltip"    : "zoom in" // zoom in button tooltip
+                    ,"zoomoutTooltip"   : "zoom out" // zoom out button tooltip
+                    ,"slideshowTooltip" : "" // zoom out button tooltip
+                    ,"flipsoundTooltip" : "page flip sound" // page flip sound button tooltip
+                    ,"fullscreenTooltip": "fullscreen" // fullscreen button tooltip
+                    ,"thumbnailsTooltip": "thumbnails" // thumbnails button tooltip
+                    ,"tocTooltip"       : "" // show/hide table of contents button tooltip
+                    ,"downloadTooltip"  : "" // download button tooltip
+                    ,"homeTooltip"      : "home page" // home button tooltip
+                    ,"shareTooltip"     : "" // share button tooltip
+
+                    // pdf find control
+                    ,"findTooltip"         : "search" // pdf find button tooltip
+                    ,"findInputPlaceHolder": "" // placeholder inside the input text
+                    ,"findPreviousTooltip" : "" // find previous match button tooltip
+                    ,"findNextTooltip"     : "" // find next match button tooltip
+                    ,"findMatchCase"       : "" // the label "Match case" beside the checkbox
+                },
+                toc: tocContent1,
+                controls : {
+                    next      : '#next',      // goto next page
+                    back      : '#back',      // back page
+                    first     : '#first',     // goto first page
+                    last      : '#last',      // goto last page
+                    zoomIn    : '#zoomIn',    // zoom in
+                    zoomOut   : '#zoomOut',   // zoom out
+                    zoomReset : '#zoomReset', // zoom reset
+                    slideShow : '#slideShow', // starts/stop slideshow
+                    flipSound : '#flipsound', // enable/disable page flip sound
+                    thumbnails: '#thumbs',    // show/hide thumbnails
+                    fullscreen: '#fullscreen',// enable/disable fullscreen mode
+                    toc       : '#elem',      // show/hide table of contentss
+                },
+                style : {
+                    color: "#07294d",        // text/icons color
+                    background: "#fff",         // background color
+
+                    // color of the lines separating the items on the table of contents
+                    // you can set the color of 2 lines. If you only want 1 line separating
+                    // the item, use transparent as the second color
+                    separator: "rgb(255,100,100),transparent" ,
+
+                    // set color of the buttons, controls and toc items when mouse hover them
+                    hover: {
+                    background: "#07294d",
+                    color: "#ffc600"
+                    },
+
+                    // set color of the buttons, controls and toc items when they are pressed
+                    active: {
+                    background: "#07294d",
+                    color: "#ffc600"
+                    },
+                }
+                // ... other configuration options
+            });
+            
+            // if($(window).width() > 450) {
+            //     console.log('uu')
+            //     $("#scale").wowBook({
+            //         thumbnailScale : '0.3',
+            //     })
+            // }
+            $('#background-music').on('click', function(){
+                if ($(this).hasClass('play')){
+                    $('#my_audio').get(0).pause();
+                $(this).toggleClass('play')
+                }else{
+                    $('#my_audio').get(0).play();
+                $(this).toggleClass('play')
+                }
+                // $(this).find('audio').prop('muted', (_, muted) => !muted);
+                // $(this).toggleClass('muted')
+            })
+            $('.wowbook-control-thumbnails').on('click',function(){
+                $('.wowbook-toc').fadeOut();
+            })
+            $('.wowbook-control-toc').on('click',function(){
+                $('.wowbook-thumbnails').hide();
+            })
+        }); 
+    </script>
+</body>
+</html>

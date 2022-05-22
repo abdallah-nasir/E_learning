@@ -1469,3 +1469,9 @@
 		border-radius: 0 0px 0 5px;
 	}
 }
+@media (max-width:350px) {
+	.shop-destails .buttons {
+		display: flex;
+		flex-direction: column;
+	}
+}

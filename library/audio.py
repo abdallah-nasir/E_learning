@@ -52,7 +52,6 @@ def search(request):
             query=Artist.objects.filter(Q(user__username__icontains=qs) | Q(user__first_name__icontains=qs)).select_related("user").distinct()
         else:
             query=Audio_Tracks.objects.filter(Q(name__icontains=qs) |Q(music__name=qs) | Q(category__name__icontains=qs)).prefetch_related("music").distinct()
-        print(query)
     # if query:
     #     if 
     context={"qs":qs,"query":query,"type":type}
@@ -153,7 +152,6 @@ def create_audio_western_payment(request,slug):
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data) 
             try:
                 if data["HttpCode"] == 201:
                     payment.payment_image = f"https://{agartha_cdn}/music-payment/{track.slug}/{payment.user.username}/{image}"
@@ -176,7 +174,6 @@ def create_audio_western_payment(request,slug):
             return redirect(reverse("accounts:audio_payment"))
         else:
             messages.error(request,"invalid form")
-            print(form.errors)
             return redirect(reverse("accounts:audio_payment",kwargs={"slug":track.slug}))
 
 
@@ -200,7 +197,6 @@ def create_audio_bank_payment(request,slug):
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data) 
             try:
                 if data["HttpCode"] == 201:
                     payment.payment_image = f"https://{agartha_cdn}/music-payment/{track.slug}/{payment.user.username}/{image}"
@@ -223,7 +219,6 @@ def create_audio_bank_payment(request,slug):
             return redirect(reverse("accounts:audio_payment"))
         else:
             messages.error(request,"invalid form")
-            print(form.errors)
             return redirect(reverse("library:audio_payment",kwargs={"slug":track.slug}))
 
 

@@ -10,9 +10,7 @@ def check_user_is_has_consul(function):
     def wrap(request, *args, **kwargs):
         my_teacher=get_object_or_404(Teacher_Time,id=kwargs["teacher"],available=True) 
         payment = Cosultant_Payment.objects.filter(user=request.user,teacher=my_teacher,expired=False,status="pending")
-        # print(payment)
         consultant=Consultant.objects.filter(user=request.user,teacher=my_teacher).exclude(Q(status="completed") | Q(status="refund") |Q(status="declined"))
-        print(consultant)   
         if payment.exists():
             messages.error(request,f"You Already Have Pending Consultant payment")
             return redirect(reverse("accounts:consultant_payment"))
@@ -20,7 +18,6 @@ def check_user_is_has_consul(function):
             messages.error(request,f"You Already Have Pending Consultant")
             return redirect(reverse("accounts:consultants"))
         else:
-            print("there") 
             return function(request, *args, **kwargs)
 
     wrap.__doc__ = function.__doc__
@@ -31,18 +28,14 @@ def check_user_is_has_consul_checkout(function):
     def wrap(request, *args, **kwargs):
         my_teacher=get_object_or_404(Teacher_Time,user__slug=kwargs["slug"],available=True) 
         payment = Cosultant_Payment.objects.filter(user=request.user,teacher=my_teacher,expired=False,status="pending")
-        print(payment)
         consultant=Consultant.objects.filter(user=request.user,teacher=my_teacher).exclude(Q(status="completed") | Q(status="refund") |Q(status="declined"))
-        print(consultant)   
         if payment.exists():
             messages.error(request,f"You Already Have Pending Consultant payment")
             return redirect(reverse("accounts:consultant_payment"))
         elif consultant.exists():
-            print("here")
             messages.error(request,f"You Already Have Pending Consultant")
             return redirect(reverse("accounts:consultants"))
         else:
-            print("there") 
             return function(request, *args, **kwargs)
 
     wrap.__doc__ = function.__doc__
@@ -54,12 +47,10 @@ def validate_checkout(function):
         try:
             id=request.GET["consultant"]
             date=request.GET["date"] 
-            print(date)
             teacher=get_object_or_404(Teacher_Time,id=id,user__slug=kwargs["slug"])
             if date in teacher.check_teacher_day(): 
                 return function(request, *args, **kwargs)
             else:
-                print("not here")
                 messages.error(request,"invalid date")
                 return redirect(reverse("consultant:home"))
         except:

@@ -86,6 +86,8 @@
                                         <tr>
                                             <th>Blog</th>
                                             <th>User</th>
+                                            <th>Domain</th>
+
                                             <th>email</th>
                                             <th>Action</th>
                                         </tr>
@@ -95,6 +97,9 @@
                                     <tr>
                                         <td>{{i.name|truncatewords:20}}</td>
                                         <td>{{i.user.username}}</td>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.get_domain}}</td>
+
                                         <td>{{i.user.email}}</td>
                                         <td>
                                             <a target="__" href="{% url 'dashboard:show_demo_blog' i.slug %}" class="btn btn-primary">Details</a>
@@ -139,6 +144,8 @@
                                         <th>User</th>
                                         <th>Email</th>
                                         <th>Method</th>
+                                        <th>Domain</th>
+
                                         <th>Transaction Number</th>
                                          <th>Created At</th>
                                         <th>Expired At</th>
@@ -155,6 +162,8 @@
                                         <td>{{i.user.username}}</td>
                                         <td>{{i.user.email}}</td>
                                         <td>{{i.method}}</td>
+                                        <td>{{i.get_domain}}</td>
+
                                         <td>{{i.transaction_number}}</td>
                                         <td>{{i.created_at}}</td>
                                         <td>{{i.expired_at}}</td>
@@ -270,6 +279,8 @@
                                             <th>Discount</th>                                   
                                              <th>Course Status</th>
                                             <th>Status</th>
+                                            <th>Domain</th>
+
                                             <th>Image</th>
                                              <th>Videos</th>
                                             <th>Action</th>
@@ -293,6 +304,8 @@
                                  
                                           <td>{{i.course_status}}</td>
                                           <td>{{i.status}}</td>
+                                          <td>{{i.get_domain}}</td>
+
                                           <td>
                                               <a target="_blank" href="{{i.image}}">image link</a></td>
                                           
@@ -406,6 +419,8 @@
                                             <th>Method</th>
                                             <th>Transaction Number</th>
                                             <th>Course</th>    
+                                            <th>Domain</th>    
+
                                             <th>Image</th>   
                                             <th>Action</th>            
                                         </tr>
@@ -418,6 +433,8 @@
                                         <td>{{i.method}}</td>
                                         <td>{{i.transaction_number}}</td>
                                         <td>{{i.course.name|truncatechars:20}}</td>
+                                        <td>{{i.course.get_domain}}</td>
+
                                        <td>
                                         {% if i.payment_image %}
                                            <a target="__" href="{{i.payment_image}}">image link</a>
@@ -929,6 +946,127 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                 <a href="{% url 'dashboard:approve_content' i.id %}?approve=e_book" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == "audio_book_payment" %}
+                                <h3>Audio Book Payments</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Method</th>
+                                            <th>Transaction Number</th>
+                                            <th>Track</th>    
+                                            <th>Image</th>   
+                                            <th>Action</th>            
+                                        </tr>
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.user.username}}</td>
+                                        <td>{{i.method}}</td>
+                                        <td>{{i.transaction_number}}</td>
+                                        <td>{{i.get_audio_book.name|truncatechars:20}}</td>
+                                       <td>
+                                        {% if i.payment_image %}
+                                           <a target="__" href="{{i.payment_image}}">image link</a>
+                                           {% endif %}
+                                        </td>
+                                     
+                                      
+
+                                        <td>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#payment_music-{{i.id}}">Approve</button>
+                                <a href="{% url 'dashboard:reject' i.id %}?reject=audio_book_payment" class="btn btn-danger">Reject</a>
+                            </td>
+                                     
+                                     
+                                    </tr>
+                                    <div class="modal fade" id="payment_music-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve Audio Book Payment</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=audio_book_payment" type="button" class="btn btn-success">Approve</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% elif qs == "e_book_payment" %}
+                                <h3>E-Book</h3>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Book</th>
+                                            <th>category</th>
+                                            <th>Price</th>    
+                                            <th>Image</th>   
+                                            <th>Action</th>            
+                                        </tr>
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in query %}
+                                    <tr>
+                                        <td>{{i.user.username}}</td>
+                                        
+                                        <td>{{i.get_e_book.name|truncatechars:20}}</td>
+                                        <td>{{i.get_e_book.category.name}}</td>
+                                        <td>{{i.get_e_book.get_price}}</td>
+                                       <td>
+                                        
+                                           <a target="__" href="{{i.payment_image}}">image link</a>
+                                           
+                                        </td>
+                                        
+                                <td>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#audios-{{i.id}}">Approve</button>
+                                <a href="{% url 'dashboard:reject' i.id %}?reject=e_book_payment" class="btn btn-danger">Reject</a>
+                            </td>
+                                     
+                                     
+                                    </tr>
+                                    <div class="modal fade" id="audios-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Approve E-Book</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you Sure ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a href="{% url 'dashboard:approve_content' i.id %}?approve=e_book_payment" type="button" class="btn btn-success">Approve</a>
                                             </div>
                                             </div>
                                         </div>

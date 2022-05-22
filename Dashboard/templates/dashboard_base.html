@@ -104,6 +104,7 @@
                         <a class="collapse-item" href="{% url 'dashboard:movies_payment' %}">Movies Payments</a>
                         <a class="collapse-item" href="{% url 'dashboard:audios:audio_payment' %}">Audio Payments</a>
                         <a class="collapse-item" href="{% url 'dashboard:audio_book_urls:audio_payment' %}">Audio Book Payments</a>
+                        <a class="collapse-item" href="{% url 'dashboard:e_book:e_book_payment' %}">E-Book Payments</a>
 
 
                         
@@ -355,6 +356,7 @@
                             <a class="collapse-item" href="{% url 'dashboard:add_blog_category' %}">Add Blog Category</a>
                             <a class="collapse-item" href="{% url 'dashboard:add_consultant_category' %}">Add Consultant Category</a>
                             <a class="collapse-item" href="{% url 'dashboard:add_library_category' %}">Add Library Category</a>
+                            <a class="collapse-item" href="{% url 'dashboard:faqs:add_category' %}">Add Faqs Category</a>
 
                             <!-- <a class="collapse-item" href="register.html"></a>
                             <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
@@ -370,12 +372,14 @@
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsebranch"
                     aria-expanded="true" aria-controls="collapsebranch">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>Add Branch</span>
+                    <span>Branches</span>
                 </a>
                 <div id="collapsebranch" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Add Branch:</h6>
-                        <a class="collapse-item" href="{% url 'dashboard:add_branch' %}">Add Branch</a>
+                        <h6 class="collapse-header">Branch:</h6>
+                        <a class="collapse-item" href="{% url 'dashboard:add_branch' %}">Add Course Branch</a>
+                        <a class="collapse-item" href="{% url 'dashboard:faqs:add_branch' %}">Add Faqs Branch</a>
+
                         <!-- <a class="collapse-item" href="register.html"></a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                         <div class="collapse-divider"></div>
@@ -460,6 +464,21 @@
                 </div>
             </div>
         </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefaqs"
+                aria-expanded="true" aria-controls="collapsefaqs">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Faqs</span>
+            </a>
+            <div id="collapsefaqs" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">All Faqs:</h6>
+                    <a class="collapse-item" href="{% url 'dashboard:faqs:faqs' %}">Faqs</a>
+                    <a class="collapse-item" href="{% url 'dashboard:faqs:add_faqs' %}">Add Faqs</a>
+
+                </div>
+            </div>
+        </li>
         {% endif %}
             <!-- Divider -->
                         
@@ -503,6 +522,7 @@
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audio_book">Audio Book</a>
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=audio_book_payment">Audio Book Payments</a>
                         <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=e_book">E-Book</a>
+                        <a class="collapse-item" href="{% url 'dashboard:approve' %}?approve=e_book_payment">E-Book Payments</a>
 
 
                         <!-- <a class="collapse-item" href="register.html"></a>

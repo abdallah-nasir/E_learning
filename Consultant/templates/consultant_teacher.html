@@ -50,7 +50,7 @@ width:100% !important;
 }
 </style>
 
-<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/page-banner-2.jpg' %})">
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/consultations/header.jpg' %})">
   <div class="container">
       <div class="row">
           <div class="col-lg-12">
@@ -175,7 +175,7 @@ width:100% !important;
                                                 {% endfor %}
                                                 {% else %}
                                                 <a class="timing" href="#">
-                                                    <span>Empty</span>
+                                                    <span>{% trans 'Empty' %}</span>
                                                 </a>  
                                                 {% endif %}
                                      
@@ -192,7 +192,7 @@ width:100% !important;
                                                         {% endfor %}
                                                         {% else %}
                                                         <a class="timing">
-                                                            <span>Empty</span>
+                                                            <span>{% trans 'Empty' %}</span>
                                                         </a>  
                                                         {% endif %}
                                            
@@ -206,7 +206,7 @@ width:100% !important;
                                                 {% endfor %}    
                                                 {% else %}
                                                 <a class="timing">
-                                                    <span>Empty</span>
+                                                    <span>{% trans 'Empty' %}</span>
                                                 </a>  
                                                 {% endif %}
                                     </li>
@@ -220,7 +220,7 @@ width:100% !important;
                                                 {% endfor %}
                                                 {% else %}
                                                 <a class="timing" >
-                                                    <span>Empty</span>
+                                                    <span>{% trans 'Empty' %}</span>
                                                 </a>  
                                                 {% endif %}
                                         </li>
@@ -233,7 +233,7 @@ width:100% !important;
                                                     {% endfor %}
                                                     {% else %}
                                                     <a class="timing">
-                                                        <span>Empty</span>
+                                                        <span>{% trans 'Empty' %}</span>
                                                     </a>  
                                                     {% endif %}
                                     </li>
@@ -246,7 +246,7 @@ width:100% !important;
                                                 {% endfor %}
                                                 {% else %}
                                                 <a class="timing">
-                                                    <span>Empty</span>
+                                                    <span>{% trans 'Empty' %}</span>
                                                 </a>  
                                                 {% endif %}
                                 </li>
@@ -259,7 +259,7 @@ width:100% !important;
                                             {% endfor %}
                                             {% else %}
                                             <a class="timing">
-                                                <span>Empty</span>
+                                                <span>{% trans 'Empty' %}</span>
                                             </a>  
                                             {% endif %}
                             </li>
@@ -286,11 +286,11 @@ width:100% !important;
                                         <thead class="thead-dark">
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Day</th>
-                                            <th scope="col">From</th>
-                                            <th scope="col">To</th>
-                                            <th scope="col">Action</th>
+                                            <th scope="col">{% trans 'Date' %}</th>
+                                            <th scope="col">{% trans 'Day' %}</th>
+                                            <th scope="col">{% trans 'From' %}</th>
+                                            <th scope="col">{% trans 'To' %}</th>
+                                            <th scope="col">{% trans 'Action' %}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -333,14 +333,13 @@ width:100% !important;
                             <div class="modal-body">
                                 <table class="table">
                                     <thead class="thead-dark">
-                                    <tr>
+                                      <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Day</th>
-                                        <th scope="col">From</th>
-                                        <th scope="col">To</th>
-                                                <th scope="col">Action</th>
-
+                                        <th scope="col">{% trans 'Date' %}</th>
+                                        <th scope="col">{% trans 'Day' %}</th>
+                                        <th scope="col">{% trans 'From' %}</th>
+                                        <th scope="col">{% trans 'To' %}</th>
+                                        <th scope="col">{% trans 'Action' %}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -385,15 +384,14 @@ width:100% !important;
                                <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                   <thead class="thead-dark">
-                                     <tr>
-                                         <th scope="col">#</th>
-                                        <th scope="col">Day</th>
-                                         <th scope="col">Day</th>
-                                         <th scope="col">From</th>
-                                         <th scope="col">To</th>
-                                        <th scope="col">Action</th>
-
-                                     </tr>
+                                    <tr>
+                                      <th scope="col">#</th>
+                                      <th scope="col">{% trans 'Date' %}</th>
+                                      <th scope="col">{% trans 'Day' %}</th>
+                                      <th scope="col">{% trans 'From' %}</th>
+                                      <th scope="col">{% trans 'To' %}</th>
+                                      <th scope="col">{% trans 'Action' %}</th>
+                                  </tr>
                                      </thead>
                                      <tbody>
                                        {% for b in teacher.get_available_day.wed_days.days %}
@@ -437,14 +435,13 @@ width:100% !important;
                               <div class="modal-body">
                                   <table class="table">
                                       <thead class="thead-dark">
-                                      <tr>
+                                        <tr>
                                           <th scope="col">#</th>
-                                           <th scope="col">Date</th>
-                                          <th scope="col">Day</th>
-                                          <th scope="col">From</th>
-                                          <th scope="col">To</th>
-                                    <th scope="col">Action</th>
-
+                                          <th scope="col">{% trans 'Date' %}</th>
+                                          <th scope="col">{% trans 'Day' %}</th>
+                                          <th scope="col">{% trans 'From' %}</th>
+                                          <th scope="col">{% trans 'To' %}</th>
+                                          <th scope="col">{% trans 'Action' %}</th>
                                       </tr>
                                       </thead>
                                       <tbody>
@@ -489,15 +486,14 @@ width:100% !important;
                                <div class="modal-body">
                                    <table class="table">
                                        <thead class="thead-dark">
-                                       <tr>
-                                           <th scope="col">#</th>
-                                           <th scope="col">Date</th>
-                                           <th scope="col">Day</th>
-                                           <th scope="col">From</th>
-                                           <th scope="col">To</th>
-                                    <th scope="col">Action</th>
-
-                                       </tr>
+                                        <tr>
+                                          <th scope="col">#</th>
+                                          <th scope="col">{% trans 'Date' %}</th>
+                                          <th scope="col">{% trans 'Day' %}</th>
+                                          <th scope="col">{% trans 'From' %}</th>
+                                          <th scope="col">{% trans 'To' %}</th>
+                                          <th scope="col">{% trans 'Action' %}</th>
+                                      </tr>
                                        </thead>
                                        <tbody>
                                          {% for b in teacher.get_available_day.fri_days.days %}
@@ -540,14 +536,13 @@ width:100% !important;
                                 <div class="modal-body">
                                     <table class="table">
                                         <thead class="thead-dark">
-                                        <tr>
+                                          <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Day</th>
-                                            <th scope="col">From</th>
-                                            <th scope="col">To</th>
-                                        <th scope="col">Action</th>
-
+                                            <th scope="col">{% trans 'Date' %}</th>
+                                            <th scope="col">{% trans 'Day' %}</th>
+                                            <th scope="col">{% trans 'From' %}</th>
+                                            <th scope="col">{% trans 'To' %}</th>
+                                            <th scope="col">{% trans 'Action' %}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -592,15 +587,14 @@ width:100% !important;
                                  <div class="modal-body">
                                      <table class="table">
                                          <thead class="thead-dark">
-                                         <tr>
-                                             <th scope="col">#</th>
-                                             <th scope="col">Date</th>
-                                             <th scope="col">Day</th>
-                                             <th scope="col">From</th>
-                                             <th scope="col">To</th>
-                                        <th scope="col">Action</th>
-
-                                         </tr>
+                                          <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">{% trans 'Date' %}</th>
+                                            <th scope="col">{% trans 'Day' %}</th>
+                                            <th scope="col">{% trans 'From' %}</th>
+                                            <th scope="col">{% trans 'To' %}</th>
+                                            <th scope="col">{% trans 'Action' %}</th>
+                                        </tr>
                                          </thead>
                                          <tbody>
                                            {% for b in teacher.get_available_day.sun_days.days %}

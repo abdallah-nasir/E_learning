@@ -47,59 +47,65 @@ def books(request):
 @login_required(login_url="accounts:login")
 def single_book(request,slug):
     track=get_object_or_404(E_Book,slug=slug,status="approved")
-    context={"book":track}
+    if track.price > 0:
+        if track.buyers.filter(id=request.user.id).exists():
+            status = False
+        else:
+            status = True
+    else:
+        status = False
+    context={"book":track,"status":status}
     return render(request,"library/e-book/single_book.html",context)
  
 @login_required(login_url="accounts:login")
 def comment(request,slug):
-    track=get_object_or_404(Audio_Book_Tracks,slug=slug,status="approved")
+    track=get_object_or_404(E_Book,slug=slug,status="approved")
     form=CommentsForm(request.POST)
-    if Comments.objects.filter(user=request.user,library=1,content_id=track.id).select_related("user").exists():
-        messages.error(request,"you already have a comment for this track")
+    if Comments.objects.filter(user=request.user,library=4,content_id=track.id).select_related("user").exists():
+        messages.error(request,"you already have a comment for this Book")
     else: 
         if form.is_valid():
             comment=form.cleaned_data.get("comment")
-            comment=Comments.objects.create(user=request.user,library=1,content_id=track.id,comment=comment)
+            comment=Comments.objects.create(user=request.user,library=4,content_id=track.id,comment=comment)
             track.comments.add(comment)
             track.save()
             messages.success(request,"thank you for your review")
-    return redirect(reverse('library:audio_book:single_audio',kwargs={"slug":slug}))
+    return redirect(reverse('library:e_book:single_book',kwargs={"slug":slug}))
 
 
 @login_required(login_url="accounts:login")
 @check_user_is_kemet_vip
-@check_audio_book_payment_page
-def audio_payment(request,slug):
-    track=get_object_or_404(Audio_Book_Tracks,slug=slug,status="approved")
+@check_e_book_payment_page
+def book_payment(request,slug):
+    track=get_object_or_404(E_Book,slug=slug,status="approved")
     if int(track.get_price()) <= 0:
-        return redirect(reverse("library:audio_book:single_audio",kwargs={"slug":slug}))
-    context={"track":track}
-    return render(request,"library/audio-book/payment.html",context)
+        return redirect(reverse("library:e_book:single_book",kwargs={"slug":slug}))
+    context={"book":track}
+    return render(request,"library/e-book/payment.html",context)
  
 @login_required(login_url="accounts:login")
 @check_user_is_kemet_vip
-@check_audio_book_payment_western
+@check_e_book_payment_western
 def western_payment(request,slug):
     form=PaymentForm(request.POST or None ,request.FILES or None)
-    track=get_object_or_404(Audio_Book_Tracks,slug=slug,status="approved")
+    track=get_object_or_404(E_Book,slug=slug,status="approved")
     if request.method == 'POST':
         if form.is_valid():
             now= datetime.date.today()
             image=form.cleaned_data["image"]
             number=form.cleaned_data["number"]
             payment=Library_Payment.objects.create(user=request.user,
-            method="Western Union",content_id=track.id,library_type=1,amount=track.get_price(), transaction_number=number,status="pending",created_at=now)
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/audio-book-payment/{track.slug}/{payment.user.username}/{image}"
+            method="Western Union",content_id=track.id,library_type=4,amount=track.get_price(), transaction_number=number,status="pending",created_at=now)
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/e-book-payment/{track.slug}/{payment.user.username}/{image}"
             headers = {
                 "AccessKey": Storage_Api, 
                 "Content-Type": "application/octet-stream",
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data) 
             try:
                 if data["HttpCode"] == 201:
-                    payment.payment_image = f"https://{agartha_cdn}/audio-book-payment/{track.slug}/{payment.user.username}/{image}"
+                    payment.payment_image = f"https://{agartha_cdn}/e-book-payment/{track.slug}/{payment.user.username}/{image}"
                     payment.save()
             except:
                 pass
@@ -116,38 +122,36 @@ def western_payment(request,slug):
             subject="new payment"
             send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
             messages.success(request,"We Have sent an Email,Please check your Inbox")
-            return redirect(reverse("accounts:music_payment"))
+            return redirect(reverse("accounts:e_book_payment"))
         else:
             messages.error(request,"invalid form")
-            print(form.errors)
-            return redirect(reverse("library:audio_book:music_payment",kwargs={"slug":track.slug}))
+            return redirect(reverse("library:e_book:e_book_payment",kwargs={"slug":track.slug}))
 
 
 
 @login_required(login_url="accounts:login")
 @check_user_is_kemet_vip
-@check_audio_book_payment_bank
+@check_e_book_payment_bank
 def bank_payment(request,slug):
     form=PaymentForm(request.POST or None ,request.FILES or None)
-    track=get_object_or_404(Audio_Book_Tracks,slug=slug,status="approved")
+    track=get_object_or_404(E_Book,slug=slug,status="approved")
     if request.method == 'POST':
         if form.is_valid():
             now= datetime.date.today()
             image=form.cleaned_data["image"]
             number=form.cleaned_data["number"]
             payment=Library_Payment.objects.create(user=request.user,
-            method="Western Union",content_id=track.id,library_type=1,amount=track.get_price(), transaction_number=number,status="pending",created_at=now)
-            image_url=f"https://storage.bunnycdn.com/{storage_name}/audio-book-payment/{track.slug}/{payment.user.username}/{image}"
+            method="Western Union",content_id=track.id,library_type=4,amount=track.get_price(), transaction_number=number,status="pending",created_at=now)
+            image_url=f"https://storage.bunnycdn.com/{storage_name}/e-book-payment/{track.slug}/{payment.user.username}/{image}"
             headers = {
                 "AccessKey": Storage_Api, 
                 "Content-Type": "application/octet-stream",
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data) 
             try:
                 if data["HttpCode"] == 201:
-                    payment.payment_image = f"https://{agartha_cdn}/audio-book-payment/{track.slug}/{payment.user.username}/{image}"
+                    payment.payment_image = f"https://{agartha_cdn}/e-book-payment/{track.slug}/{payment.user.username}/{image}"
                     payment.save()
             except:
                 pass
@@ -164,11 +168,10 @@ def bank_payment(request,slug):
             subject="new payment"
             send_mail_approve(request,user=payment.user.email,subject=subject,body=body)
             messages.success(request,"We Have sent an Email,Please check your Inbox")
-            return redirect(reverse("accounts:music_payment"))
+            return redirect(reverse("accounts:e_payment"))
         else:
             messages.error(request,"invalid form")
-            print(form.errors)
-            return redirect(reverse("library:audio_book:music_payment",kwargs={"slug":track.slug}))
+            return redirect(reverse("library:e_book:e_payment",kwargs={"slug":track.slug}))
 
 
 
@@ -179,7 +182,7 @@ def bank_payment(request,slug):
 def paypal_create(request,id):
     if request.method =="POST":
         try:
-            track=get_object_or_404(Audio_Book_Tracks,id=id,status="approved")
+            track=get_object_or_404(E_Book,id=id,status="approved")
             environment = SandboxEnvironment(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
             client = PayPalHttpClient(environment)
             create_order = OrdersCreateRequest()
@@ -221,7 +224,7 @@ def paypal_capture(request,order_id,track_id):
         client = PayPalHttpClient(environment)
         response = client.execute(capture_order)
         data = response.result.__dict__['_dict']
-        track=get_object_or_404(Audio_Book_Tracks,id=track_id)
+        track=get_object_or_404(E_Book,id=track_id)
         try:
             if data["status"] == "COMPLETED":
                 for i in data["purchase_units"]:
@@ -229,7 +232,7 @@ def paypal_capture(request,order_id,track_id):
                         transaction=b["id"]
                 now= datetime.date.today()
                 payment=Library_Payment.objects.create(method="Paypal",
-                transaction_number=transaction,content_id=track.id,amount=track.get_price(),status="pending",user=request.user,created_at=now,library_type=1)
+                transaction_number=transaction,content_id=track.id,amount=track.get_price(),status="pending",user=request.user,created_at=now,library_type=4)
                 messages.add_message(request, messages.SUCCESS,"We Have sent an Email,Please check your Inbox")
                 # msg_html = render_to_string("email_order_confirm.html",{"order":order})
                 msg = EmailMessage(
@@ -250,3 +253,14 @@ def paypal_capture(request,order_id,track_id):
         except:
             return JsonResponse({"status":0})
 
+
+@login_required(login_url="accounts:login")
+@check_user_is_kemet_vip
+@check_e_book_user
+def read_book(request,slug):
+    book=get_object_or_404(E_Book,status="approved")
+
+    context={"book":book}
+    return render(request,"library/e-book/read_book.html",context)
+
+ 

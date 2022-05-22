@@ -11,7 +11,7 @@ from home.models import *
 from Blogs.models import *
 from Consultant.models import Consultant, Cosultant_Payment
 from django.core.paginator import Paginator
-from library.models import Library_Payment,Movies
+from library.models import Library_Payment,Movies,E_Book
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -133,7 +133,6 @@ def account_info(request):
             instance=form.save(commit=False)
             try:
                 if request.FILES["account_image"]:
-                    print(request.FILES["account_image"])
                     file_name=request.FILES["account_image"]
                     url=f"https://storage.bunnycdn.com/{storage_name}/accounts/{instance.slug}/"
                     headers = {
@@ -235,6 +234,16 @@ def audio_book_payment(request):
     return render(request,"account_audio_book_payment.html",context)
 
 @login_required(login_url="accounts:login")
+@redirect_e_book_payment
+def e_book_payment(request):
+    movies=Library_Payment.objects.filter(user=request.user,library_type=4).order_by("-id")
+    paginator = Paginator(movies, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"payments":page_obj}
+    return render(request,"account_e_book_payment.html",context)
+
+@login_required(login_url="accounts:login")
 @check_user_is_teacher
 def courses(request):
     courses=Course.objects.filter(students=request.user).order_by("-id")
@@ -247,7 +256,7 @@ def courses(request):
 @login_required(login_url="accounts:login")
 @check_user_is_teacher
 def events(request):
-    events=Events.objects.filter(students=request.user).order_by("-id")
+    events=Events.objects.filter(students__in=[request.user]).order_by("-id")
     paginator = Paginator(events, 10) # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -264,6 +273,26 @@ def consultants(request):
     context={"consult":page_obj}
     return render(request,"account_consult.html",context)
 
+@login_required(login_url="accounts:login")
+@check_user_is_teacher
+def library(request):
+    qs = request.GET.get("type")
+    if qs == "e-book":
+        library = E_Book.objects.filter(buyers__in=[request.user]).prefetch_related("buyers")    
+    elif qs == "audio-book":
+        library=Audio_Book_Tracks.objects.filter(buyers__in=[request.user]).prefetch_related("buyers")   
+    elif qs == "movies":
+        library=Movies.objects.filter(buyers__in=[request.user]).prefetch_related("buyers")   
+    elif qs == "audio":
+        library = Audio_Tracks.objects.filter(buyers__in=[request.user]).prefetch_related("buyers")   
+    else:
+        return redirect(reverse("accounts:account_info"))
+
+    paginator = Paginator(library, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"library":page_obj,"qs":qs}
+    return render(request,"account_library.html",context)
 @login_required(login_url="accounts:login")
 @check_user_is_teacher 
 @check_edit_blog_pyment
@@ -515,6 +544,50 @@ def edit_audio_book_payment(request,slug,id):
     context={"form":form}
     return render(request,"edit_audio_book_payment.html",context)
 
+
+@login_required(login_url="accounts:login")
+@check_user_is_teacher
+def edit_e_book_payment(request,slug,id):
+    payment=get_object_or_404(Library_Payment,id=id,status="declined")
+    track=get_object_or_404(E_Book,slug=slug)
+    if request.user == payment.user:
+        if payment.method == "Western Union" or payment.method == "bank":
+            if Library_Payment.objects.filter(user=request.user,library_type=4,content_id=track.id,status="approved").select_related("user").exists():
+                messages.success(request,"you already have a payment for this movie")
+                return redirect(reverse("accounts:e_book_payment"))
+            form=MoviesPaymentForm(request.POST or None,request.FILES or None,instance=payment)
+            form.initial["payment_image"]=None
+            if request.method == "POST":
+                if form.is_valid():
+                    instance=form.save(commit=False)
+                    instance.status="pending"
+                    image=request.FILES.get("payment_image")
+                    if image:
+                        url=f"https://storage.bunnycdn.com/{storage_name}/e-book-payment/{track.slug}/{payment.user.username}/{image}"
+                        headers = {
+                            "Content-Type": "application/octet-stream",
+                            "AccessKey": Storage_Api
+                        }
+                        response = requests.put(url,data=image,headers=headers)
+                        data=response.json()
+                        try: 
+                            if data["HttpCode"] == 201:
+                                instance.payment_image = f"https://{agartha_cdn}/e-book-payment/{track.slug}/{payment.user.username}/{image}"
+                                instance.save()
+                        except:
+                            pass                 
+                    instance.save()
+                    body="payment edit is waiting for your approve"
+                    subject="edit action"
+                    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+                    messages.success(request,"Payment Edited Successfully")
+                    return redirect(reverse("accounts:e_book_payment"))
+        else:  
+            messages.error(request,"You Don't Have Permission")
+            return redirect(reverse("accounts:e_book_payment"))
+    context={"form":form}
+    return render(request,"edit_e_book_payment.html",context)
+
 @login_required(login_url="accounts:login")
 @check_consultant_refund
 def consultant_refund(request,id):   
@@ -588,6 +661,20 @@ def audio_book_refund(request,slug,id):
     send_mail_approve(request,user=request.user.email,subject=subject,body=body)
     messages.success(request,"Your Refund is Being Review By Admin")
     return redirect(reverse("accounts:audio_book_payment"))
+
+@login_required(login_url="accounts:login")
+@check_e_book_refund
+def e_book_refund(request,slug,id):   
+    payment=get_object_or_404(Library_Payment,id=id,library_type=4)
+    refund=Refunds.objects.create(type="e_book_payment",content_id=id,user=request.user,transaction_number=payment.transaction_number)
+    my_data={"method":payment.method,"amount":payment.amount,"payment_id":payment.id,"data":[{"date":f"{payment.created_at}","Book":payment.get_e_book().name}]}
+    refund.data=json.dumps(my_data)
+    refund.save()
+    body=f"a new refund from user {request.user.email}"
+    subject="new refund"
+    send_mail_approve(request,user=request.user.email,subject=subject,body=body)
+    messages.success(request,"Your Refund is Being Review By Admin")
+    return redirect(reverse("accounts:e_book_payment"))
 
 
 

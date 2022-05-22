@@ -30,6 +30,8 @@
                                             <th>Transaction</th>
                                             <th>Course</th>
                                             <th>Status</th>
+                                            <th>Domain</th>
+
                                             <th>Expire Date</th>
                                             <th>Action</th>
                                         </tr>
@@ -43,7 +45,7 @@
                                         <td>{{i.transaction_number}}</td>
                                         <td><a href="{% url 'home:course' i.course.slug %}">{{i.course.name}}</a></td>
                                         <td>{{i.status}}</td>
-                                      
+                                        <td>{{i.course.get_domain}}</td>
                                         <td>{{i.expired_at}}</td>
 
                                         <td>

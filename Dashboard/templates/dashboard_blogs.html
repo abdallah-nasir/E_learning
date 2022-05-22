@@ -29,6 +29,7 @@
                                             <th>Name</th>
                                             <th>Category</th>
                                               <th>Blog Type</th>
+                                              <th>Domain</th>
 
                                             <th>Comments</th>
                                             <th>Paid</th>
@@ -45,6 +46,7 @@
                                         <td>{{i.name|truncatewords:10}}</td>
                                         <td>{{i.category|truncatewords:10}}</td>
                                         <td>{{i.blog_type}}</td>
+                                        <td>{{i.get_domain}}</td>
 
                                         <td>{{i.comments.count}}</td>
                                         <td>{{i.paid}}</td>
@@ -52,7 +54,7 @@
                                         <td>
                                          
                                         <a href="{% url 'dashboard:edit_blog' i.slug %}" class="btn btn-success">Edit</a>
-                                      {% if i.status != "approved" %}
+                                      {% if i.status == "pending" or i.status == "declined" %}
                                       <a href="{% url 'dashboard:show_demo_blog' i.slug %}" target="__" class="btn btn-info">Details</a>
 
                                           {% endif %}

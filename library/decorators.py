@@ -231,3 +231,73 @@ def check_audio_book_payment_bank(function):
     wrap.__name__ = function.__name__
     return wrap 
  
+
+def check_e_book_payment_page(function):
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(E_Book,slug=kwargs["slug"],status="approved")
+        if track.buyers.filter(username=request.user.username).exists():
+            messages.error(request,"you already have this book")
+            return redirect(reverse("accounts:e_book_payment"))
+        if track.price and track.price > 0:
+            payment=Library_Payment.objects.filter(user=request.user,library_type=4,content_id=track.id,status="pending").select_related("user")
+            if payment.exists():
+                messages.error(request,"you already have an existing payment")
+                return redirect(reverse("accounts:e_book_payment"))              
+            else:
+                return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"Book is free")
+            return redirect(reverse("library:e_book:single_book",kwargs={"slug":track.slug}))  
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap 
+
+def check_e_book_payment_western(function):
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(E_Book,slug=kwargs["slug"],status="approved")
+        if track.price and track.price > 0:
+            payment=Library_Payment.objects.filter(user=request.user,library_type=4,content_id=track.id,method="Western Union",expired=False).select_related("user")
+            if payment.exists():
+                messages.error(request,"you already have an existing payment")
+                return redirect(reverse("accounts:e_book_payment"))              
+            else:
+                return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"book is free")
+            return redirect(reverse("library:e_book:single_book",kwargs={"slug":track.slug}))  
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap 
+
+def check_e_book_payment_bank(function):
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(E_Book,slug=kwargs["slug"],status="approved")
+        if track.price and track.price > 0:
+            payment=Library_Payment.objects.filter(user=request.user,library_type=4,content_id=track.id,method="bank",expired=False).select_related("user")
+            if payment.exists():
+                messages.error(request,"you already have an existing payment")
+                return redirect(reverse("accounts:e_book_payment"))              
+            else:
+                return function(request, *args, **kwargs)
+        else:
+            messages.error(request,"book is free")
+            return redirect(reverse("library:e_book:single_book",kwargs={"slug":track.slug}))  
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap 
+
+
+def check_e_book_user(function):
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(E_Book,slug=kwargs["slug"],status="approved")
+        if track.price and track.price > 0:
+            if track.buyers.filter(id=request.user.id).exists():
+                return function(request, *args, **kwargs)
+            else:
+                messages.error(request,"you should buy book first")
+                return redirect(reverse("library:e_book:single_book",kwargs={"slug":track.slug}))              
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap 

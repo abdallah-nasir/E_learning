@@ -69,6 +69,11 @@ $(function() {
     }
     
     //===== Tabs Card Header Toggle Class Active
+    $('.shop-top-search .nav .nav-item a').on('click',function(){
+      var href = $(this).attr('href')
+      $(href).addClass('show active').siblings().removeClass('show active')
+    })
+    //===== Tabs Card Header Toggle Class Active
     // var cardBody = $('.faqs .tab-content .card .collapse');
     var tabCard = $('.faqs .tab-content .card');
 
@@ -475,8 +480,7 @@ $(function() {
     });
     
     
-    
-    
+
     
     
     

@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from .models import Blog
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
 from .models import Blog_Payment,Prices
@@ -62,9 +62,12 @@ def complete_user_data(function):
 import datetime
 def check_blogs_payment_status(function):
     def wrap(request, *args, **kwargs):
+        blog = get_object_or_404(Blog,slug=kwargs["slug"],status="approved")
+        if blog.paid == False:
+            return function(request, *args, **kwargs)
         if request.user.vip == True:
             today= datetime.date.today()
-            payment=Blog_Payment.objects.filter(user=request.user,type=1,expired=False,status="approved").last()
+            payment=Blog_Payment.objects.filter(user=request.user,type=1,expired=False,status="approved").select_related("user").last()
             if payment.expired_at <= today:
                 payment.expired=True
                 payment.save()
@@ -75,27 +78,13 @@ def check_blogs_payment_status(function):
             else:
                 return function(request, *args, **kwargs)
         else:
-            return function(request, *args, **kwargs)
-    wrap.__doc__ = function.__doc__
-    wrap.__name__ = function.__name__
-    return wrap
-
-
-def check_blogs_payment_status(function):
-    def wrap(request, *args, **kwargs):
-        if request.user.vip == True:
-            messages.error(request,"you are already a member")
+            messages.error(request,"You Should Be A Member To Access Blogs")
             return redirect(reverse("blogs:pricing"))
-        else:
-            if Blog_Payment.objects.filter(user=request.user,type=1,expired=False).select_related("user").exists():
-                messages.error(request,"your already have a payment")
-                return redirect(reverse("accounts:blog_payment"))
-            else:
-                return function(request, *args, **kwargs)
-
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
+
+
 
 def check_blogs_payment_western_status(function):
     def wrap(request, *args, **kwargs):

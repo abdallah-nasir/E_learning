@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from .forms import *
 from .decorators import *
-from Frontend.models import *
+from Frontend.models import Privacy ,Terms
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.http import JsonResponse,HttpResponseRedirect
@@ -84,10 +84,8 @@ def home(request):
     if data ==None:
         data=get_home_data()
         cache.set("data",data,60*60*24*3)  
-        print("here")
     else:
         data=cache.get("data")
-        print("there")
     # data=get_home_data()
     # cache.set("data",data,60*15)
     context={"data":data}
@@ -197,7 +195,7 @@ def events(request):
     events=cache.get("events")
     today= datetime.date.today()
     if events == None:
-        events=Events.objects.filter(Q(status="approved")|Q(status="start")).distinct()
+        events=Events.objects.filter(Q(status="approved")|Q(status="start")).select_related("user").distinct()
         for i in events:
             if i.date < today:
                 i.status = "completed"
@@ -355,7 +353,6 @@ def wishlist_add(request):
         except: 
             return FailedJsonResponse({"message":"invalid id"})
     else:
-        print("here")
         return FailedJsonResponse({"message":"error message"})
 
 
@@ -511,14 +508,11 @@ def create(request,course):
             response = client.execute(create_order)
             data = response.result.__dict__['_dict']      
 
-            # print(data)
             return JsonResponse(data)
         except:
-            print("except")
             data={}
             return JsonResponse(data)
     else:
-        print("not here")
         return JsonResponse({'details': "invalid request"})         
 
 @login_required(login_url="accounts:login")
@@ -572,9 +566,11 @@ def success(request):
 def failed(request):   
     return render(request,"failed.html")
 ##########################
-
+from Frontend.models import Category as faq_category , Branch as faq_branch , Faq 
 def faqs(request):
-    return render(request,"faqs.html")
+    category = faq_category.objects.all() 
+    context={"category":category}
+    return render(request,"faqs.html",context)
 def test(request):
    return render(request,"test.html") 
     

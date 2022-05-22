@@ -46,31 +46,31 @@ body{
 
                             <!-- Personal Information -->
                             <div class="info-widget">
-                                <h4 class="card-title">Personal Information</h4>
+                                <h4 class="card-title">{% trans 'Personal Information' %}</h4>
                                 <h6>قبل البدء، يرجى العلم بأننا نعمل فقط مع المُدربين، المستشارين، الأخصائيين، ومُقدمي الخدمات ولا نعمل مع أفراد بصفة عامة.</h6>
                                 <h6>لتبدأ الحجز عليك إتمام بيناتك و نبذة عن محور استشارتك .</h6>
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group card-label">
-                                            <label>Full Name</label>
+                                            <label>{% trans 'Full Name' %}</label>
                                             <input name="full_name" class="form-control" type="text" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group card-label">
-                                            <label>Specialization</label>
+                                            <label>{% trans 'Specialization' %}</label>
                                             <input name="specialization" class="form-control" type="text" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group card-label">
-                                            <label>Email</label>
+                                            <label>{% trans 'Email' %}</label>
                                             <input class="form-control" name="email" type="email" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group card-label">
-                                            <label>Phone</label>
+                                            <label>{% trans 'Phone' %}</label>
                                             <input class="form-control" name="phone" type="text" required>
                                         </div>
                                     </div>
@@ -87,14 +87,14 @@ body{
                             <!-- /Personal Information -->
 
                             <div class="payment-widget">
-                                <h4 class="card-title">Payment Method</h4>
+                                <h4 class="card-title">{% trans 'Payment Method' %}</h4>
 
                                 <!-- Credit Card Payment -->
                                 <div class="payment-list">
                                     <label class="payment-radio credit-card-option">
                                         <input type="radio" name="method" value="credit" checked>
                                         <span class="checkmark"></span>
-                                        Bank Transaction
+                                        {% trans 'Bank Transaction' %}
                                     </label>
                                     <!-- <div class="row">
                                         <div class="col-md-6">
@@ -135,14 +135,14 @@ body{
                                     <label class="payment-radio paypal-option">
                                         <input type="radio" name="method" value="paypal">
                                         <span class="checkmark"></span>
-                                        Paypal
+                                        {% trans 'Paypal' %}
                                     </label>
                                 </div>
                                 <div class="payment-list">
                                     <label class="payment-radio paypal-option">
                                         <input type="radio" name="method" value="western">
                                         <span class="checkmark"></span>
-                                       Western Union
+                                        {% trans 'Western Union' %}
                                     </label>
                                 </div>
                                 <!-- /Paypal Payment -->
@@ -150,13 +150,13 @@ body{
                                 <div class="terms-accept">
                                     <div class="custom-checkbox">
                                         <input type="checkbox" name="terms" id="terms_accept" required>
-                                        <label for="terms_accept">I have read and accept <a href="#">Terms &amp; Conditions</a></label>
+                                        <label for="terms_accept">{% trans 'I have read and accept' %} <a href="{% url 'home:terms' %}">{% trans 'Terms' %} &amp; {% trans 'Conditions' %}</a></label>
                                     </div>
                                 </div>
                                 <!-- /Terms Accept -->
                                 <!-- Submit Section -->
                                 <div class="submit-section mt-4">
-                                    <button type="submit" class="main-btn">Confirm and Pay</button>
+                                    <button type="submit" class="main-btn">{% trans 'Confirm and Pay' %}</button>
                                 </div>
                                 <!-- /Submit Section -->
 
@@ -174,7 +174,7 @@ body{
                 <!-- Booking Summary -->
                 <div class="card booking-card">
                     <div class="card-header">
-                        <h4 class="card-title">Booking Summary</h4>
+                        <h4 class="card-title">{% trans 'Booking Summary' %}</h4>
                     </div>
                     <div class="card-body">
 
@@ -203,18 +203,18 @@ body{
                         <div class="booking-summary">
                             <div class="booking-item-wrap">
                                 <ul class="booking-date">
-                                    <li>Date <span>{{date}}</span></li>
-                                    <li>Time between <span>{{teacher.start_time}} {{teacher.end_time}}</span></li>
+                                    <li>{% trans 'Date' %} <span>{{date}}</span></li>
+                                    <li>{% trans 'Time between' %} <span>{{teacher.start_time}} {{teacher.end_time}}</span></li>
                                 </ul>
                                 <ul class="booking-fee">
-                                    <li>Consulting Fee <span>${{teacher.price}}</span></li>
+                                    <li>{% trans 'Consulting Fee' %} <span>${{teacher.price}}</span></li>
                                     <!-- <li>Booking Fee <span>$10</span></li>
                                     <li>Video Call <span>$50</span></li> -->
                                 </ul>
                                 <div class="booking-total">
                                     <ul class="booking-total-list">
                                         <li>
-                                            <span>Total</span>
+                                            <span>{% trans 'Total' %}</span>
                                             <span class="total-cost">${{teacher.price}}</span>
                                         </li>
                                     </ul>

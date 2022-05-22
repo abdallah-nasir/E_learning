@@ -359,12 +359,12 @@ iframe #body #video-wrapper{
                                 <div class="price-button pt-10">
                                     
                                     {% if course.discount %}
-                                    <span>Price : <b>${{course.discount|floatformat}}</b></span>
+                                    <span>{% trans 'Price' %} : <b>${{course.discount|floatformat}}</b></span>
                                    
                                     <span style="margin-top: 10px;  text-decoration: line-through; ">{% trans 'Price' %} : <b>${{course.price|floatformat}}</b></span>
 
                                     {% else %}
-                                    <span>Price : <b>${{course.price|floatformat}}</b></span>
+                                    <span>{% trans 'Price' %} : <b>${{course.price|floatformat}}</b></span>
                                     {% endif %}
                                    
                                     {% if request.user in course.students.all %}
@@ -500,163 +500,6 @@ iframe #body #video-wrapper{
     
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#number").keydown(function(event) {
-            // Allow: backspace, delete, tab, escape, and enter
-            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
-                // Allow: Ctrl+A
-                (event.keyCode == 65 && event.ctrlKey === true) ||
-                // Allow: home, end, left, right
-                (event.keyCode >= 35 && event.keyCode <= 39)) {
-                // let it happen, don't do anything
-                return;
-            } else {
-                // Ensure that it is a number and stop the keypress
-                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
-                    event.preventDefault();
-                }
-            }
-        });
-    });
-    function onlyNumberKey(evt) {
-          
-        // Only ASCII character in that range allowed
-        var ASCIICode = (evt.which) ? evt.which : evt.keyCode
-        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
-            return false;
-        return true;
-    }
-    $("#").click(function(e){
 
-        // prevent from normal form behaviour
-            e.preventDefault();
-            // serialize the form data  
-            var serializedData = $("#comment-form").serialize();
-            //let target_element = $('#add-html-here');
-            $.ajax({
-                type : 'POST',
-                url :  "{% url 'home:course' course.slug %}",
-                data : serializedData,
-                success : function(response){
-                //reset the form after successful submit
-                if(!response["valid"]){
-
-                    $("#comment-form")[0].reset();
-                      
-                  let html_1=`  
-                 <div class="u-s-m-b-30">
-    
-                    <label for="c-message"></label>
-                    <p> Messgae Sent Successfully </p>
-                </div>`;
-                         
-                 
-                    $("#message").html(html_1);
-
-                }
-                
-                },
-                error : function(response){
-                    console.log(response)
-                }
-            });
-       });
-
-       const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        // Render the PayPal button into #paypal-button-container
-        paypal.Buttons({
-
-            style: {
-                color:  'blue',
-                shape:  'pill',
-                label:  'pay',
-                height: 40
-            },
-                               // Call your server to set up the transaction
-                               createOrder: function(data, actions) {
-                                return fetch('{% url "home:create" course.slug %}', {
-                                    method: 'post',
-                                    headers: {"X-CSRFToken": csrftoken}
-                                }).then(function(res) {
-                                    return res.json();
-                                }).then(function(orderData) {
-                                    return orderData.id;
-                                });
-                            },
-                  
-                            // Call your server to finalize the transaction
-                            onApprove: function(data, actions) {
-                                return fetch('/capture/' + data.orderID +'/{{course.id}}/',{
-                                    method: 'post',
-                                    headers: {"X-CSRFToken": csrftoken}
-                                }).then(function(res) {
-                                   
-                                    window.location.href = '{% url "home:success" %}';                                
-                                    return res.json();
-                                }).then(function(orderData) {
-                                 
-                                    // Three cases to handle:
-                                    //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-                                    //   (2) Other non-recoverable errors -> Show a failure message
-                                    //   (3) Successful transaction -> Show a success / thank you message
-                  
-                                    // Your server defines the structure of 'orderData', which may differ
-                                    var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
-                  
-                                    if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
-                                        // Recoverable state, see: "Handle Funding Failures"
-                                        // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
-                                        return actions.restart();
-                                    }
-                  
-                                    if (errorDetail) {
-                                        var msg = 'Sorry, your transaction could not be processed.';
-                                        if (errorDetail.description) msg += '\n\n' + errorDetail.description;
-                                        if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
-                                        // Show a failure message
-                                        return alert(msg);
-                                    }
-                  
-                                    // Show a success message to the buyer
-                                   
-                                });
-                            },
-                            onCancel: function (data, actions) {
-                                return fetch('/payment/failed/',{
-                                    method: 'post',
-                                    headers: {"X-CSRFToken": csrftoken}
-                                }).then(function(res){
-                                    window.location.href = '{% url "home:failed" %}';
-                                    return res.json();
-                                })
-                                // Show a cancel page or return to cart
-                               
-                              },
-                  
-                              
-
-        }).render('#paypal-button-container');
-     
-            function copyMyText() {
-                 //select the element with the id "copyMe", must be a text box
-                 var textToCopy = document.getElementById("copyMe");
-                 //select the text in the text box
-                 textToCopy.select();
-                 //copy the text to the clipboard
-                 document.execCommand("copy");
-            }
-          
-   
-function copyMyBank() {
-//select the element with the id "copyMe", must be a text box
-var textToCopy = document.getElementById("BankAccount");
-//select the text in the text box
-textToCopy.select();
-//copy the text to the clipboard
-document.execCommand("copy");
-}   
-    </script>
 
    {% endblock %}

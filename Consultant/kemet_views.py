@@ -138,7 +138,6 @@ def western_payment(request,teacher):
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data)
             try:
                 if data["HttpCode"] == 201:
                     payment.payment_image = f"https://{agartha_cdn}/consultant-payment/{payment.user.slug}/{payment.teacher.id}/{image}"
@@ -188,7 +187,6 @@ def bank_payment(request,teacher):
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data)
             try:
                 if data["HttpCode"] == 201:
                     payment.payment_image = f"https://{agartha_cdn}/consultant-payment/{payment.user.slug}/{payment.teacher.id}/{image}"
@@ -262,10 +260,8 @@ def paypal_create(request,teacher):
         
             response = client.execute(create_order)
             data = response.result.__dict__['_dict']      
-        # print(data)
             return JsonResponse(data)
         except:
-            print("asd")
             data={}
             return JsonResponse(data)
     else:

@@ -150,7 +150,6 @@ class Teacher_Time(models.Model):
             for i in range(0,4):
                 all_days=next + datetime.timedelta(weeks=i)
                 list_days.append(all_days.strftime("%m/%d/%Y"))
-        print(list_days)
         return list_days
 
     def get_next_teacher_day(self):            #to get next day of teacher

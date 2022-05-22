@@ -1,0 +1,104 @@
+{% extends 'dashboard_base.html' %}
+{% load hosts %}
+
+
+
+{% block content %}
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Faqs</h1>
+                    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+                        For more information about DataTables, please visit the <a target="_blank"
+                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            {% comment %} <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6> {% endcomment %}
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Branch</th>
+                                            <th>Faq</th>
+                                            <th>Action</th>
+                                        
+                                        </tr>
+                                    </thead>
+                                
+                                   <tbody>
+                                       {% for i in faqs %}
+                                    <tr>
+                                        <td>{{i.branch.category.name}}</td>
+                                        <td>{{i.branch.name}}</td>
+                                        <td>{{i.name|truncatewords:20}}</td>
+                                        <td>
+                                    <a class="btn btn-success" href="{% url 'dashboard:faqs:edit_faq' i.id %}">Edit</a>
+                                <button class="btn btn-danger" data-toggle="modal" data-target="#faq-{{i.id}}">Delete</button></td>
+
+                                        </td>
+                                     
+                                     
+                                    </tr>
+
+                                    <!-- Modal -->
+<div class="modal fade" id="faq-{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete Faq</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you Sure ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="{% url 'dashboard:faqs:delete_faq' i.id %}" type="button" class="btn btn-danger">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+                                    {% endfor %}
+
+                                   </tbody>
+                                </table>
+                                {% if faqs.has_other_pages %}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        {% if teachers.has_previous  %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ faqs.previous_page_number }}">Previous</a></li>
+                                      {% endif %}
+                                      {% for i in  faqs.paginator.page_range %}
+                                      {% if faqs.number == i %}
+                                      <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% else %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+
+                                      {% endif %}
+                                      {% endfor %}
+                                      {% if faqs.has_next %}
+                                      <li class="page-item"><a class="page-link" href="?page={{ faqs.next_page_number }}">Next</a></li>
+                                      {% endif %}
+                                    </ul>
+                                  </nav>
+                                  {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+{% endblock %}

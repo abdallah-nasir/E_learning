@@ -14,7 +14,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 # import django_heroku
-  
+   
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,7 +79,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.linkedin_oauth2',    
     'bootstrap_datepicker_plus',
     "tempus_dominus",
-
+    "storages",
     'django_cleanup',
     'captcha',
     "admin_honeypot",
@@ -134,27 +134,27 @@ WSGI_APPLICATION = 'E_learning.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
-DATABASES = {    
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
-    }
-}    
+# DATABASES = {    
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
+#     }
+# }    
   
-# import pymysql
-# pymysql.install_as_MySQLdb()
-# import MySQLdb
-# DATABASES={   
-#     "default":{
-#         "ENGINE":"django.db.backends.mysql",
-#         "NAME":"agarthaa_e_learning",
-#         "USER":"agarthaa_root",
-#         "PASSWORD":"AgarthaNew",
-#         "HOST":"localhost",
-#         "PORT":"3307",
-#         'OPTIONS':{'sql_mode': 'STRICT_ALL_TABLES'},
-#     }      
-# }  
+import pymysql
+pymysql.install_as_MySQLdb()
+import MySQLdb
+DATABASES={   
+    "default":{
+        "ENGINE":"django.db.backends.mysql",
+        "NAME":"agartha",
+        "USER":"root",
+        "PASSWORD":"97@Mysql", 
+        "HOST":"localhost", 
+        "PORT":"3306",
+        'OPTIONS':{'sql_mode': 'STRICT_ALL_TABLES'},
+    }      
+}  
 CACHES = { 
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
@@ -199,17 +199,19 @@ TIME_ZONE = 'Africa/Cairo'
 TEMPUS_DOMINUS_LOCALIZE=True 
 
 MODELTRANSLATION_LANGUAGES = ['en',"ar"]
-
+ 
 STATIC_URL = '/static/'
 STATIC_ROOT=BASE_DIR/"static"
 STATICFILES_DIRS=[
   BASE_DIR/"static_in_env"
+] 
+# MEDIA_ROOT = BASE_DIR/"/media"
+# MEDIA_URL= "/media/"
 
-]  
-     
+
 # for translation
 USE_I18N = True
-USE_L10N = True
+USE_L10N = True 
 LOCALE_PATHS=(   
     os.path.join(BASE_DIR,"locale/"),
              )
@@ -389,4 +391,3 @@ RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
 RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
- 

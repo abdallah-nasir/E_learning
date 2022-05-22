@@ -2,7 +2,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from library.models import Audio_Tracks, Library_Payment,Movies,Audio_Book_Tracks
+from library.models import Audio_Tracks, Library_Payment,Movies,Audio_Book_Tracks,E_Book
 from .models import TeacherForms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -140,7 +140,6 @@ def check_course_refund(function):
         course=get_object_or_404(Course,slug=kwargs['slug'])
         payment=get_object_or_404(Payment,id=kwargs["id"])
         today= datetime.date.today()
-        print(payment.created_at + datetime.timedelta(days=30))
         refunds=Refunds.objects.filter(user=request.user,type="course_payment",content_id=payment.id).exclude(status="approved")
         if payment.status == 'refund':
             messages.error(request,"this payment is already refunded")
@@ -221,7 +220,6 @@ def check_consultant_refund(function):
             elif payment.consultant.date > today:
                 difference= payment.consultant.date - today
                 if difference.days < 3:
-                    print("here")
                     messages.error(request,"time already passed")
                     return redirect(reverse("accounts:consultant_payment"))
                 else:
@@ -262,6 +260,16 @@ def redirect_audio_book_payment(function):
     wrap.__name__ = function.__name__
     return wrap
 
+def redirect_e_book_payment(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.account_type == "teacher":
+            return redirect(reverse("dashboard:e_book:e_book_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap
+
 
 def check_audio_book_refund(function):
     @wraps(function)
@@ -282,6 +290,29 @@ def check_audio_book_refund(function):
         elif refunds.exists():
             messages.error(request,"you already have pending refund for this payment")
             return redirect(reverse("accounts:audio_book_payment"))
+        else:
+            return function(request, *args, **kwargs)
+    return wrap
+  
+def check_e_book_refund(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        track=get_object_or_404(E_Book,slug=kwargs['slug'])
+        payment=get_object_or_404(Library_Payment,id=kwargs["id"])
+        if payment.method == "Western Union":
+            messages.error(request,"You cant refund Western Union Payment")
+            return redirect(reverse("accounts:e_book_payment"))
+        today= datetime.date.today() 
+        refunds=Refunds.objects.filter(user=request.user,type="e_book_payment",content_id=payment.id).exclude(status="approved")
+        if payment.status == 'refund':
+            messages.error(request,"this payment is already refunded")
+            return redirect(reverse("accounts:e_book_payment"))
+        elif payment.created_at + datetime.timedelta(days=30) <= today : 
+            messages.error(request,"you have passed 30 days returns")
+            return redirect(reverse("accounts:e_book_payment"))
+        elif refunds.exists():
+            messages.error(request,"you already have pending refund for this payment")
+            return redirect(reverse("accounts:e_book_payment"))
         else:
             return function(request, *args, **kwargs)
     return wrap

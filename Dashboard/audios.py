@@ -214,11 +214,9 @@ def edit_audio(request,slug):
 
                 data=response.json()
                 for i in data:
-                    print(data)
                     image_url=f"https://storage.bunnycdn.com/{storage_name}/library-audio/{audio.slug}/{i['ObjectName']}"
                     response = requests.delete(image_url,headers=headers)
                     data=response.json()
-                    print(data)
                 images=request.FILES.getlist("image")
                 for i in images:
                     headers = {  

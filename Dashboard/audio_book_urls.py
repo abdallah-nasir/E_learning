@@ -4,6 +4,7 @@ app_name="Dashboard"
  
 urlpatterns = [
 path("add/track/",views.add_track,name="add_track"), 
+path("check_audio/<str:slug>/",views.check_audio,name="check_audio"), 
 path("tracks/",views.tracks,name="tracks"),
 path("track/<str:slug>/",views.single_track,name="single_track"), 
 path("add/music/",views.add_audio,name="add_audio"),  

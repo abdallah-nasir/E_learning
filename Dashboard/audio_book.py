@@ -226,11 +226,9 @@ def edit_audio(request,slug):
 
                 data=response.json()
                 for i in data:
-                    print(data)
                     image_url=f"https://storage.bunnycdn.com/{storage_name}/library-audio-book/{audio.slug}/{i['ObjectName']}"
                     response = requests.delete(image_url,headers=headers)
                     data=response.json()
-                    print(data)
                 images=request.FILES.getlist("image")
                 for i in images:
                     headers = {  
@@ -313,7 +311,7 @@ def edit_audio_book_payment(request,slug,id):
             messages.error(request,"You Don't Have Permission")
             return redirect(reverse("accounts:audio_book_payment"))
     context={"form":form}
-    return render(request,"edit_audio_book_payment.html",context)
+    return render(request,"audio-book/edit_audio_book_payment.html",context)
 
 @login_required(login_url="accounts:login")
 @check_user_validation

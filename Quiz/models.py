@@ -35,8 +35,6 @@ class Question(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
-        print(self.slug)
-
         if not self.slug:
             self.slug = slugify(self.title)
             if Question.objects.filter(slug=self.slug).exists():
@@ -44,7 +42,6 @@ class Question(models.Model):
                 self.slug =f"{slug}-{random_string_generator()}"
             else:
                 self.slug = slugify(self.title)    
-                print("ehre")
 
         super(Question, self).save()
 
@@ -118,7 +115,6 @@ class Quiz(models.Model):
         quiz_question=my_quiz.questions.get(id=int(question))
         qs=my_quiz.questions.all().order_by("-id")
         for i in qs:
-            # print(i)
             if i.id < int(question):
                 prev=i.slug
                 break
@@ -174,7 +170,6 @@ class Student_Quiz(models.Model):
         else:
             completed=False
         if student_quiz == quiz_questions :
-            print("there")
             result=True
         else:
             result=False

@@ -130,7 +130,11 @@ class Blog(models.Model):
             else:
                 self.slug = slugify(self.name)          
         super(Blog, self).save()
-        
+    def get_domain(self):
+        for i,b in DOMAIN:
+            if self.domain_type == i:
+                domain = b
+        return domain
     def get_views(self):
         views=self.viewers.count()
         return views
@@ -319,19 +323,16 @@ class Blog_Payment(models.Model):
     def __str__(self):    
         return self.method
 
+    def get_domain(self):
+        data=json.loads(self.data)
+        try:
+            type=data["type"]
+        except:
+            type=None
+        return type
     def check_payment(self):
         if self.expired == True:
             return False
-        if self.type == 1:
-            if self.user.vip == True:
-                return False
-            else:
-                return True
-        if self.type == 2:
-            if self.user.is_kemet_vip == True:
-                return False
-            else:
-                return False
         if self.status == "declined":
             if self.method == "Western Union" or self.method == "bank":
                 return True

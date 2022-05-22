@@ -97,7 +97,6 @@ def western_payment(request,slug):
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data) 
             try:
                 if data["HttpCode"] == 201:
                     payment.payment_image = f"https://{agartha_cdn}/audio-book-payment/{track.slug}/{payment.user.username}/{image}"
@@ -120,7 +119,6 @@ def western_payment(request,slug):
             return redirect(reverse("accounts:music_payment"))
         else:
             messages.error(request,"invalid form")
-            print(form.errors)
             return redirect(reverse("library:audio_book:music_payment",kwargs={"slug":track.slug}))
 
 
@@ -145,7 +143,6 @@ def bank_payment(request,slug):
                 }
             response = requests.put(image_url,data=image,headers=headers)
             data=response.json()
-            print(data) 
             try:
                 if data["HttpCode"] == 201:
                     payment.payment_image = f"https://{agartha_cdn}/audio-book-payment/{track.slug}/{payment.user.username}/{image}"
@@ -168,7 +165,6 @@ def bank_payment(request,slug):
             return redirect(reverse("accounts:music_payment"))
         else:
             messages.error(request,"invalid form")
-            print(form.errors)
             return redirect(reverse("library:audio_book:music_payment",kwargs={"slug":track.slug}))
 
 

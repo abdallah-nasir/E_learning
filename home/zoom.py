@@ -56,7 +56,6 @@ def createMeeting():
 		f'https://api.zoom.us/v2/users/me/meetings',
 	headers=headers, data=json.dumps(meetingdetails))
 
-	print("\n creating zoom meeting ... \n")
 	# print(r.text)
 	# converting the output into json and extracting the details
 	y = json.loads(r.text)

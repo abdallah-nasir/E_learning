@@ -2,7 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 import string,random,json,time,mutagen
-
+from cdn.conf import AWS_LOCATION
 from django.contrib.auth import get_user_model
 User=get_user_model()
 # Create your models here.
@@ -112,6 +112,9 @@ class Audio_Book_Tracks(models.Model):
             return True
         else:
             return False
+    def get_comments(self):
+        return Comments.objects.filter(library=1,content_id=self.id).select_related("user")
+
 class Audio_Book(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=150)
@@ -206,6 +209,9 @@ class Audio_Tracks(models.Model):
             return True
         else:
             return False
+    def get_comments(self):
+        return Comments.objects.filter(library=2,content_id=self.id).select_related("user")
+
 class Music(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=150)
@@ -270,7 +276,6 @@ class Movies(models.Model):
 
     def get_related(self):
         movies=Movies.objects.filter(category=self.category).exclude(id=self.id).select_related("category")[:4]
-        print(movies) 
         return movies 
     def get_movie_data(self):
         data=json.loads(self.data)
@@ -333,14 +338,23 @@ class Movies(models.Model):
                 return False
         else:
             return False 
+    def get_comments(self):
+        return Comments.objects.filter(library=3,content_id=self.id).select_related("user")
+
+def pdf_upload(instance, filename):
+    return (f"pdf/{instance.user.username}/{instance.slug}/{instance.pdf}")
+     
 class E_Book(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     name=models.CharField(max_length=150)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     image=models.ImageField()
+    pdf = models.FileField(blank=True,null=True,upload_to=pdf_upload)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     data=models.JSONField() 
+    buyers=models.ManyToManyField(User,blank=True,related_name="book_users")
+    comments = models.ManyToManyField(Comments, blank=True)
     price=models.FloatField(null=True,default=0)
     status=models.CharField(choices=ACTION_CHOICES,max_length=20,default="pending")
     slug=models.SlugField(unique=True,blank=True,max_length=100)
@@ -355,17 +369,15 @@ class E_Book(models.Model):
     def __str__(self):
         return self.name 
     def check_pdf(self):
-        data=self.data
         try:
-            pdf=data["pdf"]
+            pdf=self.pdf.url
             return True
         except:
             return False
     def get_book(self):
-        data=self.data
         try:
-            if data["pdf"]:
-                result=data["pdf"]
+            if self.pdf.url:
+                result=f"{AWS_LOCATION}/media/{self.pdf}"
             else:
                 result=False
         except:
@@ -388,7 +400,18 @@ class E_Book(models.Model):
         context={"images":images,"first_image":first_image}
         return context
     
-      
+    def get_about(self):
+        data=self.data
+        try:
+            about=data["about"]
+        except:
+            about=None
+        return about
+    def get_comments(self):
+        return Comments.objects.filter(library=4,content_id=self.id).select_related("user")
+
+    def get_same(self):
+        return E_Book.objects.filter(category=self.category,status="approved").exclude(id=self.id).select_related("user")[:4]
 class Artist(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     status=models.CharField(choices=ACTION_CHOICES,default="pending",max_length=10)
@@ -430,11 +453,14 @@ class Library_Payment(models.Model):
     def get_movies(self):
         if self.library_type == 3:
             movies=Movies.objects.get(id=self.content_id)
-            print(movies)
         return movies
     def get_music(self):
         if self.library_type == 2:
             track=Audio_Tracks.objects.get(id=self.content_id)
+        return track
+    def get_e_book(self):
+        if self.library_type == 4:
+            track=E_Book.objects.get(id=self.content_id)
         return track
     def check_payment(self):
         if self.expired == True:

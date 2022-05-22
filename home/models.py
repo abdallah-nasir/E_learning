@@ -207,7 +207,6 @@ class Course(models.Model):
             media_info = MediaInfo.parse(i.video)
             duration_in_ms = media_info.tracks[0].duration    
             time_in_sec=duration_in_ms/1000
-            print(time_in_sec)
             self.duration +=time_in_sec
         my_time=time.strftime('%H:%M:%S',  time.gmtime(self.duration))
         return my_time
@@ -233,7 +232,6 @@ class Course(models.Model):
             for i in self.reviews.all():
                 rate +=i.rate
             total=rate / (self.reviews.count())
-            print(total)
         else:   
             total=1
         return total
@@ -268,7 +266,6 @@ class Course(models.Model):
         for i in DOMAIN:
             while self.domain_type == i[0]:
                 domain=i[1]
-                print(domain)
                 break
         return domain
 def random_string_generator(size = 7, chars = string.ascii_lowercase + string.digits):

@@ -55,6 +55,8 @@ REFUND_TYPE=(
     ("movie_payment","movie_payment"),
     ("music_payment","music_payment"),
     ("audio_book_payment","audio_book_payment"),
+    ("e_book_payment","e_book_payment"),
+
 )
 class Refunds(models.Model): 
     type=models.CharField(choices=REFUND_TYPE,max_length=50)
@@ -89,7 +91,6 @@ class Ads(models.Model):
         for i in DOMAINS:
             while self.domain_type == i[0]:
                 domain=i[1]
-                print(domain)
                 break
-        return domain
+        return domain 
     

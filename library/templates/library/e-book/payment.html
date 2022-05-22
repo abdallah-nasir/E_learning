@@ -42,7 +42,7 @@
                     </tbody>
                     </table>
                     
-                    <form method="POST" action="{% url 'library:audio_book:western_payment' track.slug %}" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'library:e_book:western_payment' book.slug %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">
@@ -89,7 +89,7 @@
                       </tbody>
                     </table>
                   </div>
-                    <form method="POST" action="{% url 'library:audio_book:bank_payment' track.slug %}" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'library:e_book:bank_payment' book.slug %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">
@@ -140,7 +140,7 @@
         },
                            // Call your server to set up the transaction
                            createOrder: function(data, actions) {
-                            return fetch('{% url "library:audio_book:paypal_create" track.id %}', {
+                            return fetch('{% url "library:e_book:paypal_create" book.id %}', {
                                 method: 'post',
                                 headers: {"X-CSRFToken": csrftoken}
                             }).then(function(res) {
@@ -152,12 +152,12 @@
               
                         // Call your server to finalize the transaction
                         onApprove: function(data, actions) {
-                            return fetch('/library/audio-books/paypal/capture/' + data.orderID +'/{{track.id}}/',{
+                            return fetch('/library/e-books/paypal/capture/' + data.orderID +'/{{book.id}}/',{
                                 method: 'post',
                                 headers: {"X-CSRFToken": csrftoken}
                             }).then(function(res) {
                                
-                                window.location.href = '{% url "accounts:audio_payment" %}';                                
+                                window.location.href = '{% url "accounts:e_book_payment" %}';                                
                                 return res.json();
                             }).then(function(orderData) {
                              
@@ -192,7 +192,7 @@
                                 method: 'post',
                                 headers: {"X-CSRFToken": csrftoken}
                             }).then(function(res){
-                              window.location.href = '{% url "accounts:audio_payment" %}';                                
+                              window.location.href = '{% url "accounts:e_book_payment" %}';                                
                               return res.json();
                             })
                             // Show a cancel page or return to cart

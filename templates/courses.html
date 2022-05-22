@@ -47,7 +47,7 @@
                         
                         <div class="courses-search float-right">
                             <form method="GET" action="{% url  'home:course_search' %}">
-                                <input type="text" name="qs" placeholder="Search">
+                                <input type="text" name="qs" placeholder="{% trans 'Search' %}">
                                 <button type="button"><i class="fa fa-search"></i></button>
                             </form>
                         </div> <!-- courses search -->
