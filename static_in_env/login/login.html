@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Agartha Academy | Login - Signup</title>
+  <link rel="shortcut icon" href="images/favicon.png" type="image/png">
+
+  <link rel="stylesheet" href="login/css/bootstrap.min.css">
+	<link rel='stylesheet' href='login/css/unicons.css'>
+  <link rel="stylesheet" href="login/css/all.min.css">
+	<link rel="stylesheet" href="login/css/login-style.css">
+ <style type="text/css">
+   
+   li{
+    display:inline;
+     margin-right:10px;
+   }
+ </style>
+</head>
+
+<body>
+<!-- partial:index.partial.html -->
+
+<div class="section bg-section">
+  <div class="container">
+    <div class="row full-height justify-content-center">
+      <div class="col-12 text-center justify-content-center pd-top">
+        <div class="section pb-3 pt-3 text-center justify-content-center">
+          <h6 class="mb-0 pb-3"><span>Log In </span><span>Sign Up</span></h6>
+          <input class="checkbox" type="checkbox" id="reg-log" name="reg-log"/>
+          <label for="reg-log"></label>
+          <div class="card-3d-wrap mx-auto">
+            <div class="card-3d-wrapper">
+              <div class="card-front">
+                <div class="center-wrap">
+                  <form class="needs-validation" novalidate>
+                    <div class="section text-center">
+                      <h4 class="mb-4 pb-3">Log In</h4>
+                      <div class="form-row">
+                        <div class="col-sm-12 mb-4">
+                          <input type="text" class="form-style form-control" id="validationTooltip01" placeholder="Username / Email" value="" required>
+                          <i class="input-icon fas fa-at"></i>
+                          <div class="valid-tooltip">
+                            Looks good!
+                          </div>
+                          <div class="invalid-tooltip">
+                            Please choose a unique and valid username.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="col-sm-12 mb-3">
+                          <input type="password" class="form-style form-control" id="validationTooltip02" placeholder="Your Password" required>
+                          <i class="input-icon fas fa-lock"></i>
+                          <div class="invalid-tooltip">
+                            Please provide a valid password.
+                          </div>
+                        </div>
+                      </div>
+                      <button type="submit" class="btn mt-4">submit</button>
+                      <p class="mb-0 mt-4 text-center"><a href="account_reset_password" class="link">Forgot your password?</a></p>
+                    </div>
+                  </form>
+                  <div style="text-align: center; margin-bottom:5%; margin-top:5%" class="signin-social flex-c-m">
+                    <ul>
+                      <li>
+                        <a href=" provider_login_url provider.id process=process scope=scope auth_params=auth_params"> <i class="fab fa-google fa-2x"></i></a></li> 
+                      <li>
+                        <a href=" provider_login_url provider.id process=process scope=scope auth_params=auth_params"> <i class="fab fa-facebook fa-2x"></i></a></li> 
+                      <li>
+                        <a href=" provider_login_url provider.id process=process scope=scope auth_params=auth_params"> <i class="fab fa-linkedin-in fa-2x"></i></a></li> 
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-back">
+                <div class="center-wrap">
+                  <form class="needs-validation" novalidate>
+                    <div class="section text-center">
+                      <h4 class="mb-4 pb-3">Signup</h4>
+                      <div class="form-row">
+                        <div class="col-sm-12 mb-4">
+                          <input type="text" name="username" class="form-style form-control" id="validationTooltip05" placeholder="Username" value="" required>
+                          <i class="input-icon far fa-user"></i>
+                          <div class="valid-tooltip">
+                            Looks good!
+                          </div>
+                          <div class="invalid-tooltip">
+                            Please choose a unique and valid username.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                          <input type="email" class="form-style form-control" id="validationTooltip06" placeholder="Email" required>
+                          <i class="input-icon fas fa-at"></i>
+                          <div class="valid-tooltip">
+                            Looks good!
+                          </div>
+                          <div class="invalid-tooltip">
+                            Please provide a valid email.
+                          </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <input type="text" name="phone" class="form-style form-control" id="validationTooltip07" placeholder="Mobile Number" required>
+                          <i class="input-icon fas fa-mobile-alt"></i>
+                          <div class="valid-tooltip">
+                            Looks good!
+                          </div>
+                          <div class="invalid-tooltip">
+                            Please provide a valid phonenumber.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                          <input type="password" name="password1" class="form-style form-control" id="validationTooltip08" placeholder="Password" required>
+                          <i class="input-icon fas fa-lock"></i>
+                          <div class="valid-tooltip">
+                            Looks good!
+                          </div>
+                          <div class="invalid-tooltip">
+                            Please provide a valid password.
+                          </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <input type="password" name="password2" class="form-style form-control" id="validationTooltip03" placeholder="Confirm Password" required>
+                          <i class="input-icon fas fa-lock"></i>
+                          <div class="valid-tooltip">
+                            Looks good!
+                          </div>
+                          <div class="invalid-tooltip">
+                            Password confirmation is incorrect.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="container">
+                        <div class="h-gender row">
+                          <div class="col-3">
+                            <label class="form-check-label div-gender" style="color: #c4c3ca;">Gender:</label>
+                          </div>
+  
+                          <div class="col-3 form-check">
+                            <input type="radio" class="form-check-input input-gender" id="radio1" name="gender" value="female" required>
+                            <label class="form-check-label div-gender" for="radio1" style="color: #c4c3ca;">Female</label>
+                          </div>
+                          <div class="col-6 form-check">
+                            <input type="radio" class="form-check-input input-gender" id="radio2" name="gender" value="male" required>
+                            <label class="form-check-label div-gender" for="radio2" style="color: #c4c3ca;">Male</label>
+                            <div class="invalid-tooltip">Check one of this to continue!</div>
+                          </div>
+                          
+                        </div>
+                      </div>
+                      <div class="form-group mt-4">
+                        signup_form.captcha
+                      </div>
+                      <div class="form-group mt-2">
+                        <div class="container">
+                          <div class=" row text-center" style="margin-top:2%">
+                            <div class=" form-check col-xs-12">
+                              <input type="checkbox" name="terms_privacy" class="form-check-input "  required>
+                              <!--<span class="lab-terms"></span>-->
+                              <label class="form-check-label lab-terms" style="color: #c4c3ca;">By signing up, you agree to our</label>
+                              <div class="invalid-tooltip">Check this checkbox to continue!</div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class=" col-12">
+                              <p>	<a href="home:terms" text-decoration:underline" class="link ">Terms of use</a>
+                              <span>and</span>
+                              <a href="home:privacy" text-decoration:underline" class="link ">Privacy Policy</a></p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+<!-- partial -->
+<script src="login/js/jquery.slim.min.js"></script>
+	<script src="login/js/popper.min.js"></script>
+	<script src="login/js/bootstrap.bundle.min.js"></script>
+  <!-- <script  src="./script.js"></script> -->
+
+</body>
+</html>
+<script>
+	// Disable form submissions if there are invalid fields
+	(function () {
+		'use strict';
+		window.addEventListener('load', function () {
+			// Get the forms we want to add validation styles to
+			var forms = document.getElementsByClassName('needs-validation');
+
+			// Loop over them and prevent submission
+			var validation = Array.prototype.filter.call(forms, function (form) {
+				form.addEventListener('submit', function (event) {
+					debugger;
+					if (form.checkValidity() === false) {
+
+						event.preventDefault();
+						event.stopPropagation();
+					}
+					form.classList.add('was-validated');
+				}, false);
+			});
+		}, false);
+	})();
+</script>

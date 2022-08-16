@@ -7,136 +7,130 @@
 {% get_available_languages as LANGUAGES %}
 {% get_language_info_list  for LANGUAGES as languages %}
 {% block content %}
-
-<meta charset="utf-8">
-<title>{% trans 'Agartha pyament' %}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-<style type="text/css">
-    .form-check-label {
-        padding-left: 15px;
-    }
-</style>
+<title>{% trans 'Agartha Payment'  %}</title>
 
 <section id="tabs" class="project-tab">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <nav>
-                    <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Western Union</a>
-                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Bank Transaction</a>
-                        <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Paypal</a>
-                    </div>
-                </nav>
-                <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                      <table class="table">
-                        <thead class="thead-dark">
-                          <tr>
-                            <th scope="col">Name Recived</th>
-                            <th scope="col">Country</th>
-                            <th scope="col">Mobil Number</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <nav>
+                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                  <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Western Union</a>
+                  <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Bank Transaction</a>
+                  <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Paypal</a>
+              </div>
+              </nav>
+              <div class="tab-content box-sh-none " id="nav-tabContent">
+                  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="table-responsive">
+                      <table class="table width-900">
+                          <thead class="thead-dark">
+                            <tr>
+                              <th scope="col">Name Recived</th>
+                              <th scope="col">Country</th>
+                              <th scope="col">Mobil Number</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
                               <td>نبيل كمال محمد</td>
                               <td>مصر</td>
                               <td>00201011609810</td>
-                          </tr>
-                          <tr>
+                            </tr>
+                            <tr>
                               <td>Nabil Kamal Mohammad</td>
                               <td>Egypt</td>
                               <td>00201011609810</td>
-                          </tr>
-  
-                      </tbody>
+                            </tr>
+                           
+                           
+                          </tbody>
                       </table>
-                      
-                      <form method="POST" action="{% url 'blogs:western_payment' price.id %}" enctype="multipart/form-data">
-                        {{ form.non_field_errors }}
-                        {% csrf_token %}
-                        <div class="form-group">
-                          {{ form.number.errors }}
-                          <label for="exampleInputEmail1">Transaction ID</label>
-                          <input type="text" name="number"  class="form-control number" required="true" placeholder="MTCN" id="number" >
-                        </div>
-                        <div class="form-group">
-                          {{ form.payment_image.errors }}
-                              <label for="exampleInputEmail1">Image receip</label>
-                          <input type="file" name="image" accept="image/*" class="form-control" required="true" id="exampleInputEmail1" >
-                        </div>
-                        <br>
-                        <div class="form-group form-check">
-                          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                          <label class="form-check-label" for="exampleCheck1"><a href="{% url 'home:terms' %}">Terms & Privacy</a></label>
-                        </div>
-                        <br>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                      </form>
-                    </div>
-                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                      <div class="table-responsive">
-                      <table class="table">
-                        <thead class="thead-dark">
-                          <tr>
-                            <th scope="col">Bank name</th>
-                            <th scope="col">IBan</th>
-                            <th scope="col">Riceve Name</th>
-                            <th scope="col">Branch</th>
-                            <th scope="col">Swift Code</th>
-  
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>Mark</td>
-                            <td>EG260017001801820017420650101</td>
-                            <td>Nabil Kamal Mohamed</td>
-                            <td>Al AHRAR BRANCH</td>
-                            <td>SUCAEGCXXXX</td>
-                          </tr>
-                       
-                        </tbody>
-                      </table>
-                    </div>
-                      <form method="POST" action="{% url 'blogs:bank_payment' price.id %}" enctype="multipart/form-data">
-                        {{ form.non_field_errors }}
-                        {% csrf_token %}
-                        <div class="form-group">
-                          {{ form.number.errors }}
-                          <label for="exampleInputEmail1">Transaction ID</label>
-                          <input type="text" name="number"  class="form-control number" required="true" placeholder="Transaction Number"  >
-                        </div>
-                        <div class="form-group">
-                          {{ form.payment_image.errors }}
-                              <label for="exampleInputEmail1">Image receip</label>
-                          <input type="file" name="image" accept="image/*" class="form-control" required="true" placeholder="MTCN" >
-                        </div>
-                        <br>
-                        <div class="form-group form-check">
-                          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                          <label class="form-check-label" for="exampleCheck1"><a href="{% url 'home:terms' %}">Terms & Privacy</a></label>
-                        </div>
-                        <br>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                      </form>
-                    </div>
-                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                      <div class="col offset-lg-2">
-                        <div id="paypal-button-container"></div>
-  
+                  </div>
+                    
+                    <form  class="mt-50" method="POST" action="{% url 'blogs:western_payment' price.id %}" enctype="multipart/form-data">
+                      {{ form.non_field_errors }}
+                      {% csrf_token %} 
+                      <div class="form-group">
+                        {{ form.number.errors }}
+                        <label for="exampleInputEmail1" class="payment-lb">Transaction ID</label>
+                        <input type="text" name="number"  class="form-control number payment-input" required="true" placeholder="MTCN" id="number" >
                       </div>
-  
-                    </div>
+                      <div class="form-group">
+                       {{ form.payment_image.errors }} 
+                            <label for="exampleInputEmail1" class="payment-lb">Image receip</label>
+                        <input type="file" name="image" accept="image/*" class="form-control payment-input" required="true" id="exampleInputEmail1" >
+                      </div>
+                      <br>
+                      <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input payment-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1"><a href="{% url 'home:terms' %}">Terms & Privacy</a></label>
+                      </div>
+                      <br>
+                      <button type="submit" class="main-btn">Submit</button>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div class="table-responsive">
+                      <div class="table-responsive">
+                          <table class="table width-900">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th scope="col">Bank name</th>
+                                <th scope="col">IBan</th>
+                                <th scope="col">Riceve Name</th>
+                                <th scope="col">Branch</th>
+                                <th scope="col">Swift Code</th>
+      
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Mark</td>
+                                <td>EG260017001801820017420650101</td>
+                                <td>Nabil Kamal Mohamed</td>
+                                <td>Al AHRAR BRANCH</td>
+                                <td>SUCAEGCXXXX</td>
+                              </tr>
+                           
+                            </tbody>
+                          </table>
+                      </div>
                 </div>
-            </div>
-        </div>
-    </div>
-  </section>
+                  <form class="mt-50"  method="POST" action="{% url 'blogs:bank_payment' price.id %}" enctype="multipart/form-data">
+                   {{ form.non_field_errors }} 
+                       {% csrf_token %} 
+                      <div class="form-group">
+                        <!-- {{ form.number.errors }} -->
+                        <label for="exampleInputEmail1" class="payment-lb">Transaction ID</label>
+                        <input type="text" name="number"  class="form-control number payment-input" required="true" placeholder="Transaction Number"  >
+                      </div>
+                      <div class="form-group">
+                        <!-- {{ form.payment_image.errors }} -->
+                            <label for="exampleInputEmail1" class="payment-lb">Image receip</label>
+                        <input type="file" name="image" accept="image/*" class="form-control h payment-input" required="true" placeholder="MTCN" >
+                      </div>
+                      <br>
+                      <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label payment-lb" for="exampleCheck1" class="payment-lb"><a href="#">Terms & Privacy</a></label>
+                      </div>
+                      <br>
+                      <button type="submit" class="main-btn">Submit</button>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                    <div class="col offset-lg-2">
+                      <div id="paypal-button-container"></div>
 
+                    </div>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
 <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
 
 <script type="text/javascript">
@@ -245,4 +239,5 @@ $('#horizontalTab').easyResponsiveTabs({
 
    
 </script>
+
 {% endblock %}

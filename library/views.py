@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail,EmailMessage,get_connection
+from django.utils.translation import get_language
 from django.http import JsonResponse
 from .decorators import *
 from .forms import PaymentForm,CommentsForm
@@ -52,6 +53,12 @@ def search(request):
 @login_required(login_url="accounts:login")
 def home(request):
     data=get_library_home_data()
+    # lang = get_language()
+    # if lang == "en-us":
+    #     template = "library/home.html"
+    # else:
+    #     template = "library/home-rtl.html"
+
     context={"data":data}
     return render(request,"library/home.html",context)
    

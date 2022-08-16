@@ -48,24 +48,24 @@
     <!--====== Style css ======-->
 
     <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
-    rel="stylesheet"
-    />
+  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.css"
+  rel="stylesheet"
+/>
 {% endcache %}
-
 {% if LANGUAGE_CODE == "ar" %}
     <!--====== Bootstrap css ======-->
     <link rel="stylesheet" href="{% static 'css/base-rtl.css' %}">
     <!--====== Style css ======-->
     <link rel="stylesheet" href="{% static 'css/base-style-rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive-rtl.css' %}">
+
     <!--====== Responsive css ======-->
 {% else %}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-
 <link rel="stylesheet" href="{% static 'css/base-style2.css' %}">
+<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 
 {% endif %}
-<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 
     <!--====== Responsive css ======-->
 
@@ -80,9 +80,9 @@
                     display: table-cell !important;
                 }
         
-                .nice-select {
+           /*     .nice-select {
                     display: none !important;
-                }
+                }*/
         
                 .fa-heart {
                     cursor: pointer;
@@ -127,11 +127,10 @@
 
 </head>
 
-<body > 
+<body>
     <!-- oncontextmenu="return false;" -->
-    
     <!--====== PRELOADER PART START ======-->
-    
+
     <div class="preloader">
         <div class="loader rubix-cube">
             <div class="layer layer-1"></div>
@@ -144,13 +143,35 @@
             <div class="layer layer-8"></div>
         </div>
     </div>
-    
+
     <!--====== PRELOADER PART START ======-->
-    
+    <!--====== Popup PART START ======-->
+
+    <div class="modal fade" id="agarthaModal" tabindex="-1" role="dialog" aria-labelledby="agarthaModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="agarthaModalLabel">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis cumque aperiam quis sint et quasi necessitatibus nesciunt aliquam facilis! Impedit deserunt obcaecati temporibus nisi laborum excepturi maiores aut consequuntur esse?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="main-btn" data-dismiss="modal">No</button>
+              <button type="button" class="main-btn">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!--====== Popup PART START ======-->
     <!--====== HEADER PART START ======-->
-    
+
     <header id="header-part">
-       
+
         <div class="header-top d-none d-lg-block">
             <div class="container">
                 <div class="row">
@@ -160,16 +181,16 @@
                                 <img id="info-img" src="{% static 'images/all-icon/email.png' %}" alt="icon">
                             </div>
                             <div class="cont col-sm-9">
-                                <p >info@agartha.academy</p>
+                                <p>info@agartha.academy</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="slideUp" id="news-bar">
                             <marquee direction="left" scrollamount="3" behavior="scroll" onmouseover="this.stop()" onmouseout="this.start()">
-                                    {% for i in news %}
+                                {% for i in news %}
                                 <a href="{{i.link}}" class="hvr-pop">{{i.name}}</a><a>&nbsp;⏳&nbsp;</a>
-                                    {% endfor %}
+                                {% endfor %}
                             </marquee>
                         </div>
                     </div>
@@ -179,34 +200,34 @@
                                 <img src="{% static 'images/all-icon/support.png' %}" alt="icon">
                             </div>
                             <div class="cont col-sm-9">
-                                <span style="color:#ffc600;"> <p >{% trans 'Need Help? call us' %}</p > 00201011609810</span>
+                                <span style="color:#ffc600;"> <p>{% trans 'Need Help? call us' %}</p> 00201011609810</span>
                             </div>
                         </div>
                     </div>
                 </div> <!-- row -->
             </div> <!-- container -->
         </div> <!-- header top -->
-        
+
         <div class="header-logo-support pt-30 pb-30">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4 col-md-4">
                         <div class="logo">
-                            <a href="{% url  'home:home'  %}">
+                            <a href="{% url  'home:home'   %}">
                                 <img src="{% static 'images/logo.png' %}" alt="Logo">
                             </a>
-                          
+
                         </div>
-                       
+
                     </div>
                     {% if not request.user.vip %}
                     <div class="col-lg-8 col-md-8">
                         <div class="support-button float-right d-none d-md-block ">
-                         
+
                             <div class="button float-left">
-                                
-                                <a href="{% url 'blogs:pricing' %}" class="main-btn">{% trans 'Join Us' %}</a>
-                               
+
+                                <a href="{% url 'blogs:pricing'  %}" class="main-btn"  data-toggle="modal" data-target="#agarthaModal">{% trans 'Join Us' %}</a>
+
                             </div>
                         </div>
                     </div>
@@ -214,217 +235,199 @@
                 </div> <!-- row -->
             </div> <!-- container -->
         </div> <!-- header logo support -->
-        
+
         <div class="navigation">
-            <div class="container" >
+            <div class="container">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                      <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light " >
-    <!-- Container wrapper -->
-    <div class="container-fluid">
-      <!-- Toggle button -->
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </button>
-  
-      <!-- Collapsible wrapper -->
-      <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="active" href="{% url  'home:home' %}">{% trans 'Home' %}</a>
-                
-            </li>
-         
-            <li class="nav-item">
-                <a href="{% url  'home:courses'%}">{% trans 'Courses' %}</a>
-              
-            </li>
-            <li class="nav-item">
-                <a href="{% url  'library:home' %}">{% trans 'Library' %}</a>
-                
-            </li>
-            <li class="nav-item">
-                <a href="{% url  'home:events' %}">{% trans 'Events' %}</a>
-                
-            </li>
-            <li class="nav-item">
-                <a href="{% url  'home:teachers' %}">{% trans 'Teachers' %}</a>
-                
-            </li>
-            <li class="nav-item">
-                <a href="{% url  'blogs:blogs' %}">{% trans 'Blog' %}</a>
+                        <!-- Navbar -->
+                        <nav class="navbar navbar-expand-lg navbar-light ">
+                            <!-- Container wrapper -->
+                            <div class="container-fluid">
+                                <!-- Toggle button -->
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
 
-            </li>                            
-           
-             <li class="nav-item">
-                <a href="{% url  'consultant:home' %}">{% trans 'Consultations' %}</a>
-               
-            </li> 
-          
+                                <!-- Collapsible wrapper -->
+                                <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
+                                    <ul class="navbar-nav mr-auto">
+                                        <li class="nav-item">
+                                            <a class="active" href="{% url 'home:home'  %}">{% trans 'Home' %}</a>
 
-            <li class="nav-item">
-                <a href="#">{% trans 'Service' %}</a>
-                <ul class="sub-menu">
-                <li><a href="{% url  'home:contact' %}">{% trans 'Contact Us' %}</a></li> 
-                <li><a href="{% url  'home:faqs' %}">{% trans 'FAQS' %}</a></li>
-                <li><a href="{% url  'home:about' %}">{% trans 'About Us' %}</a></li>
-               
-            </ul> 
-            </li>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{% url 'home:courses'  %}">{% trans 'Courses' %}</a>
+
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'home:events'  %}">{% trans 'Events' %}</a>
+
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'library:home' %}">{% trans 'Library' %}</a>
+
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'home:teachers'  %}">{% trans 'Teachers' %}</a>
+
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'blogs:blogs'   %}">{% trans 'Blog' %}</a>
+
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{% url  'consultant:home'  %}">{% trans 'Consultations' %}</a>
+
+                                        </li>
 
 
-            <!-- <li class="nav-item">
-                <a href="#">{% trans 'Language' %}</a>
-                <ul class="sub-menu">
+                                        <li class="nav-item">
+                                            <a href="#">{% trans 'Service' %}</a>
+                                            <ul class="sub-menu">
+                                                <li><a href="{% url  'home:contact'  %}">{% trans 'Contact Us' %}</a></li>
+                                                <li><a href="{% url  'home:faqs'  %}">{% trans 'FAQS' %}</a></li>
+                                                <li><a href="{% url  'home:about'  %}">{% trans 'About Us' %}</a></li>
 
-                    {% for language in languages %}
-                     <li> <a href="/{{language.code}}" class="u-c-brand">{{ language.name_local }} ({{ language.code }})</a> 
-                     </li>
-                {%  endfor %}
-                </ul> 
-               
-            </li> -->
-           
-          
-        </ul>
-    </div>
-      <!-- Collapsible wrapper -->
-  
-      <!-- Right elements -->
-      <div class="d-flex align-items-center">
-        <!-- Icon -->
-        <a class="text-reset me-3" style="cursor:pointer;"  id="search" >
-            <i class="fa fa-search"></i>
-        </a>
-        {% if request.user.is_authenticated %}
-        <a class="text-reset me-3"  href="{% url  'home:cart' request.user.slug %}">
-            <i class="fa fa-shopping-bag"></i>
-            <span id="shop-numbers" class="badge rounded-pill badge-notification bg-success">{{my_wishlist.course.count}}</span>
-        </a>
-         {% else %}
-     <a class="text-reset me-3"  href="{% url  'account_login' %}">
-         <i class="fa fa-shopping-bag"></i>
-        <span class="badge rounded-pill badge-notification bg-success">0</span>
-        </a>
+                                            </ul>
+                                        </li>
 
-     {% endif %}
-        <!-- Notifications -->
-        <div class="dropdown">
-          <a
-            class="text-reset me-3 dropdown-toggle hidden-arrow"
-            href="#"
-            id="navbarDropdownMenuLink"
-            role="button"
-            data-mdb-toggle="dropdown"
-            aria-expanded="false"
-          >
-          <i class="fa fa-globe"></i>
-          </a>
-         
-          <ul
-            class="dropdown-menu dropdown-menu-end"
-            aria-labelledby="navbarDropdownMenuLink"
-          >
-            <li>
-                {% if LANGUAGE_CODE == "ar" %}
-               
-              <a class="dropdown-item" title="{% trans 'English' %}" href="{% url  'language' %}?path={{request.path}}&language=en">{% trans 'English' %}</a>
-              {% else %}
-            <a class="dropdown-item" title="{% trans 'Arabic' %}" href="{% url  'language' %}?path={{request.path}}&language=ar">{% trans 'Arabic' %}</a>
 
-             
-              {% endif %}
-            </li>
-         
-          </ul>
-        </div>
-        <!-- Avatar -->
-        <div class="dropdown" id="profile-list">
-            {% if request.user.is_authenticated %}
-          <a
-            class="dropdown-toggle d-flex align-items-center hidden-arrow"
-            href="#"
-            id="navbarDropdownMenuAvatar"
-            role="button"
-            data-mdb-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <img
-              src="{{request.user.image}}"
-              class="rounded-circle"
-              height="30"
-              alt="{{request.user.username}}"
-              loading="lazy"
-            />
-            <span class="hello-msg">
-                {% trans 'Hello,' %} {{request.user.first_name}}
-            </span>
-          </a>
-         
-          <ul
-            class="dropdown-menu dropdown-menu-end"
-            aria-labelledby="navbarDropdownMenuAvatar"
-          >
-            <li>
-              <a class="dropdown-item" href="{% url  'accounts:account_info' %}">{% trans 'My profile' %}</a>
-            </li>
-            {% if request.user.is_authenticated %}
-            <li>
-              <a class="dropdown-item" href="{% url  'accounts:logout' %}">{% trans 'Logout' %}</a>
-            </li>
-            {% else %}
-            <li>
-              <a class="dropdown-item" href="{% url  'accounts:login' %}">{% trans 'Login' %}</a>
-            </li>
-            {% endif %}
-          </ul>
-          {% else %}
-          <div class="dropdown">
-            <a
-              class="text-reset me-3 dropdown-toggle hidden-arrow"
-              href="#"
-              id="navbarDropdownMenuLink"
-              role="button"
-              data-mdb-toggle="dropdown"
-              aria-expanded="false"
-            >
-            <i class="fa fa-user"></i>
-            </a>
-           
-            <ul
-              class="dropdown-menu dropdown-menu-end"
-              aria-labelledby="navbarDropdownMenuLink"
-            >
-              <li>
-                <a class="dropdown-item" href="{% url  'accounts:login' %}">{% trans 'Login' %}</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{% url  'accounts:signup' %}">{% trans 'Signup' %}</a>
-              </li>
-            
-            </ul>
-          </div>
+                                        <!-- <li class="nav-item">
+                                            <a href="#">{% trans 'Language' %}</a>
+                                            <ul class="sub-menu">
 
-          {% endif %}
-        </div>
-      </div>
-      <!-- Right elements -->
-    </div>
-    <!-- Container wrapper -->
-  </nav>
-  <!-- Navbar -->
+                                                {% for language in languages %}
+                                                 <li> <a href="/{{language.code}}" class="u-c-brand">{{ language.name_local }} ({{ language.code }})</a>
+                                                 </li>
+                                            {%  endfor %}
+                                            </ul>
+
+                                        </li> -->
+
+
+                                    </ul>
+                                </div>
+                                <!-- Collapsible wrapper -->
+                                <!-- Right elements -->
+                                <div class="d-flex align-items-center">
+                                    <!-- Icon -->
+                                    <a class="navbar-icon me-3" style="cursor:pointer;" id="search">
+                                        <i class="fa fa-search"></i>
+                                    </a>
+                                    {% if request.user.is_authenticated %}
+                                    <a class="navbar-icon me-3" href="{% url  'home:cart' request.user.slug  %}">
+                                        <i class="fa fa-shopping-bag"></i>
+                                        <span id="shop-numbers" class="badge rounded-pill badge-notification bg-success">{{my_wishlist.course.count}}</span>
+                                    </a>
+                                    {% else %}
+                                    <a class="navbar-icon me-3" href="{% url  'account_login' %}">
+                                        <i class="fa fa-shopping-bag"></i>
+                                        <span class="badge rounded-pill badge-notification bg-success">0</span>
+                                    </a>
+
+                                    {% endif %}
+                                    <!-- Notifications -->
+                                    <div class="dropdown">
+                                        <a class="navbar-icon me-3 dropdown-toggle hidden-arrow"
+                                           href="#"
+                                           id="navbarDropdownMenuLink"
+                                           role="button"
+                                           data-mdb-toggle="dropdown"
+                                           aria-expanded="false">
+                                            <i class="fa fa-globe"></i>
+                                        </a>
+
+                                        <ul class="dropdown-menu dropdown-menu-end"
+                                            aria-labelledby="navbarDropdownMenuLink">
+                                            <li>
+                                                {% if LANGUAGE_CODE == "ar" %}
+
+                                                <a class="dropdown-item" title="{% trans 'English' %}" href="{% url  'language'  %}?path={{request.path}}&language=en">{% trans 'English' %}</a>
+                                                {% else %}
+                                                <a class="dropdown-item" title="{% trans 'Arabic' %}" href="{% url  'language'  %}?path={{request.path}}&language=ar">{% trans 'Arabic' %}</a>
+
+
+                                                {% endif %}
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                    <!-- Avatar -->
+                                    <div class="dropdown" id="profile-list">
+                                        {% if request.user.is_authenticated %}
+                                        <a class="navbar-icon dropdown-toggle d-flex align-items-center hidden-arrow"
+                                           href="#"
+                                           id="navbarDropdownMenuAvatar"
+                                           role="button"
+                                           data-mdb-toggle="dropdown"
+                                           aria-expanded="false">
+                                            <img src="{{request.user.image}}"
+                                                 class="rounded-circle img-circle"
+                                                 height="30"
+                                                 alt="{{request.user.username}}"
+                                                 loading="lazy" />
+                                        </a>
+
+                                        <ul class="dropdown-menu dropdown-menu-end"
+                                            aria-labelledby="navbarDropdownMenuAvatar">
+                                            <li>
+                                                <a class="dropdown-item" href="{% url  'accounts:account_info'  %}">{% trans 'My profile' %}</a>
+                                            </li>
+                                            {% if request.user.is_authenticated %}
+                                            <li>
+                                                <a class="dropdown-item" href="{% url  'accounts:logout'  %}">{% trans 'Logout' %}</a>
+                                            </li>
+                                            {% else %}
+                                            <li>
+                                                <a class="dropdown-item" href="{% url  'accounts:login'  %}">{% trans 'Login' %}</a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                        {% else %}
+                                        <div class="dropdown">
+                                            <a class="text-reset me-3 dropdown-toggle hidden-arrow"
+                                               href="#"
+                                               id="navbarDropdownMenuLink"
+                                               role="button"
+                                               data-mdb-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="fa fa-user"></i>
+                                            </a>
+
+                                            <ul class="dropdown-menu dropdown-menu-end"
+                                                aria-labelledby="navbarDropdownMenuLink">
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url  'accounts:login'  %}">{% trans 'Login' %}</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url  'accounts:signup'  %}">{% trans 'Signup' %}</a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- Right elements -->
+                            </div>
+                            <!-- Container wrapper -->
+                        </nav>
+                        <!-- Navbar -->
                     </div>
                     <!-- <div class="col-lg-2 col-md-2 col-sm-3 col-3">
 
-                       
+
                             <div class="container" >
                                 <div class="row">
                                     <div class="col-lg-10 col-md-10 col-sm-9 col-8">
                                         <nav class="navbar navbar-expand-lg navbar-expand-md">
-                                            
+
                                             <div class="collapse navbar-collapse sub-menu-bar"  style=" display: contents;" >
                                                 <ul class="navbar-nav mr-auto">
                                                 <li  class="nav-item active"><a  style="cursor:pointer;" id="search"><i class="fa fa-search"></i></a></li>
@@ -442,37 +445,41 @@
                                                     </li>
                                                     <li class="nav-item">
                                                         <a href="{% url  'accounts:account_info' %}"><i class="fa fa-user"></i></a>
-                                                    
+
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </nav> 
+                                        </nav>
                                     </div>
-                
-                                    
+
+
                                         </div>
                             </div>
-                     
+
 
 
                     </div> -->
                 </div> <!-- row -->
             </div> <!-- container -->
         </div>
-        
+
     </header>
+
+    <!--====== HEADER PART ENDS ======-->
+    <!--====== Input Hidden START ======-->
+    
+    <input type="hidden" name="showPopup" id="showPopupMSG" data-showpopup="false" value="false">
     
     <!--====== HEADER PART ENDS ======-->
-   
     <!--====== SEARCH BOX PART START ======-->
-    
+
     <div class="search-box">
         <div class="serach-form">
             <div class="closebtn">
                 <span></span>
                 <span></span>
             </div>
-            <form action="{% url  'home:global_search' %}" method='GET' >
+            <form action="{% url  'home:global_search'  %}" method='GET'>
 
                 <input type="text" name="qs" placeholder="{% trans 'Search in Courses and Teachers' %}">
                 <button><i class="fa fa-search"></i></button>
@@ -480,57 +487,37 @@
         </div> <!-- serach form -->
     </div>
 
-    <div id="content">
-        <div id="content">
-            {% if messages %}
-            <div class="modal fade" id="agarthaModal" tabindex="-1" role="dialog" aria-labelledby="agarthaModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="agarthaModalLabel"></h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                         
-                            {% for message in messages  %} 
-                            <div class="alert alert-{{message.tags}}" role="alert">
-                                {{message}}
-                              </div>
-                            
-                            {% endfor %}
-        
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="main-btn" data-dismiss="modal">Close</button>
-                            {% comment %} <button type="button" class="main-btn">Yes</button> {% endcomment %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-           {% endif %}    
-                
+    {% if messages %}
+    {% for message in messages  %}
+    <div class="container">
+        <div style="text-align:center;" class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            <strong>{{message}} </strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
+    </div>
+    {% endfor %}
+    {% endif %}
     <!--====== SEARCH BOX PART ENDS ======-->
-   {% block content %}
+    {% block content %}
 
-   {% endblock %}
+    {% endblock %}
 
-   
+
     <!--====== FOOTER PART START ======-->
-    
+
     <footer id="footer-part">
         <div class="footer-top pt-40 pb-70">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-5 col-md-4 col-sm-12">
+                    <div class="col-lg-5 col-md-12 col-sm-12">
                         <div class="footer-about mt-40">
                             <div class="logo">
                                 <a href="#"><img src="{% static 'images/logo-2.png' %}" alt="Logo"></a>
                             </div>
-                            <p >
-                                {% blocktrans %} Deep within you, the light you are looking for.<br/>You have the capabilities that successful people possess. <br />Just discover it.. then invest it in yourself. <br />Eternal... <br />Discover your inner kingdom.{% endblocktrans %}
+                            <p>
+                                Deep within you, the light you are looking for.<br />You have the capabilities that successful people possess. <br />Just discover it.. then invest it in yourself. <br />Eternal... <br />Discover your inner kingdom.
                             </p>
                             <ul class="mt-20">
                                 <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
@@ -547,225 +534,226 @@
                             </div>
                             <ul>
                                 </li>
-                                <li><a href="{% url  'home:about' %}"><i class="fa fa-angle-right"></i> {% trans 'About us' %}</a></li>
-                                <li><a href="{% url  'home:teachers' %}"><i class="fa fa-angle-right"></i> {% trans 'Teachers' %}</a></li>
-                                <li><a href="{% url  'home:contact' %}"><i class="fa fa-angle-right"></i> {% trans 'Contact' %}</a></li>
+                                <li><a href="{% url  'home:about'   %}"><i class="fa fa-angle-right"></i> {% trans 'About us' %}</a></li>
+                                <li><a href="{% url  'home:teachers'  %}"><i class="fa fa-angle-right"></i> {% trans 'Teachers' %}</a></li>
+                                <li><a href="{% url  'home:contact'  %}"><i class="fa fa-angle-right"></i> {% trans 'Contact' %}</a></li>
                             </ul>
                             <!-- <ul>
-                                <li><a href="#"><i class="fa fa-angle-right"></i>Gallery</a></li> 
-                                <li><a href="shop.html"><i class="fa fa-angle-right"></i>Shop</a></li> 
+                                <li><a href="#"><i class="fa fa-angle-right"></i>Gallery</a></li>
+                                <li><a href="shop.html"><i class="fa fa-angle-right"></i>Shop</a></li>
                                 <li><a href="{% url  'home:teachers' %}"><i class="fa fa-angle-right"></i>Teachers</a></li>
                                 <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i>Support</a></li>
                                 <li><a href="{% url  'home:contact' %}"><i class="fa fa-angle-right"></i>Contact</a></li>
                             </ul> -->
                         </div> <!-- footer link -->
                     </div>
-                    <div class="col-lg-2 col-md-4 col-sm-12" >
+                    <div class="col-lg-2 col-md-4 col-sm-12">
                         <div class="footer-link support mt-40">
                             <div class="footer-title pb-25">
                                 <h6> {% trans 'Our Products' %}</h6>
                             </div>
                             <ul>
-                                <li><a href="{% url  'home:courses' %}"><i class="fa fa-angle-right"></i> {% trans 'Courses' %}</a></li>
-                                <li><a href="{% url  'consultant:home' %}"><i class="fa fa-angle-right"></i> {% trans 'Consultations' %}</a></li>
-                                <li><a href="{% url  'blogs:blogs' %}"><i class="fa fa-angle-right"></i> {% trans 'Articles' %}</a></li>
-                                <li><a href="{% url  'home:events' %}"><i class="fa fa-angle-right"></i> {% trans 'Events' %}</a></li>
+                                <li><a href="{% url  'home:courses'   %}"><i class="fa fa-angle-right"></i> {% trans 'Courses' %}</a></li>
+                                <li><a href="{% url  'consultant:home'  %}"><i class="fa fa-angle-right"></i> {% trans 'Consultations' %}</a></li>
+                                <li><a href="{% url  'blogs:blogs'  %}"><i class="fa fa-angle-right"></i> {% trans 'Articles' %}</a></li>
+                                <li><a href="{% url  'home:events'  %}"><i class="fa fa-angle-right"></i> {% trans 'Events' %}</a></li>
 
-                          
+
                                 <!-- <li><a href="#"><i class="fa fa-angle-right"></i>Documentation</a></li> -->
                             </ul>
                         </div> <!-- support -->
                     </div>
-                    <div class="col-lg-3 col-md-12 col-sm-12">
+                    <div class="col-lg-3 col-md-4 col-sm-12">
                         <div class="footer-address mt-40">
                             <div class="footer-title pb-25">
                                 <h6> {% trans 'Support' %}</h6>
                             </div>
-                            
+
                             <div class="footer-link">
                                 <ul>
-                                <li>
-                                    <a href="{% url  'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Privacy' %}</a>
-                                </li>
-                                <li><a href="{% url  'home:privacy' %}"><i class="fa fa-angle-right"></i> {% trans 'Policy' %}</a></li>
-                                <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i> {% trans 'Support' %}</a></li>
-                                <li><a href="{% url  'home:faqs' %}"><i class="fa fa-angle-right"></i> {% trans 'FAQS' %}</a></li>
+                                    <li>
+                                        <a href="{% url  'home:privacy'  %}"><i class="fa fa-angle-right"></i> {% trans 'Privacy' %}</a>
+                                    </li>
+                                    <li><a href="{% url  'home:privacy'  %}"><i class="fa fa-angle-right"></i> {% trans 'Policy' %}</a></li>
+                                    <li><a href="mailto:support@agartha.academy"><i class="fa fa-angle-right"></i> {% trans 'Support' %}</a></li>
+                                    <li><a href="{% url  'home:faqs'  %}"><i class="fa fa-angle-right"></i> {% trans 'FAQS' %}</a></li>
 
-                            </ul>
+                                </ul>
                             </div>
-                               
+
                         </div> <!-- footer address -->
                     </div>
                 </div> <!-- row -->
             </div> <!-- container -->
         </div> <!-- footer top -->
-        
+
         <div class="footer-copyright pt-10 pb-25">
             <div class="container">
                 <div class="row">
-                    <div  class="col-12 offset-lg-3">
-                        <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url  'home:terms' %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url  'home:privacy' %}">Privacy Policy</a></p>
+                    <div class="col-12 offset-lg-3">
+                        <p style="color:#505050;"> © 2022 Copyright : Agartha Academy | <a style="color:#505050;" href="{% url  'home:terms'  %}">Terms and Conditions</a> | <a style="color:#505050;" href="{% url  'home:privacy'  %}">Privacy Policy</a></p>
                     </div>
-              
-                </div> 
+
+                </div>
             </div> <!-- container -->
         </div> <!-- footer copyright -->
     </footer>
-    
+
     <!--====== FOOTER PART ENDS ======-->
-   
     <!--====== BACK TO TP PART START ======-->
-    
+
     <a href="#" class="back-to-top"><i class="fa fa-angle-up"></i></a>
-    
+
     <!--====== BACK TO TP PART ENDS ======-->
-   
-    
-    {% cache 172800 kemet_static_js %}
+    {% comment %} {% cache 172800 kemet_static_js %} {% endcomment %}
     <!--====== jquery js ======-->
     <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
 
     <!--====== Bootstrap js ======-->
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    
+
     <!--====== Slick js ======-->
     <script src="{% static 'js/slick.min.js' %}"></script>
-    
+
     <!--====== Magnific Popup js ======-->
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
-    
+
     <!--====== Counter Up js ======-->
     <script src="{% static 'js/waypoints.min.js' %}"></script>
     <script src="{% static 'js/jquery.counterup.min.js' %}"></script>
-    
+
     <!--====== Nice Select js ======-->
     <script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
-    
+
     <!--====== Nice Number js ======-->
     <script src="{% static 'js/jquery.nice-number.min.js' %}"></script>
-    
+
     <!--====== Count Down js ======-->
     <script src="{% static 'js/jquery.countdown.min.js' %}"></script>
-    
+
     <!--====== Validator js ======-->
     <script src="{% static 'js/validator.min.js' %}"></script>
-    
+
     <!--====== Ajax Contact js ======-->
     <script src="{% static 'js/ajax-contact.js' %}"></script>
-    
+
     <!--====== Main js ======-->
-    <script src="{% static 'js/base_main.js' %}"></script>
-    
+    <script src="{% static 'js/main.js' %}"></script>
+
     <!--====== Map js ======-->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDC3Ip9iVC0nIxC6V14CKLQ1HZNF_65qEQ"></script>
     <script src="{% static 'js/map-script.js' %}"></script>
-<!-- MDB -->
-<script
-  type="text/javascript"
-  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"
-></script>
-{% endcache %}
-</body>
-<script style="text/javascript">
-   
-   
-    $(document).ready(function(){
-        $("#agarthaModal").modal('show');
-    });
+    <!-- MDB -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"></script>
   
-$(document).on('click',"#love-add",function(){
-        var _vm=$(this);
-        var _index=_vm.attr('data-index');
-        var _productId=$(".love-add-"+_index).val();
-        // Ajax
-        $.ajax({
-        
+    {% comment %} {% endcache %} {% endcomment %}
 
-            url:"{% url  'home:wishlist_add' %}",
-            data:{
-                'id':_productId,
-                
-                },
-            dataType:'json',
-            beforeSend:function(){
-                _vm.attr('disabled',true);
-            },
-            success:function(res){
-                let html_data1=`
-            ${res.shop}
-                `;
-           
-                $("#shop-numbers").html(html_data1);
-               
-                if(res.color == "yellow" ){
-                    let html_data2=`
-                    <li ><a><i style="color:#ffc600;"  id="love-color-${_productId}"  class="fa fa-heart"></i><span>${res.count}</span></a></li> `;
-               
-                    $(".love-add-"+_productId).html(html_data2);
-                    _vm.attr('disabled',false);
-                }
-             
-            
-                        },
-            error:function(res){
-                let html_data2=`
-                        
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>Message</strong> Please Login First
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                 
-                `;
-           
-                $("#collapse-"+_productId).html(html_data2);
-                $("#collapse-2-"+_productId).html(html_data2);
-                },
-                        });
-                        // End
-                    });    
+    <script style="text/javascript">
 
-    $(document).on('click',"#love-remove",function(){
-            var _vm=$(this);
-            var _index=_vm.attr('data-index');
-            var _productId=$(".love-remove-"+_index).val();
+
+
+        $(window).on('load', function(event) {
+            $('.preloader').delay(50).fadeOut(50);
+        });
+
+        $(document).on('click', "#love-add", function () {
+            var _vm = $(this);
+            var _index = _vm.attr('data-index');
+            var _productId = $(".love-add-" + _index).val();
             // Ajax
             $.ajax({
-            
-    
-                url:"{% url  'home:wishlist_remove' %}",
-                data:{
-                    'id':_productId,
-                    
-                    },
-                dataType:'json',
-                beforeSend:function(){
-                    _vm.attr('disabled',true);
+
+
+                url: "{% url  'home:wishlist_add'  %}",
+                data: {
+                    'id': _productId,
+
                 },
-                success:function(res){
-                    let html_data1=`
-                ${res.shop}
-                    `;
-               
+                dataType: 'json',
+                beforeSend: function () {
+                    _vm.attr('disabled', true);
+                },
+                success: function (res) {
+                    let html_data1 = `
+                        ${res.shop}
+                            `;
+
                     $("#shop-numbers").html(html_data1);
-                    $("#wish-"+_productId).remove();
-                    $("#wish-2-"+_productId).remove();
-                    if(res.count == 0 ){
+
+                    if (res.color == "yellow") {
+                        let html_data2 = `
+                                <li ><a><i style="color:#ffc600;"  id="love-color-${_productId}"  class="fa fa-heart"></i><span>${res.count}</span></a></li> `;
+
+                        $(".love-add-" + _productId).html(html_data2);
+                        _vm.attr('disabled', false);
+                    }
+
+
+                },
+                error: function (res) {
+                    let html_data2 = `
+
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>Message</strong> Please Login First
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+
+                            `;
+
+                    $("#collapse-" + _productId).html(html_data2);
+                    $("#collapse-2-" + _productId).html(html_data2);
+                },
+            });
+            // End
+        });
+
+        $(document).on('click', "#love-remove", function () {
+            var _vm = $(this);
+            var _index = _vm.attr('data-index');
+            var _productId = $(".love-remove-" + _index).val();
+            // Ajax
+            $.ajax({
+
+
+                url: "{% url  'home:wishlist_remove'  %}",
+                data: {
+                    'id': _productId,
+
+                },
+                dataType: 'json',
+                beforeSend: function () {
+                    _vm.attr('disabled', true);
+                },
+                success: function (res) {
+                    let html_data1 = `
+                            ${res.shop}
+                                `;
+
+                    $("#shop-numbers").html(html_data1);
+                    $("#wish-" + _productId).remove();
+                    $("#wish-2-" + _productId).remove();
+                    if (res.count == 0) {
                         window.location.assign(window.location.pathname);
                     }
-                   
-                            },
-           
-                            });
-                            // End
-                        });    
-   
-$(document).ready(function(){
-$('#videoElementID').bind('contextmenu',function() { return false; });
-});
+
+                },
+
+            });
+            // End
+        });
+
+        $(document).ready(function () {
+            $('#videoElementID').bind('contextmenu', function () { return false; });
+        });
 
     </script>
+
+
+</body>
+
     
 </html>

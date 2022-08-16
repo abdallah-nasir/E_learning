@@ -1990,15 +1990,37 @@ p {
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
+
 }
 
-    .singel-publication .image {
-        position: relative;
-    }
-
-        .singel-publication .image img {
-            width: 100%;
-        }
+.singel-publication .image{
+    position: relative;
+    height: 100%;
+}
+.singel-publication .image-sqaure{
+    position: relative;
+    height: 100%;
+}
+.singel-publication .image-sqaure:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%; /* The padding depends on the width, not on the height, so with a padding-bottom of 100% you will get a square */
+  }
+.singel-publication .image img{
+    height: 100%;
+    width: 100%;
+}
+.singel-publication .image-sqaure img {
+    position: absolute; /* Take your picture out of the flow */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0; /* Make the picture taking the size of it's parent */
+    width: 100%; /* This if for the object-fit */
+    height: 100%; /* This if for the object-fit */
+    object-fit: cover; /* Equivalent of the background-size: cover; of a background-image */
+    object-position: center;
+  }
 
         .bookshelf .book .item-type-icon,
         .singel-publication .image .item-type-icon {
@@ -2015,6 +2037,7 @@ p {
             overflow: hidden;
         }
 
+        .singel-publication .image-sqaure .add-cart ,
         .singel-publication .image .add-cart {
             position: absolute;
             top: 0;
@@ -2027,10 +2050,12 @@ p {
             transition: all 0.4s linear;
         }
 
+        .singel-publication .image-sqaure:hover .add-cart ,
         .singel-publication .image:hover .add-cart {
             opacity: 1;
         }
 
+        .singel-publication .image-sqaure .add-cart ul ,
         .singel-publication .image .add-cart ul {
             position: absolute;
             display: flex;
@@ -2040,11 +2065,13 @@ p {
             transform: translate(50%, -50%);
         }
 
+            .singel-publication .image-sqaure .add-cart ul li ,
             .singel-publication .image .add-cart ul li {
                 display: inline-block;
                 margin: 0 5px;
             }
 
+                .singel-publication .image-sqaure .add-cart ul li a ,
                 .singel-publication .image .add-cart ul li a {
                     font-size: 16px;
                     color: #ffc600;
@@ -2056,6 +2083,7 @@ p {
                     transition: all 0.4s linear;
                 }
 
+                    .singel-publication .image-sqaure .add-cart ul li a:hover ,
                     .singel-publication .image .add-cart ul li a:hover {
                         background-color: #ffc600;
                         color: #07294d;
@@ -4622,6 +4650,37 @@ p {
             border-radius: 4px;
         }
 
+        .shop-destails .shop-left .shop-image img{
+            width: 100%;
+            border-radius: 4px;
+        }
+        .shop-destails .shop-left .shop-image a.square{
+            display: block;
+            position: relative;
+            height: 100%;
+        }
+        .shop-destails .shop-left .shop-image a.square:after {
+            content: "";
+            display: block;
+            padding-bottom: 100%; /* The padding depends on the width, not on the height, so with a padding-bottom of 100% you will get a square */
+        }
+        .shop-destails .shop-left .shop-image a.square img{
+            border-radius: 4px;
+            height: 100%;
+            width: 100%;
+        }
+        .shop-destails .shop-left .shop-image a.square img {
+            position: absolute; /* Take your picture out of the flow */
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0; /* Make the picture taking the size of it's parent */
+            width: 100%; /* This if for the object-fit */
+            height: 100%; /* This if for the object-fit */
+            object-fit: cover; /* Equivalent of the background-size: cover; of a background-image */
+            object-position: center;
+          }
+
         .shop-destails .shop-left .nav .nav-item {
             margin-left: 25px;
         }
@@ -5471,6 +5530,12 @@ Welcom
     font-size: 18px;
     margin-left: 15px;
 }
+.circles-container {
+    display: flex;
+    height: 29px;
+    justify-content: space-evenly;
+    align-items: center;
+}
 .welcome-circle{
     background-color: #fff;
     display: inline-block;
@@ -5482,7 +5547,12 @@ Welcom
     position: relative;
     z-index: 44;
 }
-
+.circles-container i:first-child {
+    margin-right: 1px;
+}
+.circles-container i:last-child {
+    margin-right: -7px;
+}
 .welcome_text h2 {
     color: #07294d;
     text-transform: uppercase;

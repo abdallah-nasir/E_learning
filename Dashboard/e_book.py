@@ -111,6 +111,8 @@ def upload_pdf(request,slug):
             pdf=form.cleaned_data.get("pdf")
             book.pdf = pdf
             book.save()
+        else:
+            print(form.errors)
             messages.success(request,"Pdf added successfully")
     
     context={"form":form,"book":book}

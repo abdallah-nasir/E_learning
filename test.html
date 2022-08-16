@@ -1,0 +1,265 @@
+{% extends 'kemet/home/base.html' %}
+{% load i18n %}
+{% load hosts %}
+
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list  for LANGUAGES as languages %}
+{% block content %}
+
+<meta charset="utf-8">
+<title>{% trans 'Agartha Library' %} | {% trans 'Home Page' %}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--====== Library PART Start ======-->
+
+<section id="slider-part" class="slider-active library-pg">
+    <div class="single-slider slider-2 bg_cover" style="background-image: url({% static 'library/img/slide1/slider-image-2.jpg' %})" data-overlay="4">
+        <div class="slider-overlay"></div>
+        <div class="container con-slider">
+            <div class="row">
+                <div class="col-xl-9 col-lg-10">
+                    <div class="slider-cont">
+                        <h3 data-animation="bounceInLeft" data-delay="1s">
+                          {% blocktrans %} Agartha World Library
+                          Wander through the orbits of the vast universe between the folds of books.
+                          Travel between space-time wherever you are.
+                          Enjoy a collection of
+                          Audio books, paper books, e-books {% endblocktrans %} 
+                        </h3>
+                        <a data-animation="fadeInUp" data-delay="1.3s" href="#" class="main-btn">Start Trial now</a>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </div> <!-- single slider -->
+
+    <div class="single-slider slider-2 bg_cover" style="background-image: url({% static 'library/img/slide1/slider-image-1.jpg' %})" data-overlay="4">
+        <!-- <div class="slider-overlay"></div> -->
+        <div class="container con-slider">
+            <div class="row">
+                <div class="col-xl-9 col-lg-10">
+                    <div class="slider-cont">
+                        <h3 data-animation="bounceInLeft" data-delay="1s">
+                            {% blocktrans %} Agartha World Library
+                            Wander through the orbits of the vast universe between the folds of books.
+                            Travel between space-time wherever you are.
+                            Enjoy a collection of
+                            Audio books, paper books, e-books{% endblocktrans %} 
+                        </h3>
+                        <a data-animation="fadeInUp" data-delay="1.3s" href="#" class="main-btn">Start Trial now</a>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </div> <!-- single slider -->
+
+    <div class="single-slider slider-2 bg_cover" style="background-image: url({% static 'library/img/slide1/slider-image-2.jpg' %})" data-overlay="4">
+        <!-- <div class="slider-overlay"></div> -->
+        <div class="container con-slider">
+            <div class="row">
+                <div class="col-xl-9 col-lg-10">
+                    <div class="slider-cont">
+                        <h3 data-animation="bounceInLeft" data-delay="1s">
+                           {% blocktrans %} Agartha World Library
+                            Wander through the orbits of the vast universe between the folds of books.
+                            Travel between space-time wherever you are.
+                            Enjoy a collection of
+                            Audio books, paper books, e-books{% endblocktrans %}
+                        </h3>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </div> <!-- single slider -->
+
+</section>
+
+<!--Welcome area -->
+<div class="Welcome-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 Welcome-entry  col-sm-12">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="welcome_text wow fadeInLeft" data-wow-delay="0.3s" data-wow-offset="100">
+                            <!-- /.feature title -->
+                            <h2>{% trans 'Grow awareness' %}</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12">
+                        <div class="welcome_services wow fadeInRight" data-wow-delay="0.3s" data-wow-offset="100">
+                            <div class="row">
+                                <div class="col-md-4 m-padding">
+                                    <div class="welcome-estate">
+                                        <div class="welcome-icon">
+                                            <!--<i class="pe-7s-notebook pe-4x"></i>-->
+                                            <a href="{% url 'library:books' slug='e-book' %}"> <img src="{% static 'library/assets/img/icon/ebooks.png' %}"></a>
+                                        </div>
+                                        <h3>{% trans 'E-Books' %}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 m-padding">
+                                    <div class="welcome-estate">
+                                        <div class="welcome-icon">
+                                            <!--<i class="pe-7s-headphones pe-4x"></i>-->
+                                            <a href="{% url 'library:books' slug='audio-book' %}"> <img src="{% static 'library/assets/img/icon/AudioBooks.png' %}"></a>
+                                        </div>
+                                        <h3>{% trans 'Audio Books' %}</h3>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 m-padding">
+                                    <div class="welcome-estate">
+                                        <div class="welcome-icon">
+                                            <!--<i class="pe-7s-headphones pe-4x"></i>-->
+                                            <a href="{% url 'library:books' slug='audio-book' %}"> <img src="{% static 'library/assets/img/icon/AudioBooks.png' %}"></a>
+                                        </div>
+                                        <h3>{% trans 'Movies' %}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="circles-container">
+                                        <i class="welcome-circle"></i>
+                                    <i class="welcome-circle"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 m-padding">
+                                    <div class="welcome-estate">
+                                        <div class="welcome-icon">
+                                            <!--<i class="pe-7s-video pe-4x"></i>-->
+                                            <a href="{% url 'library:movies' %}">  <img src="{% static 'library/assets/img/icon/film.png' %}"></a>
+                                        </div>
+                                        <h3>{% trans 'Documentaries' %}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 m-padding">
+                                <div class="welcome-estate">
+                                    <div class="welcome-icon">
+                                        <!--<i class="pe-7s-music pe-4x"></i>-->
+                                        <a href="#"> 
+                                    <img  src="{% static 'library/img/icon/maps.png' %}"></a>
+                                    </div>
+                                    <h3>{% trans 'Maps' %}</h3>
+                                </div>
+                            </div>
+                                <div class="col-md-4 m-padding">
+                                    <div class="welcome-estate">
+                                        <div class="welcome-icon">
+                                            <!--<i class="pe-7s-music pe-4x"></i>-->
+                                            <a href="{% url 'library:audio_home' %}">   <img src="{% static 'library/assets/img/icon/music.png' %}"></a>
+                                        </div>
+                                        <h3>{% trans 'Best Music ' %}</h3>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--====== Books PART START ======-->
+
+<section id="course-part" class="pt-115 pb-115">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title pb-45">
+                    <h5>{% trans 'The most important books that have just arrived' %}</h5>
+                    <h2>{% trans 'RECENT E-BOOKS' %}</h2>
+                </div> <!-- section title -->
+            </div>
+        </div>
+        <div class="bookshelf">
+            <div class="shelf">
+                <div class="container">
+                    <div class="row">
+                        <div class="row-1">
+                            <div class="loc">
+                                {% for i in data.e_books %}
+                                <div> 
+                                    <div class="sample thumb book">
+                                        <a href="{% url 'library:e_book:single_book' i.slug %}">
+                                            <img  src="{{i.image}}" width="100%" height="100%" alt="flipbook">
+                                            <span class="item-type-icon">
+                                                <img src="{% static 'images/all-icon/open-book.png' %}" alt="">
+                                                <!-- <div class="img-color"></div> -->
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                               
+                               
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- container -->
+</section>
+
+<!--====== Books PART ENDS ======-->
+
+
+
+<!--====== AudioBooks PART START ======-->
+
+<section id="course-part" class="pt-115 pb-115">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="section-title pb-45">
+                    <h5>{% trans 'The most important AudioBooks that have just arrived' %}</h5>
+                    <h2>{% trans 'RECENT AUDIOBOOKS' %}</h2>
+                </div> <!-- section title -->
+            </div>
+        </div> <!-- row -->
+        <div class="row course-library-slied mt-30">
+            {% for i in data.audio_books %}
+            
+            <div class="col-lg-4">
+                <div class="singel-publication mt-30">
+                    <div class="image">
+                        <img src="{{i.image}}" alt="Publication">
+                       
+                        <span class="item-type-icon">
+                            <img src="{% static 'images/all-icon/audiobook (2).png' %}" alt="">
+                            <!-- <div class="img-color"></div> -->
+                        </span>
+                    </div>
+                    <div class="cont">
+                        <div class="name">
+                            <a href="shop-singel.html"><h6>{{i.name}}</h6></a>
+                            <span>${{i.get_price}}</span>
+                        </div>
+                        <div class="button text-right">
+                            <a href="{% url 'library:audio_book:single_audio' i.slug %}" class="main-btn">Details</a>
+                        </div>
+                    </div>
+                </div> <!-- singel publication -->
+            </div>
+           {% endfor %}
+        </div> <!-- course slied -->
+    </div> <!-- container -->
+</section>
+
+<!--====== AudioBooks PART ENDS ======-->
+<!--====== Library PART ENDS ======-->
+
+
+
+<script src="{% static 'library/assets/js/icheck.min.js' %}"></script>
+
+<script src="{% static 'library/assets/js/price-range.js' %}"></script>
+
+{% endblock %}

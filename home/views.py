@@ -24,6 +24,8 @@ from datetime import date
 import datetime
 from django.forms import ValidationError
 from django.core.cache import cache
+from django.utils.translation import get_language
+
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from E_learning.all_email import *
@@ -568,9 +570,14 @@ def failed(request):
 ##########################
 from Frontend.models import Category as faq_category , Branch as faq_branch , Faq 
 def faqs(request):
+    lang = get_language()
     category = faq_category.objects.all() 
     context={"category":category}
-    return render(request,"faqs.html",context)
+    if lang == "en-us":
+        template = "faqs.html"
+    else:
+        template = "faqs-rtl.html"
+    return render(request,template,context)
 def test(request):
    return render(request,"test.html") 
     

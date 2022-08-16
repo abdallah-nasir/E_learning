@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 import os
 from django.template.defaultfilters import urlencode
-from django.urls import reverse  
+from django.urls import reverse
 from Consultant.models import Cosultant_Payment,Consultant,Teacher_Time ,Category as Consultant_Category
 from home.models import Course,Payment,Events,Videos,News,Videos
 from Blogs.models import (Blog,Blog_Payment,Blog_Images,Prices)

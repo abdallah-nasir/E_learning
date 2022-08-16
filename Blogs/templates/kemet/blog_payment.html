@@ -23,7 +23,7 @@
               </nav>
               <div class="tab-content" id="nav-tabContent">
                   <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                    <table class="table">
+                    <table class="table width-900">
                       <thead class="thead-dark">
                         <tr>
                           <th scope="col">Name Recived</th>
@@ -33,21 +33,21 @@
                       </thead>
                       <tbody>
                         <tr>
-                            <td>نبيل كمال محمد</td>
-                            <td>مصر</td>
-                            <td>00201011609810</td>
+                          <td>نبيل كمال محمد</td>
+                          <td>مصر</td>
+                          <td>00201011609810</td>
                         </tr>
                         <tr>
-                            <td>Nabil Kamal Mohammad</td>
-                            <td>Egypt</td>
-                            <td>00201011609810</td>
+                          <td>Nabil Kamal Mohammad</td>
+                          <td>Egypt</td>
+                          <td>00201011609810</td>
                         </tr>
-
-
-                    </tbody>
-                    </table>
+                       
+                       
+                      </tbody>
+                  </table>
                     
-                    <form method="POST" action="{% url 'blogs:bank_payment' price.id %}" enctype="multipart/form-data">
+                    <form class="mt-50"  method="POST" action="{% url 'blogs:bank_payment' price.id %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">
@@ -71,30 +71,30 @@
                   </div>
                   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <div class="table-responsive">
-                    <table class="table">
-                      <thead class="thead-dark">
-                        <tr>
-                          <th scope="col">Bank name</th>
-                          <th scope="col">IBan</th>
-                          <th scope="col">Riceve Name</th>
-                          <th scope="col">Branch</th>
-                          <th scope="col">Swift Code</th>
-
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Mark</td>
-                          <td>EG260017001801820017420650101</td>
-                          <td>Nabil Kamal Mohamed</td>
-                          <td>Al AHRAR BRANCH</td>
-                          <td>SUCAEGCXXXX</td>
-                        </tr>
-                     
-                      </tbody>
-                    </table>
+                      <table class="table width-900">
+                        <thead class="thead-dark">
+                          <tr>
+                            <th scope="col">Bank name</th>
+                            <th scope="col">IBan</th>
+                            <th scope="col">Riceve Name</th>
+                            <th scope="col">Branch</th>
+                            <th scope="col">Swift Code</th>
+  
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Mark</td>
+                            <td>EG260017001801820017420650101</td>
+                            <td>Nabil Kamal Mohamed</td>
+                            <td>Al AHRAR BRANCH</td>
+                            <td>SUCAEGCXXXX</td>
+                          </tr>
+                       
+                        </tbody>
+                      </table>
                   </div>
-                    <form method="POST" action="{% url 'blogs:western_payment' price.id %}" enctype="multipart/form-data">
+                    <form class="mt-50"  method="POST" action="{% url 'blogs:western_payment' price.id %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">

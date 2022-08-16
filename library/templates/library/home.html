@@ -76,22 +76,22 @@
 
 </section>
 
-<!--Welcome area -->
-<div class="Welcome-area">
+   <!--Welcome area -->
+   <div class="Welcome-area">
     <div class="container">
         <div class="row">
             <div class="col-md-12 Welcome-entry  col-sm-12">
                 <div class="row">
-                    <div class="col-lg-7">
+                    <div class="col-lg-6">
                         <div class="welcome_text wow fadeInLeft" data-wow-delay="0.3s" data-wow-offset="100">
                             <!-- /.feature title -->
                             <h2>{% trans 'Grow awareness' %}</h2>
                         </div>
                     </div>
-                    <div class="col-lg-5 col-md-12">
+                    <div class="col-lg-6 col-md-12">
                         <div class="welcome_services wow fadeInRight" data-wow-delay="0.3s" data-wow-offset="100">
                             <div class="row">
-                                <div class="col-md-6 m-padding">
+                                <div class="col-md-4 m-padding">
                                     <div class="welcome-estate">
                                         <div class="welcome-icon">
                                             <!--<i class="pe-7s-notebook pe-4x"></i>-->
@@ -100,7 +100,7 @@
                                         <h3>{% trans 'E-Books' %}</h3>
                                     </div>
                                 </div>
-                                <div class="col-md-6 m-padding">
+                                <div class="col-md-4 m-padding">
                                     <div class="welcome-estate">
                                         <div class="welcome-icon">
                                             <!--<i class="pe-7s-headphones pe-4x"></i>-->
@@ -109,21 +109,7 @@
                                         <h3>{% trans 'Audio Books' %}</h3>
                                     </div>
                                 </div>
-
-                                <div class="col-md-12 text-center">
-                                    <i class="welcome-circle"></i>
-                                </div>
-
-                                <div class="col-md-6 m-padding">
-                                    <div class="welcome-estate">
-                                        <div class="welcome-icon">
-                                            <!--<i class="pe-7s-video pe-4x"></i>-->
-                                            <a href="{% url 'library:movies' %}">  <img src="{% static 'library/assets/img/icon/film.png' %}"></a>
-                                        </div>
-                                        <h3>{% trans 'Documentaries' %}</h3>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 m-padding">
+                                <div class="col-md-4 m-padding">
                                     <div class="welcome-estate">
                                         <div class="welcome-icon">
                                             <!--<i class="pe-7s-music pe-4x"></i>-->
@@ -133,6 +119,46 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-12">
+                                    <div class="circles-container">
+                                        <i class="welcome-circle"></i>
+                                    <i class="welcome-circle"></i>
+                                    </div>
+                                </div>
+<!-- 
+                                <div class="col-md-6 text-center">
+                                </div> -->
+
+                                <div class="col-md-4 m-padding">
+                                    <div class="welcome-estate">
+                                        <div class="welcome-icon">
+                                            <!--<i class="pe-7s-video pe-4x"></i>-->
+                                            <a href="{% url 'library:movies' %}">  <img src="{% static 'library/assets/img/icon/film.png' %}"></a>
+                                        </div>
+                                        <h3>{% trans 'Documentaries' %}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 m-padding">
+                                    <div class="welcome-estate">
+                                        <div class="welcome-icon">
+                                            <!--<i class="pe-7s-music pe-4x"></i>-->
+                                            <a href="#"> 
+                                        <img  src="{% static 'library/img/icon/maps.png' %}"></a>
+                                        </div>
+                                        <h3>{% trans 'Maps' %}</h3>
+                                    </div>
+                                </div>
+                               
+                                <div class="col-md-4 m-padding">
+                                    <div class="welcome-estate">
+                                        <div class="welcome-icon">
+                                            <!--<i class="pe-7s-music pe-4x"></i>-->
+                                            <a href="#">   <img src="{% static 'library/img/icon/EarthNow-01.png' %}"></a>
+                                        </div>
+                                        <h3>{% trans 'Earth' %}</h3>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -141,7 +167,7 @@
         </div>
     </div>
 </div>
-
+                               
 <!--====== Books PART START ======-->
 
 <section id="course-part" class="pt-115 pb-115">
@@ -161,12 +187,20 @@
                         <div class="row-1">
                             <div class="loc">
                                 {% for i in data.e_books %}
-                                <div>
+                                <div> 
                                     <div class="sample thumb book">
-                                        <img src="{{i.image}}" width="100%" height="100%" alt="{{i.name}}">
+                                        <a href="{% url 'library:e_book:single_book' i.slug %}">
+                                            <img  src="{{i.image}}" width="100%" height="100%" alt="flipbook">
+                                            <span class="item-type-icon">
+                                                <img src="{% static 'images/all-icon/open-book.png' %}" alt="">
+                                                <!-- <div class="img-color"></div> -->
+                                            </span>
+                                        </a>
                                     </div>
                                 </div>
                                 {% endfor %}
+                               
+                               
                             </div>
                         </div>
 

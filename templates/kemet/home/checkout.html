@@ -42,7 +42,7 @@
                     </tbody>
                     </table>
                     
-                    <form method="POST" action="{% url 'home:western_payment' course.slug %}" enctype="multipart/form-data">
+                    <form class="mt-50"  method="POST" action="{% url 'home:western_payment' course.slug %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">
@@ -89,7 +89,7 @@
                       </tbody>
                     </table>
                   </div>
-                    <form method="POST" action="{% url 'home:bank_payment' course.slug %}" enctype="multipart/form-data">
+                    <form  class="mt-50"  method="POST" action="{% url 'home:bank_payment' course.slug %}" enctype="multipart/form-data">
                       {{ form.non_field_errors }}
                       {% csrf_token %}
                       <div class="form-group">

@@ -15,7 +15,7 @@ from django.conf import settings
 import random,string,requests
 from crum import get_current_request   
 from captcha.fields import ReCaptchaField
-from captcha.widgets import ReCaptchaV2Checkbox
+from captcha.widgets import ReCaptchaV2Checkbox, ReCaptchaV3
 from phonenumber_field.formfields import PhoneNumberField
 
 Storage_Api=os.environ["Storage_Api"]
@@ -49,7 +49,7 @@ GENDER=(
 class MyCustomSignupForm(SignupForm):
     gender=forms.ChoiceField(label="Are You",required=True,choices=GENDER)
     phone=PhoneNumberField(required=True)
-    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
+    captcha = ReCaptchaField(widget=ReCaptchaV3)
     terms_privacy=forms.BooleanField(required=True)
     def clean(self):
         image=self.cleaned_data.get("image")
@@ -84,7 +84,7 @@ class MyCustomSignupForm(SignupForm):
 class MyCustomSocialSignupForm(SocialSignUpForm):
     gender=forms.ChoiceField(label="Are You",required=True,choices=GENDER)
     phone=PhoneNumberField(required=True)
-    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)
+    captcha = ReCaptchaField(widget=ReCaptchaV3)
     terms_privacy=forms.BooleanField(required=True)
 
     def clean_phone(self):

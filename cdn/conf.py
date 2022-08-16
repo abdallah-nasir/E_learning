@@ -10,7 +10,7 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 } 
 AWS_LOCATION = "https://agartha-media.fra1.digitaloceanspaces.com"
-AWS_DEFAULT_ACL = 'public'
+AWS_DEFAULT_ACL = "public-read"
 
 # STATICFILES_STORAGE = 'cdn.backends.StaticRootS3BotoStorage'
 DEFAULT_FILE_STORAGE = "cdn.backends.MediaRootS3BotoStorage"

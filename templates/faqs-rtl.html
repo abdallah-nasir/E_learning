@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block content %}
+<title>{% block title %}| {% trans 'FAQs' %}{% endblock %}</title>
+
+<!--====== PAGE BANNER PART START ======-->
+
+<section id="page-banner" class="pt-105 pb-110 bg_cover" data-overlay="8" style="background-image: url({% static 'images/faq-banner.jpg' %})">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-banner-cont">
+                    <h2>FAQs</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="#">FAQs</a></li>
+                        </ol>
+                    </nav>
+                </div>  <!-- page banner cont -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+<!--====== PAGE BANNER PART ENDS ======-->
+<div class="faqs mb-50 mt-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="search-section">
+                    <label for="faq-search" class="faq-search">ابحث عن السؤال</label><br>
+                    <div class="wrap">
+                        <div class="search">
+                            <input id="faq-search" type="text" class="searchTerm" placeholder="ما الذي تبحث عنه؟">
+                            <button type="submit" class="searchButton">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="nav nav-pills faq-nav" id="faq-tabs" role="tablist" aria-orientation="vertical">
+                    {% for i in category %}
+                    
+                    <a href="#tab-{{i.id}}" class="nav-link {% if forloop.first %}active{% endif %}" data-toggle="pill" role="tab" aria-controls="tab-{{i.id}}" aria-selected="true">
+                        <i class="{{i.icon}}"  aria-hidden="true"></i> {{i.name.title}}
+                    </a>
+                    {% endfor %}
+                   
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="tab-content" id="faq-tab-content">
+                    <!--  Public Information   -->
+                    {% for i in category %}
+                    
+                    <div class="tab-pane show {% if forloop.first %}active{% endif %}" id="tab-{{i.id}}" role="tabpanel" aria-labelledby="tab-{{i.id}}">
+                        <div class="accordion" id="accordion-tab-{{i.id}}">
+                           
+                            {% for b in i.get_branch %}
+                            <div class="card">
+        
+                                <div class="card-header" id="accordion-tab-{{i.id}}-heading-{{b.id}}">
+                                    <h5>
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#accordion-tab-{{i.id}}-content-{{b.id}}" aria-expanded="false" aria-controls="accordion-tab-{{i.id}}-content-{{b.id}}">
+                                            {{b.name}}
+                                        </button>
+                                    </h5>
+                                </div>
+                              {% for c in b.get_faq %}
+                                <div class="collapse show {% if forloop.first %}active{% endif %}" id="accordion-tab-{{i.id}}-content-{{b.id}}" aria-labelledby="accordion-tab-{{i.id}}-heading-{{b.id}}" data-parent="#accordion-tab-{{i.id}}">
+                                    <div class="card-body">
+                                        {{c.name|safe}}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                           {% endfor %}
+                          
+                        </div>
+                    </div>
+                  {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
+

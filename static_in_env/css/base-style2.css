@@ -645,6 +645,13 @@ p {
 .navigation .navbar .navbar-icons .navbar-icon .img-circle {
     width: 35px;
     height: 35px;
+    border-radius: 50%!important;
+    border: 2px solid #07294d;
+    margin-right: 5px;
+    transition: .4s;
+}
+.navigation .navbar .navbar-icons .navbar-icon:hover .img-circle {
+    border-color: #ffc600 !important;
 }
 
 .navigation .navbar .navbar-icons .user-img-msg {
@@ -1554,10 +1561,30 @@ width:100%;
     position: relative;
     height: 100%;
 }
+.singel-publication .image-sqaure{
+    position: relative;
+    height: 100%;
+}
+.singel-publication .image-sqaure:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%; /* The padding depends on the width, not on the height, so with a padding-bottom of 100% you will get a square */
+  }
 .singel-publication .image img{
     height: 100%;
     width: 100%;
 }
+.singel-publication .image-sqaure img {
+    position: absolute; /* Take your picture out of the flow */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0; /* Make the picture taking the size of it's parent */
+    width: 100%; /* This if for the object-fit */
+    height: 100%; /* This if for the object-fit */
+    object-fit: cover; /* Equivalent of the background-size: cover; of a background-image */
+    object-position: center;
+  }
 .bookshelf .book .item-type-icon,
 .singel-publication .image .item-type-icon {
     width: 50px;
@@ -1585,6 +1612,7 @@ width:100%;
     background-color: #07294d;
     mix-blend-mode: screen;
 }
+.singel-publication .image-sqaure .add-cart,
 .singel-publication .image .add-cart{
     position: absolute;
     top: 0;
@@ -1596,10 +1624,12 @@ width:100%;
     -webkit-transition: all 0.4s linear;
     transition: all 0.4s linear;
 }
+.singel-publication .image-sqaure:hover .add-cart,
 .singel-publication .image:hover .add-cart{
     opacity: 1;
 }
 
+.singel-publication .image-sqaure .add-cart ul,
 .singel-publication .image .add-cart ul{
     position: absolute;
     top: 50%;
@@ -1608,10 +1638,12 @@ width:100%;
     transform: translate(-50%, -50%);
     display: flex;
 }
+.singel-publication .image-sqaure .add-cart ul li,
 .singel-publication .image .add-cart ul li{
     display: inline-block;
     margin: 0 5px;
 }
+.singel-publication .image-sqaure .add-cart ul li a,
 .singel-publication .image .add-cart ul li a{
     font-size: 16px;
     color: #ffc600;
@@ -1626,6 +1658,7 @@ width:100%;
     width: 30px !important;
     line-height: 30px !important;
 } */
+.singel-publication .image-sqaure .add-cart ul li a:hover,
 .singel-publication .image .add-cart ul li a:hover{
     background-color: #ffc600;
     color: #07294d;
@@ -1644,8 +1677,24 @@ width:100%;
     align-items: center;
     padding-top: 25px;
 }
+.singel-publication .cont-map{
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 25px;
+}
 .singel-publication .cont .name{
     width: 50%;
+}
+.singel-publication .cont-map .name{
+    /* width: 50%; */
 }
 .singel-publication .cont .name a{
     display: block;
@@ -3837,6 +3886,32 @@ width:100%;
     width: 100%;
     border-radius: 4px;
 }
+.shop-destails .shop-left .shop-image a.square{
+    display: block;
+    position: relative;
+    height: 100%;
+}
+.shop-destails .shop-left .shop-image a.square:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%; /* The padding depends on the width, not on the height, so with a padding-bottom of 100% you will get a square */
+}
+.shop-destails .shop-left .shop-image a.square img{
+    border-radius: 4px;
+    height: 100%;
+    width: 100%;
+}
+.shop-destails .shop-left .shop-image a.square img {
+    position: absolute; /* Take your picture out of the flow */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0; /* Make the picture taking the size of it's parent */
+    width: 100%; /* This if for the object-fit */
+    height: 100%; /* This if for the object-fit */
+    object-fit: cover; /* Equivalent of the background-size: cover; of a background-image */
+    object-position: center;
+  }
 .shop-destails .shop-left .nav .nav-item{
     margin-right: 25px;
 }
@@ -4363,13 +4438,13 @@ font-size: 15px !important;
         background-color: #fff;
         padding: 30px 0;
     }
-    .col-sm-6 {
+    /* .col-sm-6 {
         -webkit-box-flex: 0;
         flex: 0 0 50%;
         max-width: 33%;
         padding-left: 4px;
         padding-right: 0;
-    }
+    } */
     /* .footer-title h6 {
         font-size: 12px;
     } */
@@ -4511,6 +4586,13 @@ Welcom
     text-align: center;
     fill: #FFF;
 }
+.welcome-estate.center-block{
+    width: 220px;
+    height: 220px;
+    margin: -15px auto;
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px 4px #ffffff94;
+}
 .welcome-estate h3 {
     font: 600 14px "Open Sans",sans-serif;
     text-transform: uppercase;
@@ -4540,13 +4622,24 @@ Welcom
     position: relative;
     z-index: 44;
 }
-
+.circles-container {
+    display: flex;
+    height: 29px;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.circles-container i:first-child {
+    margin-left: 1px;
+}
+.circles-container i:last-child {
+    margin-left: -7px;
+}
 .welcome_text h2 {
     color: #07294d;
     text-transform: uppercase;
     background-color: #FFF;
     position: absolute;
-    top: 70%;
+    top: 50%;
     right: 80px;
     transform: translateY(-50%);
     text-align: center;
@@ -4882,3 +4975,74 @@ Welcom
         bottom: -155px;
     }
 }
+
+.categoris-link {
+    width: 100%;
+    margin: 10px auto;
+    padding: 25px 5px;
+    border: 2px solid var(--mainColor);
+}
+.categoris-link > div {
+    position: relative;
+    margin-block: 45px;
+}
+.categoris-link div .heading {
+    width: fit-content;
+    margin-bottom: 25px;
+    position: relative;
+}
+.categoris-link div .heading::after {
+    content: "";
+    position: absolute;
+    top: 13px;
+    right: -85px;
+    width: 70px;
+    height: 2px;
+    background-color: var(--mainColor);
+}
+.categoris-link .list ul li {
+    list-style: none;
+    margin: 20px 0;
+    position: relative;
+    }
+    .categoris-link .list ul li a{
+        
+    color: rgb(25 56 90);
+    }
+  .categoris-link .list ul li:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 35px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #ddd;
+  }
+  .categoris-link .list ul li::after {
+    content: attr(data);
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    padding: 5px;
+    background-color: #ddd;
+    color: #000;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+  }
+  .categoris-link .archives ul {
+    margin-left: 17px;
+  }
+  .categoris-link .archives ul li {
+    padding-left: 15px;
+    margin-block: 30px;
+    color: rgb(25 56 90);
+  }
+  .categoris-link .archives ul li::marker {
+    content: "\f07b";
+    font-weight: 900;
+    font-family: FontAwesome;
+    color: var(--mainColor);
+  }

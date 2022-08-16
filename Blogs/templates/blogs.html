@@ -1,6 +1,6 @@
 {% extends 'blog_base.html' %}
 {% load hosts %}
-
+{% load static %}
 {% load i18n %}
 {% block content %}
 <style type="text/css">
@@ -185,6 +185,11 @@
 								<i class="fa fa-newspaper-o"></i>
 							</div>
 							<div class="entry-category"><a href="{% url 'blogs:category' i.category.slug %}">{{i.category.name.title|truncatewords:10}}</a></div>
+							{% if not i.paid %}
+							<div class="icon-free">
+								<img src="{% static 'blogs/images/BigFree-01.png' %}" alt="">
+							</div>
+							{% endif %}
 							<div class="entry-header-title">
 								<h2><a href="{% url 'blogs:blog' i.slug %}">{{i.name|truncatechars:50}}</a></h2>
 								<div class="entry-meta">

@@ -47,7 +47,7 @@ def books(request):
 @login_required(login_url="accounts:login")
 def single_book(request,slug):
     track=get_object_or_404(E_Book,slug=slug,status="approved")
-    if track.price > 0:
+    if track.price and track.price > 0:
         if track.buyers.filter(id=request.user.id).exists():
             status = False
         else:
@@ -258,7 +258,7 @@ def paypal_capture(request,order_id,track_id):
 @check_user_is_kemet_vip
 @check_e_book_user
 def read_book(request,slug):
-    book=get_object_or_404(E_Book,status="approved")
+    book=get_object_or_404(E_Book,status="approved", slug=slug)
 
     context={"book":book}
     return render(request,"library/e-book/read_book.html",context)
